@@ -11,7 +11,7 @@ import ObjectIds
 
 
 // Local imports:
-import AbilityObjectCreationUtils
+import LocalAssets
 import LocalObjectIDs
 import Panic
 import StringBuilder
@@ -22,6 +22,7 @@ import Orders
 import BuffIds
 import BuffObjEditing
 import Sounds
+import Icons
 
 constant ABILITY_WOLFS_STAMINA_BOOTS_PANIC = compiletime(ABIL_ID_GEN.next())
 //constant SPELLBOOK_ABILITY_ID = compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)))
@@ -46,7 +47,7 @@ let TT = new StringBuilder()
 
 function createBearsTenacitBuff()
     new BuffDefinition(BUFF_BEARS_TENACITY, BuffIds.slow)
-
+        ..setIcon(Icons.bTNStampede)
         ..setName("Bear's Tenacity")
         //..setTooltipNormal(1, makeToolTipNorm("N", "Bloodlust"))
         //..setTooltipNormalExtended(1, TT)

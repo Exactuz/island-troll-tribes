@@ -16,6 +16,7 @@ import LocalAssets
 import HealingSystem
 import UnitExtensions
 import Sounds
+import Orders
 constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_GEN.next())
 
 let TT = new StringBuilder()
@@ -95,22 +96,23 @@ function onPickupCoat(unit u)
             instances.put(u, new WolfCoatInstance(u))
 
 
-function onDropCoat(unit u)
+function onDropCoat(unit u, item itm)
+
     if instances.has(u)
         destroy instances.getAndRemove(u)
+
 
 init
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
             onPickupCoat(GetManipulatingUnit())
 
-    
     EventListener.add(EVENT_PLAYER_UNIT_SPELL_ENDCAST) ->
         if (GetTriggerUnit().hasItemById(ITEM_WOLF_VORACITY_COAT)) and (GetSpellAbilityId() == ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME )
             consumeCorpseHeal(EventData.getSpellAbilityUnit())
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
-            onDropCoat(GetManipulatingUnit())
+            onDropCoat(GetManipulatingUnit(), GetManipulatedItem())
 
 //@compiletime createconsume

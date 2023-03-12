@@ -45,7 +45,7 @@ let TT = new StringBuilder()
     new ChannelAbilityPreset(ABILITY_BEARS_GREED_PAWS_ACTIVE, 1, true)
         ..presetCastingTime(lvl ->0.5)
         ..presetCastRange(lvl -> 100)
-        ..presetCooldown(lvl -> 3)
+        ..presetCooldown(lvl -> 60)
         ..presetTargetTypes(Targettype.UNIT)
         ..presetTargetsAllowed(lvl ->commaList(
             TargetsAllowed.neutral,

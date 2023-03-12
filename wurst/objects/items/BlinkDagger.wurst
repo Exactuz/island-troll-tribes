@@ -14,6 +14,7 @@ let ABIL = compiletime(ABIL_ID_GEN.next())
 
 @compiletime function createBlinkDagger()
     new AbilityDefinitionWardenBlink(ABIL)
+        ..setManaCost(1, 0)
         ..setCooldown(1, 0.0)
         ..setMaximumRange(1, 99999.0)
         ..setMinimumRange(1, 0.0)

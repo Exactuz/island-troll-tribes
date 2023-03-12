@@ -83,8 +83,6 @@ init
     ..add(ITEM_SPIRIT_WATER)
     ..add(ITEM_MAGIC)
 
-
-
     let temp = new QuickMake(ABILITY_QM_WOLFS_VORACITY_COAT)
     ..add(ITEM_WOLF_SKIN_COAT)
     ..add(ITEM_STEEL_INGOT)

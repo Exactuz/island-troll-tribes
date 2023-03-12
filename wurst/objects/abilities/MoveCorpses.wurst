@@ -25,6 +25,7 @@ import SimError
 import Transformation
 import HealingItems
 import HealingSystem
+import UnitExtensions
 
 // The time for which new abilities are disabled to prevent accidental rollback.
 // TODO: Use a per-player setting for this.
@@ -248,6 +249,29 @@ function onWolfVoracityCoat(unit caster)
     updateCount(caster, -1)
 
 
+function onWolfVoracityCoatDrop(unit caster, item itm)
+    
+    // Create the corpse that is dropped.
+    //createCorpse(caster.getPos())
+    // Decrement the count.
+    if (counts.get(caster)==8)       
+        updateCount(caster, -8)
+    else 
+        RemoveItem(itm)
+        print("item removed")
+
+//TODO: figure out why addint item crashes the game
+        let temp=createItem(ITEM_WOLF_VORACITY_COAT, caster.getPos())
+        UnitAddItem(caster, temp)
+
+        //caster.addItemById(itemId)
+        
+       // caster.addItemById(ITEM_WOLF_VORACITY_COAT)
+       // print("item added")
+        //caster.addItemByHandleId(itm.getHandleId())
+
+
+
 function onGrab(unit caster, unit target)
     // Exit if the unit is not the dummy for gathering meat.
     if target.getTypeId() != LocalUnitIds.dummyMeatGather
@@ -396,5 +420,11 @@ init
     //wolfskincoat
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_USE_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
-            onWolfVoracityCoat(GetManipulatingUnit())
+            onWolfVoracityCoat(GetManipulatingUnit())                       
+
+    /*registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatingUnit().isTroll()
+            if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
+                onWolfVoracityCoatDrop(GetManipulatingUnit(),GetManipulatedItem())  
+                */      
 

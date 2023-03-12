@@ -35,6 +35,8 @@ let TT_UNFORMAT_WOLFS_BLOODLUST_CLAWS_BUFF = "Fills wearer with insatiable blood
 let TT_UNFORMAT_BEARS_GREED_PAWS= TT_COMMON + ", damage by {1}, armor by {2} and strength by {3}. |n"
 let TT_UNFORM_BEARS_GREED_PAWS_ACTIVE = "Bears greed for honey is so strong it allows you to find it where there's none. |n"
                                         +"Use this item on a hidden stash to find a honeycomb."
+                                        +"\n This item cannot be dropped while on cooldown"
+                                        + makeToolTipCooldown(60)
 
 let TT_UNFORMAT_BATTLE_GLOVE_STRING = "Increases wearer's attack speed by {0}, armor by {1} and all stats by {2}"
                                       + " and a critical strike for {3} damage on a {4} second cooldown."
@@ -196,7 +198,7 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setTintingColor3Blue(128)
         ..setModelUsed(LocalItems.skinGloves)
         ..setHotkey("")
-        ..setLumberCost(33)
+        ..setLumberCost(23)
         ..setScalingValue(0.8)
         ..setNameEnhance("Wolf Skin Gloves")
         ..setTooltipExtended(TT_WOLF_SKIN_GLOVES)
@@ -218,7 +220,7 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setTintingColor3Blue(128)
         ..setModelUsed(LocalItems.skinGloves)
         ..setHotkey("")
-        ..setLumberCost(65)
+        ..setLumberCost(80)
         ..setScalingValue(0.8)
         ..setNameEnhance("Claws of Wolf's Bloodlust")
         ..setTooltipExtended(TT_WOLF_BLOODLUST_CLAWS)
@@ -240,7 +242,7 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setTintingColor3Blue(16)
         ..setModelUsed(LocalItems.skinGloves)
         ..setHotkey("")
-        ..setLumberCost(47)
+        ..setLumberCost(29)
         ..setScalingValue(0.8)
         ..setNameEnhance("Bear Skin Gloves")
         ..setTooltipExtended(TT_BEAR_SKIN_GLOVES)
@@ -263,7 +265,7 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setTintingColor3Blue(16)
         ..setModelUsed(LocalItems.skinGloves)
         ..setHotkey("")
-        ..setLumberCost(65)
+        ..setLumberCost(82)
         ..setScalingValue(0.8)
         ..setNameEnhance("Paws of Bear's Greed")
         ..setTooltipExtended(TT_BEARS_GREED_PAWS)

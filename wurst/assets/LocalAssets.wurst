@@ -18,7 +18,7 @@ public class LocalIcons
 	static constant bTNChestOfWolfVoracity ="ReplaceableTextures\\CommandButtons\\BTNChestOfWolfVoracity.blp"
 	static constant bTNCoatOfBearPresence1 ="ReplaceableTextures\\CommandButtons\\BTNCoatOfBearPresence1.blp"
     static constant btnPoisonQuill ="ReplaceableTextures\\CommandButtons\\btnpoisonquill.blp"
-    static constant dtsbtnPoisonQuill ="ReplaceableTextures\\CommandButtons\\disbtnpoisonquill.blp"
+    static constant disbtnPoisonQuill ="ReplaceableTextures\\CommandButtons\\disbtnpoisonquill.blp"
 	static constant dISBTNCoatOfBearPresence1 ="ReplaceableTextures\\CommandButtons\\DISBTNCoatOfBearPresence2.blp"	
     static constant aTCCannibalize           = "ReplaceableTextures\\CommandButtons\\ATCCannibalize.blp"
     static constant aTCEnsnare               = "ReplaceableTextures\\CommandButtons\\ATCEnsnare.blp"

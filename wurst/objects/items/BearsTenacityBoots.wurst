@@ -123,7 +123,7 @@ IterableMap<unit, BearsTenacityBootsInstance> instances = new IterableMap<unit, 
 function onEnsnare(unit wearer)
     doPeriodicallyTimed(ANIMATION_PERIOD, 3) (CallbackCounted cb) ->
         if (wearer.hasAbility(BuffIds.ensnareGround)) or (wearer.hasAbility(BuffIds.entanglingRoots)) or (wearer.hasAbility(BuffIds.ensnareGeneral))
-            PlaySound(Sounds.druidOfTheClawWarcry1)
+            //PlaySound(Sounds.druidOfTheClawWarcry1)
             wearer.removeAbility(BuffIds.ensnareGround)
             wearer.removeAbility(BuffIds.entanglingRoots)
             wearer.removeAbility(BuffIds.ensnareGeneral)

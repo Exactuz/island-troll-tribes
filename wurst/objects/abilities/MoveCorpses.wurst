@@ -249,21 +249,14 @@ function onWolfVoracityCoat(unit caster)
     updateCount(caster, -1)
 
 
+
 function onWolfVoracityCoatDrop(unit caster, item itm)
     
     // Create the corpse that is dropped.
     //createCorpse(caster.getPos())
     // Decrement the count.
-    if (counts.get(caster)==8)       
-        updateCount(caster, -8)
-    else 
-        RemoveItem(itm)
-        print("item removed")
-
-//TODO: figure out why addint item crashes the game
-        let temp=createItem(ITEM_WOLF_VORACITY_COAT, caster.getPos())
-        UnitAddItem(caster, temp)
-
+    let temp =counts.get(caster)    
+    updateCount(caster, -temp)
         //caster.addItemById(itemId)
         
        // caster.addItemById(ITEM_WOLF_VORACITY_COAT)
@@ -286,13 +279,19 @@ function onGrab(unit caster, unit target)
 function updateCount(unit target, int differential)
     // Exit if no work is required.
     if differential == 0
-        return
+        return     
 
     // Look up the count for the unit prior to the update.
     let prior = counts.get(target)
 
     // Compute the count for unit after the update, based on the boundaries.
     let after = (prior + differential).clamp(0, MAX_COUNT)
+
+    //Coat of wolf's voractiy
+    if (after == 8) and (target.hasItemById(ITEM_WOLF_VORACITY_COAT))
+        target.getItemById(ITEM_WOLF_VORACITY_COAT).setDroppable(true)
+    else
+        target.getItemById(ITEM_WOLF_VORACITY_COAT).setDroppable(false)
 
     // Update the state.
     counts.put(target, after)
@@ -422,9 +421,9 @@ init
         if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
             onWolfVoracityCoat(GetManipulatingUnit())                       
 
-    /*registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatingUnit().isTroll()
             if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
                 onWolfVoracityCoatDrop(GetManipulatingUnit(),GetManipulatedItem())  
-                */      
+                    
 

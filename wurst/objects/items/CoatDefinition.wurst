@@ -69,6 +69,7 @@ public constant TT_WOLF_VORACITY_COAT = "" +
     "Allows wearer to consume raw meat, and to consume corpses instantly.  " +
     "|nCannot eat cooked meat. " +
     "Use item to consume raw meat instantly restoring 50 health.|n" +
+    "Item is only droppable if you have 8 raw meat which will be consumed in the process.|n"+
     "Strength +{0}.|n" +
     "Intelligence +{1}.|n" +
     "Armor+{2}."

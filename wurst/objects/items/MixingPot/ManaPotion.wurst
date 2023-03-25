@@ -38,7 +38,7 @@ let TARGET_ALLOWED = "friend,ground,hero,invulnerable,organic,self,vulnerable"
         ..setModelUsed(LocalItems.potionBlueLesser)
         ..setHotkey("W")
         ..setTooltipExtended(TT)
-        ..setLumberCost(14)
+        ..setLumberCost(10)
         ..setAbilities(commaList(ABIL))
         ..setScalingValue(0.7)
         ..setCooldownGroup("A002")

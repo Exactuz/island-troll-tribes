@@ -14,16 +14,16 @@ constant COOLDOWN = 1.
 
 // Additional pages for Quick Make
 constant MIXING_POT_SPELLBOOK = commaList(
-    ABILITY_QM_DISEASE_POTION,
     ABILITY_QM_ACID_BOMB,
+    ABILITY_QM_ANABOLIC_POTION,
     ABILITY_QM_BEE_HIVE,
     ABILITY_QM_ESSENCE_BEES,
     ABILITY_QM_GEM_OF_KNOWLEDGE,
     ABILITY_QM_OMNICURE,
     ABILITY_QM_TWIN_ISLANDS,
     ABILITY_QM_NETHER_POTION,
-    ABILITY_QM_DRUNKS_POTION,
-    ABILITY_QM_FERVOR_POTION,
+    ABILITY_QM_ANTI_MAGIC_POTION,
+    ABILITY_QM_ORACLE_POTION,
     ABILITY_QM_ELEMENTAL_SHIELD_POTION
 )
 
@@ -87,7 +87,8 @@ constant WORKSHOP_SPELLBOOK = commaList(
     ABILITY_QM_SMOKE_BOMB,
     ABILITY_QM_FIRE_BOMB,
     ABILITY_QM_EMP,
-    ABILITY_QM_TRANSPORT_SHIP
+    ABILITY_QM_TRANSPORT_SHIP,
+    ABILITY_QM_LIVING_CLAY
 )
 
 public constant BUILDING_CRAFT_SPELLBOOK = commaList(
@@ -218,25 +219,25 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         // Mixing Pot
         new QuickMakeSpell("Healing Potion"          , MIX_TOOLTIP+HEALING_POTION_RECIPE          , "LesserRejuvPotion"       , ABILITY_QM_HEALING_POTION          , 0, 0, "Q", QM_TOOLIP, "stop"),
         new QuickMakeSpell("Mana Potion"             , MIX_TOOLTIP+MANA_POTION_RECIPE             , "PotionBlueSmall"         , ABILITY_QM_MANA_POTION             , 1, 0, "W", QM_TOOLIP, "holdposition"),
-        new QuickMakeSpell("Cure All"                , MIX_TOOLTIP+CURE_ALL_RECIPE                , "LesserClarityPotion"     , ABILITY_QM_CURE_ALL                , 2, 0, "E", QM_TOOLIP, "frenzy"),
-        new QuickMakeSpell("Anti-Magic Potion"       , MIX_TOOLTIP+ANTI_MAGIC_POTION_RECIPE       , "PotionOfClarity"         , ABILITY_QM_ANTI_MAGIC_POTION       , 3, 0, "R", QM_TOOLIP, "immolation"),
-        new QuickMakeSpell("Spirit Of Wind"          , MIX_TOOLTIP+SPIRIT_WIND_RECIPE             , "OrbOfLightning"          , ABILITY_QM_SPIRIT_WIND             , 0, 1, "A", QM_TOOLIP, "winwalk"),
-        new QuickMakeSpell("Spirit Of Water"         , MIX_TOOLTIP+SPIRIT_WATER_RECIPE            , "OrbOfFrost"              , ABILITY_QM_SPIRIT_WATER            , 1, 1, "S", QM_TOOLIP, "ambush"),
+        new QuickMakeSpell("Fervor Potion"           , MIX_TOOLTIP+FERVER_POTION_RECIPE           , "GreaterInvulneralbility" , ABILITY_QM_FERVOR_POTION           , 1, 2, "C", QM_TOOLIP, "fanofknives"),
+        new QuickMakeSpell("Disease Potion"          , MIX_TOOLTIP+DISEASE_POTION_RECIPE          , "PotionGreen"             , ABILITY_QM_DISEASE_POTION          , 0, 0, "E", QM_TOOLIP, "berserk"),
+        new QuickMakeSpell("Spirit Of Water"         , MIX_TOOLTIP+SPIRIT_WATER_RECIPE            , "OrbOfFrost"              , ABILITY_QM_SPIRIT_WATER            , 1, 1, "A", QM_TOOLIP, "ambush"),
+        new QuickMakeSpell("Spirit Of Wind"          , MIX_TOOLTIP+SPIRIT_WIND_RECIPE             , "OrbOfLightning"          , ABILITY_QM_SPIRIT_WIND             , 0, 1, "S", QM_TOOLIP, "winwalk"),
         new QuickMakeSpell("Spirit Of Darkness"      , MIX_TOOLTIP+SPIRIT_DARKNESS_RECIPE         , "OrbOfDarkness"           , ABILITY_QM_SPIRIT_DARKNESS         , 2, 1, "D", QM_TOOLIP, "animatedead"),
-        new QuickMakeSpell("Anabolic Potion"         , MIX_TOOLTIP+ANABOLIC_POTION_RECIPE         , "PotionRed"               , ABILITY_QM_ANABOLIC_POTION         , 0, 2, "Z", QM_TOOLIP, "avatar"),
-        new QuickMakeSpell("Oracle Potion"           , MIX_TOOLTIP+ORACLE_POTION_RECIPE           , "GreaterInvisibility"     , ABILITY_QM_ORACLE_POTION           , 2, 2, "C", QM_TOOLIP, "battlestations"),
-
+        new QuickMakeSpell("Cure All"                , MIX_TOOLTIP+CURE_ALL_RECIPE                , "LesserClarityPotion"     , ABILITY_QM_CURE_ALL                , 2, 0, "R", QM_TOOLIP, "frenzy"),
+        new QuickMakeSpell("Drunks Potion"           , MIX_TOOLTIP+DRUNKS_POTION_RECIPE           , "LesserInvulneralbility"  , ABILITY_QM_DRUNKS_POTION           , 2, 2, "Z", QM_TOOLIP, "divineshield"),
         // Special Herb Page
-        new QuickMakeSpell("Disease Potion"          , MIX_TOOLTIP+DISEASE_POTION_RECIPE          , "PotionGreen"             , ABILITY_QM_DISEASE_POTION          , 0, 0, "Q", QM_TOOLIP, "berserk"),
-        new QuickMakeSpell("Acid Bomb"               , MIX_TOOLTIP+ACID_BOMB_RECIPE               , "AcidBomb"                , ABILITY_QM_ACID_BOMB               , 1, 0, "W", QM_TOOLIP, "burrow"),
+        
+        new QuickMakeSpell("Acid Bomb"               , MIX_TOOLTIP+ACID_BOMB_RECIPE               , "AcidBomb"                , ABILITY_QM_ACID_BOMB               , 1, 0, "Q", QM_TOOLIP, "burrow"),
+        new QuickMakeSpell("Anabolic Potion"         , MIX_TOOLTIP+ANABOLIC_POTION_RECIPE         , "PotionRed"               , ABILITY_QM_ANABOLIC_POTION         , 0, 2, "W", QM_TOOLIP, "avatar"),
         new QuickMakeSpell("Bee Hive"                , MIX_TOOLTIP+BEE_HIVE_RECIPE                , "Crate"                   , ABILITY_QM_BEE_HIVE                , 2, 0, "E", QM_TOOLIP, "cannibalize"),
         new QuickMakeSpell("Essences Of Bees"        , MIX_TOOLTIP+ESSENCE_BEES_RECIPE            , "BeeHive"                 , ABILITY_QM_ESSENCE_BEES            , 3, 0, "R", QM_TOOLIP, "chemicalrage"),
         new QuickMakeSpell("Gem Of Knowledge"        , MIX_TOOLTIP+GEM_OF_KNOWLEDGE_RECIPE        , "EnchantedGemstone"       , ABILITY_QM_GEM_OF_KNOWLEDGE        , 0, 1, "A", QM_TOOLIP, "creepanimatedead"),
         new QuickMakeSpell("Omnicure"                , MIX_TOOLTIP+OMNICURE_RECIPE                , "MinorRejuvPotion"        , ABILITY_QM_OMNICURE                , 1, 1, "S", QM_TOOLIP, "thunderclap"),
         new QuickMakeSpell("Twin Islands Potion"     , MIX_TOOLTIP+TWIN_ISLANDS_POTION_RECIPE     , "PotionGreenSmall"        , ABILITY_QM_TWIN_ISLANDS            , 2, 1, "D", QM_TOOLIP, "stomp"),
         new QuickMakeSpell("Nether Potion"           , MIX_TOOLTIP+NETHER_POTION_RECIPE           , "PotionOfOmniscience"     , ABILITY_QM_NETHER_POTION           , 0, 2, "F", QM_TOOLIP, "defend"),
-        new QuickMakeSpell("Drunks Potion"           , MIX_TOOLTIP+DRUNKS_POTION_RECIPE           , "LesserInvulneralbility"  , ABILITY_QM_DRUNKS_POTION           , 2, 2, "Z", QM_TOOLIP, "divineshield"),
-        new QuickMakeSpell("Fervor Potion"           , MIX_TOOLTIP+FERVER_POTION_RECIPE           , "GreaterInvulneralbility" , ABILITY_QM_FERVOR_POTION           , 1, 2, "X", QM_TOOLIP, "fanofknives"),
+        new QuickMakeSpell("Anti-Magic Potion"       , MIX_TOOLTIP+ANTI_MAGIC_POTION_RECIPE       , "PotionOfClarity"         , ABILITY_QM_ANTI_MAGIC_POTION       , 3, 0, "Z", QM_TOOLIP, "immolation"),
+        new QuickMakeSpell("Oracle Potion"           , MIX_TOOLTIP+ORACLE_POTION_RECIPE           , "GreaterInvisibility"     , ABILITY_QM_ORACLE_POTION           , 2, 2, "x", QM_TOOLIP, "battlestations"),
         new QuickMakeSpell("Elemental Shield Potion" , MIX_TOOLTIP+ELEMENTAL_SHIELD_POTION_RECIPE , "PotionOfRestoration"     , ABILITY_QM_ELEMENTAL_SHIELD_POTION , 2, 2, "C", QM_TOOLIP, "howlofterror"),
 
 
@@ -268,7 +269,6 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Cloak Of Mana"             , TRANSMUTE_TOOLTIP+CLOAK_MANA_RECIPE         , "CloakOfMana"               , ABILITY_QM_CLOAK_MANA         , 3, 1, "F", QM_TOOLIP, "howlofterror"),
 
         // Second Page
-        new QuickMakeSpell("Living Clay"               , TRANSMUTE_TOOLTIP+LIVING_CLAY_RECIPE        , "GreenSentryWard"           , ABILITY_QM_LIVING_CLAY        , 2, 2, "R", QM_TOOLIP, "locustswarm"),
         new QuickMakeSpell("Magic Seed"                , TRANSMUTE_TOOLTIP+MAGIC_SEED_RECIPE         , "Root"                      , ABILITY_QM_MAGIC_SEED         , 2, 2, "A", QM_TOOLIP, "manashieldon"),
         new QuickMakeSpell("Spirit Ward"               , TRANSMUTE_TOOLTIP+SPIRIT_WARD_RECIPE        , "AbsorbMagic"               , ABILITY_QM_SPIRIT_WARD        , 2, 2, "S", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Poison"                    , TRANSMUTE_TOOLTIP+POISON_RECIPE             , "HealingSalve"              , ABILITY_QM_POISON             , 0, 2, "Z", QM_TOOLIP, "manaflareon"),
@@ -292,6 +292,7 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Fire Bomb"            , TRANSMUTE_TOOLTIP+FIRE_BOMB_RECIPE            , "LiquidFire"             , ABILITY_QM_FIRE_BOMB            , 1, 0, "W", QM_TOOLIP, "manashieldon"),
         new QuickMakeSpell("EMP"                  , TRANSMUTE_TOOLTIP+EMP_RECIPE                  , "WispSplode"             , ABILITY_QM_EMP                  , 2, 0, "E", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Transport Ship"       , TRANSMUTE_TOOLTIP+TRANSPORT_SHIP_RECIPE       , "NightElfTransport"      , ABILITY_QM_TRANSPORT_SHIP       , 3, 0, "R", QM_TOOLIP, "manaflareon"),
+        new QuickMakeSpell("Living Clay"          , TRANSMUTE_TOOLTIP+LIVING_CLAY_RECIPE          , "GreenSentryWard"        , ABILITY_QM_LIVING_CLAY          , 2, 2, "R", QM_TOOLIP, "stomp"),
 
 
         // Tannery

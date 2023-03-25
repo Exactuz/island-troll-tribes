@@ -86,7 +86,7 @@ let TT_NET = "A twine net that can be used to net enemies."
         ..setInterfaceIcon(Icons.bTNEnsnare)
         ..setModelUsed(Abilities.ensnareTarget)
         ..setHotkey("N")
-        ..setLumberCost(4)
+        ..setLumberCost(5)
         ..setNameEnhance("Net")
         ..setStockMaximum(3)
         ..setTooltipExtended(TT_NET)

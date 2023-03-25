@@ -29,6 +29,8 @@ public function mixIt(LinkedList<item> inv)
             items.remove()
         if items.getTypeId() == ITEM_SPIRIT_WIND
             items.remove()    
+        if items.getTypeId() == ITEM_POISON
+            items.remove() 
 
 public function mix(unit caster)
     let count = caster.getInventoryItemCountMap()
@@ -45,6 +47,7 @@ public function mix(unit caster)
     let athelas = count.get(ITEM_ATHELAS_SEED)
     let water = count.get(ITEM_SPIRIT_WATER)
     let wind = count.get(ITEM_SPIRIT_WIND)
+    let poison = count.get(ITEM_POISON)
 
     let specCount = blue + oran + purp + yell
 
@@ -88,7 +91,7 @@ public function mix(unit caster)
         return
 
     // Disease Potion
-    if specTypes > 1 and specCount > 3 and root > 0
+    if poison > 0 and stem > 0
         mixIt(inventory)
         caster.addItemById(ITEM_DISEASE_POTION)
         return

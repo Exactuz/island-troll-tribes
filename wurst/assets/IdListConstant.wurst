@@ -224,7 +224,8 @@ public constant CRAFT_BUILDING_ABILITY_ID_LIST = asList(
 public constant HIDE_LIST = asList(
     ITEM_ELK_HIDE,
     ITEM_JUNGLE_WOLF_HIDE,
-    ITEM_JUNGLE_BEAR_HIDE
+    ITEM_JUNGLE_BEAR_HIDE,
+    ITEM_POISON
 )
 
 public constant BASIC_BOOTS_LIST = asList(

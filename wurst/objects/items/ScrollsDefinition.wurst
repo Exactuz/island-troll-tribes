@@ -78,7 +78,7 @@ public let STONE_ARMOR_TT = "Grants the unit the ability to Cast Stone armor whi
                              .format(STONE_ARMOR.toToolTipGreen(), 0.15.toToolTipOrange(), STONE_ARMOR_SLOW_DURATION.toToolTipOrange())
                              + makeToolTipDuration(STONE_ARMOR_DURATION, STONE_ARMOR_COOLDOWN)
 
-public let HASTE_TT = "Grant the unit the ability to boost its allies movement speed to the maximum."
+public let HASTE_TT = "Grant the unit the ability to boost its allies movement speed to the maximum. Passively increases wearer's MS by 60"
                        + makeToolTipDuration(HASTE_DURATION, HASTE_COOLDOWN)
 
 public let TSUNAMI_TT = "Grants the unit the ability to cast Tsunami, sending a gigantic wave dealing {0} damage to units in a line. When casted at close range, it deals {1} extra damage to buildings and can instantly put out fires."

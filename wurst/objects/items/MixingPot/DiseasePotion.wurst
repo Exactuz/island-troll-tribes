@@ -19,16 +19,15 @@ import ToolTipsUtils
 let ABIL = compiletime(ABIL_ID_GEN.next())
 
 public let DISEASE_HEALING_REDUCTION_FACTOR = 0.3
-let DURATION = 25.
+let DURATION = 20.
 let DAMAGE_TICK_INTERVAL = 0.5
-let DAMAGE_PER_SECOND = 4
+let DAMAGE_PER_SECOND = 5
 let AOE = 200.
 HashMap<unit, DiseaseInstance> diseaseInstances = new HashMap<unit,DiseaseInstance>()
 
 public constant TT_DISEASE_POTION = "" +
-    ("Biological warfare! Throw at an enemy to give him and all units in a "+
-    "small radius a disease. Dealing {0} damage per second. "+
-    "Reduces healing received from items and potions by {1}. Last {2} seconds.")
+    ("Biological warfare! Throw at an enemy to give him  "+
+    "a disease. Dealing {0} damage per second. Last {2} seconds.")
     .format(DAMAGE_PER_SECOND.toReal().toToolTipRed(),
     DISEASE_HEALING_REDUCTION_FACTOR.toToolTipOrange(),
     DURATION.toToolTipLightBlue())
@@ -58,7 +57,7 @@ public constant TT_DISEASE_POTION = "" +
         ..setNameEnhance("Disease Potion")
         ..setTooltipExtended(TT_DISEASE_POTION)
         ..setDescription(TT_DISEASE_POTION)
-        ..setLumberCost(34)
+        ..setLumberCost(13)
         ..setAbilities(commaList(ABIL))
         ..setScalingValue(0.70)
         ..setCooldownGroup(commaList(ABIL))
@@ -71,9 +70,7 @@ function onCastDisease()
     let caster = GetSpellAbilityUnit()
     let target = GetSpellTargetUnit()
 
-    forUnitsInRange(target.getPos(), AOE) u ->
-        if isValidTarget(caster.getOwner(), u)
-            applyDisease(caster, u)
+
 
 function isValidTarget(player attacker, unit u) returns bool
     return u.getOwner().isEnemyOf(attacker)
@@ -88,10 +85,7 @@ function applyDisease(unit caster, unit target)
 
     diseaseInstances.put(target, new DiseaseInstance(caster, target))
 
-function onHealed()
-    let instance = getHealingInstance()
-    if isUnitDiseased(instance.getTarget()) and instance.healingType == HealingType.ITEM
-        instance.scaleMultiplier(1 - DISEASE_HEALING_REDUCTION_FACTOR)
+
 
 class DiseaseInstance
     unit owner
@@ -124,5 +118,4 @@ init
     registerSpellEffectEvent(ABIL) ->
         onCastDisease()
 
-    onUnitHealed() ->
-        onHealed()
+

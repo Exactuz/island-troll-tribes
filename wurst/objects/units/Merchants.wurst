@@ -103,16 +103,16 @@ function createMerchantShip(int newId) returns UnitDefinition
         ..setItemsSold(
             commaList(
                 ITEM_SCROLL_FIREBALL,
-                ITEM_SCROLL_LIVING_DEAD,
                 ITEM_SCROLL_STONE_ARMOR,
                 ITEM_SCROLL_HASTE,
-                ITEM_FORGE_KIT,
+                ITEM_JUNGLE_WOLF_HIDE,
+                ITEM_JUNGLE_BEAR_HIDE,
                 ITEM_TANNERY_KIT,
                 ITEM_ARMORY_KIT,
                 ITEM_MUD_HUT_KIT,
                 ITEM_STEEL_INGOT,
                 ITEM_SPIRIT_WATER,
-                ITEM_SPIRIT_WATER,
+                ITEM_SPIRIT_WIND,
                 ITEM_ANTI_MAGIC_POTION
                 
             )
@@ -123,18 +123,19 @@ function createMerchantShip(int newId) returns UnitDefinition
         ..setModelFile(Units.humanDestroyerShip1)
         ..setItemsSold(
             commaList(
-                ITEM_ARMORY_KIT,
-                ITEM_TANNERY_KIT,
-                ITEM_SCROLL_LIVING_DEAD,
-                ITEM_SCROLL_STONE_ARMOR,
-                ITEM_ANTI_MAGIC_POTION,
-                ITEM_CURE_ALL,
-                ITEM_SPIRIT_WIND,
-                ITEM_STEEL_INGOT,
+                ITEM_MUD_HUT_KIT,
                 ITEM_FLINT,
+                ITEM_HEALING_POTION,
+                ITEM_MANA_POTION,
+                ITEM_STEEL_INGOT,
+                ITEM_IRON_INGOT,
+                ITEM_MAGIC,
+                ITEM_ENSNARE_TRAP_KIT,
+                ITEM_OMNITOWER_KIT,
+                ITEM_POISON,
                 ITEM_STONE,
-                ITEM_MANA_CRYSTAL,
-                ITEM_MAGIC
+                ITEM_MANA_CRYSTAL
+                
             )
         )
 

@@ -8,6 +8,7 @@ import Assets
 import LocalAssets
 
 
+
 function createHunter(int unitId) returns HeroDefinition
     return createBasicTroll(unitId)
         ..setNameEnhance("Hunter")
@@ -33,6 +34,9 @@ function createHunter(int unitId) returns HeroDefinition
     createHunter(UNIT_HUNTER_1)
         ..setModelFile(LocalUnits.axeTroll)
         ..setNameEditorSuffix("(Custom Skin 1)")
+    createHunter(UNIT_HUNTER_ELK_TROPHY_HIDE)
+        ..setModelFile(LocalUnits.ForestTrollWithElkHide)
+        ..setNameEditorSuffix("(Custom Skin 1)")        
 
 
 function createWarrior(int unitId) returns HeroDefinition
@@ -63,7 +67,7 @@ function createTracker(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
         ..setNameEnhance("Tracker")
         ..setAttackDamage(14)
-        ..setAttackSpeed(1.75)
+        ..setAttackSpeed(1.65)
         ..setModelFile(Units.iceTroll1)
         ..setIcons(Icons.bTNIceTrollBeserker)
         ..setUnitSoundSet(Soundsets.forestTrollShadowPriest)
@@ -750,6 +754,29 @@ function createRadarGatherer(int unitId) returns HeroDefinition
     createRadarGatherer(UNIT_RADAR_GATHERER)
 
 
+function createAlchemist(int unitId) returns HeroDefinition
+    return createSubTroll(unitId)
+        ..setNameEnhance("Alchemist")
+        ..setAttackDamage(10)
+        ..setAttackSpeed(1.70)
+        ..setModelFile(LocalUnits.TrollHexerMasked)
+        ..setIcons(LocalIcons.bTNAlchemist)
+        ..setUnitSoundSet(Soundsets.batTroll)
+        ..setSpeedBase(310)
+        ..setButtonPositionX(3)
+        ..setButtonPositionY(0)
+        ..setScalingValue(1)
+        ..setSightRadiusDay(1800)
+        ..setSightRadiusNight(1800)
+        ..setTooltipExtended(TOOLTIP_ALCHEMIST)
+        ..setProperNames("Waltuh")
+        ..setProperNamesUsed(1)
+        ..setHotkey("E")
+        ..setAbilitiesEnhance(NORMAL_SPELLS_ALCHEMIST, HERO_SPELLS_ALCHEMIST) //ABILITY_ALCHEMIST_ACID_BOMB NORMAL_SPELLS_ALCHEMIST
+
+@compiletime function createAlchemist()
+    createAlchemist(UNIT_ALCHEMIST)
+
 function createOmniGatherer(int unitId) returns HeroDefinition
     return createSuperSubTroll(unitId)
         ..setNameEnhance("Omni Gatherer")
@@ -767,7 +794,7 @@ function createOmniGatherer(int unitId) returns HeroDefinition
         ..setTooltipExtended(TOOLTIP_OMNIGATHERER)
         ..setProperNames(NAME_OMNIGATHERER)
         ..setProperNamesUsed(3)
-        ..setHotkey("E")
+        ..setHotkey("R")
         ..setAbilitiesEnhance(NORMAL_SPELLS_OMNIGATHERER, HERO_SPELLS_OMNIGATHERER)
 
 @compiletime function createOmniGatherer()

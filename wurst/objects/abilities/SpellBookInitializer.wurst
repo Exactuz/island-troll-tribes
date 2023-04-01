@@ -34,7 +34,7 @@ let TT_RENDO_EVOLUTION           = "Jungle Tyrant evolutions, contains following
         ("\nLevel 1 - Hawk Eye, Snake Toxin" +
         "\nLevel 2 - Panther Instinct, Elk Jump" +
         "\nLevel 4 - Wolf Bite").color(GOLD_COLOR)
-
+let TT_ALCHEMIST               = "Alchemist can use energy of The Philosopher's Stone to conjure spell effects of potions"
 let TT_MAGE_INHERITED         = "Inherited Spells from the Mage."
 let TT_DEMENTIA_INHERITED     = "A bunch of assorted mage spells."
 let TT_PRIEST_INHERITED       = "Inherited Spells from the Priest."
@@ -245,13 +245,23 @@ let TT_OMNIGATHERER_INHERITED = "Contains all spells from the gatherer class."
 
 @compiletime function createHeroSpellBookDruidicSpells()
     createHeroSpellBook(ABILITY_DRUID_SPELLBOOK, 3)
-        ..setTooltipNormalExtended(1, TT_DRUID_SPELLBOOK)
-        ..setAbilitiesPerLevel(DRUID_ABILITY_HASH)
+        ..setTooltipNormalExtended(1, TT_DRUID_SPELLBOOK)        
         ..presetButtonPosNormal(1, 1)
+        ..setAbilitiesPerLevel(DRUID_ABILITY_HASH)
         ..setIconNormal(Icons.bTNEntrapmentWard)
         ..setRequiredLevel(0)
         ..setLevelSkipRequirement(0)
         ..setNameEnhance("E", "Druidic Spells")
+
+@compiletime function createHeroSpellSpellBookAlchemist()
+    createHeroSpellBook(ABILITY_ALCHEMIST_SPELLBOOK, 3)
+        ..setNameEnhance("R", "Philosopher's Stone conjuration powers")
+        ..setTooltipNormalExtended(1, TT_ALCHEMIST)
+        ..setAbilitiesPerLevel(ALCHEMIST_ABILITY_HASH)
+        ..setRequiredLevel(0)
+        ..setLevelSkipRequirement(0)        
+        ..presetButtonPosNormal(2, 1)
+        ..setIconNormal(Icons.bTNtemp)        
 
 
 // Normal spell book
@@ -333,6 +343,7 @@ let TT_OMNIGATHERER_INHERITED = "Contains all spells from the gatherer class."
         ..setSpellList(1, SUB_GATHERER_INHERITED_SPELL)
         ..presetButtonPosNormal(2, 1)
         ..setIconNormal(Icons.bTNSpy)
+
 
 @compiletime function createSpellBookOmnigathererInheritedSpells()
     createSpellBook(ABILITY_OMNIGATHERER_INHERITED_SPELLBOOK)

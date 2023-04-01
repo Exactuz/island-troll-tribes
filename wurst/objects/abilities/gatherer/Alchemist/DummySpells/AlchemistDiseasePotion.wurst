@@ -1,0 +1,113 @@
+package AlchemistDiseasePotion
+
+// Standard library imports:
+import ClosureEvents
+import ChannelAbilityPreset
+import Orders
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import Lodash
+import DiseasePotion
+import InstantDummyCaster
+import SimError
+import BuffObjEditing
+import BuffIds
+
+//constant NAME =""
+//constant COOLDOWN = 0
+//constant ICON =""
+constant POTION_COST = 12
+constant errorMsg = "Philosopher's stone doesnt have enough energy"
+constant TT_COST = "\nCosts "+POTION_COST.toString().color(COLOR_GOLD_STR) +" energy."
+constant TT_EXTENDED =TT_DISEASE_POTION+TT_COST
+constant POS = new Pair(0, 2)
+LinkedList<string>hotKeys = asList("Q","W","E","R","A","S","D","F","Z","X","C")
+let hotkeyIndex=POS.b*4+POS.a
+constant HOTKEY = hotKeys.get(hotkeyIndex)
+constant TARGET_ALLOWED = commaList(TargetsAllowed.organic,
+                                    TargetsAllowed.enemies,
+                                    TargetsAllowed.vulnerable)
+
+@compiletime function createDummyPotionAbility()
+    new ChannelAbilityPreset(ABILITY_ALCHEMIST_DISEASE_POTION, 1, true)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl ->0)
+        ..setHeroAbility(true)  
+        ..setHotkeyNormal(HOTKEY)
+        ..setName(NAME)
+        ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, NAME))
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)          
+        ..setIconNormal(ICON)
+        ..setIconResearch(ICON)
+        ..setIconTurnOff(ICON)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setButtonPositionNormalX(POS.a)
+        ..setButtonPositionNormalY(POS.b)
+        ..presetTargetsAllowed(lvl->TARGET_ALLOWED)            
+        ..setFollowThroughTime(1, 0)
+        ..presetCastRange(lvl->CAST_RANGE)
+        ..setEditorSuffix("(Wurst)")
+
+@comipletime function createExtraDummyPotionBuff()
+    new BuffDefinition(BUFF_ALCHEMIST_DISEASE_POTION, BuffIds.slow)
+        ..setIcon(ICON)
+        ..setName(NAME)
+        //..setTooltipNormal(1, makeToolTipNorm("N", "Bloodlust"))
+        //..setTooltipNormalExtended(1, TT)
+        ..setEffectSound("")
+        ..setArtTarget("")
+        ..setTargetAttachmentPoint0(1, "")
+        ..setTargetAttachmentPoint1(1, "")
+
+
+@compiletime function createExtraDummyPotionAbility() // alchemist's spell event triggers this one which triggers disease.oncast(), otherwise disease will trigger even with insufficient cost
+    new AbilityDefinitionSlow(ABILITY_ALCHEMIST_DISEASE_POTION_DUMMY)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl ->0)
+        ..setHeroAbility(true)
+        ..presetBuffs(lvl->BUFF_ALCHEMIST_DISEASE_POTION.toRawCode())
+        ..setArtEffect("")
+        ..setArtTarget("")
+        ..setArtSpecial("")             
+        ..presetDurationHero(lvl->ANIMATION_PERIOD)
+        ..presetDurationNormal(lvl->ANIMATION_PERIOD)
+        ..presetMovementSpeedFactor(lvl->0)            
+        ..setHotkeyNormal(HOTKEY)
+        ..setName(NAME)
+        ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, NAME))
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)          
+        ..setIconNormal(ICON)
+        ..setIconResearch(ICON)
+        ..setIconTurnOff(ICON)
+        ..setButtonPositionNormalX(POS.a)
+        ..setButtonPositionNormalY(POS.b)
+        ..presetTargetsAllowed(lvl->TARGET_ALLOWED)            
+        ..presetCastRange(lvl->CAST_RANGE)
+        ..setEditorSuffix("(Wurst)")
+
+function onCast()
+    let target = GetSpellTargetUnit()
+    let caster = GetSpellAbilityUnit()
+    if caster.isTroll()
+        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        if itm.getCharges() >= POTION_COST
+            // Potion trigger is in DiseasePotion
+            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ALCHEMIST_DISEASE_POTION_DUMMY, 1, OrderIds.slow, target)
+            itm.setCharges(itm.getCharges()-POTION_COST)
+        else
+            caster.issueImmediateOrder("stop")
+            simError(caster.getOwner(), errorMsg)
+
+
+    
+
+
+init 
+    registerSpellEffectEvent(ABILITY_ALCHEMIST_DISEASE_POTION, function onCast)

@@ -1,0 +1,116 @@
+package AlchemistOmnicure
+
+
+// Standard library imports:
+import ClosureEvents
+import ChannelAbilityPreset
+import Orders
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import Lodash
+import Omnicure
+import InstantDummyCaster
+import SimError
+import BuffIds
+import BuffObjEditing
+
+//constant NAME =""
+//constant COOLDOWN = 0
+//constant ICON =""
+constant POTION_COST = 20
+constant errorMsg = "Philosopher's stone doesnt have enough energy"
+constant NAME = "Omnicure Potion"
+constant TT_COST = "\nCosts "+POTION_COST.toString().color(COLOR_GOLD_STR) +" energy."
+constant TT_EXTENDED =TOOLTIP_EXTENDED+TT_COST
+constant POS = new Pair(2, 1)
+
+constant ICON  = Icons.bTNMinorRejuvPotion
+LinkedList<string>hotKeys = asList("Q","W","E","R","A","S","D","F","Z","X","C")
+let hotkeyIndex=POS.b*4+POS.a
+constant HOTKEY = hotKeys.get(hotkeyIndex)
+
+@compiletime function createDummyPotionAbility()
+    new ChannelAbilityPreset(ABILITY_ALCHEMIST_OMNICURE, 1, true)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl ->0)
+        ..setHeroAbility(true)
+        ..setHotkeyNormal(HOTKEY)
+        ..setName(NAME)
+        ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, NAME))
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)
+        ..presetTargetsAllowed(lvl->TARGET_ALLOWED)            
+        ..setIconNormal(ICON)
+        ..setIconResearch(ICON)
+        ..setIconTurnOff(ICON)
+        ..setButtonPositionNormalX(POS.a)
+        ..setButtonPositionNormalY(POS.b)
+        ..setFollowThroughTime(1, 0)
+        ..setEditorSuffix("(Wurst)")
+
+
+@comipletime function createExtraDummyPotionBuff()
+    new BuffDefinition(BUFF_ALCHEMIST_OMNICURE_POTION, BuffIds.slow)
+        ..setIcon(ICON)
+        ..setName(NAME)
+        //..setTooltipNormal(1, makeToolTipNorm("N", "Bloodlust"))
+        //..setTooltipNormalExtended(1, TT)
+        ..setEffectSound("")
+        ..setArtTarget("")
+        ..setTargetAttachmentPoint0(1, "")
+        ..setTargetAttachmentPoint1(1, "")
+
+
+@compiletime function createExtraDummyPotionAbility() // alchemist's spell event triggers this one which triggers disease.oncast(), otherwise disease will trigger even with insufficient cost
+    new AbilityDefinitionSlow(ABILITY_ALCHEMIST_OMNICURE_POTION_DUMMY)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl ->0)
+        ..setHeroAbility(true)
+        ..presetBuffs(lvl->BUFF_ALCHEMIST_OMNICURE_POTION.toRawCode())
+        ..setArtEffect("")
+        ..setArtTarget("")
+        ..setArtSpecial("")             
+        ..presetDurationHero(lvl->ANIMATION_PERIOD)
+        ..presetDurationNormal(lvl->ANIMATION_PERIOD)
+        ..presetMovementSpeedFactor(lvl->0)            
+        ..setHotkeyNormal(HOTKEY)
+        ..setName(NAME)
+        ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, NAME))
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)          
+        ..setIconNormal(ICON)
+        ..setIconResearch(ICON)
+        ..setIconTurnOff(ICON)
+        ..setButtonPositionNormalX(POS.a)
+        ..setButtonPositionNormalY(POS.b)
+        ..presetTargetsAllowed(lvl->TARGET_ALLOWED)            
+        ..presetCastRange(lvl->99999.)
+        ..setEditorSuffix("(Wurst)")
+
+
+
+
+function onCast()
+    let target = GetSpellTargetUnit()
+    let caster = GetSpellAbilityUnit()
+    if caster.isTroll()
+        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        if itm.getCharges() >= POTION_COST
+            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_ALCHEMIST_OMNICURE_POTION_DUMMY, 1, OrderIds.slow, target)
+            itm.setCharges(itm.getCharges()-POTION_COST)
+        else
+            caster.issueImmediateOrder("stop")
+            simError(caster.getOwner(), errorMsg)
+
+
+    
+
+
+init 
+    registerSpellEffectEvent(ABILITY_ALCHEMIST_OMNICURE, function onCast)

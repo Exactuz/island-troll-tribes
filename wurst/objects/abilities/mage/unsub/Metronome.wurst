@@ -77,8 +77,8 @@ class Metronome extends AbilityDefinitionFirelordSoulBurn
     return new AbilityDefinitionFrostNovacreep(ABILITY_METRONOME_FROSTNOVAULT)
             ..setDummyAbility()
             ..setAreaofEffect(1, 600)
-            ..setAreaofEffectDamage(1, 15)
-            ..setSpecificTargetDamage(1, 45)
+            ..setAreaofEffectDamage(1, 60)
+            ..setSpecificTargetDamage(1, 20)
             ..setArtEffect(Abilities.blizzardTarget)
             ..setDurationHero(1, 5)
             ..setEditorSuffix("(Wurst)")
@@ -162,7 +162,15 @@ function onCast(unit caster, unit target)
         vis3.start()
         doAfter(0.2) ->
             vis3.destr()
-        abilityId = table.loadInt(GetRandomInt(0, 8))
+        while true
+            let randomInt = GetRandomInt(0, 8)
+            abilityId = table.loadInt(randomInt)                    
+            if target.getMaxMana() >0.
+                break
+            else
+                if (randomInt <7)
+                    break
+
         // Moving dummy around target so spell casting looks cool
         dummyPos = targetPos.polarOffset(GetRandomReal(0, 360).fromDeg(), GetRandomReal(0, 200))
         new DummyCaster()

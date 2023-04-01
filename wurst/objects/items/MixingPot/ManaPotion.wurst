@@ -12,40 +12,47 @@ import ToolTipsUtils
 import LocalObjectIDs
 import LocalItemObjEditing
 
-let ABIL  = compiletime(ABIL_ID_GEN.next())
+public constant MANA_RESTORED = 80.
+public constant CAST_RANGE = 400.
+public constant NAME = "Mana Potion"
+public constant ICON = Icons.bTNPotionBlueSmall
 
-let MANA_RESTORED = 80.
-
-let TT  = "A dilute potion made from Athelas Seed. "+
+public constant TT_MANA_POTION  = "A dilute potion made from Athelas Seed. "+
     "Instantly restores {0} Mana point to a target ally."
     .format(MANA_RESTORED.toToolTipLightBlue())
 
-let TARGET_ALLOWED = "friend,ground,hero,invulnerable,organic,self,vulnerable"
+public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,vulnerable"
 
 @compiletime function createAbil() returns ChannelAbilityPreset
-    return createItemChannelCast(ABIL)
-        ..setName("Mana Potion")
+    return createItemChannelCast(ABILITY_MANA_POTION)
+        ..setName(NAME)
         ..presetTargetTypes(Targettype.UNIT)
-        ..setTargetsAllowed(1, TARGET_ALLOWED)
-        ..setCastRange(1, 400.)
+        ..setTargetsAllowed(1, TARGETS_ALLOWED)
+        ..setCastRange(1, CAST_RANGE)
         ..setManaCost(1, 0)
         ..setCooldown(1, 0)
 
 @compiletime function createManaPotion() returns ItemDefinition
     return createPerishableItem(ITEM_MANA_POTION)
-        ..setNameEnhance("Mana Potion")
-        ..setInterfaceIcon(Icons.bTNPotionBlueSmall)
+        ..setNameEnhance(NAME)
+        ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionBlueLesser)
         ..setHotkey("W")
+<<<<<<< HEAD
         ..setTooltipExtended(TT)
         ..setLumberCost(10)
         ..setAbilities(commaList(ABIL))
+=======
+        ..setTooltipExtended(TT_MANA_POTION)
+        ..setLumberCost(10)
+        ..setAbilities(commaList(ABILITY_MANA_POTION))
+>>>>>>> dev
         ..setScalingValue(0.7)
-        ..setCooldownGroup("A002")
+        ..setCooldownGroup(commaList(ABILITY_MANA_POTION))
         ..setStockReplenishInterval(120)
         ..setNumberofCharges(2)
 
 init
-    EventListener.onTargetCast(ABIL) (unit caster, unit target) ->
+    EventListener.onTargetCast(ABILITY_MANA_POTION) (unit caster, unit target) ->
         target.addMana(MANA_RESTORED)
         flashEffect(Abilities.aImaTarget, target, "origin")

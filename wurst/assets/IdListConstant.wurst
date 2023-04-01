@@ -61,7 +61,8 @@ public constant GATHERER_CLASS_LIST = asList(
     UNIT_GATHERER,
     UNIT_HERB_MASTER,
     UNIT_RADAR_GATHERER,
-    UNIT_OMNIGATHERER
+    UNIT_OMNIGATHERER,
+    UNIT_ALCHEMIST
 )
 
 public constant UNSUB_TROLL_UNIT_LIST = asList(
@@ -149,10 +150,10 @@ public constant DRAGON_LIST = asList(
 )
 
 public constant TROLL_INVENTORY_SLOT_3_LIST = new LinkedList<int>()
-    ..addAll(HUNTER_CLASS_LIST)
     ..addAll(MAGE_CLASS_LIST)
 
 public constant TROLL_INVENTORY_SLOT_4_LIST = new LinkedList<int>()
+    ..addAll(HUNTER_CLASS_LIST)   
     ..addAll(PRIEST_CLASS_LIST)
     ..addAll(BEASTMASTER_CLASS_LIST)
 

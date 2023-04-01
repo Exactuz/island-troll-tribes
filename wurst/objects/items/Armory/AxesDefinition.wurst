@@ -66,7 +66,6 @@ let DRAIN_TARGET_CLASSES = asList(
 let TT_COMMON = new StringBuilder()
     ..add("Increases the attack damage of the wielder by ")
     ..add("{0}", COLOR_RED.withAlpha(0))
-    ..add(", attack speed by "+"20%".color(ENERGY_COLOR))
     ..add(" and allows them to fell trees.")
     .build()
     // This is needed to for the stack trace compiler to perform correctly.
@@ -92,7 +91,7 @@ public let TT_MM = new StringBuilder()
         DRAIN_MIN_AMOUNT.toToolTipLightBlue()
     )
 
-let TT_BA = "A two handed axe. " + TT_COMMON +
+let TT_BA = "A two handed axe. " + TT_COMMON +" Increased attack speed by "+"20%.".color(ENERGY_COLOR)+
     " Can cast purge, removes all buffs from a target unit, and slows its movement speed." +
     formatCooldown(ABIL_PURGE) + formatDuration(ABIL_PURGE)
 

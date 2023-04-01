@@ -109,7 +109,6 @@ function createMerchantShip(int newId) returns UnitDefinition
                 ITEM_JUNGLE_BEAR_HIDE,
                 ITEM_TANNERY_KIT,
                 ITEM_ARMORY_KIT,
-                ITEM_MUD_HUT_KIT,
                 ITEM_STEEL_INGOT,
                 ITEM_SPIRIT_WATER,
                 ITEM_SPIRIT_WIND,
@@ -123,6 +122,10 @@ function createMerchantShip(int newId) returns UnitDefinition
         ..setModelFile(Units.humanDestroyerShip1)
         ..setItemsSold(
             commaList(
+<<<<<<< HEAD
+=======
+                ITEM_ARMORY_KIT,     
+>>>>>>> dev
                 ITEM_MUD_HUT_KIT,
                 ITEM_FLINT,
                 ITEM_HEALING_POTION,
@@ -135,7 +138,10 @@ function createMerchantShip(int newId) returns UnitDefinition
                 ITEM_POISON,
                 ITEM_STONE,
                 ITEM_MANA_CRYSTAL
+<<<<<<< HEAD
                 
+=======
+>>>>>>> dev
             )
         )
 

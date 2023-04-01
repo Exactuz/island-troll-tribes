@@ -2,6 +2,7 @@ package Snake
 import LocalObjectIDs
 import Hostile
 import ClosureTimers
+import LinkedList
 
 
 public class Snake extends Hostile
@@ -12,6 +13,11 @@ public class Snake extends Hostile
 
     construct(unit whichUnit)
         super(whichUnit)
+
+    override function getDrops() returns LinkedList<int>
+        let drops = super.getDrops()
+            ..add(ITEM_POISON) 
+        return drops  
 
     override function postDeath()
         doAfter(0.5, -> super.postDeath())

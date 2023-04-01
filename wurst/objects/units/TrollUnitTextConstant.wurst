@@ -62,7 +62,7 @@ public constant HERO_SPELLS_PRIEST       = commaList(ABILITY_PRIEST_SPELLBOOK, A
 public constant HERO_SPELLS_BEASTMASTER = commaList(ABILITY_SPIRIT_BEAST,     ABILITY_SHAPESHIFTER,   ABILITY_DRUID)
 public constant HERO_SPELLS_THIEF        = commaList(ABILITY_CLOAK,            ABILITY_ESCAPE_ARTIST,  ABILITY_CONTORTIONIST,ABILITY_ASSASSIN)
 public constant HERO_SPELLS_SCOUT        = commaList(ABILITY_REVEAL_ID,        ABILITY_OBSERVER,       ABILITY_TRAPPER,      ABILITY_SPY)
-public constant HERO_SPELLS_GATHERER     = commaList(ABILITY_ITEM_RADAR,       ABILITY_RADAR_GATHERER, ABILITY_HERB_MASTER,  ABILITY_OMNIGATHERER)
+public constant HERO_SPELLS_GATHERER     = commaList(ABILITY_ITEM_RADAR,       ABILITY_RADAR_GATHERER, ABILITY_HERB_MASTER,  ABILITY_OMNIGATHERER, ABILITY_ALCHEMIST)
 // Unsub Normal Spells
 public constant  NORMAL_SPELLS_HUNTER       = commaList(ABILITY_HUNTER_WEB)
 public constant  NORMAL_SPELLS_MAGE         = commaList(ABILITY_NEGATIVE_BLAST)
@@ -86,6 +86,7 @@ public constant HERO_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_WARD_ARE
 public constant HERO_SPELLS_RADAR_GATHERER = commaList(ABILITY_TELE_RADAR_GATHER,                ABILITY_OMNIGATHERER)
 public constant HERO_SPELLS_HERB_MASTER    = commaList(ABILITY_TELE_HERB_GATHER,                ABILITY_OMNIGATHERER)
 public constant HERO_SPELLS_DRUID          = commaList(ABILITY_DRUID_SPELLBOOK,            ABILITY_JUNGLE_TYRANT)
+public constant HERO_SPELLS_ALCHEMIST      = commaList(ABILITY_ALCHEMIST_SPELLBOOK,         ABILITY_OMNIGATHERER)
 
 // Sub Normal Spells
 public constant NORMAL_SPELLS_WARRIOR        = commaList(ABILITY_WARRIOR_SPELLBOOK,ABILITY_HUNTER_WEB)
@@ -101,6 +102,7 @@ public constant NORMAL_SPELLS_TRAPPER        = commaList(ABILITY_GREATER_REVEAL_
 public constant NORMAL_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_SPELLBOOK,ABILITY_GREATER_REVEAL_ID)
 public constant NORMAL_SPELLS_RADAR_GATHERER = commaList(ABILITY_RADAR_GATHERER_SPELLBOOK)
 public constant NORMAL_SPELLS_HERB_MASTER    = commaList(ABILITY_MIX_HERBS)
+public constant NORMAL_SPELLS_ALCHEMIST      = commaList(ABILITY_CREATE_PHILOSOPHERS_STONE)
 
 // Shapeshifter
 public constant HERO_SPELLS_SHAPESHIFTER_WOLF    = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_JUNGLE_TYRANT)
@@ -246,7 +248,10 @@ public constant  TOOLTIP_RADAR_GATHERER  = "" +
     "The Radar is adept at locating and gathering items, he got an improved Item Radar and he can learn "+
     "Tele-Gathering,a spell allowing him to teleport items picked up to a fire. Cannot tele-gather herbs. "+
     SUBCLASS_WARNING+DIFFICULTY_MEDIUM
-
+public constant  TOOLTIP_ALCHEMIST  = "" +
+    "The Alchemist has discovered the secret of the Philosopher's Stone "+
+    "which allows him to conjure potion effects. "+
+    SUBCLASS_WARNING+DIFFICULTY_MEDIUM 
 public constant  TOOLTIP_HERB_MASTER     = "" +
     "The Herb Master Tele-Gatherers can mix herbs wherever they go. He can learn Tele-Gathering,a spell allowing him to "+
     "teleport items picked up to a fire. Can tele-gather herbs. "+
@@ -323,3 +328,4 @@ public constant trollIcons = new HashMap<int,string>()
     ..put(UNIT_RADAR_GATHERER,       LocalIcons.bTNTerrorTroll)
     ..put(UNIT_HERB_MASTER,          Icons.bTNIceTrollShadowPriest)
     ..put(UNIT_OMNIGATHERER,         LocalIcons.bTNTerrorTroll)
+    ..put(UNIT_ALCHEMIST,            LocalIcons.bTNAlchemist)

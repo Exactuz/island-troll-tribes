@@ -1,0 +1,102 @@
+package PhilosophersStone
+
+// Standard library imports:
+import HashMap
+import ClosureEvents
+import ChannelAbilityPreset
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import LocalAssets
+import UnitExtensions
+import ClosureTimers
+import Items
+import LocalItemObjEditing
+import Abilities
+
+
+let TT_PHILOSOPHERS_STONE = "Philosopher's stone accumulates energy over time. It can be used to conjure Potion effects"
+
+
+@compiletime function createcreatePhilosophersStone() returns ItemDefinition
+    return createBasicItem(ITEM_PHILOSOPHERS_STONE)
+        ..setInterfaceIcon(Icons.bTNHeartOfSearinox)
+        ..setDescription("Philosopher's stone")
+        ..setTintingColor1Red(136)
+        ..setTintingColor2Green(0)
+        ..setTintingColor3Blue(255)
+        ..setModelUsed(LocalItems.gemOfKnowledge)
+        ..setHotkey("")
+        ..setScalingValue(0.8)
+        ..setNameEnhance("Philosopher's stone")
+        ..setTooltipExtended(TT_PHILOSOPHERS_STONE)
+
+
+
+@compiletime function abilityCreatePhilosophersStone()
+    new ChannelAbilityPreset(ABILITY_CREATE_PHILOSOPHERS_STONE, 1, true)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl -> 1.0)
+        ..setHeroAbility(true)
+        ..setHotkeyNormal("E")
+        ..setName("Create Philosophers's stone")
+        ..presetTooltipNormal(lvl -> makeToolTipNorm("E", "Create Philosophers's stone"))
+        ..presetTooltipNormalExtended(lvl -> "Create Philosophers stone")
+        ..setIconNormal(Icons.bTNHeartOfSearinox)
+        ..setIconResearch(Icons.bTNHeartOfSearinox)
+        ..setIconTurnOff(Icons.bTNHeartOfSearinox)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..setFollowThroughTime(1, 0)
+        ..setEditorSuffix("(Wurst)")
+
+
+
+
+class PhilosophersStoneInstance
+    private unit hero
+    private real baseClock
+    private item itemHandle
+    private CallbackPeriodic cb
+
+    construct(unit hero)
+        this.hero = hero
+        this.baseClock = 0
+        this.itemHandle = createItem(ITEM_PHILOSOPHERS_STONE, hero.getPos())
+        hero.addItemHandle(itemHandle)
+        //this.itemHandle = hero.addItemById(ITEM_PHILOSOPHERS_STONE)  
+        itemHandle.setPawnable(false)
+        this.hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, true, false)
+        hero.getOwner().setAbilityIcon(ABILITY_ALCHEMIST_SPELLBOOK, Icons.bTNHeartOfSearinox)            
+        this.cb = doPeriodically(2) cb ->
+            let charges = itemHandle.getCharges()
+            if charges < 30
+                itemHandle.setCharges(charges+1)          
+                                 
+    ondestroy
+        hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, false, false) 
+        destroy cb
+
+IterableMap<unit, PhilosophersStoneInstance> instances = new IterableMap<unit, PhilosophersStoneInstance>()
+
+function onAbilityCreatePhilosophersStone(unit u)
+    if u.isTroll()
+        if not instances.has(u) and not u.hasItemById(ITEM_PHILOSOPHERS_STONE)
+            instances.put(u, new PhilosophersStoneInstance(u))
+            flashEffect(Abilities.tomeOfRetrainingCaster, u.getPos())
+
+function onDropPhilosophersStone(unit u, item itm)
+    if instances.has(u)
+        doAfter(ANIMATION_PERIOD) ->
+            u.addItemHandle(itm) 
+
+
+
+init
+    EventListener.onCast(ABILITY_CREATE_PHILOSOPHERS_STONE) (unit caster) ->
+        onAbilityCreatePhilosophersStone(caster)        
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_PHILOSOPHERS_STONE
+            onDropPhilosophersStone(GetManipulatingUnit(), GetManipulatedItem())

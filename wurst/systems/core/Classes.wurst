@@ -39,6 +39,7 @@ let trollClassType = new HashMap<int, ClassType>()
     ..put(UNIT_RADAR_GATHERER      , ClassType.SUB_CLASS)
     ..put(UNIT_HERB_MASTER         , ClassType.SUB_CLASS)
     ..put(UNIT_OMNIGATHERER        , ClassType.SUPER_CLASS)
+    ..put(UNIT_ALCHEMIST           , ClassType.SUB_CLASS)
 
 let trollBaseClass = new HashMap<int, int>()
     ..put(UNIT_HUNTER              , UNIT_HUNTER)
@@ -72,6 +73,7 @@ let trollBaseClass = new HashMap<int, int>()
     ..put(UNIT_RADAR_GATHERER      , UNIT_GATHERER)
     ..put(UNIT_HERB_MASTER         , UNIT_GATHERER)
     ..put(UNIT_OMNIGATHERER        , UNIT_GATHERER)
+    ..put(UNIT_ALCHEMIST           , UNIT_GATHERER)   
 
 // Looks up the class type of the given unit.
 public function unit.getTrollClassType() returns ClassType

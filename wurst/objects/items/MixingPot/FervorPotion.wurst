@@ -32,7 +32,7 @@ let DEBUFF_RANGE = 512.
         ..setInt("igol", 0)
         ..setString("uhot", "")
         ..setInt("ilum", 25)
-        ..setString("unam", "Ferver Potion")
+        ..setString("unam", "Fervor Potion")
         ..setString("ureq", "")
         ..setInt("isst", 0)
         ..setString("utip", "Trade for Ferver Potion")
@@ -65,9 +65,29 @@ function onCast(unit caster)
             abilityPair.b,
             caster
         )
-
     // Debuff nearby enemies.
     for target in ENUM_GROUP..enumUnitsInRange(caster.getPos(), DEBUFF_RANGE)
+        if target.isEnemyOf(caster.getOwner()) and target.isType(UNIT_TYPE_HERO)
+            InstantDummyCaster.castTarget(
+                caster.getOwner(),
+                ABILITY_THISTLE,
+                1,
+                OrderIds.shadowstrike,
+                target
+            )        
+
+function onAlchemistCast(unit caster, unit spellTarget)
+    // Buff the caster.
+    for abilityPair in ABILITY_PAIRS
+        InstantDummyCaster.castTarget(
+            caster.getOwner(),
+            abilityPair.a,
+            1,
+            abilityPair.b,
+            spellTarget
+        )        
+    // Debuff nearby enemies.
+    for target in ENUM_GROUP..enumUnitsInRange(spellTarget.getPos(), DEBUFF_RANGE)
         if target.isEnemyOf(caster.getOwner()) and target.isType(UNIT_TYPE_HERO)
             InstantDummyCaster.castTarget(
                 caster.getOwner(),
@@ -81,3 +101,6 @@ function onCast(unit caster)
 init
     EventListener.onCast('A03Z') (unit caster) ->
         onCast(caster)
+    EventListener.onTargetCast(ABILITY_ALCHEMIST_FERVOR_POTION) (unit caster, unit target) ->        
+        onAlchemistCast(caster, target)    
+        

@@ -17,6 +17,8 @@ import HealingSystem
 import UnitExtensions
 import Sounds
 import Orders
+import ClosureTimers
+import Transformation
 constant ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME = compiletime(ABIL_ID_GEN.next())
 
 let TT = new StringBuilder()
@@ -95,6 +97,13 @@ function onPickupCoat(unit u)
         if not instances.has(u)
             instances.put(u, new WolfCoatInstance(u))
 
+function onTransformation(unit caster)
+    let itm = caster.getItemById(ITEM_WOLF_VORACITY_COAT) // temp fix for voracity coat
+    if itm != null
+        RemoveItem(itm)
+        doAfter(ANIMATION_PERIOD) ->
+            caster.addItemById(ITEM_WOLF_VORACITY_COAT)
+
 
 function onDropCoat(unit u, item itm)
 
@@ -114,5 +123,8 @@ init
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_WOLF_VORACITY_COAT
             onDropCoat(GetManipulatingUnit(), GetManipulatedItem())
+
+    registerAfterEffect() (unit target, int unitID) ->
+        onTransformation(target)        
 
 //@compiletime createconsume

@@ -16,10 +16,10 @@ import ToolTipsUtils
 
 //let ABILITY_ID = 'XPRH'
 let CAST_RANGE = 6000.
-let HEALING_AMOUNT = 50.
+let HEALING_AMOUNT = 25.
 let COOLDOWN = 5.
 let MANACOST = 15
-let HEAL_AMOUNT = 50.
+let HEAL_AMOUNT = 25.
 let TOOLTIP_NORM = "Ranged heal"
 let TOOLTIP_EXTENDED = "Heals a friendly unit for {0} health. Can be casted from very far away. Has {1} seconds cooldown."
                         .format(HEALING_AMOUNT.toToolTipGreen(),COOLDOWN.toToolTipLightBlue())

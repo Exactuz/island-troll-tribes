@@ -1,0 +1,100 @@
+
+
+package AlchemistAcidBomb
+
+// Standard library imports:
+import ClosureEvents
+import ChannelAbilityPreset
+import Orders
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import Lodash
+import AcidBomb
+import InstantDummyCaster
+import SimError
+
+constant POTION_COST = 30
+constant errorMsg = "Philosopher's stone doesnt have enough energy"
+constant abilId = ABILITY_ACID_BOMB
+//constant NAME =""
+//constant COOLDOWN = 0
+//constant ICON =""
+constant TT = "Acid Bomb"
+constant TT_COST = "\nCosts "+POTION_COST.toString().color(COLOR_GOLD_STR) +" energy."
+constant TT_EXTENDED =TT_ACID_BOMB+TT_COST
+constant POS = new Pair(3, 1)
+LinkedList<string>hotKeys = asList("Q","W","E","R","A","S","D","F","Z","X","C")
+let hotkeyIndex=POS.b*4+POS.a
+constant HOTKEY = hotKeys.get(hotkeyIndex)
+
+@compiletime function createDummyPotionAbility()
+    new ChannelAbilityPreset(ABILITY_ALCHEMIST_ACID_BOMB, 1, true)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl ->0)
+        ..setHeroAbility(true)
+        ..setHotkeyNormal(HOTKEY)
+        ..setName(NAME)
+        ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, TT))
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)
+        ..presetTargetsAllowed(lvl->TARGETS_ALLOWED)            
+        ..setIconNormal(ICON)
+        ..setIconResearch(ICON)
+        ..setIconTurnOff(ICON)
+        ..setButtonPositionNormalX(POS.a)
+        ..setButtonPositionNormalY(POS.b)
+        ..setFollowThroughTime(1, 0)
+        ..setEditorSuffix("(Wurst)")
+        ..presetCastRange(lvl->CAST_RANGE)            
+        ..presetTargetTypes(Targettype.UNIT)
+/*
+@compiletime function createAbil()
+    new AbilityDefinitionAlchemistAcidBomb(ABILITY_ALCHEMIST_ACID_BOMB)
+    ..setName(NAME)
+    ..setCheckDependencies(false)
+    ..setPrimaryDamage(1, 0)
+    ..setSecondaryDamage(1, 0)
+    ..setArmorPenalty(1, ARMOR_PENALTY.toInt())
+    ..setMissileSpeed(900)
+    ..setTargetsAllowed(1, TARGETS_ALLOWED)
+    ..setHeroAbility(false)
+    ..setItemAbility(true)
+    ..setManaCost(1, 0)
+    ..setTooltipNormalExtended(1, TT_ACID_BOMB)
+    ..setDurationHero(1, DURATION)
+    ..setDurationNormal(1, DURATION)
+    ..setIconNormal(ICON)
+    ..setLevels(1)
+    ..setCastRange(1, CAST_RANGE)
+    ..setCooldown(1, COOLDOWN)
+    ..setEditorSuffix("(Wurst)")
+*/
+
+
+function onCast()
+    let target = GetSpellTargetUnit()
+    let caster = GetSpellAbilityUnit()
+    if caster.isTroll()
+        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        if itm.getCharges() >= POTION_COST
+            InstantDummyCaster.castTarget(caster.getOwner(), abilId, 1, OrderIds.acidbomb, target)
+            itm.setCharges(itm.getCharges()-POTION_COST)
+        else
+            caster.issueImmediateOrder("stop")
+            simError(caster.getOwner(), errorMsg)
+
+
+    
+
+
+init 
+    registerSpellEffectEvent(ABILITY_ALCHEMIST_ACID_BOMB, function onCast)
+
+
+

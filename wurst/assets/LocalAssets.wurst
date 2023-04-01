@@ -4,6 +4,11 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNWolfTrophyHide = "ReplaceableTextures\\CommandButtons\\BTNWolfTrophyHide.blp"
+    static constant bTNTrophyHideDummy = "ReplaceableTextures\\CommandButtons\\BTNTrophyHideDummy.blp"
+    static constant bTNBearTrophyHide ="ReplaceableTextures\\CommandButtons\\BTNBearTrophyHide.blp"
+    static constant bTNElkTrophyHide = "ReplaceableTextures\\CommandButtons\\BTNElkTrophyHide.blp"
+    static constant bTNAlchemist   = "ReplaceableTextures\\CommandButtons\\BTNAlchemist.blp"
 	static constant bTNPoisonQuill = "ReplaceableTextures\\CommandButtons\\BTNPoisonQuill.blp"
 	static constant dISBTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\DISBTNWeaknessAura.blp"
 	static constant bTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\BTNWeaknessAura.blp"
@@ -11,14 +16,14 @@ public class LocalIcons
 	static constant bTNBootsOfBearTenacity ="ReplaceableTextures\\CommandButtons\\BTNBootsOfBearTenacity.blp"
 	static constant dISBTNBootsOfWolfStamina ="ReplaceableTextures\\CommandButtons\\DISBTNBootsOfWolfStamina.blp"
 	static constant bTNBootsOfWolfStamina ="ReplaceableTextures\\CommandButtons\\BTNBootsOfWolfStamina.blp"
-	static constant dISBTNWolfClaws ="ReplaceableTextures\\CommandButtons\\DISBTNWolfClaws.blp"
-	static constant bTNWolfClaws ="ReplaceableTextures\\CommandButtons\\BTNWolfClaws.blp"
+	static constant dISBTNWolfSBloodlustClaws ="ReplaceableTextures\\CommandButtons\\DISBTNWolfSBloodlustClaws.blp"
+	static constant bTNWolfSBloodlustClaws ="ReplaceableTextures\\CommandButtons\\BTNWolfSBloodlustClaws.blp"
 	static constant dISBTNBearGlovesOfGreed ="ReplaceableTextures\\CommandButtons\\DISBTNBearGlovesOfGreed.blp"
 	static constant bTNBearGlovesOfGreed ="ReplaceableTextures\\CommandButtons\\BTNBearGlovesOfGreed.blp"
 	static constant dISBTNChestOfWolfVoracity ="ReplaceableTextures\\CommandButtons\\DISBTNChestOfWolfVoracity.blp"
 	static constant bTNChestOfWolfVoracity ="ReplaceableTextures\\CommandButtons\\BTNChestOfWolfVoracity.blp"
-	static constant bTNCoatOfBearPresence1 ="ReplaceableTextures\\CommandButtons\\BTNCoatOfBearPresence1.blp"
-	static constant dISBTNCoatOfBearPresence2 ="ReplaceableTextures\\CommandButtons\\DISBTNCoatOfBearPresence2.blp"	
+	static constant bTNCoatOfBearPresence ="ReplaceableTextures\\CommandButtons\\BTNCoatOfBearPresence.blp"
+	static constant dISBTNCoatOfBearPresence ="ReplaceableTextures\\CommandButtons\\DISBTNCoatOfBearPresence.blp"	
     static constant aTCCannibalize           = "ReplaceableTextures\\CommandButtons\\ATCCannibalize.blp"
     static constant aTCEnsnare               = "ReplaceableTextures\\CommandButtons\\ATCEnsnare.blp"
     static constant aTCTrack                 = "ReplaceableTextures\\CommandButtons\\ATCTrack.blp"
@@ -124,6 +129,8 @@ public class LocalIcons
 
 public class LocalUnits
     // A nonexistent model used to hide units.
+    static constant ForestTrollWithElkHide         = "Models\\Units\\ForestTrollWithElkHide.mdx"
+    static constant TrollHexerMasked               = "Models\\Units\\TrollHexerMasked.mdx"
     static constant dummy                          = "Models\\Units\\Dummy.mdl"
     static constant axeTroll                       = "Models\\Units\\Skins\\AxeTroll.mdx"
     static constant blackStagMaleFixed             = "Models\\Units\\BlackStagMaleFixed.mdx"
@@ -180,6 +187,14 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant wolfTrophyHide                 = "Models\\Items\\WolfTrophyHide.mdx"
+    static constant bearTrophyHide                 = "Models\\Items\\BearTrophyHide.mdx"
+    static constant elkTrophyHide                  = "Models\\Items\\ElkTrophyHide.mdx"
+    static constant bootsOfBearTenacity         = "Models\\Items\\BootsOfBearTenacity.mdx"
+    static constant coatOfWolfVoracity           = "Models\\Items\\CoatOfWolfVoracity.mdx"
+    static constant wolfsStaminaBoots           = "Models\\Items\\BootsOfWolfStamina.mdx"
+    static constant wolfsBloodlustClaws           = "Models\\Items\\WolfsBloodlustClaws.mdx"
+    static constant coatOfBearPresence          = "Models\\Items\\CoatOfBearPresence.mdx"
     static constant armor                       = "Models\\Items\\Armor.mdx"
     static constant banana                      = "Models\\Items\\Banana.mdx"
     static constant battleAxe                   = "Models\\Items\\BattleAxe.mdx"

@@ -1,0 +1,74 @@
+package AlchemistFervorPotion
+
+// Standard library imports:
+import ClosureEvents
+import ChannelAbilityPreset
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import Lodash
+import SimError
+
+//constant NAME =""
+//constant COOLDOWN = 0
+//constant ICON =""
+constant POTION_COST = 30
+constant ICON = Icons.bTNGreaterInvulneralbility
+constant errorMsg = "Philosopher's stone doesnt have enough energy"
+constant NAME = "Fervor Potion"
+constant TT_COST = "\nCosts "+POTION_COST.toString().color(COLOR_GOLD_STR) +" energy."
+constant TT_EXTENDED ="Drink this potion when you want to kill lots of stuff. It increases your attack and movement speed as well as hurts enemies around you.|n|c00ff0000Stimulant|r"+TT_COST
+constant POS = new Pair(1, 2)
+constant TARGET_ALLOWED = commaList(TargetsAllowed.alive,
+                                    TargetsAllowed.ground,
+                                    TargetsAllowed.friend,
+                                    TargetsAllowed.self,
+                                    TargetsAllowed.organic)
+
+LinkedList<string>hotKeys = asList("Q","W","E","R","A","S","D","F","Z","X","C")
+let hotkeyIndex=POS.b*4+POS.a
+constant HOTKEY = hotKeys.get(hotkeyIndex)
+
+@compiletime function createDummyPotionAbility()
+    new ChannelAbilityPreset(ABILITY_ALCHEMIST_FERVOR_POTION, 1, true)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl ->0)
+        ..setHeroAbility(true)
+        ..setHotkeyNormal(HOTKEY)
+        ..setName(NAME)
+        ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, NAME))
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)          
+        ..setIconNormal(ICON)
+        ..setIconResearch(ICON)
+        ..setIconTurnOff(ICON)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setButtonPositionNormalX(POS.a)
+        ..setButtonPositionNormalY(POS.b)
+        ..presetTargetsAllowed(lvl->TARGET_ALLOWED)           
+        ..setFollowThroughTime(1, 0)
+        ..presetCastRange(lvl->500.)
+        ..setEditorSuffix("(Wurst)")
+
+function onCast()
+    let target = GetSpellTargetUnit()
+    let caster = GetSpellAbilityUnit()
+    if caster.isTroll()
+        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        if itm.getCharges() >= POTION_COST
+            // FervorPotion cast is located in FervorPotion
+            itm.setCharges(itm.getCharges()-POTION_COST)
+        else
+            caster.issueImmediateOrder("stop")
+            simError(caster.getOwner(), errorMsg)
+
+
+    
+
+
+init 
+    registerSpellEffectEvent(ABILITY_ALCHEMIST_FERVOR_POTION, function onCast)

@@ -20,7 +20,7 @@ constant BUFF_ID = compiletime(BUFF_ID_GEN.next())
 constant CAST_RANGE = 400.
 constant COOLDOWN = 35.
 constant MANACOST = 20
-constant DURATION = 10.
+constant DURATION = 5.
 constant TOOLTIP_NORM = "Magic Mist"
 constant TOOLTIP_EXTENDED = "The Priest creates an artificial fog preventing all combat within it." + makeToolTipDuration(DURATION, COOLDOWN)
 

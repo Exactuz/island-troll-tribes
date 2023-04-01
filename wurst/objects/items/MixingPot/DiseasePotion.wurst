@@ -16,30 +16,43 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 
-let ABIL = compiletime(ABIL_ID_GEN.next())
 
 public let DISEASE_HEALING_REDUCTION_FACTOR = 0.3
+<<<<<<< HEAD
 let DURATION = 20.
 let DAMAGE_TICK_INTERVAL = 0.5
 let DAMAGE_PER_SECOND = 5
+=======
+public constant DURATION = 20.
+let DAMAGE_TICK_INTERVAL = 0.5
+let DAMAGE_PER_SECOND = 5
+public constant CAST_RANGE = 600.
+public constant ICON = Icons.bTNPotionGreen
+>>>>>>> dev
 let AOE = 200.
 HashMap<unit, DiseaseInstance> diseaseInstances = new HashMap<unit,DiseaseInstance>()
-
+public constant NAME = "Disease Potion"
 public constant TT_DISEASE_POTION = "" +
+<<<<<<< HEAD
     ("Biological warfare! Throw at an enemy to give him  "+
     "a disease. Dealing {0} damage per second. Last {2} seconds.")
+=======
+    ("Biological warfare! Throw at an enemy to give him a disease."+
+    " Dealing {0} damage per second. "+
+    " Last {1} seconds.")
+>>>>>>> dev
     .format(DAMAGE_PER_SECOND.toReal().toToolTipRed(),
-    DISEASE_HEALING_REDUCTION_FACTOR.toToolTipOrange(),
     DURATION.toToolTipLightBlue())
 
 
 @compiletime function createDiseaseAbility() returns ChannelAbilityPreset
-    return createItemChannelCast(ABIL)
+    return createItemChannelCast(ABILITY_DISEASE_POTION)
         ..setCooldown(1, 0.3)
         ..setFollowThroughTime(1, 0.1)
         ..presetTargetTypes(Targettype.UNIT)
         ..setOptions(1, 29)
         ..setMissileArc(0.2)
+        ..setCastRange(1, CAST_RANGE)
         ..setMissileArt(Abilities.bottleMissile)
         ..setMissileHomingEnabled(true)
         ..setMissileSpeed(750)
@@ -57,10 +70,15 @@ public constant TT_DISEASE_POTION = "" +
         ..setNameEnhance("Disease Potion")
         ..setTooltipExtended(TT_DISEASE_POTION)
         ..setDescription(TT_DISEASE_POTION)
+<<<<<<< HEAD
         ..setLumberCost(13)
         ..setAbilities(commaList(ABIL))
+=======
+        ..setLumberCost(34)
+        ..setAbilities(commaList(ABILITY_DISEASE_POTION))
+>>>>>>> dev
         ..setScalingValue(0.70)
-        ..setCooldownGroup(commaList(ABIL))
+        ..setCooldownGroup(commaList(ABILITY_DISEASE_POTION))
         ..setStockReplenishInterval(120)
 
 public function isUnitDiseased(unit u) returns bool
@@ -70,7 +88,13 @@ function onCastDisease()
     let caster = GetSpellAbilityUnit()
     let target = GetSpellTargetUnit()
 
+<<<<<<< HEAD
 
+=======
+    //forUnitsInRange(target.getPos(), AOE) u ->
+        //if isValidTarget(caster.getOwner(), u)
+    applyDisease(caster, target)
+>>>>>>> dev
 
 function isValidTarget(player attacker, unit u) returns bool
     return u.getOwner().isEnemyOf(attacker)
@@ -114,8 +138,15 @@ class DiseaseInstance
         fx.destr()
 
 
-init
-    registerSpellEffectEvent(ABIL) ->
+init 
+    registerSpellEffectEvent(ABILITY_DISEASE_POTION) ->
         onCastDisease()
+    registerSpellEffectEvent(ABILITY_ALCHEMIST_DISEASE_POTION_DUMMY) ->
+        onCastDisease()
+<<<<<<< HEAD
 
 
+=======
+    onUnitHealed() ->
+        onHealed()
+>>>>>>> dev

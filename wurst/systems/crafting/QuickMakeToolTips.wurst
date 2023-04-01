@@ -61,6 +61,8 @@ let BASICGLOVES        = "Any Basic Gloves".color(COLOR_PEANUT)
 let BASICCOAT          = "Any Basic Coat".color(COLOR_PEANUT)
 let BASICBOOTS         = "Any Basic Boots".color(COLOR_PEANUT)
 let NETS               = "Nets".color(COLOR_LIGHT_BLUE)
+let MANA               = "Mana Potion".color(COLOR_TURQUOISE)
+let HEALING            = "Healing Potion".color(COLOR_GREEN)
 
 // Artifact Materials
 let HYDRA_SCALE = "Hydra Scale".color(ARTIFACT_COLOR)
@@ -95,8 +97,8 @@ public let BUILDING_CRAFT_TOOLTIP         = "Look here to construct buildings, t
 
 // Mixing Pot
 
-public let HEALING_POTION_RECIPE          = "a " + "Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n1x " +WATER+ " + 2x " +ATHELAS_SEED
-public let MANA_POTION_RECIPE             = "a Mana Potion, restore 80 mana to the consumer :\n\n1x " +WIND+ " + 2x " +ATHELAS_SEED
+public let HEALING_POTION_RECIPE          = "2x " + "Healing Potion.".color(COLOR_GREEN) + TT_HEALING_POTION + "\n\n1x " +WATER+ " + 2x " +ATHELAS_SEED
+public let MANA_POTION_RECIPE             = "2x Mana Potion, restore 80 mana to the consumer :\n\n1x " +WIND+ " + 2x " +ATHELAS_SEED
 public let CURE_ALL_RECIPE                = "a Cure All, remove positive/negative buff & effect on the target ally :\n\n3x "+ATHELAS_SEED
 public let ESSENCE_BEES_RECIPE            = "an " + "Essence of Bees. ".color(COLOR_ORANGE) + TT_ESSENCE_BEES + "\n\n"+
                                             "2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+ " 2 + 1x "+SPECIAL_HERB+" 3\nOr\n1x "+SPECIAL_HERB+" 1/2/3/4"+SPECIAL_MIX_WARNING
@@ -113,7 +115,12 @@ public let FERVER_POTION_RECIPE           = "Increase the consumer attack speed 
                                             .format(0.20.toToolTipOrange(), 8..toToolTipRed(), 6..toToolTipGreen(), 9..toToolTipRed()) + makeToolTipDuration(20, 5)+
                                             "\n\n2x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2 + 1x "+ATHELAS_SEED+SPECIAL_MIX_WARNING
 
+<<<<<<< HEAD
 public let DISEASE_POTION_RECIPE          = "a " + "Disease Potion. " + TT_DISEASE_POTION + "\n\n1x "+POISON+" + 1x "+RIVER_STEM
+=======
+public let DISEASE_POTION_RECIPE          = "a " + "Disease Potion. " + TT_DISEASE_POTION + "\n\n"+
+                                            "1x "+POISON+" 1 + 1x "+RIVER_STEM
+>>>>>>> dev
 
 public let ANTI_MAGIC_POTION_RECIPE       = "an " + "Anti-Magic Potion. ".color(COLOR_GREEN) + TT_ANTI_MAGIC_POTION + "\n\n1x "+SPECIAL_HERB+" + 1x "+ATHELAS_SEED
 
@@ -169,7 +176,7 @@ public let STEEL_BOOTS_RECIPE = "a pair of " + "Steel Boots. " .color(COLOR_TURQ
 // Armory
 public let BATTLE_GLOVES_RECIPE         = "a pair of " + "Battle Gloves. ".color(COLOR_VIOLET) + TT_BATTLE_GLOVES
                                           +"\n\n1x " + "Bone Gloves".color(COLOR_ORANGE) + " + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by 20%, can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
+public let BATTLE_AXE_RECIPE            = "a Battle Axe. A two handed axe, increase damage by 14, attack speed by"+" 20%".color(ENERGY_COLOR)+", can cast purge, removing all buffs from a target unit and slowing it."+makeToolTipDuration(5, 15, 60)+
                                           "\n\n1x "+"Fervor potion ".color(COLOR_MAROON)+" + 2x "+STEEL+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_ARMOR_RECIPE          = TT_BATTLE_ARMOR+"\n\n"+"1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 public let BATTLE_SHIELD_RECIPE         = BATTLE_SHIELD_TOOLTIP+
@@ -206,9 +213,8 @@ public let ULTRA_POISON_RECIPE          = "an Ultra Poison salve. Can be used to
 
 public let CLOAK_FLAMES_RECIPE  = "a " + "Cloak Of Flames. " .color(COLOR_RED      ) + CLOAK_FLAMES_TT  + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + FLINT
 public let CLOAK_FROST_RECIPE   = "a " + "Cloak Of Frost. "  .color(COLOR_TURQUOISE) + CLOAK_FROST_TT   + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + WATER
-public let CLOAK_HEALING_RECIPE = "a " + "Cloak Of Healing. ".color(COLOR_GREEN    ) + CLOAK_HEALING_TT + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + ATHELAS_SEED
-public let CLOAK_MANA_RECIPE    = "a " + "Cloak Of Mana. "   .color(COLOR_VIOLET   ) + CLOAK_MANA_TT    + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + RIVER_STEM
-
+public let CLOAK_HEALING_RECIPE = "a " + "Cloak Of Healing. ".color(COLOR_GREEN    ) + CLOAK_HEALING_TT + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + HEALING
+public let CLOAK_MANA_RECIPE    = "a " + "Cloak Of Mana. "   .color(COLOR_VIOLET   ) + CLOAK_MANA_TT    + "\n\n1x "+ MAGIC +" + 1x " + "Bone Coat".color(COLOR_ORANGE) + " + 1x " + MANA
 // Workshop
 
 public let ENSNARE_TRAP_RECIPE = "an Ensnare Trap. Deals few ranged damage, can net trolls & animals, good for killing hawk :\n\n1x "               +TINDER     +" + 1x "+BONE +" + 1x "+STICK
@@ -252,6 +258,8 @@ public let EMP_RECIPE                   = "an EMP. When activated, disables all 
 
 public let TRANSPORT_SHIP_RECIPE        = "a Transport Ship Kit. Build a ship which allows you to travel on water :\n\n2x "+STICK+" + 2x "+CLAY_BALL+" + 2x "+ELK_HIDE+
                                           "\n\nWarning: Transport Ship mode must be enabled to create ship".color(COLOR_RED)
+public let MAGIC_RECIPE                 = "an essence of Magic :"+
+                                            "\n\n2x "+MC
 
 // Tannery
 

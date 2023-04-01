@@ -17,12 +17,12 @@ init
     new QuickMake(ABILITY_QM_CLOAK_HEALING)
     ..add(ITEM_MAGIC)
     ..add(ITEM_BONE_COAT)
-    ..add(ITEM_ATHELAS_SEED)
+    ..add(ITEM_HEALING_POTION)
 
     new QuickMake(ABILITY_QM_CLOAK_MANA)
     ..add(ITEM_MAGIC)
     ..add(ITEM_BONE_COAT)
-    ..add(ITEM_RIVER_STEM)
+    ..add(ITEM_MANA_POTION)
 
     new QuickMake(ABILITY_QM_POISON)
     ..add(ITEM_MUSHROOM)

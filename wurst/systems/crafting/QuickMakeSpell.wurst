@@ -88,7 +88,11 @@ constant WORKSHOP_SPELLBOOK = commaList(
     ABILITY_QM_FIRE_BOMB,
     ABILITY_QM_EMP,
     ABILITY_QM_TRANSPORT_SHIP,
+<<<<<<< HEAD
     ABILITY_QM_LIVING_CLAY
+=======
+    ABILITY_QM_MAGIC
+>>>>>>> dev
 )
 
 public constant BUILDING_CRAFT_SPELLBOOK = commaList(
@@ -248,11 +252,11 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Battle Shield"            , TRANSMUTE_TOOLTIP+BATTLE_SHIELD_RECIPE        , "ArcaniteArmor"          , ABILITY_QM_BATTLE_SHIELD        , 3, 0, "R", QM_TOOLIP, "chemicalrage"),
         new QuickMakeSpell("Anabolic Boots"              , TRANSMUTE_TOOLTIP+ANABOLIC_BOOTS_RECIPE       , "WirtsOtherLeg"          , ABILITY_QM_ANABOLIC_BOOTS       , 3, 1, "A", QM_TOOLIP, "fanofknives"),
         new QuickMakeSpell("Boots of Wolf's Stamina"    , TRANSMUTE_TOOLTIP+WOLFS_STAMINA_BOOTS_RECIPE       , "BootsOfWolfStamina" , ABILITY_QM_WOLFS_STAMINA_BOOTS       , 0, 1, "S", QM_TOOLIP, "creepanimatedead"),        
-        new QuickMakeSpell("Claws of Wolf's Bloodlust"         , TRANSMUTE_TOOLTIP+WOLFS_BLOODLUST_CLAWS_RECIPE         , "WolfClaws"          , ABILITY_QM_WOLFS_BLOODLUST_CLAWS         , 1, 1, "D", QM_TOOLIP, "thunderclap"),
+        new QuickMakeSpell("Claws of Wolf's Bloodlust"         , TRANSMUTE_TOOLTIP+WOLFS_BLOODLUST_CLAWS_RECIPE         , "WolfSBloodlustClaws"          , ABILITY_QM_WOLFS_BLOODLUST_CLAWS         , 1, 1, "D", QM_TOOLIP, "thunderclap"),
         new QuickMakeSpell("Coat of Wolf's Voracity"        , TRANSMUTE_TOOLTIP+WOLFS_VORACITY_COAT_RECIPE          , "ChestOfWolfVoracity"        , ABILITY_QM_WOLFS_VORACITY_COAT           , 2, 1, "F", QM_TOOLIP, "stomp"),
         new QuickMakeSpell("Boots of Bear's Tenacity"        , TRANSMUTE_TOOLTIP+ITEM_BEARS_TENACITY_BOOTS_RECIPE       , "BootsOfBearTenacity"          , ABILITY_QM_BEARS_TENACITY_BOOTS        , 0, 2, "Z", QM_TOOLIP, "defend"),
         new QuickMakeSpell("Paws of Bear's Greed"        , TRANSMUTE_TOOLTIP+BEARS_GREED_PAWS_RECIPE        , "BearGlovesOfGreed"          , ABILITY_QM_BEARS_GREED_PAWS        , 1, 2, "X", QM_TOOLIP, "howlofterror"),
-        new QuickMakeSpell("Coat of Bear's Terrifying Presence", TRANSMUTE_TOOLTIP+BEAR_PRESENCE_COAT_RECIPE       , "CoatOfBearPresence1"          , ABILITY_QM_BEAR_PRESENCE_COAT      , 2, 2, "C", QM_TOOLIP, "divineshield"),
+        new QuickMakeSpell("Coat of Bear's Terrifying Presence", TRANSMUTE_TOOLTIP+BEAR_PRESENCE_COAT_RECIPE       , "CoatOfBearPresence"          , ABILITY_QM_BEAR_PRESENCE_COAT      , 2, 2, "C", QM_TOOLIP, "divineshield"),
 
 
         // Witch Doctors Hut
@@ -292,8 +296,12 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Fire Bomb"            , TRANSMUTE_TOOLTIP+FIRE_BOMB_RECIPE            , "LiquidFire"             , ABILITY_QM_FIRE_BOMB            , 1, 0, "W", QM_TOOLIP, "manashieldon"),
         new QuickMakeSpell("EMP"                  , TRANSMUTE_TOOLTIP+EMP_RECIPE                  , "WispSplode"             , ABILITY_QM_EMP                  , 2, 0, "E", QM_TOOLIP, "manaflareoff"),
         new QuickMakeSpell("Transport Ship"       , TRANSMUTE_TOOLTIP+TRANSPORT_SHIP_RECIPE       , "NightElfTransport"      , ABILITY_QM_TRANSPORT_SHIP       , 3, 0, "R", QM_TOOLIP, "manaflareon"),
+<<<<<<< HEAD
         new QuickMakeSpell("Living Clay"          , TRANSMUTE_TOOLTIP+LIVING_CLAY_RECIPE          , "GreenSentryWard"        , ABILITY_QM_LIVING_CLAY          , 2, 2, "R", QM_TOOLIP, "stomp"),
 
+=======
+        new QuickMakeSpell("Magic"                , TRANSMUTE_TOOLTIP+MAGIC_RECIPE                , "MoonStone"              , ABILITY_QM_MAGIC                , 0, 1, "A", QM_TOOLIP, "creepanimatedead"),
+>>>>>>> dev
 
         // Tannery
         new QuickMakeSpell("Elk Skin Boots"          , TRANSMUTE_TOOLTIP+ELK_SKIN_BOOTS_RECIPE          , "ElkHideBoots"   , ABILITY_QM_ELK_SKIN_BOOTS          , 0, 0, "Q", QM_TOOLIP, "berserk"),

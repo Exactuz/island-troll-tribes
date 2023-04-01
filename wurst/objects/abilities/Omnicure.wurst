@@ -16,14 +16,14 @@ import Lodash
 import ToolTipsUtils
 
 let BUFF_ID = compiletime(BUFF_ID_GEN.next())
-let COOLDOWN = 50.
+public constant COOLDOWN = 50.
 let MANACOST = 10
-let TOOLTIP_NORM = "OmniCure"
-let TOOLTIP_EXTENDED = "An upgrade of Cure All that affects all allies as well as the caster. Can cure jealousy, "+
+public constant TOOLTIP_NORM = "OmniCure"
+public constant TOOLTIP_EXTENDED = "An upgrade of Cure All that affects all allies as well as the caster. Can cure jealousy, "+
                         "track, disease, snake poison, and many others. Can not be used on enemies. Has {0} seconds cooldown."
                         .format(COOLDOWN.toToolTipLightBlue())
 
-let TARGET_ALLOWED = "targetAllowed"
+public constant TARGET_ALLOWED = "targetAllowed"
 
 
 public class Omnicure extends ChannelAbilityPreset
@@ -62,3 +62,6 @@ init
         castOmnicure(caster)
     EventListener.onCast(ABILITY_OMNICURE_ITEM) (unit caster) ->
         castOmnicure(caster)
+    EventListener.onCast(ABILITY_ALCHEMIST_OMNICURE_POTION_DUMMY) (unit caster) ->
+        castOmnicure(caster)
+        

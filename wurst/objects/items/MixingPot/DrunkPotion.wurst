@@ -19,6 +19,9 @@ constant MISS_CHANCE = 0.50
 constant DURATION_HERO = 8.
 constant DURATION_NORMAL = 13.
 constant COOLDOWN = 20.
+public constant ICON = Icons.bTNLesserInvulneralbility
+public constant CAST_RANGE = 550.
+public constant NAME = "Drunk's Potion"
 
 public constant TT_DRUNK_POTION = "" +
     "Throw this at an enemy to get them drunk, target is silenced, "+
@@ -38,7 +41,7 @@ public constant TT_DRUNK_POTION = "" +
     ..setHeroAbility(false)
     ..setItemAbility(true)
     ..setManaCost(1, 0)
-    ..setCastRange(1, 550.)
+    ..setCastRange(1, CAST_RANGE)
     ..setDurationHero(1, DURATION_HERO)
     ..setDurationNormal(1, DURATION_NORMAL)
     ..setCooldown(1, COOLDOWN)
@@ -50,9 +53,9 @@ public constant TT_DRUNK_POTION = "" +
 
 @compiletime function createDrunkPotion() returns ItemDefinition
     return createPerishableItem(ITEM_DRUNKS_POTION)
-        ..setInterfaceIcon(Icons.bTNLesserInvulneralbility)
+        ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionLesserInvulnerability)
-        ..setNameEnhance("Drunk's Potion")
+        ..setNameEnhance(NAME)
         ..setTooltipExtended(TT_DRUNK_POTION)
         ..setDescription(TT_DRUNK_POTION)
         ..setLumberCost(10)

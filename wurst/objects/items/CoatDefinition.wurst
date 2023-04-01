@@ -206,7 +206,7 @@ public constant TT_SCALE_COAT = "" +
 @compiletime function createCoatOfWolfsVoracity() returns ItemDefinition
     return createUsableItem(ITEM_WOLF_VORACITY_COAT)
         ..setInterfaceIcon(LocalIcons.bTNChestOfWolfVoracity)
-        ..setModelUsed(LocalItems.skinCoat)
+        ..setModelUsed(LocalItems.coatOfWolfVoracity)
         ..setNameEnhance("Coat of Wolf's Voracity")
         ..setTooltipExtended(TT_WOLF_VORACITY_COAT)
         ..setDescription(TT_WOLF_VORACITY_COAT)
@@ -214,7 +214,7 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
-        ..setScalingValue(1.5)
+        ..setScalingValue(1.25)
         ..setAbilities(ABIL_WOLF_VORACITY)
         ..setCooldownGroup(toRawCode(ABILITY_WOLFS_VORACITY_COAT_ACTIVE))
 
@@ -235,16 +235,16 @@ public constant TT_SCALE_COAT = "" +
 
 @compiletime function createCoatOfBearsTerrifyingPresence() returns ItemDefinition
     return createBasicItem(ITEM_BEAR_PRESENCE_COAT)
-        ..setInterfaceIcon(LocalIcons.bTNCoatOfBearPresence1)
-        ..setModelUsed(LocalItems.skinCoat)
+        ..setInterfaceIcon(LocalIcons.bTNCoatOfBearPresence)
+        ..setModelUsed(LocalItems.coatOfBearPresence)
         ..setNameEnhance("Coat of bear's terrifying presence")
         ..setTooltipExtended(TT_BEAR_PRESENCE_COAT)
         ..setDescription(TT_BEAR_PRESENCE_COAT)
-        ..setLumberCost(86)
-        ..setTintingColor1Red(139)
-        ..setTintingColor2Green(6)
-        ..setTintingColor3Blue(19)
-        ..setScalingValue(1.5)
+        ..setLumberCost(86)      
+        ..setTintingColor1Red(150 )
+        ..setTintingColor2Green(150 )
+        ..setTintingColor3Blue(150 )
+        ..setScalingValue(1.25)
         ..setAbilities(ABIL_BEAR_PRESENCE)
 
 @compiletime function createBoneCoat() returns ItemDefinition

@@ -15,6 +15,8 @@ import Lodash
 // Local imports:
 import LocalObjectIDs
 import Transformation
+import AutoSkill
+import LocalAssets
 
 // The list of abilities used to transform.
 let TRANSFORMATIONS = new OwnedIterableMap<int, int>()
@@ -43,27 +45,16 @@ let transformationIDs = compiletime(registerTransformations(transformations))
 // The unit currently being transformed.
 // TODO: Remove this if forces support closures.
 unit originGlobal
-
+Order previousOrder
 // TODO: Remove logic regarding orders once a non-interrupting ability is used.
 function onCast(unit origin, int targetID)
     // Save the previous order for later use.
-    let previousOrder = origin.getLastOrder().prev
+    previousOrder = origin.getLastOrder().prev
 
     // Stop the unit in order to prevent it from using the channel ability, as
     // transforming while channeling will lock the unit from further use.
     origin.issueImmediateOrderById(OrderIds.stop)
-
-    // Reissue the previous order afterwards.
-    nullTimer() ->
-        // Compute the type of the previous order.
-        let orderType = previousOrder == null
-            ? OrderType.IMMEDIATE
-            : previousOrder.orderType
-
-        // Issue the previous order if it is still applicable.
-        if orderType == OrderType.POINT or orderType == OrderType.TARGET
-            previousOrder.issue()
-
+    
     // Transform the unit.
     transformUnit(origin, targetID)
 
@@ -89,6 +80,18 @@ function onCast(unit origin, int targetID)
 
     // Deallocate the force once it is no longer needed.
     allies.destr()
+
+function reissueLastOrder()
+    nullTimer() ->
+        //delay before detecting Orders.cannibalize and reissuing the previous order
+        //corpse bug only happens from issuing an order, if you shapeshift next to a hostile and hero autamtically attacks it doring 0.3s delay time its not gonna bug out.
+        doAfter(0.3)->                     
+            let orderType = previousOrder == null
+                ? OrderType.IMMEDIATE
+                : previousOrder.orderType
+            // Issue the previous order if it is still applicable.
+            if orderType == OrderType.POINT or orderType == OrderType.TARGET
+                previousOrder.issue()            
 
 init
     // This event does not use EVENT_PLAYER_UNIT_SPELL_EFFECT, the standard for
@@ -125,6 +128,10 @@ init
                     // Manually remove abilities in case permanency is ignored.
                     else
                         target.removeAbility(abilID)
+    //wait for corpseFix before reissuing last order
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_ORDER)->
+        if GetTriggerUnit().getLastOrder().orderId == Orders.cannibalize
+            reissueLastOrder()
 
     // Enable the correct ability for the unit.
     // TODO: Automate permanency tracking for all transformations.

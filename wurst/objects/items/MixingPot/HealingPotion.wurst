@@ -12,6 +12,20 @@ import LocalObjectIDs
 import ToolTipsUtils
 
 public constant POT_HEAL = 80.
+public constant CAST_RANGE = 400.
+public constant NAME = "Healing Potion"
+public constant ICON =Icons.bTNLesserRejuvPotion
+public constant COOLDOWN = 10.
+public constant DURATION = 50.
+public constant TARGETS_ALLOWED = commaList(
+                            TargetsAllowed.friend,
+                            TargetsAllowed.ground,
+                            TargetsAllowed.hero,
+                            TargetsAllowed.invulnerable,
+                            TargetsAllowed.organic,
+                            TargetsAllowed.self,
+                            TargetsAllowed.vulnerable
+                            )
 
 public constant TT_HEALING_POTION = "" +
     "A dilute potion made from Athelas Seed. "+
@@ -20,28 +34,19 @@ public constant TT_HEALING_POTION = "" +
 
 @compiletime function createAbil() returns ChannelAbilityPreset
     return createItemChannelCast(ABILITY_HEALING_POTION)
-    ..setName("Healing Potion")
+    ..setName(NAME)
     ..presetTargetTypes(Targettype.UNIT)
     ..setManaCost(1, 0)
     ..setCooldown(1, 0)
     ..setArtTarget(Abilities.healingSalveTarget)
-    ..setCastRange(1, 400.)
-    ..setTargetsAllowed(1, commaList(
-        TargetsAllowed.friend,
-        TargetsAllowed.ground,
-        TargetsAllowed.hero,
-        TargetsAllowed.invulnerable,
-        TargetsAllowed.organic,
-        TargetsAllowed.self,
-        TargetsAllowed.vulnerable
-        )
-    )
+    ..setCastRange(1, CAST_RANGE)
+    ..setTargetsAllowed(1, TARGETS_ALLOWED)
 
 @compiletime function createHealingPotion() returns ItemDefinition
     return createPerishableItem(ITEM_HEALING_POTION)
-        ..setInterfaceIcon(Icons.bTNLesserRejuvPotion)
+        ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionPurpleLesser)
-        ..setNameEnhance("Healing Potion")
+        ..setNameEnhance(NAME)
         ..setTooltipExtended(TT_HEALING_POTION)
         ..setDescription(TT_HEALING_POTION)
         ..setLumberCost(10)

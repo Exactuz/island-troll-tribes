@@ -57,6 +57,10 @@ init
     ..add(ITEM_CLAY_BALL)
     ..add(ITEM_ELK_HIDE)
     ..add(ITEM_ELK_HIDE)
+    
+    new QuickMake(ABILITY_QM_MAGIC)
+    ..add(ITEM_MANA_CRYSTAL)
+    ..add(ITEM_MANA_CRYSTAL)
 
     new QuickMake(ABILITY_QM_DARK_THISTLES)
     ..add(ITEM_THISTLES)

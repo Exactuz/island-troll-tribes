@@ -13,16 +13,16 @@ import LocalAssets
 import LocalObjectIDs
 import LocalItemObjEditing
 
-let ICON  = Icons.bTNLesserClarityPotion
+public constant ICON  = Icons.bTNLesserClarityPotion
 let MODEL = LocalItems.potionGreenSmall
-
-let CAST_RANGE = 500.
-let TARGET_ALLOWED = "friend,organic,self"
-let TT = "This potion is said to be able to cure anything."
+public constant NAME ="Cure Potion"
+public constant CAST_RANGE = 500.
+public constant TARGET_ALLOWED = "friend,organic,self"
+public constant TT_CURE = "This potion is said to be able to cure anything."
 
 @compiletime function createAbil() returns ChannelAbilityPreset
     return createItemChannelCast(ABILITY_CURE_ALL_ITEM)
-        ..setName("Cure Potion")
+        ..setName(NAME)
         ..presetTargetTypes(Targettype.UNIT)
         ..setTargetsAllowed(1, TARGET_ALLOWED)
         ..setCastRange(1, CAST_RANGE)
@@ -32,14 +32,15 @@ let TT = "This potion is said to be able to cure anything."
         // TODO: Remove this once order IDs can be generated correctly.
         // ..presetBaseOrderID(lvl -> "cripple")
 
+
 @compiletime function createCure() returns ItemDefinition
-    return createPerishableItem(ITEM_CURE_ALL)
-        ..setNameEnhance("Cure Potion")
+    return    createPerishableItem(ITEM_CURE_ALL)
+        ..setNameEnhance(NAME)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(MODEL)
         ..setHotkey("S")
-        ..setTooltipBasic("Cure Potion")
-        ..setTooltipExtended(TT)
+        ..setTooltipBasic(NAME)
+        ..setTooltipExtended(TT_CURE)
         ..setLumberCost(8)
         ..setAbilities(commaList(ABILITY_CURE_ALL_ITEM))
         ..setScalingValue(0.5)
@@ -48,6 +49,7 @@ let TT = "This potion is said to be able to cure anything."
         ..setNumberofCharges(2)
         ..setButtonPositionX(1)
         ..setButtonPositionY(1)
+ 
 
 init
     EventListener.onTargetCast(ABILITY_CURE_ALL_ITEM) (unit caster, unit target) ->

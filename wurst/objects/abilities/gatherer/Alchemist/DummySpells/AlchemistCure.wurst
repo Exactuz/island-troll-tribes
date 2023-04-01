@@ -1,0 +1,73 @@
+package AlchemistCure
+
+
+// Standard library imports:
+import ClosureEvents
+import ChannelAbilityPreset
+import Orders
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import UnitExtensions
+import Lodash
+import Cure
+import InstantDummyCaster
+import SimError
+
+//constant NAME =""
+//constant COOLDOWN = 0
+//constant ICON =""
+constant POTION_COST = 10
+constant errorMsg = "Philosopher's stone doesnt have enough energy"
+constant TT = NAME
+constant TT_COST = "\nCosts "+POTION_COST.toString().color(COLOR_GOLD_STR) +" energy."
+constant TT_EXTENDED =TT_CURE+TT_COST
+constant POS = new Pair(2, 0)
+
+LinkedList<string>hotKeys = asList("Q","W","E","R","A","S","D","F","Z","X","C")
+let hotkeyIndex=POS.b*4+POS.a
+constant HOTKEY = hotKeys.get(hotkeyIndex)
+
+@compiletime function createDummyPotionAbility()
+    new ChannelAbilityPreset(ABILITY_ALCHEMIST_CURE_ALL, 1, true)
+        ..presetCastingTime(lvl-> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl ->0)
+        ..setHeroAbility(true)
+        ..setHotkeyNormal(HOTKEY)
+        ..setName(NAME)
+        ..presetTooltipNormal(lvl -> makeToolTipNorm(HOTKEY, TT))
+        ..presetTooltipNormalExtended(lvl -> TT_EXTENDED)
+        ..presetTargetsAllowed(lvl->TARGET_ALLOWED)            
+        ..setIconNormal(ICON)
+        ..setIconResearch(ICON)
+        ..setIconTurnOff(ICON)
+        ..setButtonPositionNormalX(POS.a)
+        ..setButtonPositionNormalY(POS.b)
+        ..setFollowThroughTime(1, 0)
+        ..setEditorSuffix("(Wurst)")
+        ..presetCastRange(lvl->CAST_RANGE)
+        ..presetTargetTypes(Targettype.UNIT)
+
+function onCast()
+    let target = GetSpellTargetUnit()
+    let caster = GetSpellAbilityUnit()
+    if caster.isTroll()
+        and caster.hasItemById(ITEM_PHILOSOPHERS_STONE)
+        //let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        let itm = caster.getItemById(ITEM_PHILOSOPHERS_STONE)
+        if itm.getCharges() >= POTION_COST
+            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_CURE_ALL, 1, Orders.autodispel, target)
+            itm.setCharges(itm.getCharges()-POTION_COST)
+        else
+            caster.issueImmediateOrder("stop")
+            simError(caster.getOwner(), errorMsg)
+
+
+    
+
+
+init 
+    registerSpellEffectEvent(ABILITY_ALCHEMIST_CURE_ALL, function onCast)

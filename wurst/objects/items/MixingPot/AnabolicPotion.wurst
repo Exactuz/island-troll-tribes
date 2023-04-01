@@ -14,17 +14,17 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
 
-constant ABIL  = compiletime(ABIL_ID_GEN.next())
 public constant BUFF_SPEED  = compiletime(BUFF_ID_GEN.next())
-
-constant DURATION = 10.
-constant COOLDOWN = 35.
+public constant NAME ="Anabolic Potion"
+public constant DURATION = 10.
+public constant COOLDOWN = 35.
+public constant ICON = Icons.bTNPotionRed
 public constant TT_ANABOLIC_POTION = ""+
     "Boost the consumer movement speed to the max." +
     makeToolTipDuration(DURATION, COOLDOWN)
 
 @compiletime function createAbil()
-    new AbilityDefinitionItemSpeed(ABIL)
+    new AbilityDefinitionItemSpeed(ABILITY_ANABOLIC_POTION)
     ..setName("Max Speed")
     ..setMovementSpeedIncrease(1, 5)
     ..setMissileSpeed(900)
@@ -48,13 +48,14 @@ public constant TT_ANABOLIC_POTION = ""+
 
 @compiletime function createAnabolicPotion() returns ItemDefinition
     return createPerishableItem(ITEM_ANABOLIC_POTION)
-        ..setInterfaceIcon(Icons.bTNPotionRed)
+        ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionRed)
-        ..setNameEnhance("Anabolic Potion")
+        ..setNameEnhance(NAME)
         ..setTooltipExtended(TT_ANABOLIC_POTION)
         ..setDescription(TT_ANABOLIC_POTION)
         ..setLumberCost(18)
-        ..setAbilities(commaList(ABIL))
+        ..setAbilities(commaList(ABILITY_ANABOLIC_POTION))
+        ..setCooldownGroup(commaList(ABILITY_ANABOLIC_POTION))
         ..setScalingValue(0.70)
         ..setCooldownGroup(commaList("AIsp"))
         ..setStockReplenishInterval(120)

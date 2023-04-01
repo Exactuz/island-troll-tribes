@@ -182,10 +182,10 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         )
         ..setInterfaceIcon(LocalIcons.bTNBootsOfWolfStamina)
         ..setDescription("Increases wearer's movement speed, armor and intelligence, |n Gives wearer wolf's stamina")
-        ..setTintingColor1Red(128)
-        ..setTintingColor2Green(128)
-        ..setTintingColor3Blue(128)
-        ..setModelUsed(LocalItems.wolfHideBoots)
+        ..setTintingColor1Red(200)
+        ..setTintingColor2Green(200)
+        ..setTintingColor3Blue(200)
+        ..setModelUsed(LocalItems.wolfsStaminaBoots)
         ..setHotkey("")
         ..setLumberCost(77)
         ..setNameEnhance("Boots of Wolfs Stamina")
@@ -218,16 +218,16 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
     return createBasicItem(ITEM_BEARS_TENACITY_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
-            ABILITY_STR_BONUS_6,
+            ABILITY_INT_BONUS_6,
             ABILITY_ARMOR_BONUS_5
             )
         )
         ..setInterfaceIcon(LocalIcons.bTNBootsOfBearTenacity)
         ..setDescription("Grants wearer tenacity of a bear")
-        ..setTintingColor1Red(255)
-        ..setTintingColor2Green(128)
-        ..setTintingColor3Blue(128)
-        ..setModelUsed(LocalItems.wolfHideBoots)
+        ..setTintingColor1Red(150)
+        ..setTintingColor2Green(150)
+        ..setTintingColor3Blue(150)
+        ..setModelUsed(LocalItems.bootsOfBearTenacity)
         ..setHotkey("")
         ..setLumberCost(74)
         ..setNameEnhance("Boots of Bear's Tenacity")

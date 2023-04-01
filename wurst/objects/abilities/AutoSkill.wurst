@@ -65,6 +65,7 @@ let skillMap = new HashMap<int, int>()
     ..put(UNIT_HERB_MASTER,          ABILITY_TELE_HERB_GATHER)
     ..put(UNIT_RADAR_GATHERER,       ABILITY_TELE_RADAR_GATHER)
     ..put(UNIT_OMNIGATHERER,         ABILITY_ITEM_WARP)
+    ..put(UNIT_ALCHEMIST,            ABILITY_ALCHEMIST_SPELLBOOK)
 
 // TODO: Remove public once TrollUpgrade is fixed.
 public function autoSkill(unit target)

@@ -237,7 +237,16 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..setIconNormal(LocalIcons.bTNTerrorTroll)
         ..setRequiredTrollLevel(6, false)
         ..presetHotkey("W")
-        ..setBaseOrderID(1, "manaflareoff")
+        ..setBaseOrderID(1, "manaflareoff") //"manaflareoff"
+
+@compiletime function createUpgradeAbilityAlchemist() returns ChannelAbilityPreset
+    return createUpgradeAbility(ABILITY_ALCHEMIST)
+        ..setUpgradeTarget("Alchemist")
+        ..presetTooltipNormalExtended(lvl -> TOOLTIP_ALCHEMIST)
+        ..setIconNormal(LocalIcons.bTNAlchemist)
+        ..setRequiredTrollLevel(6, false)
+        ..presetHotkey("R")
+        ..setBaseOrderID(1, "manashieldon") //"manashieldon"
 
 @compiletime function createUpgradeAbilityOmnigatherer() returns ChannelAbilityPreset
     return createUpgradeAbility(ABILITY_OMNIGATHERER)

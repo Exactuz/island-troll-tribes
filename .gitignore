@@ -32,3 +32,11 @@ venv/
 
 # Files generated during builds.
 imports/LoadingScreen.tga
+wurst/objects/abilities/scout/HawkPet.wurst
+wurst/objects/abilities/gatherer/Alchemist/DummySpells.wurst
+wurst.build
+changelog_07.txt
+CommandFunc_10_11.txt
+.gitignore
+CustomUiTemp.jurst
+CommandFunc_ERTYDFGH.txt

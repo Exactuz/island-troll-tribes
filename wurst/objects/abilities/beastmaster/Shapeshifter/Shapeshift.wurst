@@ -54,7 +54,7 @@ function onCast(unit origin, int targetID)
     // Stop the unit in order to prevent it from using the channel ability, as
     // transforming while channeling will lock the unit from further use.
     origin.issueImmediateOrderById(OrderIds.stop)
-    
+    reissueLastOrder()    
     // Transform the unit.
     transformUnit(origin, targetID)
 
@@ -129,10 +129,11 @@ init
                     else
                         target.removeAbility(abilID)
     //wait for corpseFix before reissuing last order
+    /*
     EventListener.add(EVENT_PLAYER_UNIT_ISSUED_ORDER)->
         if GetTriggerUnit().getLastOrder().orderId == Orders.cannibalize
             reissueLastOrder()
-
+    */
     // Enable the correct ability for the unit.
     // TODO: Automate permanency tracking for all transformations.
     // TODO: Use BlzUnitDisableAbility per unit.

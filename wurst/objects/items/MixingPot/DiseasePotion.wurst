@@ -17,12 +17,7 @@ import LocalObjectIDs
 import ToolTipsUtils
 
 
-public let DISEASE_HEALING_REDUCTION_FACTOR = 0.3
-<<<<<<< HEAD
-let DURATION = 20.
-let DAMAGE_TICK_INTERVAL = 0.5
-let DAMAGE_PER_SECOND = 5
-=======
+public let DISEASE_HEALING_REDUCTION_FACTOR = 0.
 public constant DURATION = 20.
 let DAMAGE_TICK_INTERVAL = 0.5
 let DAMAGE_PER_SECOND = 5

@@ -6,30 +6,23 @@ import BuffObjEditing
 import ChannelAbilityPreset
 import ClosureEvents
 import ClosureTimers
-import Unit
+import HashMap
+import LinkedList
+import ItemObjEditing
+import Items
+import Cosmetics
+import OnUnitEnterLeave
 
 // Third-party imports:
 import Lodash
 
 // Local imports:
-import SpellBookInitializer
 import ColorUtils
 import LocalObjectIDs
-import ToolTipsUtils
 import LocalAssets
 import Classes
 import IdListConstant
-import HashMap
-import LinkedList
-import AbilityObjEditing
-import ItemObjEditing
-import Orders
-import PlayerExtensions
-import Items
-import ClosuresForItems
-import InventoryEvent
-import Cosmetics
-import OnUnitEnterLeave
+
 constant TT_ELK_TROPHY_HIDE ="\n\nElk hide: "+
                              "\n +1 ".color(ENERGY_COLOR)+"armor."+ 
                              "\n +20 ".color(ENERGY_COLOR)+"movement speed."
@@ -53,7 +46,8 @@ constant ABILITY_BEAR_TROPHY_HIDE = asList(ABILITY_ARMOR_BONUS_5)
 constant TROPHY_HIDE_ABILITY_LIST = asList(ABILITY_ELK_TROPHY_HIDE,
                                            ABILITY_WOLF_TROPHY_HIDE,
                                            ABILITY_BEAR_TROPHY_HIDE)
-                                   
+
+constant TROPHY_LIST = asList(ITEM_HUNTER_TROPHY_ELK_HIDE, ITEM_HUNTER_TROPHY_WOLF_HIDE, ITEM_HUNTER_TROPHY_BEAR_HIDE)                                   
 
 IterableMap<unit, TrophyHide> instances = new IterableMap<unit, TrophyHide>()
 IterableMap<int, Attachment> attachments = new IterableMap<int, Attachment>()
@@ -102,7 +96,7 @@ let id3 = compiletime(attachments.get(ITEM_JUNGLE_BEAR_HIDE).getIDs())
             ..setName("Hunter's Trophy")
             ..setLumberCost(15)
             ..setAbilities(commaList(ABILITY_WOLF_TROPHY_HIDE))
-            ..setInterfaceIcon(LocalIcons.bTNElkTrophyHide)
+            ..setInterfaceIcon(LocalIcons.bTNWolfTrophyHide)
             ..setTooltipExtended(TT_TROPHY+TT_WOLF_TROPHY_HIDE)
 
 @compiletime function createBearHideTrophy() returns ItemDefinition
@@ -127,6 +121,8 @@ class TrophyHide
             hunterDummyItem = hero.getItemById(ITEM_HUNTER_TROPHY_HIDE_DUMMY)   
 
     function onHideDrop(item itemHandle)
+        if not hero.isAlive()
+            return
         if this.trophyHide == itemHandle
             nullTimer() ->
                 let nextHide = findNextHide()
@@ -150,7 +146,7 @@ class TrophyHide
                 replaceTrophyWithHide(itemHandle)
 
     //find next hide of highest index of HIDE_LIST
-    function findNextHide() returns item
+    function findNextHide() returns item            
         item nextHide = null
         for hide in HIDE_LIST
             let foundHide = hero.getItemById(hide)
@@ -164,6 +160,18 @@ class TrophyHide
         itemHandle.remove()       
         nullTimer() -> 
             trophyHide = hero.addItemById(trophy)
+            /*
+            doAfter(ANIMATION_PERIOD) ->
+                cb = doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+                    if not hero.hasItem(hunterDummyItem) or not hero.hasItem(trophyHide)
+                        hero.removeItemFromSlot(4)
+                        hero.addItemHandle(hunterDummyItem)
+                        updateAttachment(-1)
+                        trophyHide = null                        
+                    else
+                        destroy cb 
+                        */                 
+                           
 
     function updateAttachment(int newAttachment)
         if trophyHide != null
@@ -171,14 +179,16 @@ class TrophyHide
         nullTimer() ->                 
             if newAttachment != -1
                 attachment = attachments.get(newAttachment)
-                nullTimer() ->                
-                    attachment.apply(hero)        
+                nullTimer() ->
+                    if attachment!= null                
+                        attachment.apply(hero)        
 
     function replaceTrophyWithHide(item itemHandle)
         nullTimer() -> 
-            let pos =itemHandle.getPos()
-            createItem(trophyToHideMap.get(itemHandle.getTypeId()), pos)
-            itemHandle.remove()
+            let pos =hero.getPos()
+            if not itemHandle.isOwned()
+                createItem(trophyToHideMap.get(itemHandle.getTypeId()), pos)
+                itemHandle.remove()
             updateAttachment(-1)
 
     function onHidePickup(item itemHandle)
@@ -206,6 +216,17 @@ function onHideDrop(unit hero, item itemHandle)
 function onHidePickup(unit hero, item itemHandle)
     if instances.has(hero) 
         instances.get(hero).onHidePickup(itemHandle)
+
+function onTrophyPickup(unit hero, item itemHandle)
+    if not instances.has(hero) or hero.hasItem(instances.get(hero).hunterDummyItem)
+        let trophy = itemHandle.getTypeId()
+        itemHandle.remove()
+        nullTimer() ->
+            let itmId =  trophyToHideMap.get(trophy)
+            hero.addItemById(trophyToHideMap.get(trophy))
+   // else
+       // if hero.hasItem(instances.get(hero).hunterDummyItem)
+            
 
 function onUnitEnter(unit troll)
     if troll.getTrollBaseClass() == UNIT_HUNTER
@@ -241,3 +262,7 @@ init
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetTriggerUnit().getTrollBaseClass() == UNIT_HUNTER and trophyToHideMap.has(GetManipulatedItem().getTypeId())
             onHideDrop(GetTriggerUnit(), GetManipulatedItem())
+    
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if TROPHY_LIST.has(GetManipulatedItem().getTypeId())
+            onTrophyPickup(GetTriggerUnit(), GetManipulatedItem())            

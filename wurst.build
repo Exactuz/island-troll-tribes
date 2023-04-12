@@ -5,18 +5,8 @@ dependencies:
 - https://github.com/crojewsk/wurstExtLibs
 - https://github.com/theQuazz/wurst-lodash
 buildMapData:
-<<<<<<< HEAD
-<<<<<<< HEAD
-  name: '|cffffd700Island Troll Tribes v3.11c.appdayedition(v0.51) '
-  fileName: Island.Troll.Tribes.v3.11c.appdayedition(v0.51)
-=======
-  name: '|cffffd700Island Troll Tribes v3.11c.appdayeditiontest '
-  fileName: Island.Troll.Tribes.v3.11c.appdayeditiontest
->>>>>>> sobaka
-=======
-  name: '|cffffd700Island Troll Tribes v3.11c.appdayedition(v0.7a) '
-  fileName: Island.Troll.Tribes.v3.11c.appdayedition(v0.7a)
->>>>>>> dev
+  name: '|cffffd700Island Troll Tribes v3.11c.appdayedition(v0.8b) '
+  fileName: Island.Troll.Tribes.v3.11c.appdayedition(v0.8b)
   author: "Quazz, Marsunpaisti, Xan Kriegor"
   scenarioData:
     description: "Island Troll Tribes is a PvP-centric survival map in which multiple\

@@ -115,6 +115,7 @@ class Blowpipe
                 ammo.remove()
 
             updateTooltip()
+            this.target = null
 
     function loadAmmo(unit owner, item itm)
         // Treat non-charge items as 1 charge

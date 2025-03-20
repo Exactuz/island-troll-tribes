@@ -440,7 +440,7 @@ import ObjEditingNatives
 	..setLvlDataString("atat", 0, 0, "")
 	..setLvlDataString("ata0", 0, 0, "")
 	..setLvlDataString("atp1", 1, 0, "Recipe: Hypnosis Salve")
-	..setLvlDataString("aub1", 1, 0, "Slot 1: Mushroom |nSlot 2: Butsu |nSlot 3: Butsu |nCreates a salve that sleeps target enemy troll for <A0DH,HeroDur1> seconds.")
+	..setLvlDataString("aub1", 1, 0, "Slot 1: Mushroom |nSlot 2: Athelas Seed |nSlot 3: Athelas Seed |nCreates a salve that sleeps target enemy troll for <A0DH,HeroDur1> seconds.")
 
 
 @compiletime function create_w3a_A0FF()

@@ -263,7 +263,7 @@ public let HUNTING_NET_RECIPE            = "a Hunting Net. Reusable if target di
                                            " :\n\n1x "+ NETS + " 1x " + STONE
 
 
-public let BLOW_GUN_RECIPE               = "a BlowGun. Used for shooting small things. Can be loaded with thistles or bones. Drag and drops items on the blowgun to load,"+
+public let BLOW_GUN_RECIPE               = "a BlowGun. Used for shooting small things. Can be loaded with thistles or bones (up to 5 bones). Drag and drops items on the blowgun to load,"+
                                           " click and use on your own troll to unload : \n\n1x "+STICK+" + 1x "+CLAY_BALL
 
 public let DARK_THISTLES_RECIPE         = "a Dark thistles. Creates a special type of blowgun ammo. Instead of poisoning, dark thistles depress enemies and zap mana from them over time :"+

@@ -5,10 +5,21 @@ import ClosureTimers
 import CustomItemDefinition
 import ShieldsDefinition
 import CoatDefinition
+import BattleBlowgun
 
 let UNIT_REQUIREMENT = UNIT_ARMORY
 
 public function initializeArmoryItems()
+    new CustomItemDefinition(ITEM_BATTLE_BLOW_GUN)
+        ..addBonusDamage(4)
+        ..addBonusStrength(2)
+        ..addBonusAgility(4)
+        ..addBonusIntelligence(4)
+        ..addSpecialAbilities(BATTLE_BLOWGUN_ABILITY_ID)
+        ..setItemRecipe(ITEM_BLOW_GUN, ITEM_IRON_INGOT, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
+        ..setQuickMakeAbility(ABILITY_QM_BATTLE_BLOW_GUN)
+        ..setUnitRequirement(UNIT_REQUIREMENT)
+
     new CustomItemDefinition(ITEM_BATTLE_AXE)
         ..addSpecialAbilities(ABILITY_ATTACK_TREE)
         ..addBonusAttackSpeed(20)

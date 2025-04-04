@@ -43,8 +43,14 @@ public function item.isBasicBoots() returns bool
 public function item.isPinion() returns bool
     return PINION_LIST.has(this.getTypeId())
 
+public function item.isBlowgun() returns bool
+    return BLOWGUN_LIST.has(this.getTypeId())
+
 public function item.isAxeOrShield() returns bool
     return this.isAxe() or this.isShield()
+
+public function item.isAxeOrShieldOrBlowgun() returns bool
+    return this.isAxe() or this.isShield() or this.isBlowgun()
 
 public function item.isAllyFireAround(real radius, unit caster) returns bool
     let nearbyUnits = CreateGroup()..enumUnitsInRange(this.getPos(), radius)

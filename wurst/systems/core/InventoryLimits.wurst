@@ -79,7 +79,7 @@ init
     ..add(new Restriction(2, i -> ((i.getTypeId() == ITEM_BATTLE_AXE) 
                                 or (i.getTypeId() == ITEM_IRON_STAFF)
                                 or (i.getTypeId() == ITEM_CONDUCTING_ROD)
-                                or (i.getTypeId() == ITEM_BATTLE_STAFF)) ? 2 : i.isAxeOrShield().toInt()))
+                                or (i.getTypeId() == ITEM_BATTLE_STAFF)) ? 2 : i.isAxeOrShieldOrBlowgun().toInt()))
     ..add(new Restriction(i -> i.isPinion().toInt()))
     ..add(new Restriction(i -> i.isShield().toInt()))
 

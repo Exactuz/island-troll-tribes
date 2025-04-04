@@ -86,7 +86,9 @@ constant ARMORY_SPELLBOOK = commaList(
 constant ARMORY_SECOND_SPELLBOOK = commaList(
     ABILITY_QM_ANABOLIC_BOOTS,
     ABILITY_QM_TROLL_PROTECTOR,
-    ABILITY_SPELLBOOK_PLACEHOLDER,//ABILITY_QM_CONDUCTING_ROD,
+    //ABILITY_SPELLBOOK_PLACEHOLDER,
+    //ABILITY_QM_CONDUCTING_ROD,
+    ABILITY_QM_BATTLE_BLOW_GUN,
     ABILITY_QM_BATTLE_ARMOR,
     ABILITY_QM_MAGEFIST,
     ABILITY_QM_BATTLE_STAFF 
@@ -274,12 +276,12 @@ function getQuickMakeSpells() returns LinkedList<QuickMakeSpell>
         new QuickMakeSpell("Coat of Bear's Terrifying Presence", TRANSMUTE_TOOLTIP+BEAR_PRESENCE_COAT_RECIPE       , "CoatOfBearPresence"          , ABILITY_QM_BEAR_PRESENCE_COAT      , 2, 2, "C", QM_TOOLIP, "divineshield"),
        
         // Second Page
-        new QuickMakeSpell("Troll Protector"            , TRANSMUTE_TOOLTIP+TROLL_PROTECTOR_RECIPE       , "TrollProtector"          , ABILITY_QM_TROLL_PROTECTOR      , 0, 0, "W", QM_TOOLIP, "frenzy"),
         new QuickMakeSpell("Anabolic Boots"              , TRANSMUTE_TOOLTIP+ANABOLIC_BOOTS_RECIPE       , "WirtsOtherLeg"          , ABILITY_QM_ANABOLIC_BOOTS       , 0, 1, "Q", QM_TOOLIP, "fanofknives"),
-        new QuickMakeSpell("Conducting Rod"              , TRANSMUTE_TOOLTIP+CONDUCTING_ROD_RECIPE       , "AdvancedStrengthOfTheMoon"          , ABILITY_QM_CONDUCTING_ROD       , 0, 2, "E", QM_TOOLIP, "locustswarm"),
+        new QuickMakeSpell("Troll Protector"            , TRANSMUTE_TOOLTIP+TROLL_PROTECTOR_RECIPE       , "TrollProtector"          , ABILITY_QM_TROLL_PROTECTOR      , 0, 0, "W", QM_TOOLIP, "frenzy"),
+        new QuickMakeSpell("Battle Blowgun"          , TRANSMUTE_TOOLTIP+BATTLE_BLOW_GUN_RECIPE         , "BattleBlowgun"             , ABILITY_QM_BATTLE_BLOW_GUN         , 0, 2, "E", QM_TOOLIP, "fireball"),
         new QuickMakeSpell("Battle Armor"            , TRANSMUTE_TOOLTIP+BATTLE_ARMOR_RECIPE         , "NagaArmorUp2"          , ABILITY_QM_BATTLE_ARMOR         , 0, 3, "R", QM_TOOLIP, "immolation"),                
         new QuickMakeSpell("Magefist"            , TRANSMUTE_TOOLTIP+MAGEFIST_RECIPE         , "SpellSteal"          , ABILITY_QM_MAGEFIST         , 1, 0, "A", QM_TOOLIP, "manashieldon"),                
-        new QuickMakeSpell("Battle Staff"            , TRANSMUTE_TOOLTIP+BATTLE_STAFF_RECIPE         , "BattleStaff"          , ABILITY_QM_BATTLE_STAFF         , 1, 1, "S", QM_TOOLIP, "manashieldoff"),                
+        new QuickMakeSpell("Battle Staff"            , TRANSMUTE_TOOLTIP+BATTLE_STAFF_RECIPE         , "BattleStaff"          , ABILITY_QM_BATTLE_STAFF         , 1, 1, "S", QM_TOOLIP, "manashieldoff"),
 
         // Witch Doctors Hut
         new QuickMakeSpell("Scroll Of Entangling Root" , TRANSMUTE_TOOLTIP+SCROLL_ROOT_RECIPE        , "ScrollOfRegenerationGreen" , ABILITY_QM_SCROLL_ROOT        , 0, 0, "Q", QM_TOOLIP, "berserk"),

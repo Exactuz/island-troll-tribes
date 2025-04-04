@@ -18,6 +18,22 @@ import SimError
 import UnitExtensions
 import LocalObjectIDs
 import BlowgunDefinition
+import BattleBlowgun
+import GameStates
+
+/*
+ * KNOWN BEHAVIOR: Empty blowgun targeting inconsistency
+ * =====================================================
+ * There are two different states for empty blowguns:
+ * 
+ * 1. New empty blowguns or ones emptied via self-targeting:
+ *    - Can be used to target
+ *    - Will show "No ammo!" message when fired at a target
+ * 
+ * 2. Blowguns that have fired their last ammo:
+ *    - Cannot be used to target (ability appears disabled)
+ *    - No error message appears
+ */
 
 let MAX_SLOTS = 15
 let PICKUP_RANGE = 150.0
@@ -42,8 +58,17 @@ class Blowpipe
         emptyContents()
         destroy contents
 
+    function updateItemChargeDisplay(item iterItem)
+        let charges = iterItem.getCharges()
+        if charges > 0
+            let name = iterItem.getName()
+            let parenIndex = name.indexOf(" (")
+            if parenIndex > 0
+                iterItem.setName(name.substring(0, parenIndex) + " (x" + charges.toString() + ")")
+
     function emptyContents()
         for iterItem in contents
+            updateItemChargeDisplay(iterItem)
             iterItem.setPos(this.i.getPos())
             iterItem.setVisible(true)
             contents.remove(iterItem)
@@ -52,6 +77,7 @@ class Blowpipe
 
     function emptyContentsToUnit(unit u)
         for iterItem in contents
+            updateItemChargeDisplay(iterItem)
             if not u.addOrStackItem(iterItem)
                 iterItem.setPos(u.getPos())
             iterItem.setVisible(true)
@@ -62,7 +88,11 @@ class Blowpipe
     function onFire(unit caster)
         if this.target == caster
             //Empty blowpipe on self-target
-            caster.endAbilityCooldown(ABILITY_ID)
+            let itemId = this.i.getTypeId()
+            if itemId == ITEM_BLOW_GUN
+                caster.endAbilityCooldown(ABILITY_ID)
+            else if itemId == ITEM_BATTLE_BLOW_GUN
+                caster.endAbilityCooldown(BATTLE_BLOWGUN_ABILITY_ID)
             emptyContentsToUnit(caster)
             return
 
@@ -163,9 +193,19 @@ class Blowpipe
                 var charges = itm.getCharges()
                 if (charges == 0)
                     charges = 1
-                ammoString = ammoString + "\n" + itm.getName() + "|r"
+                // Strip the "(xN)" from the item name if present
+                var name = itm.getName()
+                let parenIndex = name.indexOf(" (")
+                if parenIndex > 0
+                    name = name.substring(0, parenIndex)
+                ammoString = ammoString + "\n" + name + " (" + charges.toString() + ")|r"
 
-        this.i.setExtendedTooltip(ITEM_TOOLTIP_EXT + ammoString)
+        // Use the appropriate tooltip based on the item type
+        let itemId = this.i.getTypeId()
+        if itemId == ITEM_BLOW_GUN
+            this.i.setExtendedTooltip(ITEM_TOOLTIP_EXT + ammoString)
+        else if itemId == ITEM_BATTLE_BLOW_GUN
+            this.i.setExtendedTooltip(BATTLE_TOOLTIP_EXT + ammoString)
 
     function getAmmoSlotsLeft() returns int
         if this.contents.size() > 0
@@ -188,9 +228,10 @@ class Blowpipe
         this.target = target
 
 function onUse()
-    // Triggers after onCast, used for actually firing the blowgun at the target specified in onCast
+    // Triggers after onCast, used for actually firing the blowgun at the target specified in onCast 
     let itm = GetManipulatedItem()
-    if itm.getTypeId() == ITEM_BLOW_GUN
+    let itemId = itm.getTypeId()
+    if itemId == ITEM_BLOW_GUN or itemId == ITEM_BATTLE_BLOW_GUN
         if instances.has(itm)
             instances.get(itm).onFire(GetTriggerUnit())
         else
@@ -201,7 +242,7 @@ function onPickup()
     let itm = GetManipulatedItem()
     let itemId = itm.getTypeId()
 
-    if itemId == ITEM_BLOW_GUN
+    if itemId == ITEM_BLOW_GUN or itemId == ITEM_BATTLE_BLOW_GUN
         if not instances.has(itm)
             instances.put(itm, new Blowpipe(itm))
 
@@ -222,8 +263,13 @@ function onItemMoved()
     let u = getInventoryManipulatingUnit()
     let i = getInventoryManipulatedItem()
 
+    // If the manipulated item is a blowgun, ensure it has an instance
+    if i.getTypeId() == ITEM_BLOW_GUN or i.getTypeId() == ITEM_BATTLE_BLOW_GUN
+        if not instances.has(i) 
+            instances.put(i, new Blowpipe(i))
+
     // If dragging onto blowpipe, and item is loadable, load it
-    if u.itemInSlot(slotTo).getTypeId() == ITEM_BLOW_GUN
+    if u.itemInSlot(slotTo).getTypeId() == ITEM_BLOW_GUN or u.itemInSlot(slotTo).getTypeId() == ITEM_BATTLE_BLOW_GUN
         if slotsPerItem.has(i.getTypeId())
             instances.get(u.itemInSlot(slotTo)).loadAmmo(u, i)
 
@@ -242,16 +288,34 @@ function onTargetOrder()
         and target.isPickupable()
         and slotsPerItem.has(target.getTypeId())
         and u.isInventoryFull()
-        and u.getInventory().map(elem -> elem.getTypeId()).has(ITEM_BLOW_GUN))
+        and (u.getInventory().map(elem -> elem.getTypeId()).has(ITEM_BLOW_GUN)
+             or u.getInventory().map(elem -> elem.getTypeId()).has(ITEM_BATTLE_BLOW_GUN)))
         let collisionSize = u.getCollisionSize()
         let rangeSq = (PICKUP_RANGE + collisionSize).pow(2)
         if u.getPos().distanceToSq(target.getPos()) <= rangeSq
-            instances.get(u.getItemById(ITEM_BLOW_GUN)).loadAmmo(u, target)
+            var blowgunItem = u.getItemById(ITEM_BLOW_GUN)
+            if blowgunItem == null
+                blowgunItem = u.getItemById(ITEM_BATTLE_BLOW_GUN)
+            instances.get(blowgunItem).loadAmmo(u, target)
+
+function applyBlowgunCooldowns(unit caster)
+    // Apply cooldown to all blowguns in inventory
+    for i = 0 to caster.inventorySize()-1
+        let itm = caster.itemInSlot(i)
+        // Use cooldown constants from definitions
+        if itm.getTypeId() == ITEM_BLOW_GUN
+            caster.startAbilityCooldown(ABILITY_ID, COOLDOWN)
+        else if itm.getTypeId() == ITEM_BATTLE_BLOW_GUN
+            caster.startAbilityCooldown(BATTLE_BLOWGUN_ABILITY_ID, BATTLE_COOLDOWN)
 
 init
-    EventListener.onTargetCast(ABILITY_ID) (unit caster, unit target) ->
-    //  This event fires first but cannot retrieve used blowgun item handle
-    //  Used to set target for all blowguns in inventory
+    registerSpellEffectEvent(ABILITY_ID) ->
+        //  This event fires first but cannot retrieve used blowgun item handle
+        //  Used to set target for all blowguns in inventory
+        let caster = GetTriggerUnit()
+        let target = GetSpellTargetUnit()
+        
+        // Set target only for regular blowguns
         for i = 0 to caster.inventorySize()-1
             let itm = caster.itemInSlot(i)
             if itm.getTypeId() == ITEM_BLOW_GUN
@@ -259,8 +323,31 @@ init
                     instances.get(itm).setTarget(target)
                 else
                     error("ERROR: Tried to target blowgun with no instance!")
+                    
+        // Apply cooldown to all blowguns
+        applyBlowgunCooldowns(caster)
 
-    EventListener.onTargetCast(ABILITY_DARK_THISTLE) (unit caster, unit target) ->
+    registerSpellEffectEvent(BATTLE_BLOWGUN_ABILITY_ID) ->
+        //  This event fires first but cannot retrieve used blowgun item handle
+        //  Used to set target for all blowguns in inventory
+        let caster = GetTriggerUnit()
+        let target = GetSpellTargetUnit()
+        
+        // Set target only for battle blowguns
+        for i = 0 to caster.inventorySize()-1
+            let itm = caster.itemInSlot(i)
+            if itm.getTypeId() == ITEM_BATTLE_BLOW_GUN
+                if instances.has(itm)
+                    instances.get(itm).setTarget(target)
+                else
+                    error("ERROR: Tried to target blowgun with no instance!")
+                    
+        // Apply cooldown to all blowguns
+        applyBlowgunCooldowns(caster)
+
+    registerSpellEffectEvent(ABILITY_DARK_THISTLE) ->
+        let caster = GetTriggerUnit() 
+        let target = GetSpellTargetUnit()
         doPeriodicallyCounted(LEN_TICK, NUM_TICK) (CallbackCounted cb) ->
             caster.drainMana(target, DARK_THISTLE_MANA_BURN)
 
@@ -278,4 +365,5 @@ init
     slotsPerItem.put(ITEM_THISTLES, 1)
     slotsPerItem.put(ITEM_POISON_THISTLES, 1)
     slotsPerItem.put(ITEM_DARK_THISTLES, 1)
+    
     

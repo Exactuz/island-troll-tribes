@@ -1,0 +1,106 @@
+package BattleBlowgun
+
+// Standard library imports:
+import AbilityObjEditing
+import Assets
+import ItemObjEditing
+import ObjectIds
+import ObjectIdGenerator
+import BuffObjEditing
+import ClosureEvents
+
+// Local imports:
+import LocalAssets
+import ToolTipsUtils
+import ColorUtils
+import LocalObjectIDs
+import Items
+import UnitExtensions
+import BonusHandler
+import CustomItemDefinition
+import BlowgunDefinition
+
+public let BATTLE_BLOWGUN_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
+
+let ICON = "ReplaceableTextures\\CommandButtons\\BTNBattleBlowgun.blp"
+let GROUND_MODEL_PATH = LocalItems.blowGun
+
+let BATTLE_TOOLTIP = "Purchase |cffffcc00B|rattle |cffffcc00B|rlow Gun"
+
+let CAST_RANGE = 600. 
+public let BATTLE_COOLDOWN = 7.
+
+// Create custom tooltips for Battle Blowgun that use the BATTLE_COOLDOWN
+let BATTLE_BONE_TOOLTIP = BONE_TOOLTIP.replace(makeToolTipCooldown(COOLDOWN), makeToolTipCooldown(BATTLE_COOLDOWN))
+let BATTLE_THISTLE_TOOLTIP = THISTLE_TOOLTIP.replace(makeToolTipDuration(THISTLE_DURATION_HERO, COOLDOWN), makeToolTipDuration(THISTLE_DURATION_HERO, BATTLE_COOLDOWN))
+let BATTLE_POISON_THISTLE_TOOLTIP = POISON_THISTLE_TOOLTIP.replace(makeToolTipDuration(POISON_THISTLE_DURATION_HERO, COOLDOWN), makeToolTipDuration(POISON_THISTLE_DURATION_HERO, BATTLE_COOLDOWN))
+let BATTLE_DARK_THISTLE_TOOLTIP = DARK_THISTLE_TOOLTIP.replace(makeToolTipDuration(DARK_THISTLE_DURATION_HERO, COOLDOWN), makeToolTipDuration(DARK_THISTLE_DURATION_HERO, BATTLE_COOLDOWN))
+
+public let BATTLE_TOOLTIP_EXT = "" +
+    "An enhanced blowgun crafted for battle with |cff00ff0033%|r increased range and |cff00ff0022%|r faster cooldown. " +
+    "Can be loaded with thistles or bones. Drag and drop items on the blowgun to load, " +
+    "click and use on your own troll to unload." +
+    " If your inventory is full, clicking on ammo type item close to your troll will load them into the blowgun."+
+    "\n\nAmmo Effect :".color(GOLD_COLOR) +
+    "\n" + BATTLE_BONE_TOOLTIP +
+    "\n" + BATTLE_THISTLE_TOOLTIP +
+    "\n" + BATTLE_DARK_THISTLE_TOOLTIP +
+    "\n" + BATTLE_POISON_THISTLE_TOOLTIP
+
+let BATTLE_DESCRIPTION = "" +
+    "An enhanced blowgun crafted specifically for battle. Made from sturdy wood " +
+    "and reinforced for improved range and faster reloading."
+
+@compiletime function createBattleBlowgunItem()
+    createUsableItem(ITEM_BATTLE_BLOW_GUN)
+        ..setAbilities(toRawCode(BATTLE_BLOWGUN_ABILITY_ID))
+        ..setModelUsed(GROUND_MODEL_PATH)
+        ..setScalingValue(0.6)
+        ..setButtonPositionX(0)
+        ..setButtonPositionY(2)
+        ..setClassification("Charged")
+        ..setInterfaceIcon(ICON)
+        ..setLumberCost(30)
+        ..setCooldownGroup("blowgunGroup")
+        ..setStockReplenishInterval(50)
+        ..setDescription(BATTLE_DESCRIPTION)
+        ..setHotkey("F")
+        ..setName("Battle Blow Gun")
+        ..setTooltipBasic(BATTLE_TOOLTIP)
+        ..setTooltipExtended(BATTLE_TOOLTIP_EXT)
+        ..setTintingColor1Red(139)     // Brown color (RGB: 139, 69, 19)
+        ..setTintingColor2Green(69)
+        ..setTintingColor3Blue(19)
+
+@compiletime function createBattleBlowgunAbility()
+    createItemChannelCast(BATTLE_BLOWGUN_ABILITY_ID)
+        ..setCastRange(1, CAST_RANGE)
+        ..setName("Battle Blow Gun Ability")
+        ..setOptions(1, 1)
+        ..setTargetsAllowed(1, "air,ground,enemy,neutral,organic,self")
+        ..setTargetType(1, 1)
+        ..setCooldown(1, BATTLE_COOLDOWN)
+
+function applyBattleBlowgunBonuses(unit troll)
+    if troll.isTroll() and customItemDefinitions != null
+        let blowgunDef = customItemDefinitions.get(ITEM_BATTLE_BLOW_GUN)
+        if blowgunDef != null
+            blowgunDef.applyBonuses(troll)
+
+function removeBattleBlowgunBonuses(unit troll)
+    if troll.isTroll() and customItemDefinitions != null
+        let blowgunDef = customItemDefinitions.get(ITEM_BATTLE_BLOW_GUN)
+        if blowgunDef != null
+            troll.addBonus(Bonus.DAMAGE, -4)
+            troll.addBonus(Bonus.STRENGTH, -2)
+            troll.addBonus(Bonus.AGILITY, -4)
+            troll.addBonus(Bonus.INTELLIGENCE, -4)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_BATTLE_BLOW_GUN
+            applyBattleBlowgunBonuses(GetManipulatingUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_BATTLE_BLOW_GUN
+            removeBattleBlowgunBonuses(GetManipulatingUnit()) 

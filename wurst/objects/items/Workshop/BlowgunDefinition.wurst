@@ -57,10 +57,10 @@ let DARK_THISTLE_MS_FACTOR     = 0.2
 let DARK_THISTLE_DECAYING_DMG  = 1.
 let DARK_THISTLE_DECAY_POWER   = 0.5
 
-let POISON_THISTLE_DURATION_HERO   = 7.
+public let POISON_THISTLE_DURATION_HERO   = 7.
 let THISTLE_DURATION_NORMAL = 16.
-let THISTLE_DURATION_HERO   = 6.
-let DARK_THISTLE_DURATION_HERO = 12.
+public let THISTLE_DURATION_HERO   = 6.
+public let DARK_THISTLE_DURATION_HERO = 12.
 
 let CAST_RANGE = 450.
 
@@ -70,13 +70,12 @@ public let NUM_TICK = 6
 public let LEN_TICK = 1.
 public let DARK_THISTLE_MANA_BURN = 2.
 
-let COOLDOWN = 9.
+public let COOLDOWN = 9.
 
 let ITEM_TOOLTIP = "Purchase |cffffcc00B|rlow Gun"
 
 // I used substring to get rid of the decimal since those value are of type real, didn't know how to do otherwise
-let BONE_TOOLTIP    = "" +
-    "Bone :".color(SPECIAL_COLOR) + " Deals {0} damage and stun for {1} seconds."
+public let BONE_TOOLTIP    =    "Bone :".color(SPECIAL_COLOR) + " Deals {0} damage and stun for {1} seconds."
     .format(
         BONE_THISTLE_DMG.toToolTipRed(),
         BONE_THISTLE_STUN_HERO.toString().substring(0, 4).color(COLOR_TURQUOISE) +
@@ -84,7 +83,7 @@ let BONE_TOOLTIP    = "" +
     )
     +makeToolTipCooldown(COOLDOWN)
 
-let THISTLE_TOOLTIP = "" +
+public let THISTLE_TOOLTIP = "" +
     "Thistle : ".color(GOLD_COLOR) +
     "Deals {0} initial damage and {1} damage every {2} seconds. "
     .format(
@@ -99,7 +98,7 @@ let THISTLE_TOOLTIP = "" +
     )
     +makeToolTipDuration(THISTLE_DURATION_HERO, COOLDOWN)
 
- let POISON_THISTLE_TOOLTIP = "" +
+public let POISON_THISTLE_TOOLTIP = "" +
     "Poison Thistle : ".color(GREEN_COLOR) +
     "Deals {0} initial damage and {1} damage every {2} seconds. "
     .format(
@@ -115,7 +114,7 @@ let THISTLE_TOOLTIP = "" +
     +makeToolTipDuration(POISON_THISTLE_DURATION_HERO, COOLDOWN)   
 
 
-let DARK_THISTLE_TOOLTIP = "" +
+public let DARK_THISTLE_TOOLTIP = "" +
     "Dark Thistle : ".color(COLOR_VIOLET) +
     "Deals {0} initial damage and {1} damage every {2} seconds, burn {3} mana over {4} seconds. "
     .format(
@@ -249,6 +248,7 @@ function createThistleAbility(int newId) returns AbilityDefinitionWardenShadowSt
         ..setClassification("Charged")
         ..setInterfaceIcon(ICON)
         //..setCooldownGroup(ABILITY_SPEAR.toRawCode())
+        ..setCooldownGroup("blowgunGroup")
         ..setLumberCost(5)
         ..setStockReplenishInterval(30)
         ..setDescription(ITEM_DESCRIPTION)

@@ -64,6 +64,9 @@ public class EquipmentCallbacks extends OwnedLinkedList<Pair<int, EquipmentCallb
 let onEquipCallbacks = new EquipmentCallbacks()
 let onUnequipCallbacks = new EquipmentCallbacks()
 
+// Add new callback lists for the more specific events
+let onUnequipToInventoryCallbacks = new EquipmentCallbacks()
+let onUnequipToGroundCallbacks = new EquipmentCallbacks()
 
 public function registerOnEquipEvent(int itemId, EquipmentCallback cb)
     onEquipCallbacks.push(pair(itemId, cb))
@@ -71,6 +74,12 @@ public function registerOnEquipEvent(int itemId, EquipmentCallback cb)
 public function registerOnUnequipEvent(int itemId, EquipmentCallback cb)
     onUnequipCallbacks.push(pair(itemId, cb))
 
+// New specific functions
+public function registerOnUnequipToInventoryEvent(int itemId, EquipmentCallback cb)
+    onUnequipToInventoryCallbacks.push(pair(itemId, cb))
+
+public function registerOnUnequipToGroundEvent(int itemId, EquipmentCallback cb)
+    onUnequipToGroundCallbacks.push(pair(itemId, cb))
 
 function runOnEquipCallbacks(unit troll, item itm)
     for each in onEquipCallbacks
@@ -84,6 +93,22 @@ function runOnUneqipCallbacks(unit troll, item itm)
         if each.a == itm.getTypeId()
             //print("onUnequip "+GetObjectName(each.a)+" == "+GetObjectName(itm.getTypeId()))
             each.b.run(troll, itm)
+
+// Run callbacks for unequip to inventory
+function runOnUnequipToInventoryCallbacks(unit troll, item itm)
+    for each in onUnequipToInventoryCallbacks
+        if each.a == itm.getTypeId()
+            each.b.run(troll, itm)
+    // Also run general unequip callbacks for backward compatibility
+    runOnUneqipCallbacks(troll, itm)
+
+// Run callbacks for unequip to ground
+function runOnUnequipToGroundCallbacks(unit troll, item itm)
+    for each in onUnequipToGroundCallbacks
+        if each.a == itm.getTypeId()
+            each.b.run(troll, itm)
+    // Also run general unequip callbacks for backward compatibility
+    runOnUneqipCallbacks(troll, itm)
 
 public class EquipmentSlots
     IterableMap<int, item> currentItems = new IterableMap<int, item>()
@@ -107,7 +132,7 @@ public class EquipmentSlots
             currentItems.put(index, null)
             nullTimer() ->       
                 gatheringSlotInstances.get(troll).updateDummyItems()
-                runOnUneqipCallbacks(troll, itm) 
+                runOnUnequipToInventoryCallbacks(troll, itm) 
                 nullTimer() ->
                     unequipItem(itm, index)
                         
@@ -119,6 +144,9 @@ public class EquipmentSlots
                 troll.addItemHandle(itm)
                 removeBonuses(itm.getTypeId(), troll)
                 destroy inventory
+                // Call the new specific callback for unequipping to inventory
+                runOnUnequipToInventoryCallbacks(troll, itm)
+                printTimedToPlayer("Unequiped "+GetObjectName(itm.getTypeId()), 5, troll.getOwner())
                 return
         currentItems.put(index, null)
         itm.setPos(troll.getPos())
@@ -126,8 +154,10 @@ public class EquipmentSlots
         removeBonuses(itm.getTypeId(), troll)
         refreshFrames()
         equippedItems.remove(itm)
-        printTimedToPlayer("Unequiped "+GetObjectName(itm.getTypeId()), 5, troll.getOwner())        
-        destroy inventory   
+        // Call the new specific callback for unequipping to ground
+        runOnUnequipToGroundCallbacks(troll, itm)
+        printTimedToPlayer("Unequiped "+GetObjectName(itm.getTypeId()), 5, troll.getOwner())
+        destroy inventory
         if cb != null
             destroy cb
 

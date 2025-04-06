@@ -40,6 +40,9 @@ class TrollProtectorResistAura
 
 
     function updateAffectedUnits()
+        if currentOwner != null and not currentOwner.hasAbility(ABILITY_TROLL_PROTECTOR_AURA)
+            print("ERROR: Troll Protector is in " + currentOwner.getName() + "'s inventory, but ability was not added to the troll")
+        
         let tribePlayers = currentOwner.getOwner().getTribe().getMembers()
         for each in tribePlayers
             let troll = each.getTroll()
@@ -54,9 +57,7 @@ class TrollProtectorResistAura
                 u.addAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
                 doAfter(3.) -> 
                     u.removeAbility(ABILITY_TROLL_PROTECTOR_RESIST_AURA)
-        else
-            doAfter(3.) -> 
-                u.removeAbility(ABILITY_TROLL_PROTECTOR_AURA)
+            
 /*
     function onDamage(unit u)   
         if not affectedUnits.has(u)
@@ -71,7 +72,8 @@ class TrollProtectorResistAura
         nullTimer() -> 
             dummy.issueImmediateOrder("immolation")
             dummy.getOwner().getPlayerAlliance(otherPlayer, whichAllianceSetting)
-            */
+*/
+
     function onDrop()
         if currentOwner.hasAbility(ABILITY_TROLL_PROTECTOR_AURA)
             currentOwner.removeAbility(ABILITY_TROLL_PROTECTOR_AURA)
@@ -83,6 +85,9 @@ class TrollProtectorResistAura
 
     function onPickUp(unit _currentOwner)
         currentOwner = _currentOwner
+        if not currentOwner.hasAbility(ABILITY_TROLL_PROTECTOR_AURA)
+            currentOwner.addAbility(ABILITY_TROLL_PROTECTOR_AURA)
+            
         cb = doPeriodically(0.25) (CallbackPeriodic cb) ->
             updateAffectedUnits()
 
@@ -172,6 +177,9 @@ class TrollProtectorAura extends AbilityDefinitionPaladinDevotionAura
     new TrollProtectorAura(ABILITY_TROLL_PROTECTOR_AURA)
 
 function onPickUp(unit troll, item itm)
+    if troll.isType(UNIT_TYPE_STRUCTURE)
+        return
+        
     let instance = instances.get(itm)
     if instance == null
         instances.put(itm, new TrollProtectorResistAura(troll))
@@ -189,14 +197,14 @@ init
         if EventData.getManipulatedItem().getTypeId() == ITEM_TROLL_PROTECTOR
             onPickUp(EventData.getManipulatingUnit(), EventData.getManipulatedItem()) 
 
-    registerOnEquipEvent(ITEM_TROLL_PROTECTOR) (unit troll, item itm) ->
-        if itm.getTypeId() == ITEM_TROLL_PROTECTOR
-            onPickUp(troll, itm)
+//    registerOnEquipEvent(ITEM_TROLL_PROTECTOR) (unit troll, item itm) ->
+//        if itm.getTypeId() == ITEM_TROLL_PROTECTOR
+//            onPickUp(troll, itm)
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if EventData.getManipulatedItem().getTypeId() == ITEM_TROLL_PROTECTOR
             onDrop(EventData.getManipulatingUnit(), EventData.getManipulatedItem())
-
-    registerOnUnequipEvent(ITEM_TROLL_PROTECTOR) (unit troll, item itm) ->
-        if itm.getTypeId() == ITEM_TROLL_PROTECTOR
+            
+    registerOnUnequipToGroundEvent(ITEM_TROLL_PROTECTOR) (unit troll, item itm) ->
+        if itm.getTypeId() == ITEM_TROLL_PROTECTOR 
             onDrop(troll, itm)

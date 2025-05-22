@@ -17,6 +17,8 @@ import LocalObjectIDs
 import PreventNet
 import ToolTipsUtils
 import UnitExtensions
+import CustomItemDefinition
+import ObjectIDManager
 
 let HUNTING_NET_ENSNARE = compiletime(ABIL_ID_GEN.next())
 
@@ -65,8 +67,8 @@ let TT_NET = "A twine net that can be used to net enemies."
         ..setCastRange(1, NET_CAST_RANGE)
         ..setEditorSuffix("(Wurst)")
 
-@compiletime function createHuntingNet()
-    createPerishableItem(ITEM_HUNTING_NET)
+public constant ITEM_HUNTING_NET_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HUNTING_NET_DUMMY_UNIT")
+public constant ITEM_HUNTING_NET_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HUNTING_NET)
         ..setAbilities(toRawCode(HUNTING_NET_ENSNARE))
         ..setCooldownGroup(toRawCode(ABILITY_ENSNARE))
         ..setInterfaceIcon(LocalIcons.bTNHuntingNet)
@@ -79,8 +81,12 @@ let TT_NET = "A twine net that can be used to net enemies."
         ..setTooltipExtended(TT_HUNTING_NET)
         ..setDescription("Reusable net as long as target dies while ensnared")
         ..setNumberofCharges(1)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_HUNTING_NET_DUMMY_UNIT)
+        )
 
-    createPerishableItem(ITEM_NETS)
+public constant ITEM_NETS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_NETS_DUMMY_UNIT")
+public constant ITEM_NETS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_NETS)
         ..setAbilities(toRawCode(ABILITY_ENSNARE))
         ..setCooldownGroup(toRawCode(ABILITY_ENSNARE))
         ..setInterfaceIcon(Icons.bTNEnsnare)
@@ -92,6 +98,9 @@ let TT_NET = "A twine net that can be used to net enemies."
         ..setTooltipExtended(TT_NET)
         ..setDescription("Can net opponents")
         ..setNumberofCharges(3)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_NETS_DUMMY_UNIT)
+        )
 
 function onHuntNet()
     let target = GetSpellTargetUnit()

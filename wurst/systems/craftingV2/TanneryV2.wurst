@@ -2,25 +2,28 @@ package TanneryV2
 
 import LocalObjectIDs
 import ClosureTimers
-import CustomItemDefinition
+import CustomItemType
+import BootsDefinition
+import CoatDefinition
+import GlovesDefinition
 
 let UNIT_REQUIREMENT = UNIT_TANNERY
 
 public function initializeTanneryItems()
-    new CustomItemDefinition(ITEM_ELK_SKIN_BOOTS)
+    new CustomItemType(ITEM_ELK_SKIN_BOOTS, ITEM_ELK_SKIN_BOOTS_DEFINITION)
     ..addBonusIntelligence(2)
     ..addSpecialAbilities(ABILITY_SPEED_BONUS_60)
     ..setItemRecipe(ITEM_ELK_HIDE, ITEM_ELK_HIDE)
     ..setQuickMakeAbility(ABILITY_QM_ELK_SKIN_BOOTS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_ELK_SKIN_GLOVES)
+    new CustomItemType(ITEM_ELK_SKIN_GLOVES, ITEM_ELK_SKIN_GLOVES_DEFINITION)
     ..addBonusAttackSpeed(10)
     ..setItemRecipe(ITEM_ELK_HIDE, ITEM_ELK_HIDE)
     ..setQuickMakeAbility(ABILITY_QM_ELK_SKIN_GLOVES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_ELK_SKIN_COAT)
+    new CustomItemType(ITEM_ELK_SKIN_COAT, ITEM_ELK_SKIN_COAT_DEFINITION)
     ..addBonusStrength(2)
     ..addBonusIntelligence(2)
     ..addBonusArmour(1)
@@ -28,7 +31,7 @@ public function initializeTanneryItems()
     ..setQuickMakeAbility(ABILITY_QM_ELK_SKIN_COAT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_WOLF_SKIN_BOOTS)
+    new CustomItemType(ITEM_WOLF_SKIN_BOOTS, ITEM_WOLF_SKIN_BOOTS_DEFINITION)
     ..addBonusIntelligence(4)
     ..addBonusAgility(4)
     ..addSpecialAbilities(ABILITY_SPEED_BONUS_60)
@@ -37,7 +40,7 @@ public function initializeTanneryItems()
     ..setQuickMakeAbility(ABILITY_QM_JUNGLE_WOLF_SKIN_BOOTS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_WOLF_SKIN_GLOVES)
+    new CustomItemType(ITEM_WOLF_SKIN_GLOVES, ITEM_WOLF_SKIN_GLOVES_DEFINITION)
     ..addBonusAttackSpeed(15)
     ..addBonusDamage(2)
     ..addBonusArmour(2)
@@ -45,7 +48,7 @@ public function initializeTanneryItems()
     ..setQuickMakeAbility(ABILITY_QM_JUNGLE_WOLF_SKIN_GLOVES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_WOLF_SKIN_COAT)
+    new CustomItemType(ITEM_WOLF_SKIN_COAT, ITEM_WOLF_SKIN_COAT_DEFINITION)
     ..addBonusStrength(3)
     ..addBonusIntelligence(2)
     ..addBonusArmour(2)
@@ -53,7 +56,7 @@ public function initializeTanneryItems()
     ..setQuickMakeAbility(ABILITY_QM_JUNGLE_WOLF_SKIN_COAT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEAR_SKIN_COAT)
+    new CustomItemType(ITEM_BEAR_SKIN_COAT, ITEM_BEAR_SKIN_COAT_DEFINITION)
     ..addBonusStrength(6)
     ..addBonusIntelligence(4)
     ..addBonusArmour(3)
@@ -61,7 +64,7 @@ public function initializeTanneryItems()
     ..setQuickMakeAbility(ABILITY_QM_JUNGLE_BEAR_SKIN_COAT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEAR_SKIN_BOOTS)
+    new CustomItemType(ITEM_BEAR_SKIN_BOOTS, ITEM_BEAR_SKIN_BOOTS_DEFINITION)
     ..addBonusIntelligence(5)
     ..addBonusStrength(6)
     ..addBonusArmour(3)
@@ -70,7 +73,7 @@ public function initializeTanneryItems()
     ..setQuickMakeAbility(ABILITY_QM_JUNGLE_BEAR_SKIN_BOOTS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEAR_SKIN_GLOVES)
+    new CustomItemType(ITEM_BEAR_SKIN_GLOVES, ITEM_BEAR_SKIN_GLOVES_DEFINITION)
     ..addBonusAttackSpeed(20)
     ..addBonusDamage(3)
     ..addBonusArmour(3)
@@ -78,4 +81,7 @@ public function initializeTanneryItems()
     ..setQuickMakeAbility(ABILITY_QM_JUNGLE_BEAR_SKIN_GLOVES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-        
+
+init
+    doAfter(1.) -> 
+        initializeTanneryItems()      

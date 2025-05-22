@@ -13,6 +13,9 @@ import ToolTipsUtils
 import LocalObjectIDs
 import LocalItemObjEditing
 import RegisterEvents
+import ObjectIdGenerator
+import ObjectIDManager
+import CustomItemDefinition
 
 let EVASION_CHANCE = 0.10
 
@@ -141,8 +144,8 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setItemAbility(true)
         ..setEditorSuffix("(Wurst)")
 
-@compiletime function createElkSkinBoots() returns ItemDefinition
-    return createBasicItem(ITEM_ELK_SKIN_BOOTS)
+public constant ITEM_ELK_SKIN_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ELK_SKIN_BOOTS_DUMMY_UNIT")
+public constant ITEM_ELK_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ELK_SKIN_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
             ABILITY_INT_BONUS_2
@@ -159,9 +162,12 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Elk Skin Boots")
         ..setTooltipExtended(TT_ELK_SKIN_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_ELK_SKIN_BOOTS_DUMMY_UNIT)
+        )
 
-@compiletime function createWolfSkinBoots() returns ItemDefinition
-    return createBasicItem(ITEM_WOLF_SKIN_BOOTS)
+
+public constant ITEM_WOLF_SKIN_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_SKIN_BOOTS_DUMMY_UNIT")
+public constant ITEM_WOLF_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_SKIN_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
             ABILITY_INT_BONUS_4,
@@ -180,9 +186,12 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Wolf Skin Boots")
         ..setTooltipExtended(TT_WOLF_SKIN_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_WOLF_SKIN_BOOTS_DUMMY_UNIT)
+        )
 
-@compiletime function createWolfsStaminaBoots() returns ItemDefinition
-    return createBasicItem(ITEM_WOLFS_STAMINA_BOOTS)
+
+public constant ITEM_WOLFS_STAMINA_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLFS_STAMINA_BOOTS_DUMMY_UNIT")
+public constant ITEM_WOLFS_STAMINA_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLFS_STAMINA_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_100,
             ABILITY_INT_BONUS_10,
@@ -201,10 +210,13 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Boots of Wolfs Stamina")
         ..setTooltipExtended(TT_WOLFS_STAMINA_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_WOLFS_STAMINA_BOOTS_DUMMY_UNIT)
+        )
 
 
-@compiletime function createBearSkinBoots() returns ItemDefinition
-    return createBasicItem(ITEM_BEAR_SKIN_BOOTS)
+
+public constant ITEM_BEAR_SKIN_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_SKIN_BOOTS_DUMMY_UNIT")
+public constant ITEM_BEAR_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_SKIN_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
             ABILITY_INT_BONUS_5,
@@ -223,10 +235,13 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Bear Skin Boots")
         ..setTooltipExtended(TT_BEAR_SKIN_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_BEAR_SKIN_BOOTS_DUMMY_UNIT)
+        )
 
 
-@compiletime function createBearsTenacityBoots() returns ItemDefinition
-    return createBasicItem(ITEM_BEARS_TENACITY_BOOTS)
+
+public constant ITEM_BEARS_TENACITY_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEARS_TENACITY_BOOTS_DUMMY_UNIT")
+public constant ITEM_BEARS_TENACITY_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEARS_TENACITY_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
             ABILITY_STR_BONUS_8,
@@ -245,9 +260,12 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Boots of Bear's Tenacity")
         ..setTooltipExtended(TT_BEARS_TENACITY_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_BEARS_TENACITY_BOOTS_DUMMY_UNIT)
+        )
 
-@compiletime function createBoneBoots() returns ItemDefinition
-    return createBasicItem(ITEM_BONE_BOOTS)
+
+public constant ITEM_BONE_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_BOOTS_DUMMY_UNIT")
+public constant ITEM_BONE_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BONE_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_70,
             ABILITY_INT_BONUS_3,
@@ -265,9 +283,12 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Bone Boots")
         ..setTooltipExtended(TT_BONE_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_BONE_BOOTS_DUMMY_UNIT)
+        )
 
-@compiletime function createIronBoots() returns ItemDefinition
-    return createBasicItem(ITEM_IRON_BOOTS)
+
+public constant ITEM_IRON_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_BOOTS_DUMMY_UNIT")
+public constant ITEM_IRON_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_80,
             ABILITY_INT_BONUS_6,
@@ -285,9 +306,12 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Iron Boots")
         ..setTooltipExtended(TT_IRON_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_IRON_BOOTS_DUMMY_UNIT)
+        )
 
-@compiletime function createSteelBoots() returns ItemDefinition
-    return createBasicItem(ITEM_STEEL_BOOTS)
+
+public constant ITEM_STEEL_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_BOOTS_DUMMY_UNIT")
+public constant ITEM_STEEL_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_100,
             ABILITY_INT_BONUS_10,
@@ -305,9 +329,12 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Steel Boots")
         ..setTooltipExtended(TT_STEEL_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_STEEL_BOOTS_DUMMY_UNIT)
+        )
 
-@compiletime function createAnabolicBoots() returns ItemDefinition
-    return createBasicItem(ITEM_ANABOLIC_BOOTS)
+
+public constant ITEM_ANABOLIC_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ANABOLIC_BOOTS_DUMMY_UNIT")
+public constant ITEM_ANABOLIC_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ANABOLIC_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_200,
             ABILITY_STATS_BONUS_4 ,
@@ -326,9 +353,12 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Anabolic Boots")
         ..setTooltipExtended(TT_ANA_BOOTS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_ANABOLIC_BOOTS_DUMMY_UNIT)
+        )
 
-@compiletime function createHydraFins() returns ItemDefinition
-    return createBasicItem(ITEM_HYDRA_FINS)
+
+public constant ITEM_HYDRA_FINS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HYDRA_FINS_DUMMY_UNIT")
+public constant ITEM_HYDRA_FINS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HYDRA_FINS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_100,
             ABILITY_STATS_BONUS_5,
@@ -344,4 +374,7 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setNameEnhance("Hydra Fins")
         ..setTooltipExtended(ARTIFACT_PREFIX + TT_HYDRA_FINS)
         ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_HYDRA_FINS_DUMMY_UNIT)
+        )
+
 

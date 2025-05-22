@@ -19,6 +19,8 @@ import StackNSplit
 import DummyUnits
 import LocalObjectIDs
 import LocalAssets
+import ObjectIDManager
+import CustomItemDefinition
 
 // The configuration for the mechanism preventing clustering wards.
 @configurable let CLAY_WARD_LIMIT_RANGE = 500.0
@@ -147,12 +149,14 @@ let dummies = new HashMap<unit, unit>()
         ..presetUnitType(lvl -> UNIT_LIVING_CLAY.toRawCode())
         ..setAreaofEffect(1, SIGHT_RADIUS.toReal())
 
-@compiletime function createLivingClayItem()
-    new ItemDefinition(ITEM_LIVING_CLAY, ItemIds.sentryWards)
+
+public constant ITEM_LIVING_CLAY_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_LIVING_CLAY_DUMMY_UNIT")
+public constant ITEM_LIVING_CLAY_DEFINITION = compiletime(new CustomItemDefinition(ITEM_LIVING_CLAY, ItemIds.sentryWards)
         ..setAbilities(commaList(PLACE_ABIL_ID))
         ..setInterfaceIcon(LocalIcons.bTNGreenSentryWard)
         ..setModelUsed(Units.sentryWard)
         ..setNumberofCharges(3)
+        ..setItemPerishable()
         ..setGoldCost(0)
         ..setLumberCost(5)
         ..setCooldownGroup(PLACE_ABIL_ID.toRawCode())
@@ -163,6 +167,8 @@ let dummies = new HashMap<unit, unit>()
         ..setScalingValue(0.5)
         ..setCanBeSoldToMerchants(false)
         ..setStockReplenishInterval(999)
+        ..constructItemShopDummyUnit(ITEM_LIVING_CLAY_DUMMY_UNIT)
+        )        
 
 // Pairs each ward with a dummy to impart the aura.
 function onWardEnter(unit target)

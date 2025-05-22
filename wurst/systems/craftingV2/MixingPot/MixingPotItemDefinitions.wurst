@@ -2,9 +2,19 @@ package MixingPotItemDefinitions
 
 import LocalObjectIDs
 import ClosureTimers
-import CustomItemDefinition
+import CustomItemType
 import ShieldsDefinition
 import CoatDefinition
+import CraftedMaterials
+import AnabolicPotion
+import Cure
+import HealingPotion
+import ManaPotion
+import DiseasePotion
+import DrunkPotion
+import AntiMagicPotion
+import NetherPotion
+import AcidBomb
 
 let UNIT_REQUIREMENT = UNIT_MIXING_POT
 
@@ -12,85 +22,88 @@ let UNIT_REQUIREMENT = UNIT_MIXING_POT
 
 
 public function initializeMixingPotItems()
-    new CustomItemDefinition(ITEM_SPIRIT_WIND)
+    new CustomItemType(ITEM_SPIRIT_WIND, ITEM_SPIRIT_WIND_DEFINITION)
     ..setItemRecipe(ITEM_RIVER_STEM, ITEM_RIVER_STEM)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SPIRIT_WIND)
 
-    new CustomItemDefinition(ITEM_SPIRIT_DARKNESS)
+    new CustomItemType(ITEM_SPIRIT_DARKNESS, ITEM_SPIRIT_DARKNESS_DEFINITION)
     ..setItemRecipe(ITEM_RIVER_STEM, ITEM_RIVER_ROOT, ITEM_ATHELAS_SEED, ITEM_ATHELAS_SEED)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SPIRIT_DARKNESS)
     
-    new CustomItemDefinition(ITEM_SPIRIT_WATER)
+    new CustomItemType(ITEM_SPIRIT_WATER, ITEM_SPIRIT_WATER_DEFINITION)
     ..setItemRecipe(ITEM_RIVER_ROOT, ITEM_RIVER_ROOT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SPIRIT_WATER)
     
-    new CustomItemDefinition(ITEM_LESSER_ESSENCE)
+    new CustomItemType(ITEM_LESSER_ESSENCE, ITEM_LESSER_ESSENCE_DEFINITION)
     ..setItemRecipe(ITEM_NATIVE_HERB, ITEM_NATIVE_HERB)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_LESSER_ESSENCE)
     
-    new CustomItemDefinition(ITEM_GREATER_ESSENCE)
+    new CustomItemType(ITEM_GREATER_ESSENCE, ITEM_GREATER_ESSENCE_DEFINITION) 
     ..setItemRecipe(ITEM_EXOTIC_HERB, ITEM_EXOTIC_HERB)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_GREATER_ESSENCE)
 
-    new CustomItemDefinition(ITEM_ANABOLIC_POTION)
+    new CustomItemType(ITEM_ANABOLIC_POTION, ITEM_ANABOLIC_POTION_DEFINITION)
     ..setMixingPotManaRequirement(6)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_ANABOLIC_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     
-    new CustomItemDefinition(ITEM_CURE_ALL)
+    new CustomItemType(ITEM_CURE_ALL, ITEM_CURE_ALL_DEFINITION)
     ..setMixingPotManaRequirement(3)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_CURE_ALL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_HEALING_POTION)
+    new CustomItemType(ITEM_HEALING_POTION, ITEM_HEALING_POTION_DEFINITION)
     ..setMixingPotManaRequirement(4)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_HEALING_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_MANA_POTION)
+    new CustomItemType(ITEM_MANA_POTION, ITEM_MANA_POTION_DEFINITION)
     ..setMixingPotManaRequirement(3)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_MANA_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_DISEASE_POTION)
+    new CustomItemType(ITEM_DISEASE_POTION, ITEM_DISEASE_POTION_DEFINITION)
     ..setMixingPotManaRequirement(5)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_DISEASE_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_DRUNKS_POTION)
+    new CustomItemType(ITEM_DRUNKS_POTION, ITEM_DRUNKS_POTION_DEFINITION)
     ..setMixingPotManaRequirement(10)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_DRUNKS_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_FERVOR_POTION)
+    new CustomItemType(ITEM_FERVOR_POTION)
     ..setMixingPotManaRequirement(10)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_FERVOR_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_NETHER_POTION)
+    new CustomItemType(ITEM_NETHER_POTION, ITEM_NETHER_POTION_DEFINITION)
     ..setMixingPotManaRequirement(15)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_NETHER_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_ANTI_MAGIC_POTION)
+    new CustomItemType(ITEM_ANTI_MAGIC_POTION, ITEM_ANTI_MAGIC_POTION_DEFINITION)
     ..setMixingPotManaRequirement(3)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_ANTI_MAGIC_POTION)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEE_HIVE)
+    new CustomItemType(ITEM_BEE_HIVE)
     ..setMixingPotManaRequirement(6)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_BEE_HIVE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_ACID_BOMB)
+    new CustomItemType(ITEM_ACID_BOMB, ITEM_ACID_BOMB_DEFINITION)
     ..setMixingPotManaRequirement(25)
     ..setMixingPotQuickMakeAbility(ABILITY_QM_ACID_BOMB)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
 
+init
+    doAfter(1.) -> 
+        initializeMixingPotItems()
     

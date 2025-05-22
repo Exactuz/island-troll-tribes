@@ -18,6 +18,8 @@ import LocalAssets
 import LocalObjectIDs
 import LocalItemObjEditing
 import AbilityObjectCreationUtils
+import CustomItemDefinition
+import ObjectIDManager
 
 let ABILITY_ID = compiletime(ABIL_ID_GEN.next())
 let ABILITY_DUMMY_ID = compiletime(ABIL_ID_GEN.next())
@@ -69,13 +71,14 @@ let TOOLTIP = "" +
     ..setCasterAttachmentPoint("overhead")
     ..setCasterAttachments(0)
 
-@compiletime function createOraclePotion() returns ItemDefinition
+@compiletime function createOraclePotion()
 
     createItemBerserkCast(ABILITY_DUMMY_ID)
     ..setName("Oracle Potion Cast")
     ..setCooldown(1, COOLDOWN)
 
-    return createPerishableItem(ITEM_ORACLE_POTION)
+public constant ITEM_ORACLE_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ORACLE_POTION_DUMMY_UNIT")
+public constant ITEM_ORACLE_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ORACLE_POTION)
     ..setNameEnhance("Oracle Potion")
     ..setAbilities(toRawCode(ABILITY_DUMMY_ID))
     ..setTooltipExtended(TOOLTIP)
@@ -86,6 +89,9 @@ let TOOLTIP = "" +
     ..setDescription("Give true sight")
     ..setCooldownGroup(toRawCode('pinv'))
     ..setNumberofCharges(1)
+    ..constructItemShopDummyUnit(ITEM_ORACLE_POTION_DUMMY_UNIT)
+    ..setItemPerishable()
+    )
 
 HashMap<unit, timer> removalTimers = new HashMap<unit,timer>()
 

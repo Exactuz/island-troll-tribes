@@ -21,6 +21,8 @@ import ToolTipsUtils
 import UnitExtensions
 import MakruraCuirass
 import HealingItems
+import CustomItemDefinition
+import ObjectIDManager
 
 constant ABIL_STATS_BATTLE            = compiletime(ABIL_ID_GEN.next())
 public constant ABIL_SPELL_RESISTANCE_BATTLE = compiletime(ABIL_ID_GEN.next())
@@ -190,8 +192,8 @@ public constant TT_SCALE_COAT = "" +
                 TargetsAllowed.vulnerable
             ))
 
-@compiletime function createElkSkinCoat() returns ItemDefinition
-    return createBasicItem(ITEM_ELK_SKIN_COAT)
+public constant ITEM_ELK_SKIN_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ELK_SKIN_COAT_DUMMY_UNIT")
+public constant ITEM_ELK_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ELK_SKIN_COAT)
         ..setInterfaceIcon(LocalIcons.bTNElkHideCoat)
         ..setModelUsed(LocalItems.skinCoat)
         ..setNameEnhance("Elk Skin Coat")
@@ -203,9 +205,11 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(255)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_ELK)
+        ..constructItemShopDummyUnit(ITEM_ELK_SKIN_COAT_DUMMY_UNIT)
+        )
 
-@compiletime function createWolfSkinCoat() returns ItemDefinition
-    return createUsableItem(ITEM_WOLF_SKIN_COAT)
+public constant ITEM_WOLF_SKIN_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_SKIN_COAT_DUMMY_UNIT")
+public constant ITEM_WOLF_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_SKIN_COAT)
         ..setInterfaceIcon(LocalIcons.bTNWolfHideCoat)
         ..setModelUsed(LocalItems.skinCoat)
         ..setNameEnhance("Wolf Skin Coat")
@@ -217,9 +221,11 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(255)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_WOLF)
+        ..constructItemShopDummyUnit(ITEM_WOLF_SKIN_COAT_DUMMY_UNIT)
+        )
 
-@compiletime function createCoatOfWolfsVoracity() returns ItemDefinition
-    return createUsableItem(ITEM_WOLF_VORACITY_COAT)
+public constant ITEM_WOLF_VORACITY_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_VORACITY_COAT_DUMMY_UNIT")
+public constant ITEM_WOLF_VORACITY_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_VORACITY_COAT)
         ..setInterfaceIcon(LocalIcons.bTNChestOfWolfVoracity)
         ..setModelUsed(LocalItems.coatOfWolfVoracity)
         ..setNameEnhance("Coat of Wolf's Voracity")
@@ -232,10 +238,12 @@ public constant TT_SCALE_COAT = "" +
         ..setScalingValue(1.25)
         ..setAbilities(ABIL_WOLF_VORACITY)
         ..setCooldownGroup(toRawCode(ABILITY_WOLFS_VORACITY_COAT_ACTIVE))
+        ..constructItemShopDummyUnit(ITEM_WOLF_VORACITY_COAT_DUMMY_UNIT)
+        )
 
 
-@compiletime function createBearSkinCoat() returns ItemDefinition
-    return createBasicItem(ITEM_BEAR_SKIN_COAT)
+public constant ITEM_BEAR_SKIN_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_SKIN_COAT_DUMMY_UNIT")
+public constant ITEM_BEAR_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_SKIN_COAT)
         ..setInterfaceIcon(LocalIcons.bTNBearHideCoat)
         ..setModelUsed(LocalItems.skinCoat)
         ..setNameEnhance("Bear Skin Coat")
@@ -247,9 +255,11 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(19)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_BEAR)
+        ..constructItemShopDummyUnit(ITEM_BEAR_SKIN_COAT_DUMMY_UNIT)
+        )
 
-@compiletime function createCoatOfBearsTerrifyingPresence() returns ItemDefinition
-    return createBasicItem(ITEM_BEAR_PRESENCE_COAT)
+public constant ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT")
+public constant ITEM_BEAR_PRESENCE_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_PRESENCE_COAT)
         ..setInterfaceIcon(LocalIcons.bTNCoatOfBearPresence)
         ..setModelUsed(LocalItems.coatOfBearPresence)
         ..setNameEnhance("Coat of bear's terrifying presence")
@@ -261,9 +271,11 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(150 )
         ..setScalingValue(1.25)
         ..setAbilities(ABIL_BEAR_PRESENCE)
+        ..constructItemShopDummyUnit(ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT)
+        )
 
-@compiletime function createBoneCoat() returns ItemDefinition
-    return createBasicItem(ITEM_BONE_COAT)
+public constant ITEM_BONE_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_COAT_DUMMY_UNIT")
+public constant ITEM_BONE_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BONE_COAT)
         ..setInterfaceIcon(LocalIcons.bTNBoneCoat)
         ..setModelUsed(LocalItems.boneCoat)
         ..setNameEnhance("Bone Coat")
@@ -275,9 +287,11 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(255)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_BONE)
+        ..constructItemShopDummyUnit(ITEM_BONE_COAT_DUMMY_UNIT)
+        )
 
-@compiletime function createIronCoat() returns ItemDefinition
-    return createBasicItem(ITEM_IRON_COAT)
+public constant ITEM_IRON_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_COAT_DUMMY_UNIT")
+public constant ITEM_IRON_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_COAT)
         ..setInterfaceIcon(Icons.bTNImprovedMoonArmor)
         ..setModelUsed(LocalItems.armor)
         ..setNameEnhance("Iron Coat")
@@ -289,9 +303,11 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(255)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_IRON)
+        ..constructItemShopDummyUnit(ITEM_IRON_COAT_DUMMY_UNIT)
+        )
 
-@compiletime function createSteelCoat() returns ItemDefinition
-    return createUsableItem(ITEM_STEEL_COAT)
+public constant ITEM_STEEL_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_COAT_DUMMY_UNIT")
+public constant ITEM_STEEL_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_COAT)
         ..setInterfaceIcon(Icons.bTNAdvancedMoonArmor)
         ..setModelUsed(LocalItems.armor)
         ..setNameEnhance("Steel Coat")
@@ -304,24 +320,28 @@ public constant TT_SCALE_COAT = "" +
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_STEEL)
         ..setCooldownGroup(ABIL_STEEL)
+        ..constructItemShopDummyUnit(ITEM_STEEL_COAT_DUMMY_UNIT)
+        )
 
-@compiletime function createMakruruCuirass() returns ItemDefinition
-    return createUsableItem(ITEM_MAKRURA_CUIRASS)
+public constant ITEM_MAKRURA_CUIRASS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAKRURA_CUIRASS_DUMMY_UNIT")
+public constant ITEM_MAKRURA_CUIRASS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAKRURA_CUIRASS)
         ..setInterfaceIcon(Icons.bTNNagaArmorUp3)
         ..setModelUsed(LocalItems.makruraCuirass)
         ..setNameEnhance("Makruru Cuirass")
         ..setTooltipExtended(TT_MAKRURA_CUIRASS)
         ..setDescription(TT_MAKRURA_CUIRASS)
-        ..setLumberCost(43)
+        ..setLumberCost(30)
         //..setTintingColor1Red(255)
         //..setTintingColor2Green(0)
         //..setTintingColor3Blue(128)
         ..setScalingValue(1.)
         ..setAbilities(ABIL_MAKRURA_CUIRASS)
         ..setCooldownGroup(ABIL_MAKRURA_CUIRASS)
+        ..constructItemShopDummyUnit(ITEM_MAKRURA_CUIRASS_DUMMY_UNIT)
+        )
 
-@compiletime function createBattleArmor() returns ItemDefinition
-    return createUsableItem(ITEM_BATTLE_ARMOR)
+public constant ITEM_BATTLE_ARMOR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_ARMOR_DUMMY_UNIT")
+public constant ITEM_BATTLE_ARMOR_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_ARMOR)
         ..setInterfaceIcon(Icons.bTNNagaArmorUp2)
         ..setModelUsed(LocalItems.armor)
         ..setNameEnhance("Battle Armor")
@@ -334,9 +354,11 @@ public constant TT_SCALE_COAT = "" +
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_BATTLE)
         ..setCooldownGroup("AIms")
+        ..constructItemShopDummyUnit(ITEM_BATTLE_ARMOR_DUMMY_UNIT)
+        )
 
-@compiletime function createRobeOfMagi() returns ItemDefinition
-    return createUsableItem(ITEM_ROBE_OF_THE_MAGI)
+public constant ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT")
+public constant ITEM_ROBE_OF_THE_MAGI_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ROBE_OF_THE_MAGI)
         ..setInterfaceIcon(Icons.bTNRobeOfTheMagi)
         ..setModelUsed(LocalItems.armor)
         ..setNameEnhance("Robe of the Magi")
@@ -349,9 +371,11 @@ public constant TT_SCALE_COAT = "" +
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_ROBE_OF_THE_MAGI)
         ..setCooldownGroup("AIms")
+        ..constructItemShopDummyUnit(ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT)
+        )
 
-@compiletime function createScaleCoat() returns ItemDefinition
-    return createBasicItem(ITEM_HARDEN_SCALES)
+public constant ITEM_HARDEN_SCALES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HARDEN_SCALES_DUMMY_UNIT")
+public constant ITEM_HARDEN_SCALES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HARDEN_SCALES)
         ..setInterfaceIcon(Icons.bTNNagaArmorUp3)
         ..setModelUsed(LocalItems.hydraCoat)
         ..setNameEnhance("Hydra Scale Coat")
@@ -363,6 +387,8 @@ public constant TT_SCALE_COAT = "" +
         ..setTintingColor3Blue(255)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_SCALE)
+        ..constructItemShopDummyUnit(ITEM_HARDEN_SCALES_DUMMY_UNIT)
+        )
 
 init
     EventListener.onCast(ABIL_CAST_BATTLE) (unit caster) ->

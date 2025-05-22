@@ -1,0 +1,96 @@
+package MakruraRewardHandler
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ClosureEvents
+import ClosureTimers
+import ColorUtils
+import SpearsDefinition
+import ChannelAbilityPreset
+import MurlocPoison
+import Orders
+import DamageEvent
+import DamageListeners
+import HashList
+import HashMap
+import ObjectIDManager
+import LocalObjectIDs2
+import Items
+import OnUnitEnterLeave
+import PlayerExtensions
+import UnitExtensions
+import GameStates
+import GameState
+import ItemShopDummyUnit
+import BossRewardHandler
+import ClosureForGroups
+import StandardTextTags
+import SharedGold
+
+
+public constant UNIT_MAKRURA_REWARD_SELECTOR = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_MAKRURA_REWARD_SELECTOR")
+public constant MAX_MANA = 47
+public constant MAKRURA_REWARDS_LIST = new LinkedList<int>()
+    ..add(ITEM_MAKRURA_CLAWS)
+    ..add(ITEM_MAKRURA_CUIRASS)
+    ..add(ITEM_MAKRURA_CARAPACE)
+    ..add(ITEM_TIDEBRINGER)
+    ..add(ITEM_STEEL_INGOT)
+    ..add(ITEM_IRON_INGOT)
+    ..add(ITEM_GREATER_ESSENCE)
+    ..add(ITEM_LESSER_ESSENCE)
+    ..add(ITEM_SPIRIT_WIND)
+    ..add(ITEM_SPIRIT_WATER)
+
+@compiletime function constructRewardSelectorUnit()
+    new UnitDefinition(UNIT_MAKRURA_REWARD_SELECTOR, UnitIds.siren)
+        ..setNormalAbilities(
+            commaList(
+                AbilityIds.invulnerable,
+                AbilityIds.shopPurchaseItem,
+                AbilityIds.ghostVisible,
+                AbilityIds.sellUnitDynamic,
+                LocalAbilityIds.selectUnit
+            )
+        )
+        ..setAttacksEnabled(0)
+        ..setHitPointsMaximumBase(500000)
+        ..setManaMaximum(MAX_MANA)
+        ..setManaRegeneration(0)
+        ..setHideMinimapDisplay(true)
+
+function onDeath(unit dyingUnit, unit killingUnit)
+    if dyingUnit.getTypeId() != UNIT_MAKRURA
+        return
+    killingUnit.getOwner().addLumber(MAX_MANA)
+    nullTimer() -> 
+        handleTransaction(killingUnit)
+    flashEffect(Abilities.pileofGold, dyingUnit.getPos())
+    /*
+    forUnitsInRange(dyingUnit.getPos(), 800.)(unit u)->
+        if (u.isAllyOf(killingUnit.getOwner()) or u.getOwner() == killingUnit.getOwner()) and u.isTroll()
+            flashEffect(Abilities.pileofGold, u.getPos())
+    */
+    standardTextTag(dyingUnit.getPos(), "+"+MAX_MANA.toString().substring(0,2))
+        ..setVisibility(GetLocalPlayer().isAllyOf(killingUnit.getOwner()))
+        ..setColor(COLOR_GOLD)   
+
+    let rewardHandlerUnit = createUnit(players[PLAYER_NEUTRAL_PASSIVE], UNIT_MAKRURA_REWARD_SELECTOR, dyingUnit.getPos(), dyingUnit.getFacingAngle())
+    doAfter(ANIMATION_PERIOD) -> 
+        new BossRewardHandler(rewardHandlerUnit, MAKRURA_REWARDS_LIST)
+
+init
+
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
+        onDeath(GetDyingUnit(), GetKillingUnit())    

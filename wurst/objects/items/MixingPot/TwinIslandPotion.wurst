@@ -17,6 +17,8 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import LocalAssets
 import UnitExtensions
+import CustomItemDefinition
+import ObjectIDManager
 
 constant ABIL      = compiletime(ABIL_ID_GEN.next())
 constant CAST_ABIL = compiletime(ABIL_ID_GEN.next())
@@ -57,8 +59,8 @@ public constant TT_TWIN_ISLAND_POTION = "" +
         ..setName("Twin Island Potion Cast")
 
 
-@compiletime function createTwinIslandPotion() returns ItemDefinition
-    return createPerishableItem(ITEM_POTION_TWIN_ISLANDS)
+public constant ITEM_POTION_TWIN_ISLANDS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POTION_TWIN_ISLANDS_DUMMY_UNIT")
+public constant ITEM_POTION_TWIN_ISLANDS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_POTION_TWIN_ISLANDS)
         ..setInterfaceIcon(Icons.bTNPotionGreenSmall)
         ..setModelUsed(LocalItems.potionGreenSmall)
         ..setNameEnhance("Twin Island Potion")
@@ -69,6 +71,9 @@ public constant TT_TWIN_ISLAND_POTION = "" +
         ..setScalingValue(0.70)
         ..setCooldownGroup(commaList(CAST_ABIL))
         ..setStockReplenishInterval(120)
+        ..constructItemShopDummyUnit(ITEM_POTION_TWIN_ISLANDS_DUMMY_UNIT)
+        ..setItemPerishable()
+        )
 
 
 init

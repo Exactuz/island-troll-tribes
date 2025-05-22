@@ -12,12 +12,13 @@ import ClosuresForItems
 import HashMap
 import Mixing
 import Tanning
-import Transmute
 import SimError
 import TrollUnitTextConstant
 import Classes
 import Transformation
 import PlayerExtensions
+import UnitExtensions
+import LocalObjectIDs
 
 let prior = new Callbacks()
 let after = new Callbacks()
@@ -48,9 +49,9 @@ public class QuickMake
         EventListener.onCast(spellAbilityId, caster -> onCast(caster))
 
     function onCast(unit caster)
-        if not caster.isTroll() and caster.getTypeId() != UNIT_CRAFT_MASTER
+        if caster.getTypeId() != UNIT_CRAFT_MASTER
             return
-        runCallbacks(prior, caster, 0)
+        //runCallbacks(prior, caster, 0)
         // The position around which matches are searched for.
         let pos = caster.getPos()
 
@@ -140,7 +141,7 @@ public class QuickMake
             tan(caster, spellAbilityId)
 
         // Disable transmutation while the original inventory is restored.
-        gg_trg_transmute.disable()
+        //gg_trg_transmute.disable()
 
         // Add back all items not used as an ingredient.
 
@@ -149,7 +150,7 @@ public class QuickMake
         caster.moveInventoryDown()
 
         // Allow transmuations once the inventory is restored.
-        gg_trg_transmute.enable()
+        //gg_trg_transmute.enable()
 
         // Reset the threshold modification used for Essence of Bees.
         // TODO: Remove this once the above logic is simplified.

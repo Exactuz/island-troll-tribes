@@ -43,15 +43,15 @@ public class Makrura extends Hostile
 
     override function getDrops() returns LinkedList<int>
         let drops = super.getDrops()
-            ..add(ITEM_SPIRIT_WATER)
-            ..add(ITEM_SPIRIT_WIND)
+           // ..add(ITEM_SPIRIT_WATER)
+           // ..add(ITEM_SPIRIT_WIND)
         return drops
 
     override function getNumCorpses() returns int
         return 16
 
     override function onDeath()
-        spawnMakruraItem()
+        //spawnMakruraItem()
         dead = true
         super.onDeath()  
 

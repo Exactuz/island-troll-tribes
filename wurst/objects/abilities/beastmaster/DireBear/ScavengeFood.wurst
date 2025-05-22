@@ -32,11 +32,12 @@ import FoodSlots
 import ItemPoolExtensions
 import StackNSplit
 
+let MANACOST = 20
+let SCAVENGE_COOLDOWN = 30.
 let TT_NAME = "Scavenge for food"
 let TT_EXT = "Scavenge for food from hidden stash or mushroom colony, attempting to collect all edible food as well as generating one unit of food."+
-             "\nScavenging extra food has a separate two minutes cooldown per stash."+
-             "\nThe amount of food scavenged is doubled at lvl {0}.".format("4".color(COLOR_GOLD_STR))
-let MANACOST = 20
+             "\nThe amount of food scavenged is doubled at lvl {0}.".format("4".color(COLOR_GOLD_STR))+
+             "\nHas {0} seconds cooldown.".format(SCAVENGE_COOLDOWN.toString().color(COLOR_LIGHT_BLUE))
 
 @compiletime function createScavengeFoodAbility()
     new ChannelAbilityPreset(ABILITY_SCAVENGE_FOOD, 1, true)
@@ -48,7 +49,8 @@ let MANACOST = 20
         ..setManaCost(1, MANACOST)
         ..presetTooltipNormal(lvl->TT_NAME)
         ..setName(TT_NAME)
-        ..presetTooltipNormalExtended(lvl->TT_EXT)    
+        ..presetTooltipNormalExtended(lvl->TT_EXT)
+        ..presetCooldown(lvl->SCAVENGE_COOLDOWN)
         ..presetTargetsAllowed(lvl ->commaList(
             TargetsAllowed.neutral,
             TargetsAllowed.ground,
@@ -67,7 +69,7 @@ let hiddenStashPool = CreateItemPool()
 class ScavengedStash
     unit scavengedStash
     unit troll
-    real cooldown = 120.
+    real cooldown = 1.
     construct(unit _scavengedStash, unit _troll)
         scavengedStash = _scavengedStash
         troll = _troll

@@ -5,6 +5,8 @@ import Assets
 import AbilityObjEditing
 import ObjectIds
 import ObjectIdGenerator
+import CustomItemDefinition
+import ObjectIDManager
 
 // Local lib Imports:
 import Items
@@ -40,8 +42,8 @@ public constant TT_ANTI_MAGIC_POTION = "" +
     ..setCooldown(1, COOLDOWN)
     ..setEditorSuffix("(Wurst)")
 
-@compiletime function createAntiMagicPotion() returns ItemDefinition
-    return createPerishableItem(ITEM_ANTI_MAGIC_POTION)
+public constant ITEM_ANTI_MAGIC_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ANTI_MAGIC_POTION_DUMMY_UNIT")
+public constant ITEM_ANTI_MAGIC_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ANTI_MAGIC_POTION)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionAntiMagic)
         ..setNameEnhance(NAME)
@@ -53,3 +55,6 @@ public constant TT_ANTI_MAGIC_POTION = "" +
         ..setCooldownGroup(commaList(ABILITY_ANTI_MAGIC_POTION))
         ..setStockReplenishInterval(120)
         ..setNumberofCharges(2)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_ANTI_MAGIC_POTION_DUMMY_UNIT)
+        )

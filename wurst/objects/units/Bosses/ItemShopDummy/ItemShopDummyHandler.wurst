@@ -1,0 +1,112 @@
+package ItemShopDummyHandler
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ClosureEvents
+import ClosureTimers
+import ColorUtils
+import SpearsDefinition
+import ChannelAbilityPreset
+import MurlocPoison
+import Orders
+import DamageEvent
+import DamageListeners
+import HashList
+import HashMap
+import ObjectIDManager
+import LocalObjectIDs2
+import Items
+import OnUnitEnterLeave
+import PlayerExtensions
+import UnitExtensions
+import GameStates
+import GameState
+import ItemShopDummyUnit
+import UnitUtils
+import SimError
+import SharedGold
+
+public constant BUYING_RANGE = 1200.
+
+public class ItemShopDummyHandler
+    int unitId
+    unit thisUnit
+    UnitDefinition unitDefinition
+    HashList<ItemShopDummyUnit> rewardList = new HashList<ItemShopDummyUnit>()
+    LinkedList<int>soldItems
+    static IterableMap<unit, thistype> instances = new IterableMap<unit, thistype>
+
+    static function getInstanceByItemId(unit u) returns thistype
+        let instance = instances.get(u)
+        return instance 
+
+    construct(unit whichUnit, LinkedList<int> soldItems)
+        this.soldItems = soldItems
+        this.thisUnit = whichUnit
+        instances.put(thisUnit, this)
+        initializeItemStock()
+        registerEventListener()
+
+    function registerEventListener()
+        EventListener.add(EVENT_PLAYER_UNIT_SELL)->
+            handleUnitSold()
+
+    function initializeItemStock()
+        for itemId in soldItems
+            //thisUnit.removeItemFromStock(itemId)
+            let instance = ItemShopDummyUnit.getInstanceByItemId(itemId)
+            if instance == null
+                Log.debug("Missing reward instance for item "+GetObjectName(itemId))
+            else
+                let dummyUnitId = instance.dummyUnitId
+                thisUnit.addUnitToStock(dummyUnitId, instance.stockMaximum, instance.stockMaximum)
+                rewardList.add(instance)
+
+    function selectTarget(unit soldUnit) returns unit
+        unit target = null
+        let p = soldUnit.getOwner()  
+        let troll = p.getTroll()
+        if troll.getPos().distanceTo(thisUnit.getPos())< BUYING_RANGE
+            target = troll
+        if target == null
+            target = findNearestUnit(thisUnit.getPos(), BUYING_RANGE , u->(u.isStructure() and u.isAllyOf(p)))
+        return target
+
+    function refund(unit soldUnit, string errorMessage)
+        let instance = ItemShopDummyUnit.getInstanceByUnitId(soldUnit.getTypeId())
+        thisUnit.addUnitToStock(soldUnit.getTypeId(), instance.stockMaximum, instance.stockMaximum)
+        soldUnit.getOwner().addLumber(instance.goldCost)
+        handleTransaction(soldUnit)
+        soldUnit.remove()
+        simError(soldUnit.getOwner(), errorMessage)
+
+    function handleUnitSold()
+        let sellingUnit = GetSellingUnit()
+        let soldUnit = GetSoldUnit()
+        if sellingUnit != thisUnit
+            return
+        let target = selectTarget(soldUnit)
+        if target == null
+            refund(soldUnit, "No eligible target in radius")
+            return
+        nullTimer() ->
+            for each in rewardList
+                if each.dummyUnitId == soldUnit.getTypeId()
+                    let itm = createItem(each.itemId, target.getPos())
+                    soldUnit.remove()
+                    nullTimer() -> 
+                        target.triggerSmoothPickup(itm)
+                        target.addItemHandle(itm)
+                        Log.debug("Player "+GetPlayerName(soldUnit.getOwner())+" bought item "+GetObjectName(each.itemId)) 
+    

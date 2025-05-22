@@ -1,0 +1,92 @@
+package BossRewardHandler
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ClosureEvents
+import ClosureTimers
+import ColorUtils
+import SpearsDefinition
+import ChannelAbilityPreset
+import MurlocPoison
+import Orders
+import DamageEvent
+import DamageListeners
+import HashList
+import HashMap
+import ObjectIDManager
+import LocalObjectIDs2
+import Items
+import OnUnitEnterLeave
+import PlayerExtensions
+import UnitExtensions
+import GameStates
+import GameState
+import ItemShopDummyUnit
+import UnitUtils
+import SimError
+import ItemShopDummyHandler
+
+public constant BUYING_RANGE = 1200.
+public constant TT_BOSS_REWARD_EXT = "You can purchase items for merchant's {0}. {1} is displayed as merchant's mana.".format("Favour".color(COLOR_LIGHT_BLUE), "Favour".color(COLOR_LIGHT_BLUE))+
+                                     "\nItem {0} cost is equivalent to {1} cost.".format("Favour".color(COLOR_LIGHT_BLUE), "gold".color(COLOR_GOLD_STR))
+
+public class BossRewardHandler extends ItemShopDummyHandler
+    construct(unit whichUnit, LinkedList<int> soldItems)
+        super(whichUnit, soldItems)
+        //doAfter(ANIMATION_PERIOD) -> 
+        thisUnit.addAbility(ABILITY_BOSS_REWARD_HANDLRER) 
+            
+
+    override function handleUnitSold()
+        let sellingUnit = GetSellingUnit()
+        let soldUnit = GetSoldUnit()
+        if sellingUnit != thisUnit
+            return
+        let target = selectTarget(soldUnit)
+        if target == null
+            refund(soldUnit, "No eligible target in radius")
+            return
+        if not unitHasEnoughFavour(soldUnit)
+            refund(soldUnit, "Not enough favour")
+            return
+        nullTimer() -> 
+            for each in rewardList
+                if each.dummyUnitId == soldUnit.getTypeId()
+                    let itm = createItem(each.itemId, target.getPos())
+                    soldUnit.remove()
+                    nullTimer() -> 
+                        target.triggerSmoothPickup(itm)
+                        target.addItemHandle(itm)
+                        thisUnit.setMana(thisUnit.getMana()-each.goldCost)
+                        Log.debug("Player "+GetPlayerName(soldUnit.getOwner())+" bought item "+GetObjectName(each.itemId)) 
+
+    function unitHasEnoughFavour(unit soldUnit) returns bool
+        let instance = ItemShopDummyUnit.getInstanceByUnitId(soldUnit.getTypeId())
+        if thisUnit.getMana() < instance.goldCost
+            return false
+        return true
+
+
+
+
+@compiletime function createNightStalkerDummyAbility()
+    new AbilityDefinitionEvasion(ABILITY_BOSS_REWARD_HANDLRER)
+        ..setChancetoEvade(1, 0.)
+        ..setLevels(1)
+        ..presetButtonPosNormal(3, 2)
+        ..setTooltipNormal(1, "Boss Rewards")
+        ..setIconNormal(Icons.bTNMedalionOfCourage)
+        ..setTooltipLearn("Boss Rewards")
+        ..setTooltipLearnExtended(TT_BOSS_REWARD_EXT)
+        ..setTooltipNormalExtended(1, TT_BOSS_REWARD_EXT)

@@ -26,7 +26,7 @@ let DAMAGE = 24.
 let ICON = ""
 let TT_NORM = "Spiked Net"
 let INTERVAL = 0.5
-let TARGET_ALLOWED = "air,enemies,ground,neutral,nonancient,organic"
+let TARGET_ALLOWED = "air,enemies,ground,neutral,nonancient,organic,vulnerable"
 let TT_EXTENDED = "Binds an enemy target for {0}/{1} seconds on heroes/normal units. Air units and fish will be moved next to the caster.|nDeals {2} damage over time."
                         .format(HERO_DURATION.toString().color(COLOR_ORANGE), NORMAL_DURATION.toString().color(COLOR_ORANGE), DAMAGE.toString().color(COLOR_RED))
                         + makeToolTipCooldown(COOLDOWN)

@@ -30,12 +30,12 @@ import QuickMake
 import AxesDefinition
 import InstantDummyCaster
 import DamageEvent
-import CustomItemDefinition
+import CustomItemType
 import PlayerExtensions
 import ToolTipsUtils
 import initlater WeaponsOfChoice
 
-let CD = 20.
+let CD = 10.
 let CD_DUAL_WIELDING = 10.
 let RANGE = 700.
 let PROJECTILE_SPEED = 900

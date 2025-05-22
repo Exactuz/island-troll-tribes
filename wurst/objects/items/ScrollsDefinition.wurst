@@ -19,6 +19,8 @@ import LocalItemObjEditing
 import LocalObjectIDs
 import ColorUtils
 import UnitExtensions
+import CustomItemDefinition
+import ObjectIDManager
 
 public let ABIL_ABILITY_SPEED_BONUS_60 = compiletime(ABIL_ID_GEN.next())
 public let ABILITY_HASTE = commaList(ABILITY_HASTE_AOE, ABILITY_SPEED_BONUS_60)
@@ -26,10 +28,10 @@ public let ABILITY_HASTE = commaList(ABILITY_HASTE_AOE, ABILITY_SPEED_BONUS_60)
 public let ROOT_DMG            = 5.
 public let FIRE_DMG            = 60.
 public let STONE_ARMOR         = 5.
-public let TSUNAMI_DMG         = 25.
+public let TSUNAMI_DMG         = 35.
 // The TOTAL damage a crushing wave can do
 public let TSUNAMI_MAX_DMG     = 200.
-public let TSUNAMI_STRUCT_DMG  = 30.
+public let TSUNAMI_STRUCT_DMG  = 20.
 public let SKELETAL_MINION_DMG = 7
 public let HASTE_SPEED_BONUS   = 5.
 
@@ -282,8 +284,8 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
             TargetsAllowed.ward
             ))
 
-@compiletime function createEntanglingRootsScroll() returns ItemDefinition
-    return createUsableItem(ITEM_SCROLL_ENTANGLING_ROOTS)
+public constant ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT")
+public constant ITEM_SCROLL_ENTANGLING_ROOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_ENTANGLING_ROOTS)
         ..setCooldownGroup(ABILITY_ROOT_CAST.toRawCode())
         ..setLumberCost(15)
         ..setAbilities(ABILITY_ROOT_CAST.toRawCode())
@@ -293,9 +295,11 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setNameEnhance("Scroll of Entangling Roots")
         ..setTooltipExtended(ENTANGLING_ROOT_TT)
         ..setClassification("Charged")
-
-@compiletime function createFireBallScroll() returns ItemDefinition
-    return createUsableItem(ITEM_SCROLL_FIREBALL)
+        ..constructItemShopDummyUnit(ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT)
+        )
+        
+public constant ITEM_SCROLL_FIREBALL_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_FIREBALL_DUMMY_UNIT")
+public constant ITEM_SCROLL_FIREBALL_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_FIREBALL)
         ..setCooldownGroup(ABILITY_SPEAR.toRawCode())
         ..setLumberCost(7)
         ..setAbilities(ABILITY_FIREBOLT.toRawCode())
@@ -305,9 +309,11 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setNameEnhance("Scroll of Fire Ball")
         ..setTooltipExtended(FIREBALL_TT)
         ..setClassification("Charged")
+        ..constructItemShopDummyUnit(ITEM_SCROLL_FIREBALL_DUMMY_UNIT)
+        )
 
-@compiletime function createLivingDeadScroll() returns ItemDefinition
-    return createUsableItem(ITEM_SCROLL_LIVING_DEAD)
+public constant ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT")
+public constant ITEM_SCROLL_LIVING_DEAD_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_LIVING_DEAD)
         ..setCooldownGroup(ABILITY_SKELETAL_MINION.toRawCode())
         ..setLumberCost(7)
         ..setAbilities(ABILITY_SKELETAL_MINION.toRawCode())
@@ -316,9 +322,11 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setInterfaceIcon(Icons.bTNSnazzyScroll)
         ..setNameEnhance("Scroll of Living Dead")
         ..setTooltipExtended(LIVING_DEAD_TT)
+        ..constructItemShopDummyUnit(ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT)
+        )
 
-@compiletime function createStoneShieldScroll() returns ItemDefinition
-    return createUsableItem(ITEM_SCROLL_STONE_ARMOR)
+public constant ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT")
+public constant ITEM_SCROLL_STONE_ARMOR_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_STONE_ARMOR)
         ..setCooldownGroup(ABILITY_FROST_ARMOR.toRawCode())
         ..setLumberCost(9)
         ..setAbilities(ABILITY_FROST_ARMOR.toRawCode())
@@ -328,9 +336,11 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setNameEnhance("Scroll of Stone Shield")
         ..setTooltipExtended(STONE_ARMOR_TT)
         ..setClassification("Charged")
+        ..constructItemShopDummyUnit(ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT)
+        )
 
-@compiletime function createHasteScroll() returns ItemDefinition
-    return createUsableItem(ITEM_SCROLL_HASTE)
+public constant ITEM_SCROLL_HASTE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_HASTE_DUMMY_UNIT")
+public constant ITEM_SCROLL_HASTE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_HASTE)
         ..setCooldownGroup(ABILITY_HASTE_AOE.toRawCode())
         ..setLumberCost(25)
         ..setAbilities(ABILITY_HASTE)
@@ -339,9 +349,11 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setInterfaceIcon(Icons.bTNScrollOfHaste)
         ..setNameEnhance("Scroll of Haste")
         ..setTooltipExtended(HASTE_TT)
+        ..constructItemShopDummyUnit(ITEM_SCROLL_HASTE_DUMMY_UNIT)
+        )
 
-@compiletime function createTsunamiScroll() returns ItemDefinition
-    return createUsableItem(ITEM_SCROLL_TSUNAMI)
+public constant ITEM_SCROLL_TSUNAMI_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_TSUNAMI_DUMMY_UNIT")
+public constant ITEM_SCROLL_TSUNAMI_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_TSUNAMI)
         ..setCooldownGroup(ABILITY_TSUNAMI.toRawCode())
         ..setLumberCost(9)
         ..setAbilities(ABILITY_TSUNAMI.toRawCode())
@@ -351,9 +363,11 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setNameEnhance("Scroll of Tsunami")
         ..setTooltipExtended(TSUNAMI_TT)
         ..setClassification("Charged")
+        ..constructItemShopDummyUnit(ITEM_SCROLL_TSUNAMI_DUMMY_UNIT)
+        )
 
-@compiletime function createCycloneScroll() returns ItemDefinition
-    return createUsableItem(ITEM_SCROLL_CYCLONE)
+public constant ITEM_SCROLL_CYCLONE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_CYCLONE_DUMMY_UNIT")
+public constant ITEM_SCROLL_CYCLONE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_CYCLONE)
         ..setCooldownGroup(ABILITY_CYCLONE.toRawCode())
         ..setLumberCost(9)
         ..setAbilities(ABILITY_CYCLONE.toRawCode())
@@ -362,6 +376,8 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
         ..setInterfaceIcon(Icons.bTNBansheeMaster)
         ..setNameEnhance("Scroll of Cyclone")
         ..setTooltipExtended(CYCLONE_TT)
+        ..constructItemShopDummyUnit(ITEM_SCROLL_CYCLONE_DUMMY_UNIT)
+        )
 
 
 function onCyclone(unit target)

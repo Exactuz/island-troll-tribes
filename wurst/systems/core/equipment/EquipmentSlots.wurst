@@ -47,7 +47,7 @@ import GatheringSlot
 import Sounds
 import SoundUtils
 import EquipmentSlotFrames
-import CustomItemDefinition
+import CustomItemType
 import InventoryLimits
 import Reflection
 import Lodash
@@ -210,27 +210,27 @@ public class EquipmentSlots
     function refreshItemTooltip(item itm)
 
     function applyBonuses(int itemId, unit troll)
-        let instance = customItemDefinitions.get(itemId)
+        let instance = CustomItemType.getInstance(itemId)
         if instance == null 
-            print("customItemDefinition doesnt exist for item "+GetObjectName(itemId))
+            print("customItemType doesnt exist for item "+GetObjectName(itemId))
         instance.applyBonuses(troll)
 
     function removeBonuses(int itemId, unit troll)
         if itemId == 0 
             return
-        let instance = customItemDefinitions.get(itemId)
+        let instance = CustomItemType.getInstance(itemId)
         if instance == null
-            print("customItemDefinition doesnt exist for item "+GetObjectName(itemId))
+            print("customItemType doesnt exist for item "+GetObjectName(itemId))
         instance.removeBonuses(troll)
 
     function onTransformation()
         for each in currentItems
             let itm = currentItems.get(each)
-            let customItemDefinition = customItemDefinitions.get(itm.getTypeId())
-            if customItemDefinition!= null
-                customItemDefinition.removeBonuses(troll)
+            let customItemType = CustomItemType.getInstance(itm.getTypeId())
+            if customItemType!= null
+                customItemType.removeBonuses(troll)
                 nullTimer() -> 
-                    customItemDefinition.applyBonuses(troll)
+                    customItemType.applyBonuses(troll)
 
     function findEquipmentItem() returns item
         let inventory = troll.getInventory()

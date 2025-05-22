@@ -25,7 +25,7 @@ import Transformation
 import UnitExtensions
 import BonusHandler
 import EquipmentSlots
-import CustomItemDefinition
+import CustomItemType
 
 
 
@@ -57,9 +57,9 @@ class Magefist
         let equippedItems = wearer.getOwner().getEquipmentSlots().currentItems
         var totalStrengthBonus = 0
         for each in equippedItems
-            let customItemDefinition = customItemDefinitions.get(equippedItems.get(each).getTypeId())
-            if customItemDefinition != null
-                totalStrengthBonus += customItemDefinition.strengthBonus
+            let customItemType = CustomItemType.getInstance(equippedItems.get(each).getTypeId())
+            if customItemType != null
+                totalStrengthBonus += customItemType.strengthBonus
         currentBonus = (wearer.getInt(true))/3
         if not (wearer.hasItem(itm) or hasMagefist())
             currentBonus = 0

@@ -1,0 +1,106 @@
+package MiscItems
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import Transformation
+import UnitIds
+import Items
+import LocalItemObjEditing
+import HashList
+import IdListConstant
+import QuickMake
+import BonusHandler
+import ItemRecipeV2
+import QuickMakeV2
+import initlater MixingPotV2
+import initlater CustomItemDefinition
+import initlater ItemShopDummyUnit
+import CustomItemType
+import CoatDefinition
+import MakruraClaw
+import ShieldsDefinition
+import LocalObjectIDs2
+import AxesDefinition
+
+
+
+function addItems() 
+    new CustomItemType(ITEM_HYDRA_FINS)
+    ..addBonusMovementSpeed(100)
+    ..addBonusArmour(5)
+    ..addBonusAgility(5)
+    ..addBonusIntelligence(5)
+    ..addBonusStrength(5)
+
+    new CustomItemType(ITEM_HYDRA_CLAWS)
+    ..addBonusAttackSpeed(35)
+    ..addBonusAgility(5)
+    ..addBonusIntelligence(5)
+    ..addBonusStrength(5)
+
+    new CustomItemType(ITEM_HYDRA_SCALE)
+    ..addBonusArmour(10)
+    ..addBonusIntelligence(2)
+    ..addBonusStrength(2)
+    ..addBonusAgility(2)
+
+    new CustomItemType(ITEM_MAKRURA_CUIRASS, ITEM_MAKRURA_CUIRASS_DEFINITION)
+    ..addBonusStrength(8)
+    ..addBonusArmour(3)
+
+
+    new CustomItemType(ITEM_PANTHER_FANG)
+    ..addBonusDamage(4)
+
+
+
+    new CustomItemType(ITEM_MAKRURA_CLAWS, ITEM_MAKRURA_CLAWS_DEFINITION)
+    ..addBonusDamage(8)
+    ..addBonusArmour(2)
+
+   
+    new CustomItemType(ITEM_MAKRURA_CARAPACE, ITEM_MAKRURA_CARAPACE_DEFINITION)
+    ..addBonusArmour(3)
+
+    new CustomItemType(ITEM_TIDEBRINGER, ITEM_TIDEBRINGER_DEFINITION)
+    ..addBonusDamage(10)
+    ..addBonusStrength(8)
+    ..addBonusIntelligence(8)
+
+init
+    doAfter(1.) -> 
+        addItems()

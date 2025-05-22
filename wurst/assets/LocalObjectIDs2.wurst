@@ -1,0 +1,17 @@
+package LocalObjectIDs2
+
+// Standard library imports:
+import ObjectIdGenerator
+
+// Third-party imports:
+import ObjectIDManager
+ 
+//LocalObjectIDs is split in multiple packages due to opertation limit bug.
+//TODO: merge when fixed
+
+
+
+public let UNIT_REWARD_SELECTOR        =compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_REWARD_SELECTOR")
+public let ABILITY_NEGATIVE_ATTACK_SPEED_20                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_NEGATIVE_ATTACK_SPEED_20")
+public let ABILITY_BOSS_REWARD_HANDLRER                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_BOSS_REWARD_HANDLRER")
+public let ITEM_TIDEBRINGER  = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_TIDEBRINGER")    

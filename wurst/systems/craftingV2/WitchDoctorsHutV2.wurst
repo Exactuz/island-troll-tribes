@@ -2,12 +2,16 @@ package WitchDoctorsHutV2
 
 import LocalObjectIDs
 import ClosureTimers
-import CustomItemDefinition
+import CustomItemType
+import CraftedMaterials
+import BuildingKitsDefinitions
+import ScrollsDefinition
+import CloaksDefinition
 
 let UNIT_REQUIREMENT = UNIT_WITCH_DOCTORS_HUT
 
 public function initializeWitchDoctorsHutItems()
-    new CustomItemDefinition(ITEM_CLOAK_OF_FLAMES)
+    new CustomItemType(ITEM_CLOAK_OF_FLAMES, ITEM_CLOAK_OF_FLAMES_DEFINITION)
     ..addBonusAgility(3)
     ..addBonusIntelligence(3)
     ..addBonusStrength(3)
@@ -16,7 +20,7 @@ public function initializeWitchDoctorsHutItems()
     ..setQuickMakeAbility(ABILITY_QM_CLOAK_FLAMES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_CLOAK_OF_MANA)
+    new CustomItemType(ITEM_CLOAK_OF_MANA, ITEM_CLOAK_OF_MANA_DEFINITION)
     ..addBonusAgility(3)
     ..addBonusIntelligence(3)
     ..addBonusStrength(3)
@@ -25,7 +29,7 @@ public function initializeWitchDoctorsHutItems()
     ..setQuickMakeAbility(ABILITY_QM_CLOAK_MANA)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_CLOAK_OF_FROST)
+    new CustomItemType(ITEM_CLOAK_OF_FROST, ITEM_CLOAK_OF_FROST_DEFINITION)
     ..addBonusAgility(3)
     ..addBonusIntelligence(3)
     ..addBonusStrength(3)
@@ -34,7 +38,7 @@ public function initializeWitchDoctorsHutItems()
     ..setQuickMakeAbility(ABILITY_QM_CLOAK_FROST)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_CLOAK_OF_HEALING)
+    new CustomItemType(ITEM_CLOAK_OF_HEALING, ITEM_CLOAK_OF_HEALING_DEFINITION)
     ..addBonusAgility(3)
     ..addBonusArmour(3)
     ..addBonusIntelligence(3)
@@ -43,7 +47,7 @@ public function initializeWitchDoctorsHutItems()
     ..setQuickMakeAbility(ABILITY_QM_CLOAK_HEALING)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_NECROMANCERS_CLOAK)
+    new CustomItemType(ITEM_NECROMANCERS_CLOAK, ITEM_NECROMANCERS_CLOAK_DEFINITION)
     ..addBonusAgility(3)
     ..addBonusArmour(3)
     ..addBonusIntelligence(3)
@@ -52,74 +56,79 @@ public function initializeWitchDoctorsHutItems()
     ..setQuickMakeAbility(ABILITY_QM_NECROMANCERS_CLOAK)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_EMPOWERED_NECROMANCERS_CLOAK)
+    new CustomItemType(ITEM_EMPOWERED_NECROMANCERS_CLOAK, ITEM_EMPOWERED_NECROMANCERS_CLOAK_DEFINITION)
     ..addBonusArmour(5)
     ..addBonusAgility(3)
     ..addBonusIntelligence(3)
     ..addBonusStrength(3)
 
-    new CustomItemDefinition(ITEM_VENOM_FANG)
+    new CustomItemType(ITEM_VENOM_FANG)
     ..addBonusDamage(4)
     ..addSpecialAbilities(ABILITY_ATTACK_TREE)
     ..setItemRecipe(ITEM_PANTHER_FANG, ITEM_POISON, ITEM_POISON, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MAGIC)
     ..setQuickMakeAbility(ABILITY_QM_VENOM_FANG)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_SCROLL_ENTANGLING_ROOTS)
+    new CustomItemType(ITEM_SCROLL_ENTANGLING_ROOTS, ITEM_SCROLL_ENTANGLING_ROOTS_DEFINITION)
     ..setItemRecipe(ITEM_TINDER, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_ROOT)
 
 
-    new CustomItemDefinition(ITEM_SCROLL_STONE_ARMOR)
+    new CustomItemType(ITEM_SCROLL_STONE_ARMOR, ITEM_SCROLL_STONE_ARMOR_DEFINITION)
     ..setItemRecipe(ITEM_STONE, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_ARMOR)
 
 
-    new CustomItemDefinition(ITEM_SCROLL_TSUNAMI)
+    new CustomItemType(ITEM_SCROLL_TSUNAMI, ITEM_SCROLL_TSUNAMI_DEFINITION)
     ..setItemRecipe(ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_TSUNAMI)
 
 
-    new CustomItemDefinition(ITEM_SCROLL_LIVING_DEAD)
+    new CustomItemType(ITEM_SCROLL_LIVING_DEAD, ITEM_SCROLL_LIVING_DEAD_DEFINITION)
     ..setItemRecipe(ITEM_BONE, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_LIVING_DEAD)
 
 
-    new CustomItemDefinition(ITEM_POISON)
+    new CustomItemType(ITEM_POISON, ITEM_POISON_DEFINITION)
     ..setItemRecipe(ITEM_MUSHROOM, ITEM_MUSHROOM, ITEM_MUSHROOM)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_POISON)
 
 
-    new CustomItemDefinition(ITEM_SCROLL_FIREBALL)
+    new CustomItemType(ITEM_SCROLL_FIREBALL, ITEM_SCROLL_FIREBALL_DEFINITION)
     ..setItemRecipe(ITEM_FLINT, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_FIREBALL)
 
 
-    new CustomItemDefinition(ITEM_SCROLL_CYCLONE)
+    new CustomItemType(ITEM_SCROLL_CYCLONE, ITEM_SCROLL_CYCLONE_DEFINITION)
     ..setItemRecipe(ITEM_SPIRIT_WIND, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_CYCLONE)
 
 
-    new CustomItemDefinition(ITEM_SCROLL_HASTE)
+    new CustomItemType(ITEM_SCROLL_HASTE, ITEM_SCROLL_HASTE_DEFINITION)
     ..setItemRecipe(ITEM_ELK_SKIN_BOOTS, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SCROLL_HASTE)
 
 
-    new CustomItemDefinition(ITEM_MAGIC_SEED)
+    new CustomItemType(ITEM_MAGIC_SEED, ITEM_MAGIC_SEED_DEFINITION)
     ..setItemRecipe(ITEM_STICK, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_MAGIC_SEED)
 
 
-    new CustomItemDefinition(ITEM_SPIRIT_WARD_KIT)
+    new CustomItemType(ITEM_SPIRIT_WARD_KIT, ITEM_SPIRIT_WARD_KIT_DEFINITION)
     ..setItemRecipe(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL, ITEM_STICK)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SPIRIT_WARD)             
+
+
+init
+    doAfter(1.) -> 
+        initializeWitchDoctorsHutItems()

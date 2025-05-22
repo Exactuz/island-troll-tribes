@@ -16,6 +16,8 @@ import HealingSystem
 import BuffObjEditing
 import DamageEvent
 import DamageListeners
+import CustomItemDefinition
+import ObjectIDManager
 
 public constant HEALING = 120.
 public constant CAST_RANGE = 600.
@@ -58,8 +60,8 @@ public constant TT_HEALING_SALVE = "" +
 
 
 
-@compiletime function createHealingSalve() returns ItemDefinition
-    return createPerishableItem(ITEM_HEALING_SALVE)
+public constant ITEM_HEALING_SALVE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HEALING_SALVE_DUMMY_UNIT")
+public constant ITEM_HEALING_SALVE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HEALING_SALVE)
         ..setInterfaceIcon(LocalIcons.bTNBronzeBowlFullGreen)
         ..setModelUsed(LocalItems.healingSalve)
         ..setNameEnhance(NAME)
@@ -71,6 +73,9 @@ public constant TT_HEALING_SALVE = "" +
         ..setScalingValue(0.7)
         ..setCooldownGroup(commaList(ABILITY_HEALING_SALVE))
         ..setStockReplenishInterval(120)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_HEALING_SALVE_DUMMY_UNIT)
+        )
 
 @compiletime function createBuffRejuvenationHealth() returns BuffDefinition
     return new BuffDefinition(BUFF_HEALING_SALVE, BuffIds.rejuvenation) // Rejuvination

@@ -5,6 +5,7 @@ import ObjectIdGenerator
 
 // Third-party imports:
 import ObjectIDManager
+
 public let ABILITY_CHAOS                             =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_CHAOS")   
 public let ABILITY_WARRIOR_SHIELD_CHARGE_DUMMY                             =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_WARRIOR_SHIELD_CHARGE_DUMMY")       
 public let ABILITY_WARRIOR_SHIELD_CHARGE                             =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_WARRIOR_SHIELD_CHARGE")     

@@ -48,7 +48,7 @@ HashList<unit> instances = new HashList<unit>()
 
 @compiletime function createAbilityArmor()           
     new AbilityDefinitionDefenseBonusPlus1(ABILITY_THICK_FUR_ARMOR_BONUS)
-        ..setDefenseBonus(1, 4)
+        ..setDefenseBonus(1, 3)
         ..setName("Armor Bonus + 4")
         ..setEditorSuffix("(Wurst)")            
 

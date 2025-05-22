@@ -15,6 +15,8 @@ import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
+import CustomItemDefinition
+import ObjectIDManager
 
 
 public let DISEASE_HEALING_REDUCTION_FACTOR = 0.
@@ -52,8 +54,8 @@ public constant TT_DISEASE_POTION = "" +
             )
         )
 
-@compiletime function createDiseasePotion() returns ItemDefinition
-    return createPerishableItem(ITEM_DISEASE_POTION)
+public constant ITEM_DISEASE_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_DISEASE_POTION_DUMMY_UNIT")
+public constant ITEM_DISEASE_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_DISEASE_POTION)
         ..setInterfaceIcon(Icons.bTNPotionGreen)
         ..setModelUsed(LocalItems.potionGreen)
         ..setNameEnhance("Disease Potion")
@@ -65,6 +67,9 @@ public constant TT_DISEASE_POTION = "" +
         ..setCooldownGroup(commaList(ABILITY_DISEASE_POTION))
         ..setStockReplenishInterval(120)
         ..setStockMaximum(4)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_DISEASE_POTION_DUMMY_UNIT)
+        )
 
 public function isUnitDiseased(unit u) returns bool
     return diseaseInstances.has(u)

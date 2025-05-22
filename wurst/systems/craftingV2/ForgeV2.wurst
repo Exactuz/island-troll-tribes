@@ -2,16 +2,23 @@ package ForgeV2
 
 import LocalObjectIDs
 import ClosureTimers
-import CustomItemDefinition
+import CustomItemType
 import ShieldsDefinition
 import ChameleonHatchet
 import AbilityObjectCreationUtils
 import ObjectIds
+import CraftedMaterials
+import GlovesDefinition
+import BootsDefinition
+import CoatDefinition
+import AxesDefinition
+import StavesDefinition
+import SpearsDefinition
 
 let UNIT_REQUIREMENT = UNIT_FORGE
 
 public function initializeForgeItems()
-    new CustomItemDefinition(ITEM_BONE_GLOVES)
+    new CustomItemType(ITEM_BONE_GLOVES, ITEM_BONE_GLOVES_DEFINITION)
     ..addBonusAttackSpeed(20)
     ..addBonusDamage(1)
     ..addBonusArmour(2)
@@ -19,7 +26,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_BONE_GLOVES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BONE_BOOTS)
+    new CustomItemType(ITEM_BONE_BOOTS, ITEM_BONE_BOOTS_DEFINITION)
     ..addBonusMovementSpeed(70)
     ..addBonusIntelligence(3)
     ..addBonusArmour(3)
@@ -28,7 +35,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_BONE_BOOTS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BONE_COAT)
+    new CustomItemType(ITEM_BONE_COAT, ITEM_BONE_COAT_DEFINITION)
     ..addBonusStrength(3)
     ..addBonusIntelligence(4)
     ..addBonusArmour(2)
@@ -36,7 +43,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_BONE_COAT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     
-    new CustomItemDefinition(ITEM_IRON_BOOTS)
+    new CustomItemType(ITEM_IRON_BOOTS, ITEM_IRON_BOOTS_DEFINITION)
     ..addBonusMovementSpeed(80)
     ..addBonusIntelligence(6)
     ..addBonusArmour(3)
@@ -45,14 +52,14 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_IRON_BOOTS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_MAGE_MASHER)
+    new CustomItemType(ITEM_MAGE_MASHER, ITEM_MAGE_MASHER_DEFINITION)
     ..addBonusDamage(7)
     ..addSpecialAbilities(ABILITY_ATTACK_TREE)
     ..setItemRecipe(ITEM_STICK, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setQuickMakeAbility(ABILITY_QM_MAGE_MASHER)
     ..setUnitRequirement(UNIT_REQUIREMENT)
          
-    new CustomItemDefinition(ITEM_IRON_COAT)
+    new CustomItemType(ITEM_IRON_COAT, ITEM_IRON_COAT_DEFINITION)
     ..addBonusStrength(4)
     ..addBonusIntelligence(6)
     ..addBonusArmour(3)
@@ -60,7 +67,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_IRON_COAT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_IRON_GLOVES)
+    new CustomItemType(ITEM_IRON_GLOVES, ITEM_IRON_GLOVES_DEFINITION)
     ..addBonusAttackSpeed(25)
     ..addBonusDamage(2)
     ..addBonusArmour(3)
@@ -68,7 +75,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_IRON_GLOVES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_STEEL_GLOVES)
+    new CustomItemType(ITEM_STEEL_GLOVES, ITEM_STEEL_GLOVES_DEFINITION)
     ..addBonusAttackSpeed(35)
     ..addBonusArmour(5)
     ..addBonusDamage(4)
@@ -76,7 +83,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_STEEL_GLOVES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_STEEL_BOOTS)
+    new CustomItemType(ITEM_STEEL_BOOTS, ITEM_STEEL_BOOTS_DEFINITION)
     ..addSpecialAbilities(ABILITY_SPEED_BONUS_100)
     ..addBonusIntelligence(10)
     ..addBonusArmour(5)
@@ -84,7 +91,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_STEEL_BOOTS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_STEEL_COAT)
+    new CustomItemType(ITEM_STEEL_COAT, ITEM_STEEL_COAT_DEFINITION)
     ..addBonusStrength(8)
     ..addBonusIntelligence(8)
     ..addBonusArmour(5)
@@ -93,21 +100,21 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_STEEL_COAT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_STEEL_AXE)
+    new CustomItemType(ITEM_STEEL_AXE, ITEM_STEEL_AXE_DEFINITION)
     ..addBonusDamage(12)
     ..addSpecialAbilities(ABILITY_ATTACK_TREE)
     ..setItemRecipe(ITEM_STICK, ITEM_STEEL_INGOT, ITEM_STEEL_INGOT)
     ..setQuickMakeAbility(ABILITY_QM_STEEL_AXE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     
-    new CustomItemDefinition(ITEM_IRON_AXE)
+    new CustomItemType(ITEM_IRON_AXE, ITEM_IRON_AXE_DEFINITION)
     ..addBonusDamage(8)
     ..addSpecialAbilities(ABILITY_ATTACK_TREE)
     ..setItemRecipe(ITEM_STICK, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
     ..setQuickMakeAbility(ABILITY_QM_IRON_AXE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     
-    new CustomItemDefinition(ITEM_IRON_STAFF)
+    new CustomItemType(ITEM_IRON_STAFF, ITEM_IRON_STAFF_DEFINITION)
     ..addBonusDamage(8)
     ..addBonusArmour(2)
     ..addBonusIntelligence(8)
@@ -115,14 +122,14 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_IRON_STAFF)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BONE_SHIELD)
+    new CustomItemType(ITEM_BONE_SHIELD, ITEM_BONE_SHIELD_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BONE_SHIELD_BLOCK_ID))))
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
     ..setItemRecipe(ITEM_SHIELD, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE, ITEM_BONE)
     ..setQuickMakeAbility(ABILITY_QM_BONE_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_SHIELD)
+    new CustomItemType(ITEM_SHIELD, ITEM_SHIELD_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BASIC_SHIELD_BLOCK_ID))))
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
     ..addBonusArmour(1) 
@@ -130,7 +137,7 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_STEEL_SHIELD)
+    new CustomItemType(ITEM_STEEL_SHIELD, ITEM_STEEL_SHIELD_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_STEEL_SHIELD_BLOCK_ID))))
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
     ..addBonusArmour(4)
@@ -138,57 +145,60 @@ public function initializeForgeItems()
     ..setQuickMakeAbility(ABILITY_QM_STEEL_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     
-    new CustomItemDefinition(ITEM_IRON_SHIELD)
+    new CustomItemType(ITEM_IRON_SHIELD, ITEM_IRON_SHIELD_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_MAGIC_RESIST))))
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_IRON_SHIELD_BLOCK_ID))))
     ..addBonusArmour(2)
     ..setItemRecipe(ITEM_SHIELD, ITEM_IRON_INGOT, ITEM_IRON_INGOT)
     ..setQuickMakeAbility(ABILITY_QM_IRON_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
-
-    new CustomItemDefinition(ITEM_STEEL_INGOT)
+    
+    new CustomItemType(ITEM_STEEL_INGOT, ITEM_STEEL_INGOT_DEFINITION)
     ..setItemRecipe(ITEM_IRON_INGOT, ITEM_IRON_INGOT, ITEM_FLINT, ITEM_FLINT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_STEEL_INGOT)
 
-    new CustomItemDefinition(ITEM_IRON_INGOT)
+    new CustomItemType(ITEM_IRON_INGOT, ITEM_IRON_INGOT_DEFINITION)
     ..setItemRecipe(ITEM_STONE, ITEM_FLINT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_IRON_INGOT)
 
-    new CustomItemDefinition(ITEM_SPEAR)
+    new CustomItemType(ITEM_SPEAR, ITEM_SPEAR_DEFINITION)
     ..setItemRecipe(ITEM_STICK, ITEM_STONE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SPEAR)
 
-    new CustomItemDefinition(ITEM_IRON_SPEAR)
+    new CustomItemType(ITEM_IRON_SPEAR, ITEM_IRON_SPEAR_DEFINITION)
     ..setItemRecipe(ITEM_STICK, ITEM_IRON_INGOT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_IRON_SPEAR)
 
-    new CustomItemDefinition(ITEM_STEEL_SPEAR)
+    new CustomItemType(ITEM_STEEL_SPEAR, ITEM_STEEL_SPEAR_DEFINITION)
     ..setItemRecipe(ITEM_STICK, ITEM_STEEL_INGOT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_STEEL_SPEAR)
 
-    new CustomItemDefinition(ITEM_DARK_SPEAR)
+    new CustomItemType(ITEM_DARK_SPEAR, ITEM_DARK_SPEAR_DEFINITION)
     ..setItemRecipe(ITEM_STICK, ITEM_SPIRIT_DARKNESS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_DARK_SPEAR)
 
-    new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_STR)
+    new CustomItemType(ITEM_CHAMELEON_HATCHET_STR, ITEM_CHAMELEON_HATCHET_STR_DEFINITION)
     ..addBonusDamage(8)
     ..addBonusStrength(CHAMELEON_HATCHET_ATTRIBUTE_BONUS)
     ..setItemRecipe(ITEM_IRON_AXE, ITEM_IRON_INGOT, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_CHAMELEON_HATCHET)
 
-    new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_AGI)
+    new CustomItemType(ITEM_CHAMELEON_HATCHET_AGI, ITEM_CHAMELEON_HATCHET_AGI_DEFINITION)
     ..addBonusDamage(8)
     ..addBonusAgility(CHAMELEON_HATCHET_ATTRIBUTE_BONUS)
 
-    new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_INT)
+    new CustomItemType(ITEM_CHAMELEON_HATCHET_INT, ITEM_CHAMELEON_HATCHET_INT_DEFINITION)
     ..addBonusDamage(8)
     ..addBonusIntelligence(CHAMELEON_HATCHET_ATTRIBUTE_BONUS)
 
-        
+
+init
+    doAfter(1.) -> 
+        initializeForgeItems()     

@@ -8,6 +8,9 @@ import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
+import CustomItemDefinition
+import ObjectIDManager
+import ObjectIdGenerator
 
 constant HERB_SUFFIX = "\n|c00408000Herb|r"
 constant HERB_SUFFIX_MIX = " can be mixed with other herbs to make various potions."
@@ -27,8 +30,8 @@ function createHerb(int itemId) returns ItemDefinition
 function ItemDefinition.setTooltipExtendedHerb(string toolTip)
     this.setTooltipExtended(toolTip + HERB_SUFFIX_MIX + HERB_SUFFIX)
 
-@compiletime function createRiverStem() returns ItemDefinition
-    return createHerb(ITEM_RIVER_STEM)
+public constant ITEM_RIVER_STEM_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_RIVER_STEM_DUMMY_UNIT")
+public constant ITEM_RIVER_STEM_DEFINITION = compiletime(new CustomItemDefinition(ITEM_RIVER_STEM)
         ..setInterfaceIcon(Icons.bTNDOTAdeptTraining)
         ..setModelUsed(LocalItems.riverStem)
         ..setNameEnhance("River Stem")
@@ -38,9 +41,11 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
         ..setScalingValue(0.70)
+        ..constructItemShopDummyUnit(ITEM_RIVER_STEM_DUMMY_UNIT)
+        )
 
-@compiletime function createRiverRoot() returns ItemDefinition
-    return createHerb(ITEM_RIVER_ROOT)
+public constant ITEM_RIVER_ROOT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_RIVER_ROOT_DUMMY_UNIT")
+public constant ITEM_RIVER_ROOT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_RIVER_ROOT)
         ..setInterfaceIcon(Icons.bTNWandOfNeutralization)
         ..setModelUsed(LocalItems.riverRoot)
         ..setNameEnhance("River Root")
@@ -50,9 +55,11 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
         ..setScalingValue(0.70)
+        ..constructItemShopDummyUnit(ITEM_RIVER_ROOT_DUMMY_UNIT)
+        )
 
-@compiletime function createAthelasSeed() returns ItemDefinition
-    return createHerb(ITEM_ATHELAS_SEED)
+public constant ITEM_ATHELAS_SEED_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ATHELAS_SEED_DUMMY_UNIT")
+public constant ITEM_ATHELAS_SEED_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ATHELAS_SEED)
         ..setInterfaceIcon(LocalIcons.bTNGreenSeed)
         ..setModelUsed(Objects.thunderLizardEgg1)
         ..setNameEnhance("Athelas Seed")
@@ -62,9 +69,11 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(0)
         ..setScalingValue(0.90)
+        ..constructItemShopDummyUnit(ITEM_ATHELAS_SEED_DUMMY_UNIT)
+        )
 
-@compiletime function createLeafOfBlueHerb() returns ItemDefinition
-    return createHerb(ITEM_BLUE_HERB)
+public constant ITEM_BLUE_HERB_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BLUE_HERB_DUMMY_UNIT")
+public constant ITEM_BLUE_HERB_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BLUE_HERB)
         ..setInterfaceIcon(LocalIcons.bTNBlueHerb)
         ..setModelUsed(Doodads.ruins_Flower2)
         ..setNameEnhance("Leaf of Blue Herb")
@@ -74,9 +83,11 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setTintingColor2Green(102)
         ..setTintingColor3Blue(204)
         ..setScalingValue(1.00)
+        ..constructItemShopDummyUnit(ITEM_BLUE_HERB_DUMMY_UNIT)
+        )
 
-@compiletime function createLeafOfOrangeHerb() returns ItemDefinition
-    return createHerb(ITEM_ORANGE_HERB)
+public constant ITEM_ORANGE_HERB_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ORANGE_HERB_DUMMY_UNIT")
+public constant ITEM_ORANGE_HERB_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ORANGE_HERB)
         ..setInterfaceIcon(LocalIcons.bTNOrangeHerb)
         ..setModelUsed(Doodads.ruins_Flower4)
         ..setNameEnhance("Leaf of Orange Herb")
@@ -86,9 +97,11 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setTintingColor2Green(128)
         ..setTintingColor3Blue(0)
         ..setScalingValue(1.00)
+        ..constructItemShopDummyUnit(ITEM_ORANGE_HERB_DUMMY_UNIT)
+        )
 
-@compiletime function createLeafOfPurpleHerb() returns ItemDefinition
-    return createHerb(ITEM_EXOTIC_HERB)
+public constant ITEM_EXOTIC_HERB_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_EXOTIC_HERB_DUMMY_UNIT")
+public constant ITEM_EXOTIC_HERB_DEFINITION = compiletime(new CustomItemDefinition(ITEM_EXOTIC_HERB)
         ..setInterfaceIcon(LocalIcons.bTNPurpleHerb)
         ..setModelUsed(Doodads.outland_Plant4)
         ..setNameEnhance("Leaf of Exotic Herb")
@@ -98,9 +111,11 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setTintingColor2Green(0)
         ..setTintingColor3Blue(255)
         ..setScalingValue(0.70)
+        ..constructItemShopDummyUnit(ITEM_EXOTIC_HERB_DUMMY_UNIT)
+        )
 
-@compiletime function createLeafOfYellowHerb() returns ItemDefinition
-    return createHerb(ITEM_NATIVE_HERB)
+public constant ITEM_NATIVE_HERB_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_NATIVE_HERB_DUMMY_UNIT")
+public constant ITEM_NATIVE_HERB_DEFINITION = compiletime(new CustomItemDefinition(ITEM_NATIVE_HERB)
         ..setInterfaceIcon(LocalIcons.bTNYellowHerb)
         ..setModelUsed(Doodads.ruins_Flower1)
         ..setNameEnhance("Leaf of Native Herb")
@@ -110,3 +125,5 @@ function ItemDefinition.setTooltipExtendedHerb(string toolTip)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(0)
         ..setScalingValue(1.00)
+        ..constructItemShopDummyUnit(ITEM_NATIVE_HERB_DUMMY_UNIT)
+        )

@@ -1,0 +1,139 @@
+package ItemShopDummyUnit
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ClosureEvents
+import ClosureTimers
+import ColorUtils
+import SpearsDefinition
+import ChannelAbilityPreset
+import MurlocPoison
+import Orders
+import DamageEvent
+import DamageListeners
+import HashList
+import HashMap
+import ObjectIDManager
+import LocalObjectIDs2
+import Items
+import OnUnitEnterLeave
+import PlayerExtensions
+import UnitExtensions
+import GameStates
+import GameState
+import CraftedMaterials
+import CustomItemDefinition
+
+public constant DEFAULT_RESTOCK_TIME = 120
+public constant DEFAULT_STOCK = 1
+
+
+public class ItemShopDummyUnit
+    int itemId
+    int dummyUnitId
+    int goldCost
+    int stockMaximum
+    int abilId
+    ItemShopDummyUnitDefinition dummyUnitDef
+    static IterableMap<int, thistype> instances = new IterableMap<int, thistype>()
+
+    static function getInstanceByItemId(int itemId) returns thistype
+        let instance = instances.get(itemId)
+        return instance
+
+    static function getInstanceByUnitId(int dummyUnitId) returns thistype
+        for each in instances
+            let instance = instances.get(each)
+            if instance.dummyUnitId == dummyUnitId
+                return instance
+        return null
+
+    construct(int itemId, ItemShopDummyUnitDefinition dummyUnitDef) //int unitId, int goldCost, int stock, int stockReplenishInterval, string tt_name, string tt_ext, string iconPath
+        this.dummyUnitDef = dummyUnitDef
+        this.itemId = itemId
+        this.stockMaximum = dummyUnitDef.stockMaximum
+        this.dummyUnitId = dummyUnitDef.unitId
+        this.goldCost = dummyUnitDef.goldCost
+        instances.put(itemId, this)
+    
+
+public class ItemShopDummyUnitDefinition extends BaseItemShopDummyUnitDefinition
+    int unitId
+    int goldCost
+    int stockMaximum 
+    CustomItemDefinition customItemDefinition
+    construct(int unitId, int goldCost, int stockMaximum, int stockReplenishInterval, string tt_name, string tt_ext, string iconPath)
+        super(unitId)
+        this.unitId = unitId
+        this.goldCost = goldCost
+        this.stockMaximum = stockMaximum
+        this.setName("UNIT_DUMMY_ITEM_REWARD_"+unitId.toString())
+        this.setStockMaximum(stockMaximum)
+        this.setIconGameInterface(iconPath)
+        this.setTooltipBasic(tt_name)
+        this.setTooltipExtended(tt_ext)
+        this.setLumberCost(goldCost)
+        this.setStockReplenishInterval(stockReplenishInterval)
+
+    construct(int unitId, CustomItemDefinition customItemDefinition)
+        super(unitId)
+        this.unitId = unitId
+        this.customItemDefinition = customItemDefinition
+        this.goldCost = customItemDefinition.lumberCost
+        this.stockMaximum = customItemDefinition.stockMaximum
+        this.setStockMaximum(customItemDefinition.stockMaximum)
+        this.setIconGameInterface(customItemDefinition.iconPath)
+        this.setTooltipBasic(customItemDefinition.TT_NAME)
+        this.setTooltipExtended(customItemDefinition.TT_EXTENDED)
+        this.setLumberCost(customItemDefinition.lumberCost)
+        this.setStockReplenishInterval(customItemDefinition.stockReplenishInterval)
+        
+
+public class BaseItemShopDummyUnitDefinition extends UnitDefinition
+    construct(int unitId)
+        super(unitId, 'ewsp')
+        this.setManaMaximum(1000000)
+        this.setRandomSound("")
+        this.setMovementType(MovementType.Fly)
+        this.setUpgradesUsed("")
+        this.setCollisionSize(0.0)
+        this.setStructuresBuilt("")
+        this.setRace(Race.Commoner)
+        this.setFoodCost(0)
+        this.setGoldCost(0)
+        this.setArmorType(ArmorType.Divine)
+        this.setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNtemp.blp")
+        this.setSpeedBase(522)
+        this.setStockMaximum(1)
+        this.setStockReplenishInterval(5)
+        this.setModelFile("dummy.mdl")
+        this.setAnimationBlendTimeseconds(0.0)
+        this.setAnimationCastBackswing(0.0)
+        this.setMaximumPitchAngledegrees(0.0)
+        this.setMaximumRollAngledegrees(0.0)
+        this.setTurnRate(3)
+        this.setArtSpecial("")
+        this.setProjectileImpactZ(0.0)
+        this.setProjectileLaunchZ(0.0)
+        this.setNameEditorSuffix("(Basics)")
+        this.setSightRadiusDay(1)
+        this.setSightRadiusNight(1)
+        this.setUnitClassification("_")
+        this.setPropulsionWindowdegrees(1.0)
+        this.setTooltipBasic("")
+        this.setNormalAbilities(commaList(LOCUST_ID, GHOST_INVIS_ID)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+        this.setCollisionSize(0)
+
+
+        

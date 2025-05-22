@@ -2,16 +2,20 @@ package ArmoryV2
 
 import LocalObjectIDs
 import ClosureTimers
-import CustomItemDefinition
+import CustomItemType
 import ShieldsDefinition
 import CoatDefinition
 import AbilityObjectCreationUtils
 import ObjectIds
+import AxesDefinition
+import GlovesDefinition
+import BootsDefinition
+import StavesDefinition
 
 let UNIT_REQUIREMENT = UNIT_ARMORY
 
 public function initializeArmoryItems()
-    new CustomItemDefinition(ITEM_BATTLE_AXE)
+    new CustomItemType(ITEM_BATTLE_AXE, ITEM_BATTLE_AXE_DEFINITION)
         ..addSpecialAbilities(ABILITY_ATTACK_TREE)
         ..addBonusAttackSpeed(20)
         ..addBonusDamage(14)
@@ -19,7 +23,7 @@ public function initializeArmoryItems()
         ..setQuickMakeAbility(ABILITY_QM_BATTLE_AXE)
         ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_ANABOLIC_BOOTS)
+    new CustomItemType(ITEM_ANABOLIC_BOOTS, ITEM_ANABOLIC_BOOTS_DEFINITION)
         ..addSpecialAbilities(ABILITY_SPEED_BONUS_200)
         ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_ANABOLIC_EVASION))))
         ..addBonusArmour(5)
@@ -30,7 +34,7 @@ public function initializeArmoryItems()
         ..setQuickMakeAbility(ABILITY_QM_ANABOLIC_BOOTS)
         ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEARS_TENACITY_BOOTS)
+    new CustomItemType(ITEM_BEARS_TENACITY_BOOTS, ITEM_BEARS_TENACITY_BOOTS_DEFINITION)
         ..addBonusIntelligence(6)
         ..addBonusStrength(8)
         ..addSpecialAbilities(ABILITY_SPEED_BONUS_60)
@@ -39,7 +43,7 @@ public function initializeArmoryItems()
         ..setQuickMakeAbility(ABILITY_QM_BEARS_TENACITY_BOOTS)
         ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEARS_GREED_PAWS)
+    new CustomItemType(ITEM_BEARS_GREED_PAWS, ITEM_BEARS_GREED_PAWS_DEFINITION)
     ..addBonusAttackSpeed(20)
     ..addBonusDamage(2)
     ..addBonusStrength(8)
@@ -47,7 +51,7 @@ public function initializeArmoryItems()
     ..setItemRecipe(ITEM_BEAR_SKIN_GLOVES, ITEM_IRON_INGOT, ITEM_LESSER_ESSENCE, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEARS_GREED_PAWS_EMPTY)
+    new CustomItemType(ITEM_BEARS_GREED_PAWS_EMPTY, ITEM_BEARS_GREED_PAWS_EMPTY_DEFINITION)
     ..addBonusAttackSpeed(20)
     ..addBonusStrength(8)
     ..addBonusDamage(2)
@@ -56,7 +60,7 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_BEARS_GREED_PAWS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_MAGEFIST)
+    new CustomItemType(ITEM_MAGEFIST, ITEM_MAGEFIST_DEFINITION)
     ..addBonusAttackSpeed(30)
     ..addBonusIntelligence(10)
     ..addBonusArmour(4)    
@@ -64,7 +68,7 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_MAGEFIST)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_WOLFS_BLOODLUST_CLAWS)
+    new CustomItemType(ITEM_WOLFS_BLOODLUST_CLAWS, ITEM_WOLFS_BLOODLUST_CLAWS_DEFINITION)
     ..addBonusAttackSpeed(30)
     ..addBonusDamage(4)
     ..addBonusAgility(4)
@@ -73,7 +77,7 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_WOLFS_BLOODLUST_CLAWS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_WOLFS_STAMINA_BOOTS)
+    new CustomItemType(ITEM_WOLFS_STAMINA_BOOTS, ITEM_WOLFS_STAMINA_BOOTS_DEFINITION)
     ..addSpecialAbilities(ABILITY_SPEED_BONUS_100)
     ..addBonusIntelligence(10)
     ..addBonusAgility(6)
@@ -82,7 +86,7 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_WOLFS_STAMINA_BOOTS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BATTLE_STAFF)
+    new CustomItemType(ITEM_BATTLE_STAFF, ITEM_BATTLE_STAFF_DEFINITION)
     ..addBonusDamage(14)
     ..addBonusArmour(4)
     ..addBonusIntelligence(12)
@@ -90,21 +94,21 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_BATTLE_STAFF)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_TROLL_PROTECTOR)
+    new CustomItemType(ITEM_TROLL_PROTECTOR, ITEM_TROLL_PROTECTOR_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_TROLL_PROTECTOR_ID))))
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_TROLL_PROTECTOR_AURA))))
     ..setItemRecipe(ITEM_IRON_SHIELD, ITEM_ELK_HIDE, ITEM_MANA_CRYSTAL)
     ..setQuickMakeAbility(ABILITY_QM_TROLL_PROTECTOR)
     ..setUnitRequirement(UNIT_REQUIREMENT) 
 
-    new CustomItemDefinition(ITEM_BATTLE_SHIELD)
+    new CustomItemType(ITEM_BATTLE_SHIELD, ITEM_BATTLE_SHIELD_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BATTLE_SHIELD_BLOCK_ID))))
     ..addBonusArmour(7)
     ..setItemRecipe(ITEM_BONE_SHIELD, ITEM_ELK_HIDE, ITEM_STEEL_INGOT, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setQuickMakeAbility(ABILITY_QM_BATTLE_SHIELD)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BATTLE_GLOVES)
+    new CustomItemType(ITEM_BATTLE_GLOVES, ITEM_BATTLE_GLOVES_DEFINITION)
     ..addBonusAttackSpeed(30)
     ..addBonusArmour(5)
     ..addBonusAgility(4)
@@ -114,7 +118,7 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_BATTLE_GLOVES)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BEAR_PRESENCE_COAT)
+    new CustomItemType(ITEM_BEAR_PRESENCE_COAT, ITEM_BEAR_PRESENCE_COAT_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_BEARS_PRESENCE_AURA))))
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABILITY_SPIRIT_BEAST))))
     ..addBonusStrength(12)
@@ -123,7 +127,7 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_BEAR_PRESENCE_COAT)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_BATTLE_ARMOR)
+    new CustomItemType(ITEM_BATTLE_ARMOR, ITEM_BATTLE_ARMOR_DEFINITION)
     ..addSpecialAbilities(compiletime(createHiddenSpellbookWithAbilities(toRawCode(ABIL_SPELL_RESISTANCE_BATTLE))))
     ..addBonusAgility(4)
     ..addBonusStrength(4)
@@ -133,7 +137,7 @@ public function initializeArmoryItems()
     ..setQuickMakeAbility(ABILITY_QM_BATTLE_ARMOR)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_WOLF_VORACITY_COAT)
+    new CustomItemType(ITEM_WOLF_VORACITY_COAT, ITEM_WOLF_VORACITY_COAT_DEFINITION)
     ..addBonusArmour(4)
     ..addBonusStrength(6)
     ..addBonusAgility(6)
@@ -141,10 +145,14 @@ public function initializeArmoryItems()
     ..setItemRecipe(ITEM_WOLF_SKIN_COAT, ITEM_SPIRIT_DARKNESS, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
 
-    new CustomItemDefinition(ITEM_ROBE_OF_THE_MAGI)
+    new CustomItemType(ITEM_ROBE_OF_THE_MAGI, ITEM_ROBE_OF_THE_MAGI_DEFINITION)
     ..addBonusIntelligence(10)
     ..addBonusArmour(3) 
     ..setItemRecipe(ITEM_BONE_COAT, ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER, ITEM_MANA_CRYSTAL)
     ..setQuickMakeAbility(ABILITY_QM_ROBE_OF_THE_MAGI)
     ..setUnitRequirement(UNIT_REQUIREMENT)
            
+
+init
+    doAfter(1.) -> 
+        initializeArmoryItems()

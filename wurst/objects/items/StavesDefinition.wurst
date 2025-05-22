@@ -22,6 +22,8 @@ import LocalObjectIDs
 import ToolTipsUtils
 import PlayerExtensions
 import AxesDefinition
+import CustomItemDefinition
+import ObjectIDManager
 
 public let IRON_STAFF_DMG_BONUS = ABIL_DMG_IRON
 public let IRON_STAFF_ARMOR_BONUS = ABILITY_ARMOR_BONUS_2
@@ -70,8 +72,8 @@ function createAxe(int staffId) returns ItemDefinition
         ..setCooldownGroup("AIas")
         ..setStockReplenishInterval(120)
 
-@compiletime function createIronStaff() returns ItemDefinition
-    return createAxe(ITEM_IRON_STAFF)
+public constant ITEM_IRON_STAFF_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_STAFF_DUMMY_UNIT")
+public constant ITEM_IRON_STAFF_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_STAFF)
         ..setInterfaceIcon(Icons.bTNWand)
         ..setModelUsed(LocalItems.ironAxe)
         ..setNameEnhance("Iron Staff")
@@ -81,9 +83,14 @@ function createAxe(int staffId) returns ItemDefinition
         ..setScalingValue(0.7)
         ..setLumberCost(37)
         ..setAbilities(commaList(ABILITY_IRON_STAFF))
+        ..setCooldownGroup("AIas")
+        ..setStockReplenishInterval(120)
+        ..constructItemShopDummyUnit(ITEM_IRON_STAFF_DUMMY_UNIT)
+        )        
 
-@compiletime function createBattleStaff() returns ItemDefinition
-    return createAxe(ITEM_BATTLE_STAFF)
+
+public constant ITEM_BATTLE_STAFF_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_STAFF_DUMMY_UNIT")
+public constant ITEM_BATTLE_STAFF_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_STAFF)
         ..setInterfaceIcon(LocalIcons.bTNBattleStaff)
 /*        
         ..setTintingColor1Red(100)
@@ -97,9 +104,13 @@ function createAxe(int staffId) returns ItemDefinition
         ..setScalingValue(0.7)
         ..setLumberCost(78)
         ..setAbilities(commaList(ABILITY_BATTLE_STAFF))
+        ..setCooldownGroup("AIas")
+        ..setStockReplenishInterval(120)
+        ..constructItemShopDummyUnit(ITEM_BATTLE_STAFF_DUMMY_UNIT)
+        )        
 
-@compiletime function createConductingRod() returns ItemDefinition
-    return createAxe(ITEM_CONDUCTING_ROD)
+public constant ITEM_CONDUCTING_ROD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CONDUCTING_ROD_DUMMY_UNIT")
+public constant ITEM_CONDUCTING_ROD_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CONDUCTING_ROD)
         ..setInterfaceIcon(Icons.bTNAdvancedStrengthOfTheMoon)
         ..setModelUsed(LocalItems.battleAxe)
         ..setNameEnhance("Conducting rod")
@@ -112,9 +123,13 @@ function createAxe(int staffId) returns ItemDefinition
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
+        ..setCooldownGroup("AIas")
+        ..setStockReplenishInterval(120)
+        ..constructItemShopDummyUnit(ITEM_CONDUCTING_ROD_DUMMY_UNIT)
+        )        
 
-@compiletime function createStaffOfKnowledge() returns ItemDefinition
-    return createAxe(ITEM_STAFF_OF_KNOWLEDGE)
+public constant ITEM_STAFF_OF_KNOWLEDGE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STAFF_OF_KNOWLEDGE_DUMMY_UNIT")
+public constant ITEM_STAFF_OF_KNOWLEDGE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STAFF_OF_KNOWLEDGE)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
         ..setModelUsed(LocalItems.steelAxe)
         ..setNameEnhance("Staff of Wisdom")
@@ -126,10 +141,14 @@ function createAxe(int staffId) returns ItemDefinition
         ..setTintingColor1Red(120)
         ..setTintingColor2Green(140)
         ..setTintingColor3Blue(255)
+        ..setCooldownGroup("AIas")
+        ..setStockReplenishInterval(120)
+        ..constructItemShopDummyUnit(ITEM_STAFF_OF_KNOWLEDGE_DUMMY_UNIT)
+        )        
 
 
-@compiletime function createStaffOfWisdom() returns ItemDefinition
-    return createAxe(ITEM_STAFF_OF_WISDOM)
+public constant ITEM_STAFF_OF_WISDOM_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STAFF_OF_WISDOM_DUMMY_UNIT")
+public constant ITEM_STAFF_OF_WISDOM_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STAFF_OF_WISDOM)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
         ..setModelUsed(LocalItems.steelAxe)
         ..setNameEnhance("Staff of Wisdom")
@@ -141,6 +160,10 @@ function createAxe(int staffId) returns ItemDefinition
         ..setTintingColor1Red(120)
         ..setTintingColor2Green(140)
         ..setTintingColor3Blue(255)
+        ..setCooldownGroup("AIas")
+        ..setStockReplenishInterval(120)
+        ..constructItemShopDummyUnit(ITEM_STAFF_OF_WISDOM_DUMMY_UNIT)
+        )        
 
 function onDamage()
     let caster = DamageEvent.getSource()

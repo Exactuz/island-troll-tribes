@@ -123,6 +123,12 @@ public class ScrollSlot
         if hero.hasItemEquipped(itm)
             updateDummyItems()
             return
+        pauseTriggers = true
+        hero.removeItem(dummy)
+        nullTimer() -> 
+            hero.addItemHandle(itm)
+            nullTimer() -> 
+                updateDummyItems()
 
 
 function onEnter(unit troll)

@@ -12,7 +12,7 @@ import ClosuresForItems
 // Local imports:
 import ItemRecipeV2
 import QuickMakeV2
-import CustomItemDefinition
+import CustomItemType
 
 
 HashMap<unit, MixingPot> mixingPotInstances = new HashMap<unit, MixingPot>
@@ -52,7 +52,7 @@ public class MixingPot
 
     function craftPotion(int itemId) returns item
         //print("craftPotion "+GetObjectName(itemId))
-        let instance = customItemDefinitions.get(itemId)
+        let instance = CustomItemType.getInstance(itemId)
         let manaCost = instance.recipe.mixingPotManaRequirement
         let currentMana = mixingPot.getMana()
         if currentMana<manaCost

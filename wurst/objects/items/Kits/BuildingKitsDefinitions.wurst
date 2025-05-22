@@ -1,4 +1,4 @@
-package TrollBuildingKits
+package BuildingKitsDefinitions
 
 // Standard lib Imports:
 import AbilityObjEditing
@@ -11,6 +11,8 @@ import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
+import CustomItemDefinition
+import ObjectIDManager
 
 
 constant ABIL_ARMORY       = compiletime(ABIL_ID_GEN.next())
@@ -211,8 +213,9 @@ function createKitAbility(int abilId) returns AbilityDefinitionBuildTinyCastle
         ..setUnitCreatedperplayerrace(1,  commaList(UNIT_TROLL_TRANSPORT_SHIP))
 
 
-function createKit(int itemId) returns ItemDefinition
-    return createPerishableItem(itemId)
+function createKit(int itemId) returns CustomItemDefinition
+    return new CustomItemDefinition(itemId)
+        ..setItemPerishable()
         ..setNumberofCharges(1)
         ..setRequirements("")
         ..setLevel(1)
@@ -221,8 +224,9 @@ function createKit(int itemId) returns ItemDefinition
         ..setGoldCost(0)
         ..setHotkey("")
 
-@compiletime function createArmoryKit() returns ItemDefinition
-    return createKit(ITEM_ARMORY_KIT)
+
+public constant ITEM_ARMORY_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ARMORY_KIT_DUMMY_UNIT")
+public constant ITEM_ARMORY_KIT_DEFINITION = compiletime(createKit(ITEM_ARMORY_KIT)
     ..setInterfaceIcon(LocalIcons.bTNArmory)
     ..setModelUsed(Doodads.barricade0)
     ..setNameEnhance("Armory Kit")
@@ -232,9 +236,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_ARMORY))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_ARMORY_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createEnsnareTrapKit() returns ItemDefinition
-    return createKit(ITEM_ENSNARE_TRAP_KIT)
+public constant ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT")
+public constant ITEM_ENSNARE_TRAP_KIT_DEFINITION = compiletime(createKit(ITEM_ENSNARE_TRAP_KIT)
     ..setInterfaceIcon(Icons.bTNCOP)
     ..setModelUsed(Doodads.junkPile0)
     ..setNameEnhance("Ensnare Trap Kit")
@@ -245,9 +251,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setScalingValue(1.0)
     ..setStockMaximum(2)
     ..setStockReplenishInterval(120)
+    ..constructItemShopDummyUnit(ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createFireKit() returns ItemDefinition
-    return createKit(ITEM_FIRE_KIT)
+public constant ITEM_FIRE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_FIRE_KIT_DUMMY_UNIT")
+public constant ITEM_FIRE_KIT_DEFINITION = compiletime(createKit(ITEM_FIRE_KIT)
     ..setInterfaceIcon(Icons.bTNFire)
     ..setModelUsed(Doodads.firePitTrashed)
     ..setNameEnhance("Camp Fire Kit")
@@ -257,9 +265,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_FIRE))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_FIRE_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createMageFireKit() returns ItemDefinition
-    return createKit(ITEM_MAGE_FIRE_KIT)
+public constant ITEM_MAGE_FIRE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGE_FIRE_KIT_DUMMY_UNIT")
+public constant ITEM_MAGE_FIRE_KIT_DEFINITION = compiletime(createKit(ITEM_MAGE_FIRE_KIT)
     ..setInterfaceIcon(Icons.bTNFire)
     ..setModelUsed(Doodads.firePitTrashed)
     ..setNameEnhance("Mage Fire Kit")
@@ -270,9 +280,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
     ..setTintingColor2Green(100)
+    ..constructItemShopDummyUnit(ITEM_MAGE_FIRE_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createTentKit() returns ItemDefinition
-    return createKit(ITEM_TENT_KIT)
+public constant ITEM_TENT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TENT_KIT_DUMMY_UNIT")
+public constant ITEM_TENT_KIT_DEFINITION = compiletime(createKit(ITEM_TENT_KIT)
     ..setInterfaceIcon(LocalIcons.bTNTent)
     ..setModelUsed(Doodads.emptyCrates0)
     ..setNameEnhance("Tent Kit")
@@ -282,9 +294,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_TENT))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(120)
+    ..constructItemShopDummyUnit(ITEM_TENT_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createTrollHutKit() returns ItemDefinition
-    return createKit(ITEM_TROLL_HUT_KIT)
+public constant ITEM_TROLL_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TROLL_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_TROLL_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_TROLL_HUT_KIT)
     ..setInterfaceIcon(Icons.bTNSpiritLodge)
     ..setModelUsed(Doodads.crates1)
     ..setNameEnhance("Troll Hut Kit")
@@ -294,9 +308,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_TROLL_HUT))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_TROLL_HUT_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createSmokeHouseKit() returns ItemDefinition
-    return createKit(ITEM_SMOKE_HOUSE_KIT)
+public constant ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT")
+public constant ITEM_SMOKE_HOUSE_KIT_DEFINITION = compiletime(createKit(ITEM_SMOKE_HOUSE_KIT)
     ..setInterfaceIcon(Icons.bTNRockTower)
     ..setModelUsed(Doodads.barricade0)
     ..setNameEnhance("Smoke House Kit")
@@ -306,9 +322,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_SMOKEHOUSE))
     ..setScalingValue(0.95)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createStorageHutKit() returns ItemDefinition
-    return createKit(ITEM_STORAGE_HUT_KIT)
+public constant ITEM_STORAGE_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STORAGE_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_STORAGE_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_STORAGE_HUT_KIT)
     ..setInterfaceIcon(LocalIcons.bTNForestTrollHut1)
     ..setModelUsed(Doodads.treasurePile0)
     ..setNameEnhance("Storage Hut Kit")
@@ -318,9 +336,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_STORAGE_HUT))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_STORAGE_HUT_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createSpiritWardKit() returns ItemDefinition
-    return createKit(ITEM_SPIRIT_WARD_KIT)
+public constant ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT")
+public constant ITEM_SPIRIT_WARD_KIT_DEFINITION = compiletime(createKit(ITEM_SPIRIT_WARD_KIT)
     ..setInterfaceIcon(Icons.bTNAbsorbMagic)
     ..setModelUsed(Objects.humanCaptureFlag)
     ..setNameEnhance("Spirit Ward Kit")
@@ -330,9 +350,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_SPIRIT_WARD))
     ..setScalingValue(1.4)
     ..setStockReplenishInterval(120)
+    ..constructItemShopDummyUnit(ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createMudHutKit() returns ItemDefinition
-    return createKit(ITEM_MUD_HUT_KIT)
+public constant ITEM_MUD_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MUD_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_MUD_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_MUD_HUT_KIT)
     ..setInterfaceIcon(Icons.bTNGoldmine)
     ..setModelUsed(Doodads.crates0)
     ..setNameEnhance("Mud Hut Kit")
@@ -342,9 +364,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_MUD_HUT))
     ..setScalingValue(1.1)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_MUD_HUT_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createTowerKit() returns ItemDefinition
-    return createKit(ITEM_OMNITOWER_KIT)
+public constant ITEM_OMNITOWER_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_OMNITOWER_KIT_DUMMY_UNIT")
+public constant ITEM_OMNITOWER_KIT_DEFINITION = compiletime(createKit(ITEM_OMNITOWER_KIT)
     ..setInterfaceIcon(Icons.bTNOrcTower)
     ..setModelUsed(Doodads.barricade0)
     ..setNameEnhance("Omnitower Kit")
@@ -354,9 +378,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_TOWER))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(120)
+    ..constructItemShopDummyUnit(ITEM_OMNITOWER_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createPotKit() returns ItemDefinition
-    return createKit(ITEM_POT_KIT)
+public constant ITEM_POT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POT_KIT_DUMMY_UNIT")
+public constant ITEM_POT_KIT_DEFINITION = compiletime(createKit(ITEM_POT_KIT)
     ..setInterfaceIcon(Icons.bTNSacrificialPit)
     ..setModelUsed(Doodads.barricade1)
     ..setNameEnhance("Mixing Pot Kit")
@@ -366,9 +392,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_POT))
     ..setScalingValue(1.25)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_POT_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createTanneryKit() returns ItemDefinition
-    return createKit(ITEM_TANNERY_KIT)
+public constant ITEM_TANNERY_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TANNERY_KIT_DUMMY_UNIT")
+public constant ITEM_TANNERY_KIT_DEFINITION = compiletime(createKit(ITEM_TANNERY_KIT)
     ..setInterfaceIcon(Icons.bTNPigFarm)
     ..setModelUsed(Buildings.barrelsUnit)
     ..setNameEnhance("Tannery Kit")
@@ -378,9 +406,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_TANNERY))
     ..setScalingValue(1.25)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_TANNERY_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createWorkshopKit() returns ItemDefinition
-    return createKit(ITEM_WORKSHOP_KIT)
+public constant ITEM_WORKSHOP_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WORKSHOP_KIT_DUMMY_UNIT")
+public constant ITEM_WORKSHOP_KIT_DEFINITION = compiletime(createKit(ITEM_WORKSHOP_KIT)
     ..setInterfaceIcon(LocalIcons.bTNOrcLumberMill)
     ..setModelUsed(Doodads.barricade1)
     ..setNameEnhance("Workshop Kit")
@@ -390,9 +420,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_WORKSHOP))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_WORKSHOP_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createTeleportBeaconKit() returns ItemDefinition
-    return createKit(ITEM_TELEPORT_BEACON_KIT)
+public constant ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT")
+public constant ITEM_TELEPORT_BEACON_KIT_DEFINITION = compiletime(createKit(ITEM_TELEPORT_BEACON_KIT)
     ..setInterfaceIcon(Icons.bTNEnergyTower)
     ..setModelUsed(Doodads.barricade0)
     ..setNameEnhance("Teleport beacon Kit")
@@ -402,9 +434,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_TP_BEACON))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createWdhKit() returns ItemDefinition
-    return createKit(ITEM_WITCH_DOCTORS_HUT_KIT)
+public constant ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_WITCH_DOCTORS_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_WITCH_DOCTORS_HUT_KIT)
     ..setInterfaceIcon(Icons.bTNVoodooLounge)
     ..setModelUsed(Units.tNTBarrel)
     ..setNameEnhance("Witch Doctors Hut Kit")
@@ -414,9 +448,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_WDH))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createHatcheryKit() returns ItemDefinition
-    return createKit(ITEM_HATCHERY_KIT)
+public constant ITEM_HATCHERY_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HATCHERY_KIT_DUMMY_UNIT")
+public constant ITEM_HATCHERY_KIT_DEFINITION = compiletime(createKit(ITEM_HATCHERY_KIT)
     ..setInterfaceIcon(Icons.bTNSnowOwl)
     ..setModelUsed(Doodads.barricade1)
     ..setNameEnhance("Hatchery Kit")
@@ -426,9 +462,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_HATCHERY))
     ..setScalingValue(1.0)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_HATCHERY_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createMagicSeed() returns ItemDefinition
-    return createKit(ITEM_MAGIC_SEED)
+public constant ITEM_MAGIC_SEED_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGIC_SEED_DUMMY_UNIT")
+public constant ITEM_MAGIC_SEED_DEFINITION = compiletime(createKit(ITEM_MAGIC_SEED)
     ..setInterfaceIcon(Icons.bTNRoot)
     ..setModelUsed(Objects.crystalShard)
     ..setNameEnhance("Magic Seed")
@@ -439,10 +477,12 @@ function createKit(int itemId) returns ItemDefinition
     ..setScalingValue(0.65)
     ..setStockReplenishInterval(30)
     ..setNumberofCharges(2)
+    ..constructItemShopDummyUnit(ITEM_MAGIC_SEED_DUMMY_UNIT)
+    )
 
 
-@compiletime function createMagicTreeSeed() returns ItemDefinition
-    return createKit(ITEM_MAGIC_TREE_SEED)
+public constant ITEM_MAGIC_TREE_SEED_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGIC_TREE_SEED_DUMMY_UNIT")
+public constant ITEM_MAGIC_TREE_SEED_DEFINITION = compiletime(createKit(ITEM_MAGIC_TREE_SEED)
     ..setInterfaceIcon(Icons.bTNAcorn)
     ..setModelUsed(Objects.crystalShard)
     ..setNameEnhance("Magic Palm Tree Seed")
@@ -452,9 +492,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setStockReplenishInterval(999)
     ..setAbilities(commaList(ABIL_MAGIC_TREE_SEED))
     ..setScalingValue(0.65)
+    ..constructItemShopDummyUnit(ITEM_MAGIC_TREE_SEED_DUMMY_UNIT)
+    )
 
-@compiletime function createForgeKit() returns ItemDefinition
-    return createKit(ITEM_FORGE_KIT)
+public constant ITEM_FORGE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_FORGE_KIT_DUMMY_UNIT")
+public constant ITEM_FORGE_KIT_DEFINITION = compiletime(createKit(ITEM_FORGE_KIT)
     ..setInterfaceIcon(LocalIcons.bTNForge)
     ..setModelUsed(Doodads.barricade0)
     ..setNameEnhance("Forge Kit")
@@ -464,9 +506,11 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_FORGE))
     ..setScalingValue(1)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_FORGE_KIT_DUMMY_UNIT)
+    )
 
-@compiletime function createTransportKit() returns ItemDefinition
-    return createKit(ITEM_TRANSPORT_SHIP_KIT)
+public constant ITEM_TRANSPORT_SHIP_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TRANSPORT_SHIP_KIT_DUMMY_UNIT")
+public constant ITEM_TRANSPORT_SHIP_KIT_DEFINITION = compiletime(createKit(ITEM_TRANSPORT_SHIP_KIT)
     ..setInterfaceIcon(Icons.bTNNightElfTransport)
     ..setModelUsed(Doodads.barricade0)
     ..setNameEnhance("Transport Ship Kit")
@@ -476,3 +520,5 @@ function createKit(int itemId) returns ItemDefinition
     ..setAbilities(commaList(ABIL_SHIP))
     ..setScalingValue(1)
     ..setStockReplenishInterval(30)
+    ..constructItemShopDummyUnit(ITEM_TRANSPORT_SHIP_KIT_DUMMY_UNIT)
+    )

@@ -15,8 +15,8 @@ public class LocalIcons
     static constant bTNChameleonHatchetStr                 ="ReplaceableTextures\\CommandButtons\\BTNChameleonHatchetStr.blp"
     static constant bTNChameleonHatchetAgi                 ="ReplaceableTextures\\CommandButtons\\BTNChameleonHatchetAgi.blp"
     static constant bTNChameleonHatchetInt                 ="ReplaceableTextures\\CommandButtons\\BTNChameleonHatchetInt.blp"
-    static constant bTNLESSERESSENCE                  ="ReplaceableTextures\\CommandButtons\\BTNOrangeEssence.blp"
-    static constant bTNGREATERESSENCE                  ="ReplaceableTextures\\CommandButtons\\BTNPurpleEssence.blp"
+    static constant bTNLesserEssence                  ="ReplaceableTextures\\CommandButtons\\BTNOrangeEssence.blp"
+    static constant bTNGreaterEssence                  ="ReplaceableTextures\\CommandButtons\\BTNPurpleEssence.blp"
     static constant bTNWing                  ="ReplaceableTextures\\CommandButtons\\BTNWing.blp"
     static constant pASBTNBringDown          ="ReplaceableTextures\\CommandButtons\\PASBTNBringDown.blp"
     static constant pASBTNSwoopEnemy          ="ReplaceableTextures\\CommandButtons\\PASBTNSwoopEnemy.blp"
@@ -269,6 +269,7 @@ public class LocalAbilities
     static constant test                           = "Models\\Abilities\\Test.mdx"
 
 public class LocalItems
+    static constant tideBringer                   = "Models\\Items\\TideBringer.mdx"
     static constant chameleonHatchet              = "Models\\Items\\ChameleonHatchet.mdx" 
     static constant lesserEssence                 = "Models\\Items\\OrangeEssence.mdx" 
     static constant greaterEssence                 = "Models\\Items\\PurpleEssence.mdx" 

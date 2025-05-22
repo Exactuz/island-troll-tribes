@@ -2,91 +2,107 @@ package WorkshopV2
 
 import LocalObjectIDs
 import ClosureTimers
-import CustomItemDefinition
+import CustomItemType
+import BuildingKitsDefinitions
+import BasicMaterials
+import SpearsDefinition
+import Net
+import HealingSalve
+import ClosureKeyPresses
+import PlayerExtensions
+import ClosureEvents
+import GameTimer
+import LivingClay
 
 let UNIT_REQUIREMENT = UNIT_WORKSHOP
 
 public function initializeWorkshopItems()
-    new CustomItemDefinition(ITEM_ENSNARE_TRAP_KIT)
+    new CustomItemType(ITEM_ENSNARE_TRAP_KIT, ITEM_ENSNARE_TRAP_KIT_DEFINITION)
     ..setItemRecipe(ITEM_TINDER, ITEM_BONE, ITEM_STICK)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_ENSNARE_TRAP)
 
 
-    new CustomItemDefinition(ITEM_BLOW_GUN)
+    new CustomItemType(ITEM_BLOW_GUN)
     ..setItemRecipe(ITEM_STICK, ITEM_CLAY_BALL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_BLOW_GUN)
 
 
-    new CustomItemDefinition(ITEM_POISON_THISTLES)
+    new CustomItemType(ITEM_POISON_THISTLES, ITEM_POISON_THISTLES_DEFINITION)
     ..setItemRecipe(ITEM_THISTLES, ITEM_POISON)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_POISON_THISTLES)
 
 
-    new CustomItemDefinition(ITEM_MANA_CRYSTAL)
+    new CustomItemType(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL_DEFINITION)
     ..setItemRecipe(ITEM_SPIRIT_WIND, ITEM_SPIRIT_WATER)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_MANA_CRYSTAL)
     ..setPreventBeingCraftedAsIngridient(true)
 
 
-    new CustomItemDefinition(ITEM_MAGIC)
+    new CustomItemType(ITEM_MAGIC, ITEM_MAGIC_DEFINITION)
     ..setItemRecipe(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_MAGIC)
 
 
-    new CustomItemDefinition(ITEM_POISON_SPEAR)
+    new CustomItemType(ITEM_POISON_SPEAR, ITEM_POISON_SPEAR_DEFINITION)
     ..setItemRecipe(ITEM_POISON, ITEM_BONE, ITEM_STONE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_POISON_SPEAR)
 
 
-    new CustomItemDefinition(ITEM_NETS)
+    new CustomItemType(ITEM_NETS, ITEM_NETS_DEFINITION)
     ..setItemRecipe(ITEM_TINDER, ITEM_TINDER)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_NETS)
 
 
-    new CustomItemDefinition(ITEM_HUNTING_NET)
+    new CustomItemType(ITEM_HUNTING_NET, ITEM_HUNTING_NET_DEFINITION)
     ..setItemRecipe(ITEM_NETS, ITEM_STONE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_HUNTING_NET)
 
 
-    new CustomItemDefinition(ITEM_HEALING_SALVE)
+    new CustomItemType(ITEM_HEALING_SALVE, ITEM_HEALING_SALVE_DEFINITION)
     ..setItemRecipe(ITEM_ATHELAS_SEED, ITEM_BANANA)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_HEALING_SALVE)
 
 
-    new CustomItemDefinition(ITEM_SMOKE_BOMB)
+    new CustomItemType(ITEM_SMOKE_BOMB)
     ..setItemRecipe(ITEM_BANANA, ITEM_SPIRIT_WIND)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_SMOKE_BOMB)
 
 
-    new CustomItemDefinition(ITEM_FIRE_BOMB)
+    new CustomItemType(ITEM_FIRE_BOMB)
     ..setItemRecipe(ITEM_SMOKE_BOMB, ITEM_FLINT, ITEM_MANA_CRYSTAL)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_FIRE_BOMB)
 
 
-    new CustomItemDefinition(ITEM_DARK_THISTLES)
+    new CustomItemType(ITEM_DARK_THISTLES)
     ..setItemRecipe(ITEM_THISTLES, ITEM_SPIRIT_DARKNESS)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_DARK_THISTLES)
 
 
-    new CustomItemDefinition(ITEM_EMP)
+    new CustomItemType(ITEM_EMP)
     ..setItemRecipe(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL, ITEM_SPIRIT_WATER, ITEM_SPIRIT_WIND)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_EMP)
 
 
-    new CustomItemDefinition(ITEM_TRANSPORT_SHIP_KIT)
+    new CustomItemType(ITEM_TRANSPORT_SHIP_KIT, ITEM_TRANSPORT_SHIP_KIT_DEFINITION)
     ..setItemRecipe(ITEM_STICK, ITEM_STICK, ITEM_CLAY_BALL, ITEM_CLAY_BALL, ITEM_ELK_HIDE, ITEM_ELK_HIDE)
     ..setUnitRequirement(UNIT_REQUIREMENT)
     ..setQuickMakeAbility(ABILITY_QM_TRANSPORT_SHIP)
+
+    new CustomItemType(ITEM_LIVING_CLAY, ITEM_LIVING_CLAY_DEFINITION)
+
+init
+    doAfter(1.) -> 
+        initializeWorkshopItems()

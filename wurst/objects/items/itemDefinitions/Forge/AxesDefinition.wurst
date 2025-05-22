@@ -20,6 +20,10 @@ import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
+import initlater CustomItemDefinition
+import ObjectIDManager
+import LocalObjectIDs2
+import initlater ScrollsDefinition
 
 let ABIL_ABILITY_ATTACK_SPEED_20 = compiletime(ABIL_ID_GEN.next())
 public let ABIL_DMG_STONE  = compiletime(ABIL_ID_GEN.next())
@@ -27,6 +31,7 @@ public let ABIL_DMG_IRON   = compiletime(ABIL_ID_GEN.next())
 public let ABIL_DMG_STEEL  = compiletime(ABIL_ID_GEN.next())
 public let ABIL_DMG_MASHER = compiletime(ABIL_ID_GEN.next())
 public let ABIL_DMG_BATTLE = compiletime(ABIL_ID_GEN.next())
+public let ABILITY_ATTACK_DMG_10 = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL__ATTACK_DMG_10")
 
 let ABIL_SILENCE = compiletime(ABIL_ID_GEN.next())
 let ABIL_PURGE   = compiletime(ABIL_ID_GEN.next())
@@ -36,6 +41,7 @@ public let ABIL_IRON   = commaList(ABIL_DMG_IRON, ABILITY_ATTACK_TREE)
 let ABIL_STEEL  = commaList(ABIL_DMG_STEEL, ABILITY_ATTACK_TREE)
 let ABIL_MASHER = commaList(ABIL_SILENCE, ABIL_DMG_MASHER, ABILITY_ATTACK_TREE)
 let ABIL_BATTLE = commaList(ABIL_DMG_BATTLE, ABILITY_ATTACK_TREE, ABILITY_ATTACK_SPEED_20)
+let ABIL_TIDEBRINGER = commaList(ABILITY_TSUNAMI, ABILITY_ATTACK_DMG_10, ABILITY_STR_BONUS_8, ABILITY_INT_BONUS_8)
 
 let DMG_STONE  = 6
 let DMG_IRON   = 8
@@ -101,6 +107,13 @@ let TT_BA = "A two handed axe. " + TT_COMMON +" Increased attack speed by "+"20%
     //formatCooldown(ABIL_PURGE) + formatDuration(ABIL_PURGE)
 
 
+let TT_TIDEBRINGER = "You were gifted this legendary trident by Princess Naelyssa, heir to the Coral Throne, after rescuing her from the clutches of the Ancient Makrura."+
+                     "\nTidebringer is no mere weapon; it is a herald of the tides, capable of commanding currents and summoning {0}.".format("Tsunami".color(SPECIAL_COLOR))+
+                     "\n+"+"10 ".color(COLOR_GREEN)+"Attack Damage"+
+                     "\n+"+"8 ".color(COLOR_GREEN)+"Strength"+
+                     "\n+"+"8 ".color(COLOR_GREEN)+"Intelligence"+
+                     "\n\nTsunami\n".color(SPECIAL_COLOR) + TSUNAMI_TT
+
 @compiletime function createCutTreeAbility() returns AbilityDefinitionFireDamageBonus
     return new AbilityDefinitionFireDamageBonus(ABILITY_ATTACK_TREE)
         ..setHeroAbility(true)
@@ -130,8 +143,8 @@ function createAxe(int axeId) returns ItemDefinition
         ..setCooldownGroup("AIas")
         ..setStockReplenishInterval(120)
 
-@compiletime function createStoneAxe() returns ItemDefinition
-    return createAxe(ITEM_STONE_AXE)
+public constant ITEM_STONE_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STONE_AXE_DUMMY_UNIT")
+public constant ITEM_STONE_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STONE_AXE)
         ..setInterfaceIcon(Icons.bTNOrcMeleeUpOne)
         ..setModelUsed(LocalItems.stoneAxe)
         ..setHotkey("A")
@@ -140,9 +153,11 @@ function createAxe(int axeId) returns ItemDefinition
         ..setLumberCost(12)
         ..setAbilities(ABIL_STONE)
         ..setNameEnhance("Stone Axe")
+        ..constructItemShopDummyUnit(ITEM_STONE_AXE_DUMMY_UNIT)
+        )
 
-@compiletime function createIronAxe() returns ItemDefinition
-    return createAxe(ITEM_IRON_AXE)
+public constant ITEM_IRON_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_AXE_DUMMY_UNIT")
+public constant ITEM_IRON_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_AXE)
         ..setInterfaceIcon(Icons.bTNOrcMeleeUpTwo)
         ..setModelUsed(LocalItems.ironAxe)
         ..setNameEnhance("Iron Axe")
@@ -151,9 +166,12 @@ function createAxe(int axeId) returns ItemDefinition
         ..setScalingValue(0.7)
         ..setLumberCost(25)
         ..setAbilities(ABIL_IRON)
+        ..constructItemShopDummyUnit(ITEM_IRON_AXE_DUMMY_UNIT)
+        )
 
-@compiletime function createSteelAxe() returns ItemDefinition
-    return createAxe(ITEM_STEEL_AXE)
+
+public constant ITEM_STEEL_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_AXE_DUMMY_UNIT")
+public constant ITEM_STEEL_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_AXE)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
         ..setModelUsed(LocalItems.steelAxe)
         ..setNameEnhance("Steel Axe")
@@ -165,9 +183,11 @@ function createAxe(int axeId) returns ItemDefinition
         ..setTintingColor1Red(120)
         ..setTintingColor2Green(140)
         ..setTintingColor3Blue(255)
+        ..constructItemShopDummyUnit(ITEM_STEEL_AXE_DUMMY_UNIT)
+        )
 
-@compiletime function createBattleAxe() returns ItemDefinition
-    return createAxe(ITEM_BATTLE_AXE)
+public constant ITEM_BATTLE_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_AXE_DUMMY_UNIT")
+public constant ITEM_BATTLE_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_AXE)
         ..setInterfaceIcon(Icons.bTNOrcMeleeUpThree)
         ..setModelUsed(LocalItems.battleAxe)
         ..setNameEnhance("Battle Axe")
@@ -177,9 +197,11 @@ function createAxe(int axeId) returns ItemDefinition
         ..setLumberCost(60)
         ..setAbilities(ABIL_BATTLE)
         ..setActivelyUsed(true)
+        ..constructItemShopDummyUnit(ITEM_BATTLE_AXE_DUMMY_UNIT)
+        )
 
-@compiletime function createMageMasher() returns ItemDefinition
-    return createAxe(ITEM_MAGE_MASHER)
+public constant ITEM_MAGE_MASHER_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGE_MASHER_DUMMY_UNIT")
+public constant ITEM_MAGE_MASHER_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAGE_MASHER)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerMasterTraining)
         ..setModelUsed(LocalItems.mageMasher)
         ..setNameEnhance("Mage Masher ")
@@ -191,7 +213,23 @@ function createAxe(int axeId) returns ItemDefinition
         ..setTintingColor2Green(65)
         ..setTintingColor3Blue(65)
         ..setActivelyUsed(true)
-
+        ..constructItemShopDummyUnit(ITEM_MAGE_MASHER_DUMMY_UNIT)
+        )
+            
+public constant ITEM_TIDEBRINGER_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TIDEBRINGER_DUMMY_UNIT")
+public constant ITEM_TIDEBRINGER_DEFINITION = compiletime(new CustomItemDefinition(ITEM_TIDEBRINGER)
+        ..setInterfaceIcon(Icons.bTNNagaWeaponUp2)
+        ..setModelUsed(LocalItems.tideBringer)
+        ..setNameEnhance("Tidebringer")
+        ..setHotkey("A")
+        ..setTooltipExtended(TT_TIDEBRINGER)
+        ..setScalingValue(0.7)
+        ..setLumberCost(35)
+        ..setAbilities(ABIL_TIDEBRINGER)
+        ..setActivelyUsed(true)
+        ..constructItemShopDummyUnit(ITEM_TIDEBRINGER_DUMMY_UNIT)
+        )
+        
 @compiletime function createStoneAxeAttackBonusAbility() returns AbilityDefinitionAttackBonusPlus1
     return new AbilityDefinitionAttackBonusPlus1(ABIL_DMG_STONE)
         ..setName("Stone Axe Damage Bonus")
@@ -214,6 +252,12 @@ function createAxe(int axeId) returns ItemDefinition
     return new AbilityDefinitionAttackBonusPlus1(ABIL_DMG_BATTLE)
         ..setName("Battle Axe Damage Bonus")
         ..setAttackBonus(1, DMG_BATTLE)
+        ..setEditorSuffix("(Wurst)")
+
+@compiletime function createAttackDamageBonusAbility10() returns AbilityDefinitionAttackBonusPlus1
+    return new AbilityDefinitionAttackBonusPlus1(ABILITY_ATTACK_DMG_10)
+        ..setName("Attack Damage Bonus +10")
+        ..setAttackBonus(1, 10)
         ..setEditorSuffix("(Wurst)")
 
 @compiletime function createMageMasherAxeAttackBonusAbility() returns AbilityDefinitionAttackBonusPlus1

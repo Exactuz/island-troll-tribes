@@ -138,7 +138,7 @@ public class WhirlingAxe
         for each in units
             if each.getPos().distanceTo(pos.toVec2())<= collisionSize and
                 not damagedUnits.has(each) and
-                not each.isAllyOf(troll.getOwner()) and
+                (not each.isAllyOf(troll.getOwner()) or each.getTypeId() == UNIT_FAWN) and
                 each.isAlive() 
 
                 damagedUnits.add(each)

@@ -43,6 +43,8 @@ import LocalItemObjEditing
 import HashList
 import IdListConstant
 import AxesDefinition
+import CustomItemDefinition
+import ObjectIDManager
 
 HashMap<int, int> attributeSwitchMap = new HashMap<int, int>
 ..put(ITEM_CHAMELEON_HATCHET_STR, ITEM_CHAMELEON_HATCHET_AGI)
@@ -84,7 +86,8 @@ let ABILITIES_INT  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_
 @compiletime function createHatchets()
     createItemBerserkCast(ABILITY_CHAMELEON_AXE_DUMMY)
 
-    createUsableItem(ITEM_CHAMELEON_HATCHET_STR)
+public constant ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT")
+public constant ITEM_CHAMELEON_HATCHET_STR_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_STR)
         ..setStockReplenishInterval(120)
         ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetStr)
         ..setModelUsed(LocalItems.chameleonHatchet)
@@ -95,8 +98,11 @@ let ABILITIES_INT  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_
         ..setTooltipExtended(TT_CHAMELEON_HATCHET_STR)
         ..setAbilities(commaList(ABILITIES_STR))
         ..setNameEnhance(TT_NAME)
+        ..constructItemShopDummyUnit(ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT)
+        )       
 
-    createUsableItem(ITEM_CHAMELEON_HATCHET_AGI)
+public constant ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT")
+public constant ITEM_CHAMELEON_HATCHET_AGI_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_AGI)
         ..setStockReplenishInterval(120)
         ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetAgi)
         ..setModelUsed(LocalItems.chameleonHatchet)
@@ -107,8 +113,11 @@ let ABILITIES_INT  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_
         ..setTooltipExtended(TT_CHAMELEON_HATCHET_AGI)
         ..setAbilities(commaList(ABILITIES_AGI))
         ..setNameEnhance(TT_NAME)
+        ..constructItemShopDummyUnit(ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT)
+        )       
         
-    createUsableItem(ITEM_CHAMELEON_HATCHET_INT)
+public constant ITEM_CHAMELEON_HATCHET_INT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CHAMELEON_HATCHET_INT_DUMMY_UNIT")
+public constant ITEM_CHAMELEON_HATCHET_INT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_INT)
         ..setStockReplenishInterval(120)
         ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetInt)
         ..setModelUsed(LocalItems.chameleonHatchet)
@@ -119,6 +128,8 @@ let ABILITIES_INT  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_
         ..setTooltipExtended(TT_CHAMELEON_HATCHET_INT)
         ..setAbilities(commaList(ABILITIES_INT))
         ..setNameEnhance(TT_NAME)
+        ..constructItemShopDummyUnit(ITEM_CHAMELEON_HATCHET_INT_DUMMY_UNIT)
+        )       
 
 
 function onUse(item itm, unit troll)

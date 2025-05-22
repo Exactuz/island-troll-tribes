@@ -29,16 +29,19 @@ import LocalItemObjEditing
 import GlovesDefinition
 import AxesDefinition
 import ColorUtils
+import ObjectIDManager
+import CustomItemDefinition
 
 let ABIL_MAKRURA_CLAWS_DMG   = compiletime(ABIL_ID_GEN.next())
-let DURATION_HERO = 2.5
+let DURATION_HERO = 2.
 let CAST_RANGE = 200.
-let MAKRURA_CLAWS_DMG_BONUS = 8
+let MAKRURA_CLAWS_DMG_BONUS = 6
 let MAKRURA_PIN_COOLDOWN = 25.
-public let MAKRURA_CLAWS_TT = "A pair of Makrura claws, that can be worn as gloves, takes up both gloves and a one-handed weapon slots."+
-                              "\n+{0} damage.".format(MAKRURA_CLAWS_DMG_BONUS.toString().color(COLOR_GREEN))+
-                              "\n+{0} armor.".format("3".color(COLOR_GREEN))+
-                              "\nPin".color(COLOR_TURQUOISE)+
+public let MAKRURA_CLAWS_TT = "A Makrura claw, that can be used as one-handed weapon."+
+                              "\n+{0} Attack Damage.".format(MAKRURA_CLAWS_DMG_BONUS.toString().color(COLOR_GREEN))+
+                              "\n+{0} Armor.".format("2".color(COLOR_GREEN))+
+                              "\n+{0} Strength.".format("4".color(COLOR_GREEN))+
+                              "\n\nPin".color(COLOR_TURQUOISE)+
                               ": \nCan be activated to pin a target with your claw, immobilizing and disarming target for {0} seconds, ".format(DURATION_HERO.toString().color(ENERGY_COLOR))+
                               "dealing 40 damage over time. ".format(DURATION_HERO.toString().color(ENERGY_COLOR))+
                               "Pin is canceled if you move 300 range away from the target. "+
@@ -57,13 +60,14 @@ public let MAKRURA_CLAWS_TT = "A pair of Makrura claws, that can be worn as glov
         ..setArtTarget(Abilities.stampedeMissileDeath)
         ..setArtSpecial("")
         ..setIcon(LocalIcons.bTNMakruraClaws)
-        ..setTooltipNormalExtended(1, "You are pinned for 4 seconds, taking damage over time.")
+        ..setTooltipNormalExtended(1, "You are pinned for {0} seconds, taking damage over time.".format(DURATION_HERO.toToolTipLightBlue()))
 
-@compiletime function createMakruraClaws() returns ItemDefinition
-    return createUsableItem(ITEM_MAKRURA_CLAWS)
+public constant ITEM_MAKRURA_CLAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAKRURA_CLAWS_DUMMY_UNIT")
+public constant ITEM_MAKRURA_CLAWS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAKRURA_CLAWS)
         ..setAbilities(commaList(
             ABILITY_MAKRURA_PIN,
-            ABILITY_ARMOR_BONUS_3,
+            ABILITY_ARMOR_BONUS_2,
+            ABILITY_STR_BONUS_4,
             ABIL_MAKRURA_CLAWS_DMG    
             )
         )
@@ -74,11 +78,13 @@ public let MAKRURA_CLAWS_TT = "A pair of Makrura claws, that can be worn as glov
         //..setTintingColor3Blue(255)
         ..setModelUsed(LocalItems.makruraClaws)
         ..setHotkey("")
-        ..setLumberCost(40)
+        ..setLumberCost(30)
         ..setScalingValue(1.2)
         ..setNameEnhance("Makrura Claw")
         ..setTooltipExtended(MAKRURA_CLAWS_TT)
         ..setCooldownGroup(toRawCode(ABILITY_MAKRURA_PIN))
+        ..constructItemShopDummyUnit(ITEM_MAKRURA_CLAWS_DUMMY_UNIT)
+        )        
 
 @compiletime function createMakruraPinAbility()
     new AbilityDefinitionEntanglingRootscreep(ABILITY_MAKRURA_PIN)

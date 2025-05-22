@@ -11,6 +11,8 @@ import LocalAssets
 import ToolTipsUtils
 import LocalObjectIDs
 import LocalItemObjEditing
+import CustomItemDefinition
+import ObjectIDManager
 
 public constant MANA_RESTORED = 80.
 public constant CAST_RANGE = 400.
@@ -32,8 +34,8 @@ public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,
         ..setManaCost(1, 0)
         ..setCooldown(1, 0)
 
-@compiletime function createManaPotion() returns ItemDefinition
-    return createPerishableItem(ITEM_MANA_POTION)
+public constant ITEM_MANA_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MANA_POTION_DUMMY_UNIT")
+public constant ITEM_MANA_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MANA_POTION)
         ..setNameEnhance(NAME)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionBlueLesser)
@@ -42,9 +44,13 @@ public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,
         ..setLumberCost(5)
         ..setAbilities(commaList(ABILITY_MANA_POTION))
         ..setScalingValue(0.7)
+        ..setStockMaximum(6)
         ..setCooldownGroup(commaList(ABILITY_MANA_POTION))
         ..setStockReplenishInterval(120)
         ..setNumberofCharges(1)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_MANA_POTION_DUMMY_UNIT)
+        )
 
 
 

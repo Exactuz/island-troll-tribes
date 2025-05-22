@@ -1,0 +1,208 @@
+package Reward
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIds
+import ClosureEvents
+import ClosureTimers
+import ColorUtils
+import SpearsDefinition
+import ChannelAbilityPreset
+import MurlocPoison
+import Orders
+import DamageEvent
+import DamageListeners
+import HashList
+import HashMap
+import ObjectIDManager
+import LocalObjectIDs2
+import Items
+import OnUnitEnterLeave
+import PlayerExtensions
+import UnitExtensions
+import GameStates
+import GameState
+import ItemShopDummyUnit
+
+HashMap<int, int> unitIdToRewardSelectorUnitIdMap = new HashMap<int, int>()
+    ..put(UNIT_MAKRURA, compiletime(constructRewardSelectorUnit()))
+
+HashList<int> MAKRURA_REWARDS_LIST = new HashList<int>()
+    ..add(ITEM_SPIRIT_WIND)
+    ..add(ITEM_SPIRIT_WATER)
+    ..add(ITEM_SPIRIT_DARKNESS)
+    //..add(ITEM_MAKRURA_CLAWS)
+    //..add(ITEM_MAKRURA_CARAPACE)
+
+public class Reward
+    int itemId
+    int dummyUnitId = compiletime(UNIT_ID_GEN.next())
+    int manaCost
+    int stock
+    int abilId
+    static IterableMap<int, thistype> instances = new IterableMap<int, thistype>()
+
+    static function getInstanceByItemId(int itemId) returns thistype
+        let instance = instances.get(itemId)
+        return instance
+
+    static function getInstanceByUnitId(int dummyUnitId) returns thistype
+        for each in instances
+            let instance = instances.get(each)
+            if instance.dummyUnitId == dummyUnitId
+                return instance
+        return null
+
+    construct(int itemId, int manaCost, int stock) // , int dummyUnitId
+        this.itemId = itemId
+        this.manaCost = manaCost
+        this.stock = stock
+        //this.dummyUnitId = compiletime(UNIT_ID_GEN.next())
+        print(dummyUnitId)
+        instances.put(itemId, this)
+        //rewardList.add(this)
+
+
+function createDummyUnit(int dummyUnitId) returns int
+        //let dummyUnitId = compiletime(UNIT_ID_GEN.next())//..registerObjectID("UNIT_DUMMY_ITEM_REWARD"+toRawCode(dummyUnitId))
+        new UnitDefinition(dummyUnitId, 'ewsp')
+        ..setName("UNIT_DUMMY_ITEM_REWARD")
+        ..setManaMaximum(1000000)
+        ..setMovementType(MovementType.Fly)
+        ..setUpgradesUsed("")
+        ..setCollisionSize(0.0)
+        ..setStructuresBuilt("")
+        ..setRace(Race.Commoner)
+        ..setFoodCost(0)
+        ..setGoldCost(0)
+        ..setArmorType(ArmorType.Divine)
+        ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNtemp.blp")
+        ..setSpeedBase(522)
+        ..setStockMaximum(1)
+        ..setStockReplenishInterval(5)
+        ..setModelFile("dummy.mdl")
+        ..setAnimationBlendTimeseconds(0.0)
+        ..setAnimationCastBackswing(0.0)
+        ..setMaximumPitchAngledegrees(0.0)
+        ..setMaximumRollAngledegrees(0.0)
+        ..setTurnRate(3)
+        ..setArtSpecial("")
+        ..setProjectileImpactZ(0.0)
+        ..setProjectileLaunchZ(0.0)
+        ..setNameEditorSuffix("(Basics)")
+        ..setSightRadiusDay(1)
+        ..setSightRadiusNight(1)
+        ..setUnitClassification("_")
+        ..setPropulsionWindowdegrees(1.0)
+        ..setTooltipBasic("")
+        ..setNormalAbilities(commaList(LOCUST_ID, GHOST_INVIS_ID)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+        ..setCollisionSize(0)
+        return dummyUnitId    
+
+
+
+public class RewardSelector
+    int unitId
+    int mana
+    unit u
+    HashList<ItemShopDummyUnit> rewardList = new HashList<ItemShopDummyUnit>()
+    static IterableMap<unit, thistype> instances = new IterableMap<unit, thistype>
+
+    static function getInstanceByItemId(unit u) returns thistype
+        let instance = instances.get(u)
+        return instance 
+
+    construct(int mana, unit dyingUnit)
+        this.mana = mana
+        this.unitId = unitIdToRewardSelectorUnitIdMap.get(dyingUnit.getTypeId())
+        spawnUnit(dyingUnit)
+        instances.put(u, this)
+        EventListener.add(EVENT_PLAYER_UNIT_SELL)->
+            handleUnitSold()
+
+        //addItemsToStock()
+
+
+    function spawnUnit(unit dyingUnit)
+        u = createUnit(players[PLAYER_NEUTRAL_PASSIVE], unitId, dyingUnit.getPos())
+        initializeItemStock()
+
+    function initializeItemStock()
+        let rewardInstances = ItemShopDummyUnit.instances
+        for each in rewardInstances
+            let instance = rewardInstances.get(each)
+            let itmId = instance.itemId
+            let dummyUnitId = rewardInstances.get(each).dummyUnitId
+            if MAKRURA_REWARDS_LIST.has(itmId)
+                u.addUnitToStock(dummyUnitId, 1, 1)
+                rewardList.add(instance)
+
+
+    function handleUnitSold()
+        let sellingUnit = GetSellingUnit()
+        let soldUnit = GetSoldUnit()
+        if sellingUnit!= u
+            return
+        nullTimer() -> 
+            let troll = soldUnit.getOwner().getTroll()
+            print(GetPlayerName(soldUnit.getOwner()))
+            for each in rewardList
+                print(GetObjectName(each.dummyUnitId)+" != "+GetObjectName(soldUnit.getTypeId()))
+                if each.dummyUnitId == soldUnit.getTypeId()
+                    let itm = createItem(each.itemId, troll.getPos())
+                    soldUnit.remove()
+                    nullTimer() -> 
+                        troll.triggerSmoothPickup(itm)
+                        troll.addItemHandle(itm)
+
+    function addItemsToStock()
+        u.addItemToStock(ITEM_SPIRIT_WIND, 0, 1)
+        for each in rewardList
+            u.addItemToStock(each.itemId, 0, 1)
+
+
+function constructRewardSelectorUnit() returns int
+    let rewardSelectorId = compiletime(UNIT_ID_GEN.next())//..registerObjectID("UNIT_DUMMY_ITEM_REWARD"+toRawCode(dummyUnitId))
+    new UnitDefinition(rewardSelectorId, UnitIds.foresttrollshadowpriest)
+        ..setNormalAbilities(
+            commaList(
+                AbilityIds.invulnerable,
+                AbilityIds.shopPurchaseItem,
+                AbilityIds.ghostVisible,
+                AbilityIds.sellUnitDynamic,
+                LocalAbilityIds.selectUnit
+            )
+        )
+        ..setAttacksEnabled(0)
+        ..setHitPointsMaximumBase(500000)
+        ..setManaMaximum(0)
+        ..setHideMinimapDisplay(true)
+    return rewardSelectorId   
+
+function initializeRewards()
+    //for each in MAKRURA_REWARDS_LIST
+     //   new Reward(each, 6, 1) //, compiletime(UNIT_ID_GEN.next())
+
+
+function onDeath(unit u)
+    let rewardSelectorUnitId = unitIdToRewardSelectorUnitIdMap.get(u.getTypeId())
+    if rewardSelectorUnitId == 0
+        return
+    new RewardSelector(45, u)
+
+init
+    //initializeRewards()
+
+    //EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
+    //    onDeath(GetDyingUnit())
+        

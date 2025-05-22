@@ -64,7 +64,7 @@ function createMidBoss(int unitId) returns UnitDefinition
 
 @compiletime function createMakrura() returns UnitDefinition
     return createMidBoss(UNIT_MAKRURA)
-        ..addAbilities(asList(ABILITY_MAKRURA_CARAPACE_BOSS_BUFF, ABILITY_MAKRURA_BOSS_PIN, ABILITY_MAKRURA_CUIRASS_ACTIVE, ABILITY_MAKRURA_CUIRASS_BUFF))
+        ..addAbilities(asList(ABILITY_MAKRURA_CARAPACE_BOSS_BUFF, ABILITY_MAKRURA_BOSS_PIN, ABILITY_MAKRURA_CUIRASS_ACTIVE, ABILITY_MAKRURA_CUIRASS_BUFF, 'Asb1')) //'Asb1' is swimming
         ..setAttack1CooldownTime(3.5)
         ..setAttack1DamageNumberofDice(2)
         ..setAttack1DamageBase(30)
@@ -72,6 +72,7 @@ function createMidBoss(int unitId) returns UnitDefinition
         ..setModelFile(Units.lobstrokkred)
         ..setScalingValue(1.5)
         ..setName("Makrura")
+        ..setMovementType(MovementType.Amphipic)
         ..setSelectionScale(3.0)
         ..setSpeedBase(350)
         ..setLevel(20)

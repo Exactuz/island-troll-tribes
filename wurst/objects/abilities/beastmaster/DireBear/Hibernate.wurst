@@ -33,13 +33,15 @@ import Omnivore
 let MANA_RESTORED = 80.
 let STRENGTH_MULTIPLIER = 2.
 let SLEEP_DURATION = 5.
-let DAMAGE_MITIGATION = 0.5
+let DAMAGE_MITIGATION = 0.35
 let FOOD_REDUCTION_PER_SECOND = 50
-
+let MISSING_HP_FULL_HEALING_THRESHOLD = 0.25
+let MISSING_HP_MINIMUM_HEALING = 0.333
 let TT_NORM = "Hibernate"
-let TT_EXT = "The Dire Bear can hibernate, restoring {0} mana and {1}x{2} life.".format(MANA_RESTORED.toString().color(COLOR_LIGHT_BLUE),
+let TT_EXT = "The Dire Bear can hibernate, restoring {0} mana and {1}x{2} life based on missing life.".format(MANA_RESTORED.toString().color(COLOR_LIGHT_BLUE),
                                                                                                          STRENGTH_MULTIPLIER.toString().color(COLOR_GREEN),
                                                                                                          "Strength".color(COLOR_ORANGE))+
+             "Healing reaches maximum effect at {0}".format(MISSING_HP_FULL_HEALING_THRESHOLD.toToolTipGray())+
              "\nDuring hibernation Dire Bear has {0}% damage reduction and lowers healing reduction by {1} per second.".format(
                 (DAMAGE_MITIGATION*100).toString().color(COLOR_ORANGE),FOOD_REDUCTION_PER_SECOND.toString().color(COLOR_GREEN))+
              "\nConsuming any food will reduce Hibernate cooldown by {0} second.".format(ON_FOOD_COOLDOWN_REFUND.toToolTipLightBlue())+
@@ -123,7 +125,12 @@ function onCast(unit caster, unit target)
         let str = caster.getStr(true)
         //doPeriodicallyTimed(ANIMATION_PERIOD, 1.) (CallbackCounted cb) ->
             //new HealingInstance(caster, caster, str*STRENGTH_MULTIPLIER/SLEEP_DURATION*ANIMATION_PERIOD, HealingType.ABILITY, false)
-        new HealingInstance(caster, caster, str*STRENGTH_MULTIPLIER, HealingType.ABILITY, true) 
+
+        
+        let missingHpMultiplier = target.getMissingHP()/(target.getMaxHP()*(1-MISSING_HP_FULL_HEALING_THRESHOLD))
+        let totalHealingMultiplier = min(missingHpMultiplier, 1)*(1-MISSING_HP_MINIMUM_HEALING)+MISSING_HP_MINIMUM_HEALING
+        let healAmount = str*STRENGTH_MULTIPLIER*totalHealingMultiplier
+        new HealingInstance(caster, caster, healAmount, HealingType.ABILITY, true)
         doAfter(1.) ->
             let state = states[caster.getIndex()]
             if state != null

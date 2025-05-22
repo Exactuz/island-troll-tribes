@@ -1,0 +1,271 @@
+package CustomItemType
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import Transformation
+import UnitIds
+import Items
+import LocalItemObjEditing
+import HashList
+import IdListConstant
+import QuickMake
+import BonusHandler
+import ItemRecipeV2
+import QuickMakeV2
+import initlater MixingPotV2
+import initlater CustomItemDefinition
+import initlater ItemShopDummyUnit
+
+LinkedList<Bonus> bonusTypes =  new LinkedList<Bonus>()
+        ..add(Bonus.STRENGTH)    
+        ..add(Bonus.AGILITY)
+        ..add(Bonus.ARMOR)
+        ..add(Bonus.ATTACKSPEED)
+        ..add(Bonus.DAMAGE)
+        ..add(Bonus.INTELLIGENCE)
+        ..add(Bonus.LIFE)
+        ..add(Bonus.MANA)
+/*
+@compiletime function createItemTest()
+    let CustomItemType = new CustomItemType(ITEM_TEST)
+        ..setLumberCost(100)
+        ..setIcon(Icons.bTNAbomination)
+        ..setName("test Item")
+        ..setTooltipExtended("testestest")
+        ..addBonusAgility(4)
+        ..addBonusStrength(10)
+    let itmDefinition = CustomItemType.itemDefinition
+    itmDefinition..setAbilities(ABIL_IRON)
+*/
+
+
+public class CustomItemType
+    static HashMap<int, thistype> instances = new HashMap<int, thistype>()
+    int itemId
+    CustomItemDefinition customItemDefinition
+    ItemRecipe recipe
+    int strengthBonus =0    
+    int agilityBonus =0
+    int intelligenceBonus =0
+    int armorBonus =0
+    int damageBonus =0
+    int attackSpeedBonus =0
+    int hpBonus =0
+    int mpBonus =0
+    bool preventBeingCraftedAsIngridient = false
+    string iconPath
+    string modelPath
+    string TT_EXTENDED
+    string TT_NAME
+    real scalingValue
+    int lumberCost
+    int quickMakeAbility = 0
+    let arraySize = 5
+    int array[arraySize] abilities
+    int arrayIndex = 0
+    LinkedList<int> specialAbilities
+    HashMap<Bonus, int> bonuses = new HashMap<Bonus, int>()
+
+    static function getInstance(int itemId) returns thistype
+        return instances.get(itemId)
+
+    construct(int itemId)
+        this.itemId = itemId
+        //createItem(itemId)
+        instances.put(itemId, this)
+        recipe = new ItemRecipe(itemId)
+        doAfter(1.) ->
+            if recipe != null and quickMakeAbility == 0
+                //print(GetObjectName(itemId)+" doesnt have a quickmake ability assigned")
+             
+    construct(int itemId, CustomItemDefinition customItemDefinition)
+        this.itemId = itemId
+        this.customItemDefinition = customItemDefinition
+        //print(customItemDefinition.TT_NAME)
+        //this.itemDefinition = itemDefinition.
+        instances.put(itemId, this)
+        recipe = new ItemRecipe(itemId)
+        if customItemDefinition.itemShopDummyUnitDefinition!= null
+            new ItemShopDummyUnit(itemId, customItemDefinition.itemShopDummyUnitDefinition)
+
+    function applyBonuses(unit troll)
+        //print(damageBonus)
+        //print("applyBonuses")
+        if not troll.isTroll()
+            return
+        for bonus in bonusTypes
+            let bonusValue = bonuses.get(bonus).toReal()
+            //print("bonusType = "+bonus.toString())
+            //print("bonusValue = "+bonusValue.toString())
+            if bonusValue !=0
+                troll.addBonus(bonus, bonusValue)
+                //print("applying bonus "+bonusValue.toString()+" "+bonus.toString())
+        for i = 0 to arraySize
+            let abilId = abilities[i]
+            if abilId == 0
+                return
+            troll.addAbility(abilId)
+            troll.makeAbilityPermanent(abilId, true)
+            troll.disableAbility(abilId, false, true)
+
+    function removeBonuses(unit troll)
+        if not troll.isTroll()
+            return
+        for bonus in bonusTypes
+            let bonusValue = bonuses.get(bonus).toReal()
+            if bonusValue !=0
+                troll.addBonus(bonus, -bonusValue)
+        for i = 0 to arraySize
+            let abilId = abilities[i]
+            if abilId == 0
+                return
+            troll.removeAbility(abilId)
+            //print("removing "+GetObjectName(abilId))
+
+    function createItem(int itemId)
+
+    function setScalingValue(real _scalingValue)
+        scalingValue = _scalingValue
+
+    function setLumberCost(int amount)
+        lumberCost = amount
+
+    function setTooltipExtended(string _TT_EXTENDED)
+        TT_EXTENDED = _TT_EXTENDED
+
+    function setItemRecipe(vararg int itemIds)
+        for each in itemIds
+            recipe.addRecipeIngredient(each)
+
+    function setUnitRequirement(int unitRequirementId)
+        recipe.unitRequirementId = unitRequirementId
+
+    function setMixingPotManaRequirement(int manaRequirement)
+        recipe.setMixingPotManaRequirement(manaRequirement)
+
+    function setMixingPotQuickMakeAbility(int abilId)
+        quickMakeAbility = abilId
+        EventListener.onCast(abilId) (unit caster) ->
+            onMixingPotQuickMake(caster, itemId)        
+
+    function setQuickMakeAbility(int abilId)
+        quickMakeAbility = abilId
+        EventListener.onCast(abilId) (unit caster) ->
+            onQuickMake(caster, quickMakeAbility)
+            
+    //function onMixingPotQuickMake(unit caster)
+
+    function onQuickMake(unit caster, int abilId)
+        if itemId == ITEM_TRANSPORT_SHIP_KIT and gameConfig.getDisabledBoats() == true
+            return
+        let quickMake = new QuickMakeV2(itemId, caster, abilId)
+        let craftedItem = quickMake.craftItem(caster)
+        if craftedItem == null
+            return
+        //doAfter(ANIMATION_PERIOD) ->
+            //caster.addItemHandle(craftedItem)   
+            //quickMake.onSuccess()        
+
+    function setName(string _name)
+        TT_NAME = _name
+
+    function setIcon(string _iconPath)
+        iconPath = _iconPath
+
+    function setModelUsed(string _modelPath)
+        modelPath = _modelPath
+
+    function addActiveAbility(int abilId)
+
+    function addBonusStrength(int amount)
+        strengthBonus += amount
+        bonuses.put(Bonus.STRENGTH, strengthBonus)
+
+    function addBonusAgility(int amount)
+        agilityBonus += amount
+        bonuses.put(Bonus.AGILITY, agilityBonus)
+        
+
+    function addBonusIntelligence(int amount)
+        intelligenceBonus += amount
+        bonuses.put(Bonus.INTELLIGENCE, intelligenceBonus)
+        
+
+    function addBonusArmour(int amount)
+        armorBonus += amount
+        bonuses.put(Bonus.ARMOR, armorBonus)
+        
+
+    function addBonusDamage(int amount)
+        damageBonus += amount
+        bonuses.put(Bonus.DAMAGE, damageBonus)
+        
+
+    function addBonusAttackSpeed(int amount)
+        attackSpeedBonus += amount
+        bonuses.put(Bonus.ATTACKSPEED, attackSpeedBonus)
+        
+
+    function addBonusHp(int amount)
+        hpBonus += amount
+        bonuses.put(Bonus.LIFE, hpBonus)
+        
+
+    function addBonusMp(int amount)
+        agilityBonus += amount
+        bonuses.put(Bonus.MANA, agilityBonus)
+        
+
+    function addBonusMovementSpeed(int amount)
+        mpBonus += amount
+        //bonuses.put(Bonus.m, strengthBonus)
+        
+
+    function addSpecialAbilities(int _abilId)
+        if _abilId == 0
+            return
+        abilities[arrayIndex] = _abilId
+        arrayIndex+=1
+        //specialAbilities.add(abilId)
+    
+    function addAllAttributes(int amount)
+        strengthBonus+=amount
+        agilityBonus+=amount
+        intelligenceBonus+=amount
+
+    function setPreventBeingCraftedAsIngridient(bool prevent)
+        preventBeingCraftedAsIngridient = prevent

@@ -11,6 +11,9 @@ import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
+import CustomItemDefinition
+import ObjectIDManager
+import ObjectIdGenerator
 
 
 constant AS_FACTOR = 0.10
@@ -53,8 +56,8 @@ public constant TT_DRUNK_POTION = "" +
     ..setChanceToMiss(1, MISS_CHANCE)
     ..setEditorSuffix("(Wurst)")
 
-@compiletime function createDrunkPotion() returns ItemDefinition
-    return createPerishableItem(ITEM_DRUNKS_POTION)
+public constant ITEM_DRUNKS_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_DRUNKS_POTION_DUMMY_UNIT")
+public constant ITEM_DRUNKS_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_DRUNKS_POTION)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionLesserInvulnerability)
         ..setNameEnhance(NAME)
@@ -66,3 +69,7 @@ public constant TT_DRUNK_POTION = "" +
         ..setCooldownGroup(commaList(ABILITY_DRUNK_POTION))
         ..setStockReplenishInterval(90)
         ..setNumberofCharges(1)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_DRUNKS_POTION_DUMMY_UNIT)
+        )
+

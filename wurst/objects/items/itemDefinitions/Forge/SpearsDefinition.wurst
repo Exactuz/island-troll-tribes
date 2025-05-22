@@ -13,6 +13,8 @@ import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
+import CustomItemDefinition
+import ObjectIDManager
 
 // Generate the object IDs used locally.
 let BUFF_DARK                   = compiletime(BUFF_ID_GEN.next())
@@ -124,15 +126,16 @@ let TT_UPOISON = TT_POISON_BASE.format(
     UPOISON_DEBUFF[1].toToolTipOrange()
 ) + makeToolTipDuration(POISON_DURATION, UPOISON_COOLDOWN)
 
-function createSpear(int spearId) returns ItemDefinition
-    return createPerishableItem(spearId)
+function createSpear(int spearId) returns CustomItemDefinition
+    return new CustomItemDefinition(spearId)
+        ..setItemPerishable()
         ..setNumberofCharges(1)
         ..setScalingValue(0.75)
         ..setCooldownGroup(toRawCode(ABILITY_SPEAR))
         ..setModelUsed(LocalItems.spears)
 
-@compiletime function createStoneSpear() returns ItemDefinition
-    return createSpear(ITEM_SPEAR)
+public constant ITEM_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SPEAR_DUMMY_UNIT")
+public constant ITEM_SPEAR_DEFINITION = compiletime(createSpear(ITEM_SPEAR)
         ..setNameEnhance("Stone Spear")
         ..setInterfaceIcon(Icons.bTNSteelRanged)
         ..setHotkey("Q")
@@ -140,9 +143,11 @@ function createSpear(int spearId) returns ItemDefinition
         ..setLumberCost(5)
         ..setAbilities(commaList(ABILITY_SPEAR))
         ..setStockReplenishInterval(120)
+        ..constructItemShopDummyUnit(ITEM_SPEAR_DUMMY_UNIT)
+        )
 
-@compiletime function createIronSpear() returns ItemDefinition
-    return createSpear(ITEM_IRON_SPEAR)
+public constant ITEM_IRON_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_SPEAR_DUMMY_UNIT")
+public constant ITEM_IRON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_IRON_SPEAR)
         ..setNameEnhance("Iron Spear")
         ..setInterfaceIcon(Icons.bTNStrengthOfTheMoon)
         ..setHotkey("Q")
@@ -153,9 +158,11 @@ function createSpear(int spearId) returns ItemDefinition
         ..setTintingColor1Red(200)
         ..setTintingColor2Green(200)
         ..setTintingColor3Blue(200)
+        ..constructItemShopDummyUnit(ITEM_IRON_SPEAR_DUMMY_UNIT)
+        )
 
-@compiletime function createSteelSpear() returns ItemDefinition
-    return createSpear(ITEM_STEEL_SPEAR)
+public constant ITEM_STEEL_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_SPEAR_DUMMY_UNIT")
+public constant ITEM_STEEL_SPEAR_DEFINITION = compiletime(createSpear(ITEM_STEEL_SPEAR)
         ..setNameEnhance("Steel Spear")
         ..setInterfaceIcon(Icons.bTNThoriumRanged)
         ..setHotkey("Q")
@@ -166,9 +173,11 @@ function createSpear(int spearId) returns ItemDefinition
         ..setTintingColor1Red(150)
         ..setTintingColor2Green(150)
         ..setTintingColor3Blue(150)
+        ..constructItemShopDummyUnit(ITEM_STEEL_SPEAR_DUMMY_UNIT)
+        )
 
-@compiletime function createDarkSpear() returns ItemDefinition
-    return createSpear(ITEM_DARK_SPEAR)
+public constant ITEM_DARK_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_DARK_SPEAR_DUMMY_UNIT")
+public constant ITEM_DARK_SPEAR_DEFINITION = compiletime(createSpear(ITEM_DARK_SPEAR)
         ..setNameEnhance("Dark Spear")
         ..setInterfaceIcon(Icons.bTNArcaniteRanged)
         ..setHotkey("Q")
@@ -179,10 +188,12 @@ function createSpear(int spearId) returns ItemDefinition
         ..setTintingColor1Red(0)
         ..setTintingColor2Green(0)
         ..setTintingColor3Blue(0)
+        ..constructItemShopDummyUnit(ITEM_DARK_SPEAR_DUMMY_UNIT)
+        )
 
 
-@compiletime function createRefinedPoisonSpear() returns ItemDefinition
-    return createSpear(ITEM_POISON_SPEAR)
+public constant ITEM_POISON_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POISON_SPEAR_DUMMY_UNIT")
+public constant ITEM_POISON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_POISON_SPEAR)
         ..setNameEnhance("Poison Spear")
         ..setInterfaceIcon(Icons.bTNEnvenomedSpear)
         ..setHotkey("Q")
@@ -194,9 +205,11 @@ function createSpear(int spearId) returns ItemDefinition
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(100)
         ..setStockMaximum(4)
+        ..constructItemShopDummyUnit(ITEM_POISON_SPEAR_DUMMY_UNIT)
+        )
 
-@compiletime function createUltraPoisonSpear() returns ItemDefinition
-    return createSpear(ITEM_ULTRA_POISON_SPEAR)
+public constant ITEM_ULTRA_POISON_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ULTRA_POISON_SPEAR_DUMMY_UNIT")
+public constant ITEM_ULTRA_POISON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_ULTRA_POISON_SPEAR)
         ..setNameEnhance("Ultra Poison Spear")
         ..setInterfaceIcon(LocalIcons.bTNUltraPoisonSpear)
         ..setHotkey("Q")
@@ -207,6 +220,8 @@ function createSpear(int spearId) returns ItemDefinition
         ..setTintingColor1Red(100)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(100)
+        ..constructItemShopDummyUnit(ITEM_ULTRA_POISON_SPEAR_DUMMY_UNIT)
+        )
 
 public function createSpearAbility(int newId) returns ChannelAbilityPreset
     return new ChannelAbilityPreset(newId, 1, true)

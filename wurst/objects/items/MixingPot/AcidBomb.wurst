@@ -11,6 +11,8 @@ import Items
 import LocalObjectIDs
 import ToolTipsUtils
 import LocalItemObjEditing
+import CustomItemDefinition
+import ObjectIDManager
 
 
 public constant ARMOR_PENALTY = 8.
@@ -52,8 +54,8 @@ public constant TT_ACID_BOMB = "" +
     ..setCooldown(1, COOLDOWN)
     ..setEditorSuffix("(Wurst)")
 
-@compiletime function createAcidBomb() returns ItemDefinition
-    return createPerishableItem(ITEM_ACID_BOMB)
+public constant ITEM_ACID_BOMB_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ACID_BOMB_DUMMY_UNIT")
+public constant ITEM_ACID_BOMB_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ACID_BOMB)
         ..setInterfaceIcon(Icons.bTNAcidBomb)
         ..setModelUsed(Buildings.barrelsUnit0)
         ..setNameEnhance(NAME)
@@ -67,3 +69,6 @@ public constant TT_ACID_BOMB = "" +
         ..setScalingValue(0.40)
         ..setCooldownGroup(commaList(ABILITY_ACID_BOMB))
         ..setStockReplenishInterval(180)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_ACID_BOMB_DUMMY_UNIT)
+        )

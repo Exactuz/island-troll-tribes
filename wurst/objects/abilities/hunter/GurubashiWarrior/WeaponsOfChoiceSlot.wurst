@@ -23,6 +23,7 @@ import LinkedList
 import QuickMake
 import PlayerExtensions
 import ObjectIDManager
+import EquipmentSlots
 
 
 public IterableMap<unit, WeaponsOfChoiceSlot> weaponsOfChoiceSlotInstances = new IterableMap<unit, WeaponsOfChoiceSlot>()
@@ -227,6 +228,12 @@ init
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         if GetManipulatedItem().getTypeId() == ITEM_ARMS_SLOT
             onDummyDrop(GetManipulatingUnit(), GetManipulatedItem())           
+
+    registerOnEquipEvent(EQUIPMENT_CALLBACK_ANY) (unit troll, item itm) ->                  
+        onPickup(troll, itm) 
+        
+    registerOnUnequipEvent(EQUIPMENT_CALLBACK_ANY) (unit troll, item itm) ->                  
+        onPickup(troll, itm)        
 
     registerPlayerUnitEvent(EVENT_PLAYER_HERO_REVIVE_FINISH)->
         onRevive(GetTriggerUnit())  

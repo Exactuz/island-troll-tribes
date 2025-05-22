@@ -27,6 +27,7 @@ import TrollProtector
 import VenomFang
 import StavesDefinition
 import ChameleonHatchet
+import CraftedMaterials
 
 // Herbs
 let SPECIAL_HERB       = "Special Herb".color(SPECIAL_COLOR)
@@ -147,14 +148,14 @@ public let SPIRIT_DARKNESS_RECIPE         = "a Spirit Of Darkness, dark essence 
 public let OMNICURE_RECIPE                = "an Omicure, remove positive/negative buff & effect on all allied Trolls :\n\n2x "+ATHELAS_SEED+" + 1x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2"
 public let GEM_OF_KNOWLEDGE_RECIPE        = "a Gem Of Knowledge, magical artifact increasing experience gained by 50%, doesn't work on hunter & beastmaster classes"+
                                             " :\n\n2x "+SPECIAL_HERB+" 1 + 2x "+SPECIAL_HERB+" 2\nOr\n3x "+SPECIAL_HERB+" 1 + 1x "+SPECIAL_HERB+" 2"
-public let SPIRIT_WIND_RECIPE             = "a Spirit Of Wind, used to craft quality gear, gives your hero +1 all attributes :\n\n2x "+RIVER_STEM
-public let SPIRIT_WATER_RECIPE            = "a Spirit Of Water, used to craft quality gear, gives your hero +1 all attributes :\n\n2x "+RIVER_ROOT
-public let GREATER_ESSENCE_RECIPE                = "a Greater Essence, used to craft quality gear :\n\n2x "+EXOTIC_HERB
-public let LESSER_ESSENCE_RECIPE                 = "a Lesser Essence, used to craft quality gear :\n\n2x "+NATIVE_HERB
+public let SPIRIT_WIND_RECIPE             = "a "+TT_SWIND+" :\n\n2x "+RIVER_STEM
+public let SPIRIT_WATER_RECIPE            = "a "+TT_SWATER+" :\n\n2x "+RIVER_ROOT
+public let GREATER_ESSENCE_RECIPE                = "a "+TT_GREATER_ESSENCE+" :\n\n2x "+EXOTIC_HERB
+public let LESSER_ESSENCE_RECIPE                 = "a "+TT_LESSER_ESSENCE+" :\n\n2x "+NATIVE_HERB
 
 //Forge
-public let IRON_INGOT_RECIPE   = "an Iron Ingot. A Hard and shiny ingot of iron that could be used in production of powerful weapons :\n\n1x "      +STONE      +" + 1x "+FLINT
-public let STEEL_INGOT_RECIPE  = "a Steel Ingot. A Hard and shiny ingot of Steel that could be used in production of powerful weapons :\n\n2x "     +IRON       +" + 2x "+FLINT
+public let IRON_INGOT_RECIPE   = "an Iron Ingot. "+TT_IINGOT_EXT+" :\n\n1x "      +STONE      +" + 1x "+FLINT
+public let STEEL_INGOT_RECIPE  = "a Steel Ingot. "+TT_SINGOT_EXT+" :\n\n2x "     +IRON       +" + 2x "+FLINT
 
 public let STONE_AXE_RECIPE   = "a Stone Axe. Increase damage by 6, allows tree to be cut :\n\n1x "                                    +STICK+"/"+BONE+" + 2x "+STONE
 public let IRON_AXE_RECIPE    = "an Iron Axe. Increase damage by 9, allows tree to be cut :\n\n1x "                                    +STICK+"/"+BONE+" + 2x "+IRON
@@ -349,7 +350,7 @@ public let HATCHERY_KIT_RECIPE = "a Hatchery Kit. A kit used to build a Hatchery
                                   "3x "+STONE+" + 3x "+STICK
 
 public let TELEPORT_BEACON_KIT_RECIPE = "a Teleport Beacon Kit. A kit used to build a Teleport Beacon, can be used to blink yourself on the other side of the beacon :\n\n"+
-                                  "2x "+STONE+" + 1x "+MC+" + 1x "+STICK+" + 1x "+TINDER
+                                  "2x "+STONE+" + 1x "+MC+" + 1x "+STICK
 
 public let OMNI_TOWER_KIT_RECIPE = "a Omnitower Kit. A kit used to build an Omnitower, a tower dealing small amount of damage, can use activable items like spear, scroll or blowgun :\n\n"+
                                   "1x "+STONE+" + 3x "+STICK

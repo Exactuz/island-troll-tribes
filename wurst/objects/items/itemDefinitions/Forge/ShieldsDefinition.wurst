@@ -15,6 +15,8 @@ import LocalAssets
 import Items
 import ColorUtils
 import TrollProtector
+import CustomItemDefinition
+import ObjectIDManager
 
 // I've been really lazy down here
 
@@ -71,51 +73,97 @@ class AttackTypes
     static constant special = 4
     static constant spells  = 8
 
-public class Shield
-    int id = 0
+public constant ITEM_SHIELD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SHIELD_DUMMY_UNIT")
+public constant ITEM_SHIELD_DEFINITION = compiletime(new Shield(ITEM_SHIELD, ITEM_SHIELD_DUMMY_UNIT, "Basic Shield", ABILITY_BASIC_SHIELD_BLOCK_ID, SHIELD_DAMAGE_BLOCK3, BASIC_SHIELD_TOOLTIP, Icons.bTNSteelArmor, LocalItems.shield, BASIC_SHIELD_ABILITIES, 13))
+
+public constant ITEM_BONE_SHIELD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_SHIELD_DUMMY_UNIT")
+public constant ITEM_BONE_SHIELD_DEFINITION = compiletime(new Shield(ITEM_BONE_SHIELD, ITEM_BONE_SHIELD_DUMMY_UNIT, "Bone Shield", ABILITY_BONE_SHIELD_BLOCK_ID, SHIELD_DAMAGE_BLOCK5, BONE_SHIELD_TOOLTIP, Icons.bTNImprovedUnholyArmor, LocalItems.boneShield, BONE_SHIELD_ABILITIES, 20))
+        
+public constant ITEM_IRON_SHIELD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_SHIELD_DUMMY_UNIT")
+public constant ITEM_IRON_SHIELD_DEFINITION = compiletime(new Shield(ITEM_IRON_SHIELD, ITEM_IRON_SHIELD_DUMMY_UNIT, "Iron Shield", ABILITY_IRON_SHIELD_BLOCK_ID, SHIELD_DAMAGE_BLOCK7, IRON_SHIELD_TOOLTIP, Icons.bTNHumanArmorUpOne, LocalItems.ironShield, IRON_SHIELD_ABILITIES, 46))
+        
+public constant ITEM_STEEL_SHIELD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_SHIELD_DUMMY_UNIT")
+public constant ITEM_STEEL_SHIELD_DEFINITION = compiletime(new Shield(ITEM_STEEL_SHIELD, ITEM_STEEL_SHIELD_DUMMY_UNIT, "Steel Shield", ABILITY_STEEL_SHIELD_BLOCK_ID, SHIELD_DAMAGE_BLOCK10, STEEL_SHIELD_TOOLTIP, Icons.bTNThoriumArmor, LocalItems.steelShield, STEEL_SHIELD_ABILITIES, 66))
+        
+public constant ITEM_BATTLE_SHIELD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_SHIELD_DUMMY_UNIT")
+public constant ITEM_BATTLE_SHIELD_DEFINITION = compiletime(new Shield(ITEM_BATTLE_SHIELD, ITEM_BATTLE_SHIELD_DUMMY_UNIT, "Battle Shield", ABILITY_BATTLE_SHIELD_BLOCK_ID, SHIELD_DAMAGE_BLOCK10, BATTLE_SHIELD_TOOLTIP, Icons.bTNArcaniteArmor, LocalItems.battleShield, BATTLE_SHIELD_ABILITIES, 82))
+        
+public constant ITEM_MAKRURA_CARAPACE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAKRURA_CARAPACE_DUMMY_UNIT")
+public constant ITEM_MAKRURA_CARAPACE_DEFINITION = compiletime(new Shield(ITEM_MAKRURA_CARAPACE, ITEM_MAKRURA_CARAPACE_DUMMY_UNIT, "Makrura Carapace", ABILITY_DUMMY_SHIELD_BLOCK_ID, SHIELD_DAMAGE_BLOCK0, MAKRURA_CARAPACE_TOOLTIP, LocalIcons.bTNMakruraCarapace, LocalItems.makruraCarapace, MAKRURA_CARAPACE_DUMMY_ABILITIES, 30, 1.0))
+        //new Shield(ITEM_MAKRURA_CARAPACE_DUMMY , "Makrura Carapace" , ABILITY_DUMMY2_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace", LocalItems.makruraCarapace, MAKRURA_CARAPACE_DUMMY_ABILITIES , 41, 1.0),
+        
+public constant ITEM_TROLL_PROTECTOR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TROLL_PROTECTOR_DUMMY_UNIT")
+public constant ITEM_TROLL_PROTECTOR_DEFINITION = compiletime(new Shield(ITEM_TROLL_PROTECTOR, ITEM_TROLL_PROTECTOR_DUMMY_UNIT, "Troll Protector", ABILITY_TROLL_PROTECTOR_ID, SHIELD_DAMAGE_BLOCK7, TROLL_PROTECTOR_TOOLTIP, LocalIcons.bTNTrollProtector, LocalItems.trollProtector, TROLL_PROTECTOR_ABILITIES, 41))
+
+
+public class Shield extends CustomItemDefinition
+    //int id = 0
     int abilId = 0
-    int goldCost = 0
+    //int goldCost = 0
+    int itemShopDummyUnitId = 0
     real scale = 0
     real ignoreDamage = 0
-    string name = ""
-    string tooltip = ""
-    string iconPath = "ReplaceableTextures\\CommandButtons\\BTN"
-    string abilities = ""
-    string modelPath = ""
+    //string name = ""
+    //string tooltip = ""
+    //string iconPath = "ReplaceableTextures\\CommandButtons\\BTN"
+    //string abilities = ""
+    //string modelPath = ""
 
-    construct(int id, string name, int abilId, real ignoreDamage, string tooltip, string iconPath, string modelPath, string abilities, int goldCost)
+    construct(int id, int itemShopDummyUnitId, string name, int abilId, real ignoreDamage, string tooltip, string iconPath, string modelPath, string abilities, int goldCost)
+        super(id)
         this.scale = 0.8
-        this.id = id
-        this.name = name
+        this.itemId = id
+        this.itemShopDummyUnitId = itemShopDummyUnitId
+        this.TT_NAME = name
         this.abilId = abilId
-        this.tooltip = tooltip
-        this.goldCost = goldCost
-        this.iconPath += iconPath+".blp"
+        this.TT_EXTENDED = tooltip
+        this.lumberCost = goldCost
+        this.iconPath = iconPath
         this.ignoreDamage = ignoreDamage
         this.abilities = abilities
         if id != ITEM_BATTLE_SHIELD
             this.abilities += "," + ABILITY_MAGIC_RESIST.toRawCode() // 10% magic resistance ability
         this.modelPath = modelPath
+        buildShield()
+        
 
-    construct(int id, string name, int abilId, real ignoreDamage, string tooltip, string iconPath, string modelPath, string abilities, int goldCost, real scale)
+    construct(int id, int itemShopDummyUnitId, string name, int abilId, real ignoreDamage, string tooltip, string iconPath, string modelPath, string abilities, int goldCost, real scale)
+        super(id)
         this.scale=scale
-        this.id = id
-        this.name = name
+        this.itemId = id
+        this.itemShopDummyUnitId = itemShopDummyUnitId
+        this.TT_NAME = name
         this.abilId = abilId
-        this.tooltip = tooltip
-        this.goldCost = goldCost
-        this.iconPath += iconPath+".blp"
+        this.TT_EXTENDED = tooltip
+        this.lumberCost = goldCost
+        this.iconPath = iconPath
         this.ignoreDamage = ignoreDamage
         this.abilities = abilities
         if id != ITEM_BATTLE_SHIELD
             this.abilities += "," + ABILITY_MAGIC_RESIST.toRawCode() // 10% magic resistance ability
         this.modelPath = modelPath
+        buildShield()
 
     function buildShield()
-        buildItem()
         buildReduceDamageSpell()
+        buildItem()
 
     function buildItem()
+        setInterfaceIcon(iconPath)
+        setAbilities(abilities)
+        setTooltipExtended(TT_EXTENDED)
+        setName(TT_NAME)
+        setModelUsed(modelPath)
+        setLumberCost(lumberCost)
+        setScalingValue(scale)
+        setActivelyUsed(true)
+        setCooldownGroup("defend")
+        setGoldCost(0)
+        setLevelUnclassified(0)
+        setPerishable(false)
+        setPriority(0)
+        constructItemShopDummyUnit(itemShopDummyUnitId)        
+        /*
         new ItemDefinition(id, 'bspd')
         ..setName(name)
         ..setAbilities(abilities)
@@ -134,16 +182,17 @@ public class Shield
         ..setPerishable(false)
         ..setPriority(0)
         ..setTooltipBasic("Trade for "+name)
-
+        */
     function buildReduceDamageSpell()
         new AbilityDefinitionHardenedSkin(abilId)
-        ..setName(name+" block")
+        ..setName(TT_NAME+" block")
         ..setRequirements("")
         ..setChancetoReduceDamage(1, 100.0)
         ..setIgnoredDamage(1, ignoreDamage)
         ..setMinimumDamage(1, 1)
         ..setItemAbility(true)
 
+/*
 function getShield() returns LinkedList<Shield>
     return asList(
         new Shield(ITEM_SHIELD        , "Basic Shield"  , ABILITY_BASIC_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK3 , BASIC_SHIELD_TOOLTIP  , "SteelArmor"         , LocalItems.shield      , BASIC_SHIELD_ABILITIES , 13),
@@ -155,7 +204,7 @@ function getShield() returns LinkedList<Shield>
         //new Shield(ITEM_MAKRURA_CARAPACE_DUMMY , "Makrura Carapace" , ABILITY_DUMMY2_SHIELD_BLOCK_ID  , SHIELD_DAMAGE_BLOCK0 , MAKRURA_CARAPACE_TOOLTIP , "MakruraCarapace", LocalItems.makruraCarapace, MAKRURA_CARAPACE_DUMMY_ABILITIES , 41, 1.0),
         new Shield(ITEM_TROLL_PROTECTOR , "Troll Protector" , ABILITY_TROLL_PROTECTOR_ID  , SHIELD_DAMAGE_BLOCK7 , TROLL_PROTECTOR_TOOLTIP , "TrollProtector", LocalItems.trollProtector, TROLL_PROTECTOR_ABILITIES , 41)
     )
-
+*/
 
 
 @compiletime function createShieldSpell()
@@ -190,9 +239,3 @@ function getShield() returns LinkedList<Shield>
         ..setName("Makrura Carapace cooldown")
         ..setCooldown(1, MAKRURA_CARAPACE_COOLDOWN)
 
-
-
-
-
-@compiletime function buildShield()
-    getShield().forEach(shield -> shield.buildShield())

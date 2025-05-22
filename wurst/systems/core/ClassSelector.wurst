@@ -58,7 +58,9 @@ public class ClassSelector
 
     static function initialize()
         registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SELL) ->
-            findByTotem(GetSellingUnit()).handleUnitSold()
+            let u = GetSellingUnit()
+            if u.getTypeId() == UNIT_TROLL_TOTEM
+                findByTotem(u).handleUnitSold()
 
         initializeSpawns()
 

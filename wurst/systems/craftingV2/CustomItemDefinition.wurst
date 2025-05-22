@@ -1,79 +1,23 @@
 package CustomItemDefinition
 
-// Standard library imports:
-import HashMap
-import AbilityObjEditing
-import ClosureEvents
-import DamageEvent
-import InstantDummyCaster
-import StandardTextTags
-
-// Local imports:
-import ColorUtils
-import ChatCommands
-import ChatUtils
-import LocalObjectIDs
-import UnitExtensions
-import ToolTipsUtils
-import ObjectIds
-import Sleep
+// Standard Libs Imports:
+import Assets
 import ChannelAbilityPreset
-import ClosureTimers
-import Orders
-import HealingSystem
-import BuffObjEditing
-import BuffIds
-import Abilities
-import StupefyField
-import DamageListeners
-import LocalAssets
-import SimError
-import FoodSlots
-import ItemPoolExtensions
-import LinkedList
-import OnUnitEnterLeave
-import GameStates
-import Tribe
-import PlayerExtensions
-import GameConfig
-import Transformation
-import UnitIds
+
+// Local Imports
 import Items
+import LocalAssets
 import LocalItemObjEditing
-import HashList
-import IdListConstant
-import QuickMake
-import BonusHandler
-import ItemRecipeV2
-import QuickMakeV2
-import initlater ArmoryV2
-import initlater ForgeV2
-import initlater TanneryV2
-import initlater WitchDoctorsHutV2
-import initlater MixingPotItemDefinitions
-import initlater WorkshopV2
-import initlater MixingPotV2
+import LocalObjectIDs
+import ToolTipsUtils
+import initlater BasicMaterials
+import CustomItemType
+import initlater ItemShopDummyUnit
 
-public HashMap<int, CustomItemDefinition> customItemDefinitions = null
-LinkedList<Bonus> bonusTypes = null
-/*
-@compiletime function createItemTest()
-    let customItemDefinition = new CustomItemDefinition(ITEM_TEST)
-        ..setLumberCost(100)
-        ..setIcon(Icons.bTNAbomination)
-        ..setName("test Item")
-        ..setTooltipExtended("testestest")
-        ..addBonusAgility(4)
-        ..addBonusStrength(10)
-    let itmDefinition = customItemDefinition.itemDefinition
-    itmDefinition..setAbilities(ABIL_IRON)
-*/
-
-
-public class CustomItemDefinition
+        
+public class CustomItemDefinition extends ItemDefinition
     int itemId
-    ItemDefinition itemDefinition
-    ItemRecipe recipe
+    int itemShopDummyUnitId
     int strengthBonus =0    
     int agilityBonus =0
     int intelligenceBonus =0
@@ -82,264 +26,114 @@ public class CustomItemDefinition
     int attackSpeedBonus =0
     int hpBonus =0
     int mpBonus =0
+    int stockMaximum = 1
+    int stockReplenishInterval = 120
+    int lumberCost
+    int numberOfCharges = 1
     bool preventBeingCraftedAsIngridient = false
     string iconPath
     string modelPath
     string TT_EXTENDED
     string TT_NAME
+    string abilities
     real scalingValue
-    int lumberCost
-    int quickMakeAbility = 0
-    let arraySize = 5
-    int array[arraySize] abilities
-    int arrayIndex = 0
-    LinkedList<int> specialAbilities
-    HashMap<Bonus, int> bonuses = new HashMap<Bonus, int>()
+    ItemShopDummyUnitDefinition itemShopDummyUnitDefinition
 
+    construct(int itemId)
+        super(itemId, 'bspd')
+        this.itemId = itemId
+        this.setGoldCost(0)
+        this.setDroppedWhenCarrierDies(true)
+        this.setHotkey("")
+        this.setLevel(0)
+        this.setHitPoints(75)
+        this.setClassification("Permanent")
+        this.setMaxStack(0)
+        this.setAbilities("")
+        this.setStockReplenishInterval(120)
 
-    construct(int _itemId)
-        itemId = _itemId
-        //createItem(itemId)
-        customItemDefinitions.put(itemId, this)
-        recipe = new ItemRecipe(itemId)
-        doAfter(1.) ->
-            if recipe != null and quickMakeAbility == 0
-                //print(GetObjectName(itemId)+" doesnt have a quickmake ability assigned")
-             
+    construct(int itemId, int baseItem)
+        super(itemId, baseItem)
+        this.itemId = itemId
+        this.setGoldCost(0)
+        this.setDroppedWhenCarrierDies(true)
+        this.setHotkey("")
+        this.setLevel(0)
+        this.setHitPoints(75)
+        this.setClassification("Permanent")
+        this.setMaxStack(0)
+        this.setAbilities("")
+        this.setStockReplenishInterval(120)
+/*
+    construct(int itemId, int itemShopDummyUnitId)
+        super(itemId, 'bspd')
+        this.itemShopDummyUnitId = itemShopDummyUnitId
+        this.itemId = itemId
+        this.setGoldCost(0)
+        this.setDroppedWhenCarrierDies(true)
+        this.setHotkey("")
+        this.setLevel(0)
+        this.setHitPoints(75)
+        this.setClassification("Permanent")
+        this.setMaxStack(0)
+        this.setAbilities("")
+        this.setStockReplenishInterval(120)
+*/
+    function constructItemShopDummyUnit(int itemShopDummyUnitId)
+        itemShopDummyUnitDefinition = new ItemShopDummyUnitDefinition(itemShopDummyUnitId, lumberCost, stockMaximum, stockReplenishInterval, TT_NAME, TT_EXTENDED, iconPath)
 
-    function applyBonuses(unit troll)
-        //print(damageBonus)
-        //print("applyBonuses")
-        if not troll.isTroll()
-            return
-        for bonus in bonusTypes
-            let bonusValue = bonuses.get(bonus).toReal()
-            //print("bonusType = "+bonus.toString())
-            //print("bonusValue = "+bonusValue.toString())
-            if bonusValue !=0
-                troll.addBonus(bonus, bonusValue)
-                //print("applying bonus "+bonusValue.toString()+" "+bonus.toString())
-        for i = 0 to arraySize
-            let abilId = abilities[i]
-            if abilId == 0
-                return
-            troll.addAbility(abilId)
-            troll.makeAbilityPermanent(abilId, true)
-            troll.disableAbility(abilId, false, true)
+    override function setInterfaceIcon(string data)
+        iconPath = data
+        def.setString("iico", data)
 
-    function removeBonuses(unit troll)
-        if not troll.isTroll()
-            return
-        for bonus in bonusTypes
-            let bonusValue = bonuses.get(bonus).toReal()
-            if bonusValue !=0
-                troll.addBonus(bonus, -bonusValue)
-        for i = 0 to arraySize
-            let abilId = abilities[i]
-            if abilId == 0
-                return
-            troll.removeAbility(abilId)
-            //print("removing "+GetObjectName(abilId))
-
-    function createItem(int itemId)
-        itemDefinition = createBasicItem(itemId)
-
-    function setScalingValue(real _scalingValue)
-        scalingValue = _scalingValue
-        itemDefinition..setScalingValue(scalingValue)
-
-    function setLumberCost(int amount)
-        lumberCost = amount
-        itemDefinition..setLumberCost(lumberCost)
-
-    function setTooltipExtended(string _TT_EXTENDED)
-        TT_EXTENDED = _TT_EXTENDED
-        itemDefinition..setTooltipExtended(TT_EXTENDED)
-
-    function setItemRecipe(vararg int itemIds)
-        for each in itemIds
-            recipe.addRecipeIngredient(each)
-
-    function setUnitRequirement(int unitRequirementId)
-        recipe.unitRequirementId = unitRequirementId
-
-    function setMixingPotManaRequirement(int manaRequirement)
-        recipe.setMixingPotManaRequirement(manaRequirement)
-
-    function setMixingPotQuickMakeAbility(int abilId)
-        quickMakeAbility = abilId
-        EventListener.onCast(abilId) (unit caster) ->
-            onMixingPotQuickMake(caster, itemId)        
-
-    function setQuickMakeAbility(int abilId)
-        quickMakeAbility = abilId
-        EventListener.onCast(abilId) (unit caster) ->
-            onQuickMake(caster, quickMakeAbility)
-            
-    //function onMixingPotQuickMake(unit caster)
-
-    function onQuickMake(unit caster, int abilId)
-        if itemId == ITEM_TRANSPORT_SHIP_KIT and gameConfig.getDisabledBoats() == true
-            return
-        let quickMake = new QuickMakeV2(itemId, caster, abilId)
-        let craftedItem = quickMake.craftItem(caster)
-        if craftedItem == null
-            return
-        //doAfter(ANIMATION_PERIOD) ->
-            //caster.addItemHandle(craftedItem)   
-            //quickMake.onSuccess()        
-
-    function setName(string _name)
-        TT_NAME = _name
-        itemDefinition..setNameEnhance(TT_NAME)
-
-    function setIcon(string _iconPath)
-        iconPath = _iconPath
-        itemDefinition..setInterfaceIcon(iconPath)
-
-    function setModelUsed(string _modelPath)
-        modelPath = _modelPath
-        itemDefinition..setModelUsed(modelPath)
-
-    function addActiveAbility(int abilId)
-
-    function addBonusStrength(int amount)
-        strengthBonus += amount
-        bonuses.put(Bonus.STRENGTH, strengthBonus)
-
-    function addBonusAgility(int amount)
-        agilityBonus += amount
-        bonuses.put(Bonus.AGILITY, agilityBonus)
-        
-
-    function addBonusIntelligence(int amount)
-        intelligenceBonus += amount
-        bonuses.put(Bonus.INTELLIGENCE, intelligenceBonus)
-        
-
-    function addBonusArmour(int amount)
-        armorBonus += amount
-        bonuses.put(Bonus.ARMOR, armorBonus)
-        
-
-    function addBonusDamage(int amount)
-        damageBonus += amount
-        bonuses.put(Bonus.DAMAGE, damageBonus)
-        
-
-    function addBonusAttackSpeed(int amount)
-        attackSpeedBonus += amount
-        bonuses.put(Bonus.ATTACKSPEED, attackSpeedBonus)
-        
-
-    function addBonusHp(int amount)
-        hpBonus += amount
-        bonuses.put(Bonus.LIFE, hpBonus)
-        
-
-    function addBonusMp(int amount)
-        agilityBonus += amount
-        bonuses.put(Bonus.MANA, agilityBonus)
-        
-
-    function addBonusMovementSpeed(int amount)
-        mpBonus += amount
-        //bonuses.put(Bonus.m, strengthBonus)
-        
-
-    function addSpecialAbilities(int _abilId)
-        if _abilId == 0
-            return
-        abilities[arrayIndex] = _abilId
-        arrayIndex+=1
-        //specialAbilities.add(abilId)
+    override function setModelUsed(string data)
+        modelPath = data
+        def.setString("ifil", data)
     
-    function addAllAttributes(int amount)
-        strengthBonus+=amount
-        agilityBonus+=amount
-        intelligenceBonus+=amount
+    override function setName(string data)
+        TT_NAME = data
+        def.setString("unam", data)
+        this.setTooltipBasic("Purchase " + data)
 
-    function setPreventBeingCraftedAsIngridient(bool prevent)
-        preventBeingCraftedAsIngridient = prevent
+    override function setTooltipExtended(string data)
+        TT_EXTENDED = data
+        def.setString("utub", data)  
+        this.setDescription(data)
 
-function addItems() 
+    override function setNumberofCharges(int data)
+        this.setItemUsable()
+        numberOfCharges = data
+        def.setInt("iuse", data)
 
+    override function setLumberCost(int data)
+        lumberCost = data
+        def.setInt("ilum", data)
     
-    
+    function setTintingColorRGB(int red, int blue, int green)
+        this.setTintingColor1Red(red)
+        this.setTintingColor3Blue(blue)
+        this.setTintingColor2Green(green)
 
+    override function setScalingValue(real data)
+        scalingValue = data
+        def.setReal("isca", data)
 
+    override function setAbilities(string data)
+        abilities = data
+        this.setItemUsable()
+        def.setString("iabi", data)
 
-    new CustomItemDefinition(ITEM_MAKRURA_CLAWS)
-    ..addBonusDamage(8)
-    ..addBonusArmour(3)
+    override function setStockMaximum(int data)
+        stockMaximum = data
+        def.setInt("isto", data)
 
+    function setItemPerishable()
+        setItemUsable()
+        this.setPerishable(true)
+        this.setNumberofCharges(numberOfCharges)
+        // Used for omnitower cast
+        this.setClassification("Charged")        
 
-
-    new CustomItemDefinition(ITEM_MAKRURA_CARAPACE)
-    ..addBonusStrength(8)
-    ..addBonusArmour(3)
-    
-
-
-    new CustomItemDefinition(ITEM_HYDRA_FINS)
-    ..addBonusMovementSpeed(100)
-    ..addBonusArmour(5)
-    ..addBonusAgility(5)
-    ..addBonusIntelligence(5)
-    ..addBonusStrength(5)
-
-    new CustomItemDefinition(ITEM_HYDRA_CLAWS)
-    ..addBonusAttackSpeed(35)
-    ..addBonusAgility(5)
-    ..addBonusIntelligence(5)
-    ..addBonusStrength(5)
-
-    new CustomItemDefinition(ITEM_HYDRA_SCALE)
-    ..addBonusArmour(10)
-    ..addBonusIntelligence(2)
-    ..addBonusStrength(2)
-    ..addBonusAgility(2)
-
-
-
-
-
-
-    new CustomItemDefinition(ITEM_MAKRURA_CUIRASS)
-    ..addBonusStrength(8)
-    ..addBonusArmour(3)
-
-
-    new CustomItemDefinition(ITEM_HYDRA_SCALE)
-    ..addBonusDamage(7)
-
-    new CustomItemDefinition(ITEM_PANTHER_FANG)
-    ..addBonusDamage(4)
-
-
-
-   
-    new CustomItemDefinition(ITEM_MAKRURA_CARAPACE)
-    ..addBonusArmour(3)
-
-
-init
-    doAfter(1.) -> 
-        customItemDefinitions = new HashMap<int, CustomItemDefinition>()
-        bonusTypes = new LinkedList<Bonus>()
-        ..add(Bonus.AGILITY)
-        ..add(Bonus.ARMOR)
-        ..add(Bonus.ATTACKSPEED)
-        ..add(Bonus.DAMAGE)
-        ..add(Bonus.INTELLIGENCE)
-        ..add(Bonus.LIFE)
-        ..add(Bonus.MANA)
-        ..add(Bonus.STRENGTH)    
-        doAfter(1.) -> 
-            initializeArmoryItems()
-            initializeForgeItems()
-            initializeTanneryItems()
-            initializeWitchDoctorsHutItems()
-            initializeMixingPotItems()
-            initializeWorkshopItems()
-            addItems()
+    function setItemUsable()
+        this.setActivelyUsed(true)
+        this.setIgnoreCooldown(false)

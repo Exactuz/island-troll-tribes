@@ -249,7 +249,7 @@ function onLeaver(player target)
         if not sharing.get(member).toBool()
             member.print("Use -share-gold to access their gold.")
 
-function handleTransaction(unit origin)
+public function handleTransaction(unit origin)
     handleTransaction(origin.getOwner())
 
 function handleTransaction(player origin)
@@ -307,6 +307,9 @@ init
     // Sync when a unit sells an item to a shop.
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PAWN_ITEM) ->
         handleTransaction(GetTriggerUnit())
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SELL) ->
+        handleTransaction(GetSoldUnit())
 
     // Sync when a unit picks up gold.
     // TODO: Support the possible items this via a registry.

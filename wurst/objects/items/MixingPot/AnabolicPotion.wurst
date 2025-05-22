@@ -13,6 +13,8 @@ import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
+import CustomItemDefinition
+import ObjectIDManager
 
 public constant BUFF_SPEED  = compiletime(BUFF_ID_GEN.next())
 public constant NAME ="Anabolic Potion"
@@ -46,8 +48,8 @@ public constant TT_ANABOLIC_POTION = ""+
     ..setTargetAttachmentPoint1(1, "")
 
 
-@compiletime function createAnabolicPotion() returns ItemDefinition
-    return createPerishableItem(ITEM_ANABOLIC_POTION)
+public constant ITEM_ANABOLIC_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ANABOLIC_POTION_DUMMY_UNIT")
+public constant ITEM_ANABOLIC_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ANABOLIC_POTION)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionRed)
         ..setNameEnhance(NAME)
@@ -60,3 +62,6 @@ public constant TT_ANABOLIC_POTION = ""+
         ..setCooldownGroup(commaList("AIsp"))
         ..setStockReplenishInterval(120)
         ..setClassification("Purchasable")
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_ANABOLIC_POTION_DUMMY_UNIT)
+        )

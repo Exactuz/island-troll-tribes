@@ -21,6 +21,8 @@ import Items
 import LocalItemObjEditing
 import HealingSystem
 import ColorUtils
+import CustomItemDefinition
+import ObjectIDManager
 
 // Create the ability IDs for the dummy castings.
 let ABILITY_CLOAK_HEALING = compiletime(ABIL_ID_GEN.next())
@@ -96,15 +98,15 @@ public let CLOAK_MANA_TT    = COMMON_TT + "can be cast to restore {0} mana point
                               .format(CLOAK_MANA_RESTORED.toToolTipBlue(), RESTORE_DURATION.toToolTipLightBlue()) + makeToolTipCooldown(RESTORE_COOLDOWN)
 
 // Cloaks ItemDefinition
-function createCloak(int newId) returns ItemDefinition
-    return createUsableItem(newId)
+function createCloak(int newId) returns CustomItemDefinition
+    return new CustomItemDefinition(newId)
         ..setScalingValue(1)
         ..setModelUsed(LocalItems.cloak)
         ..setCooldownGroup(commaList(ABILITY_CLOAK_FLAMES))
 
 
-@compiletime function createCloakOfFlames() returns ItemDefinition
-    return createCloak(ITEM_CLOAK_OF_FLAMES)
+public constant ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_FLAMES_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_FLAMES)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfInferno)
         ..setNameEnhance("Cloak of Flames")
         ..setTooltipExtended(CLOAK_FLAMES_TT)
@@ -113,9 +115,11 @@ function createCloak(int newId) returns ItemDefinition
         ..setTintingColor2Green(0)
         ..setTintingColor3Blue(0)
         ..setAbilities(commaList(ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) // Immolation,+ 3 Armor, +3 all stats
+        ..constructItemShopDummyUnit(ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT)
+        )
 
-@compiletime function createCloakOfHealing() returns ItemDefinition
-    return createCloak(ITEM_CLOAK_OF_HEALING)
+public constant ITEM_CLOAK_OF_HEALING_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_HEALING_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_HEALING_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_HEALING)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfHealing)
         ..setNameEnhance("Cloak of Healing")
         ..setTooltipExtended(CLOAK_HEALING_TT)
@@ -124,9 +128,11 @@ function createCloak(int newId) returns ItemDefinition
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(0)
         ..setAbilities(commaList(ABILITY_CLOAK_HEALING, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) // Frost Cast,+ 3 Armor, +3 all stats
+        ..constructItemShopDummyUnit(ITEM_CLOAK_OF_HEALING_DUMMY_UNIT)
+        )
 
-@compiletime function createCloakOfMana() returns ItemDefinition
-    return createCloak(ITEM_CLOAK_OF_MANA)
+public constant ITEM_CLOAK_OF_MANA_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_MANA_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_MANA_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_MANA)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfMana)
         ..setNameEnhance("Cloak of Mana")
         ..setTooltipExtended(CLOAK_MANA_TT)
@@ -135,9 +141,11 @@ function createCloak(int newId) returns ItemDefinition
         ..setTintingColor2Green(0)
         ..setTintingColor3Blue(255)
         ..setAbilities(commaList(ABILITY_CLOAK_MANA, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) // Healing Cast,+ 3 Armor, +3 all stats
+        ..constructItemShopDummyUnit(ITEM_CLOAK_OF_MANA_DUMMY_UNIT)
+        )
 
-@compiletime function createCloakOfFrost() returns ItemDefinition
-    return createCloak(ITEM_CLOAK_OF_FROST)
+public constant ITEM_CLOAK_OF_FROST_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_FROST_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_FROST_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_FROST)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfFrost)
         ..setNameEnhance("Cloak of Frost")
         ..setTooltipExtended(CLOAK_FROST_TT)
@@ -146,24 +154,30 @@ function createCloak(int newId) returns ItemDefinition
         ..setTintingColor2Green(100)
         ..setTintingColor3Blue(255)
         ..setAbilities(commaList(ABILITY_CLOAK_FROST, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) // Mana Cast,+ 3 Armor, +3 all stats
+        ..constructItemShopDummyUnit(ITEM_CLOAK_OF_FROST_DUMMY_UNIT)
+        )
 
-@compiletime function createNecromancersCloak() returns ItemDefinition
-    return createCloak(ITEM_NECROMANCERS_CLOAK)
+public constant ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT")
+public constant ITEM_NECROMANCERS_CLOAK_DEFINITION = compiletime(createCloak(ITEM_NECROMANCERS_CLOAK)
         ..setInterfaceIcon(LocalIcons.bTNSkullShroudGlowIncreased)
         ..setNameEnhance("Necromancer's Cloak")
         ..setTooltipExtended(CLOAK_NECROMANCER_TT)
         ..setModelUsed(LocalItems.cloakOfNecromancy)
         ..setLumberCost(74)
         ..setAbilities(commaList(ABILITY_NECROMANCERS_CLOAK_SKELETONS, ABILITY_ARMOR_BONUS_3, AbilityIds.allPlus3)) //+ 3 Armor, +3 all stats
+        ..constructItemShopDummyUnit(ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT)
+        )
 
-@compiletime function createEmpoweredNecromancersCloak() returns ItemDefinition
-    return createCloak(ITEM_EMPOWERED_NECROMANCERS_CLOAK)
+public constant ITEM_EMPOWERED_NECROMANCERS_CLOAK_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_EMPOWERED_NECROMANCERS_CLOAK_DUMMY_UNIT")
+public constant ITEM_EMPOWERED_NECROMANCERS_CLOAK_DEFINITION = compiletime(createCloak(ITEM_EMPOWERED_NECROMANCERS_CLOAK)
         ..setInterfaceIcon(LocalIcons.bTNSavageGladiatorChain)
         ..setNameEnhance("Empowered Necromancer's Cloak")
         ..setTooltipExtended(CLOAK_NECROMANCER_EMPOWERED_TT)
         ..setModelUsed(LocalItems.cloakOfNecromancy)
         ..setLumberCost(90)
         ..setAbilities(commaList(ABILITY_NECROMANCERS_CLOAK_GREATER_SKELETONS, ABILITY_ARMOR_BONUS_5, AbilityIds.allPlus3)) //+ 3 Armor, +3 all stats
+        ..constructItemShopDummyUnit(ITEM_EMPOWERED_NECROMANCERS_CLOAK_DUMMY_UNIT)
+        )
 
 
 // Cloaks Item Cast

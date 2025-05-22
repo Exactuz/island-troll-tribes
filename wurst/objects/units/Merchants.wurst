@@ -13,6 +13,8 @@ import DummyUnits
 import LocalObjectIDs
 import LocalAssets
 import LinkedList
+import HashMap
+
 
 public LinkedList<int>tradeShip1Items = asList(
                 ITEM_CLAY_BALL,
@@ -25,8 +27,8 @@ public LinkedList<int>tradeShip1Items = asList(
                 ITEM_FORGE_KIT,
                 ITEM_WORKSHOP_KIT,
                 ITEM_FIRE_KIT,
-                ITEM_MAGIC_TREE_SEED,
                 ITEM_FLINT
+                //ITEM_MAGIC_TREE_SEED
             )
 
 public LinkedList<int>tradeShip2Items = asList(
@@ -38,7 +40,7 @@ public LinkedList<int>tradeShip2Items = asList(
                 ITEM_IRON_INGOT,
                 ITEM_MAGIC,
                 ITEM_ENSNARE_TRAP_KIT,
-                ITEM_OMNITOWER_KIT,
+                //ITEM_OMNITOWER_KIT,
                 ITEM_LIVING_CLAY,
                 ITEM_STONE,
                 ITEM_MANA_CRYSTAL
@@ -55,7 +57,7 @@ public LinkedList<int>tradeShip3Items = asList(
                 ITEM_STEEL_INGOT,
                 ITEM_SPIRIT_WIND,
                 ITEM_SPIRIT_WATER,
-                ITEM_ANTI_MAGIC_POTION,
+                //ITEM_ANTI_MAGIC_POTION,
                 ITEM_MANA_CRYSTAL            
             )
 
@@ -70,7 +72,7 @@ public LinkedList<int>tradeShip4Items = asList(
                 ITEM_MAGIC,
                 ITEM_POISON_SPEAR,
                 ITEM_DISEASE_POTION,
-                ITEM_POISON,
+                //ITEM_POISON,
                 ITEM_STONE,
                 ITEM_MANA_CRYSTAL
             )
@@ -85,7 +87,7 @@ public LinkedList<int>tradeShip5Items = asList(
                 ITEM_NETS,
                 ITEM_SMOKE_BOMB,
                 ITEM_POISON,
-                ITEM_SPIRIT_DARKNESS,
+                //ITEM_SPIRIT_DARKNESS,
                 ITEM_IRON_INGOT,
                 ITEM_STEEL_INGOT
             )         
@@ -101,10 +103,17 @@ public LinkedList<int>tradeShip6Items = asList(
                 ITEM_MAGIC,
                 ITEM_EMP,
                 ITEM_NETS,
-                ITEM_SPIRIT_DARKNESS,
-                ITEM_ULTRA_POISON
+                ITEM_SPIRIT_DARKNESS
+                //ITEM_ULTRA_POISON
             )
 
+public HashMap<int, LinkedList<int>> tradeShipIdToItemsMap = new HashMap<int, LinkedList<int>>()
+    ..put(UNIT_TRADE_SHIP_1, tradeShip1Items)
+    ..put(UNIT_TRADE_SHIP_2, tradeShip2Items)
+    ..put(UNIT_TRADE_SHIP_3, tradeShip3Items)
+    ..put(UNIT_TRADE_SHIP_4, tradeShip4Items)
+    ..put(UNIT_TRADE_SHIP_5, tradeShip5Items)
+    ..put(UNIT_TRADE_SHIP_6, tradeShip6Items)
 
 function createMerchant(int newId, int oldId) returns UnitDefinition
     return new UnitDefinition(newId, oldId)
@@ -113,6 +122,7 @@ function createMerchant(int newId, int oldId) returns UnitDefinition
                 AbilityIds.invulnerable,
                 AbilityIds.shopPurchaseItem,
                 AbilityIds.ghostVisible,
+                AbilityIds.sellUnitDynamic,
                 LocalAbilityIds.selectUnit
             )
         )
@@ -154,42 +164,42 @@ function createMerchantShip(int newId) returns UnitDefinition
     createMerchantShip(UNIT_TRADE_SHIP_1)
         ..setModelFile(Units.orcishTransportShip)
         ..setItemsSold(
-            commaList(tradeShip1Items)
+            commaList(ITEM_MAGIC_TREE_SEED)
         )
 
 @compiletime function createMerchantShip2()
     createMerchantShip(UNIT_TRADE_SHIP_2)
         ..setModelFile(Units.humanTransportShip1)
         ..setItemsSold(
-            commaList(tradeShip2Items)
+            commaList(ITEM_OMNITOWER_KIT)
         )
 
 @compiletime function createMerchantShip3()
     createMerchantShip(UNIT_TRADE_SHIP_3)
         ..setModelFile(Units.orcishDestroyerShip1)
         ..setItemsSold(
-            commaList(tradeShip3Items)
+            commaList(ITEM_ANTI_MAGIC_POTION)
         )
 
 @compiletime function createMerchantShip4()
     createMerchantShip(UNIT_TRADE_SHIP_4)
         ..setModelFile(Units.humanDestroyerShip1)
         ..setItemsSold(
-            commaList(tradeShip4Items)
+            commaList(ITEM_POISON)
         )
 
 @compiletime function createMerchantShip5()
     createMerchantShip(UNIT_TRADE_SHIP_5)
         ..setModelFile(Units.nightElfDestroyerShip1)
         ..setItemsSold(
-            commaList(tradeShip5Items)
+            commaList(ITEM_SPIRIT_DARKNESS)
         )
 
 @compiletime function createMerchantShip6()
     createMerchantShip(UNIT_TRADE_SHIP_6)
         ..setModelFile(Units.nightElfBattleship)
         ..setItemsSold(
-            commaList(tradeShip6Items)
+            commaList(ITEM_ULTRA_POISON)
         )
 
 @compiletime function createTrollMerchant()

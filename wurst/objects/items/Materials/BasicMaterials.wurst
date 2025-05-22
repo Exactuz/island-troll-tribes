@@ -9,32 +9,41 @@ import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
-import SpearsDefinition
 import ToolTipsUtils
+import CustomItemType
+import CustomItemDefinition
+import ObjectIDManager
+import ClosureTimers
 
-constant ABIL_STONE = compiletime(ABIL_ID_GEN.next())
-constant ABIL_MAGIC = compiletime(ABIL_ID_GEN.next())
+public constant ABIL_STONE = compiletime(ABIL_ID_GEN.next())
+public constant ABIL_MAGIC = compiletime(ABIL_ID_GEN.next())
 
 
-constant STONE_DMG = 25.
-constant STONE_COOLDOWN   = 8.
-constant STONE_STUN_DURATION = 1.
-constant STONE_STUN_DURATION_NORMAL = 7.
-constant STONE_CAST_RANGE = 1000.
+public constant STONE_DMG = 25.
+public constant STONE_COOLDOWN   = 8.
+public constant STONE_STUN_DURATION = 1.
+public constant STONE_STUN_DURATION_NORMAL = 7.
+public constant STONE_CAST_RANGE = 1000.
 
-constant TT_TINDER    = "" +
+
+public constant TT_TINDER    = "" +
     "Some small leaves and twigs. Used in camp fire (Tinder Flint Stick), or for making ensnare " +
     "traps and nets."
+public constant TINDER_LUMBER_COST = 2
 
-constant TT_STICK     = "" +
+public constant TT_STICK     = "" +
     "Increases the damage of the troll by 1 when carried. " +
     "Used in Troll hut, Storage hut, Witch Doctors hut, camp fire, tent, and tannery. " +
     "Can make various items in the armory too."
+public constant STICK_LUMBER_COST = 2
 
-constant TT_FLINT     = "Used for starting fires or making iron and steel in the armory."
-constant TT_MUSHROOM  = "Erk, this is clearly not edible, should be used to craft poison."
-constant TT_CLAY      = "A ball of clay that can be used for building."
-constant TT_STONE     = "" +
+public constant TT_FLINT     = "Used for starting fires or making iron and steel in the armory."
+public constant FLINT_LUMBER_COST = 3
+public constant TT_MUSHROOM  = "Erk, this is clearly not edible, should be used to craft poison."
+public constant MUSHROOM_LUMBER_COST = 3
+public constant TT_CLAY      = "A ball of clay that can be used for building."
+public constant CLAY_LUMBER_COST = 3
+public constant TT_STONE     = "" +
     "A sturdy stone. Can be thrown at enemies or used in buildings. " +
     "Deals {0} damage, stun for {1} seconds."
     .format(
@@ -42,30 +51,31 @@ constant TT_STONE     = "" +
         STONE_STUN_DURATION.toToolTipRed()
         )
     +makeToolTipCooldown(STONE_COOLDOWN)
+public constant STONE_LUMBER_COST = 5
 
-constant TT_ELK_HIDE  = "A hide from an Elk, can be tanned to make armor."
-constant TT_WOLF_HIDE = "A hide from a Wolf, can be tanned to make armor."
-constant TT_BEAR_HIDE = "A hide from a Bear, can be tanned to make armor."
-constant TT_BONE      = "" +
+public constant TT_ELK_HIDE  = "A hide from an Elk, can be tanned to make armor."
+public constant TT_WOLF_HIDE = "A hide from a Wolf, can be tanned to make armor."
+public constant TT_BEAR_HIDE = "A hide from a Bear, can be tanned to make armor."
+public constant TT_BONE      = "" +
     "A sharp bone that can be used to cut an opponent adding 2 to damage. " +
     "Can be used to make bone armor and weapons."
 
-constant TT_MAGIC     = "" +
+public constant TT_MAGIC     = "" +
     "A very rare and unpredictable activated Mana Complex. Use with extreme caution. " +
     "Who knows what it will do."
 
-constant TT_MC        = "A glowing crystal of mana. Used to craft magic gear."
-constant TT_THISTLES  = "" +
+public constant TT_MC        = "A glowing crystal of mana. Used to craft magic gear."
+public constant TT_THISTLES  = "" +
     "Some slightly poisonous thistles from a thistle bush. Use with the blowgun!"
 
-constant TT_PTHISTLES = "" +
+public constant TT_PTHISTLES = "" +
     "Inflicts mushroom poison on the enemy unit dealing damage and slowing."
 
-constant TT_DTHISTLES = "" +
+public constant TT_DTHISTLES = "" +
     "Inflicts depressing on the enemy unit zapping some energy and slowing. "+
     "When combined with any other form of depression (spell or aura), the effects are increased."
-constant TT_HAWK_EGG  = "The egg of a hawk. Valuable for trading."
-constant TT_SCALE     = "A rare scale."
+public constant TT_HAWK_EGG  = "The egg of a hawk. Valuable for trading."
+public constant TT_SCALE     = "A rare scale."
 
 @compiletime function createBasicSpearAbility() returns AbilityDefinitionThunderBoltCreep
     return new AbilityDefinitionThunderBoltCreep(ABIL_STONE)
@@ -97,78 +107,88 @@ constant TT_SCALE     = "A rare scale."
         ..setName("Magic cast")
         ..setCooldown(1, 0)
 
-@compiletime function createTinder() returns ItemDefinition
-    return createBasicItem(ITEM_TINDER)
-        ..setInterfaceIcon(Icons.bTNShimmerWeed)
-        ..setModelUsed(Doodads.ruins_Shrub1)
-        ..setNameEnhance("Tinder")
-        ..setTooltipExtended(TT_TINDER)
-        ..setDescription(TT_TINDER)
-        ..setLumberCost(2)
-        ..setTintingColor1Red(255)
-        ..setTintingColor2Green(255)
-        ..setTintingColor3Blue(255)
-        ..setCooldownGroup("")
-        ..setScalingValue(0.80)
 
-@compiletime function createStick() returns ItemDefinition
-    return createBasicItem(ITEM_STICK)
+
+public constant ITEM_STICK_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STICK_DUMMY_UNIT")
+public constant ITEM_STICK_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STICK)
         ..setInterfaceIcon(Icons.bTNNatureTouchGrow)
         ..setModelUsed(Doodads.felwoodLogStraight)
         ..setNameEnhance("Stick")
         ..setTooltipExtended(TT_STICK)
         ..setDescription(TT_STICK)
-        ..setLumberCost(3)
+        ..setLumberCost(STICK_LUMBER_COST)
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
         ..setScalingValue(0.40)
         ..setAbilities("AItg") // +1 Damage
+        ..constructItemShopDummyUnit(ITEM_STICK_DUMMY_UNIT)
+        )
 
-@compiletime function createFlint() returns ItemDefinition
-    return createBasicItem(ITEM_FLINT)
+
+public constant ITEM_FLINT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_FLINT_DUMMY_UNIT")
+public constant ITEM_FLINT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_FLINT)
         ..setInterfaceIcon(Icons.bTNStaffOfSanctuary)
         ..setModelUsed(Doodads.rubbleRock5)
         ..setNameEnhance("Flint")
         ..setTooltipExtended(TT_FLINT)
         ..setDescription(TT_FLINT)
-        ..setLumberCost(3)
+        ..setLumberCost(FLINT_LUMBER_COST)
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
         ..setCooldownGroup("")
         ..setScalingValue(0.50)
+        ..constructItemShopDummyUnit(ITEM_FLINT_DUMMY_UNIT)
 
-@compiletime function createMushroom() returns ItemDefinition
-    return createBasicItem(ITEM_MUSHROOM)
+    )
+public constant ITEM_TINDER_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TINDER_DUMMY_UNIT")
+public constant ITEM_TINDER_DEFINITION = compiletime(new CustomItemDefinition(ITEM_TINDER)
+        ..setInterfaceIcon(Icons.bTNShimmerWeed)
+        ..setModelUsed(Doodads.ruins_Shrub1)
+        ..setNameEnhance("Tinder")
+        ..setTooltipExtended(TT_TINDER)
+        ..setDescription(TT_TINDER)
+        ..setLumberCost(TINDER_LUMBER_COST)
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(255)
+        ..setTintingColor3Blue(255)
+        ..setCooldownGroup("")
+        ..setScalingValue(0.80)
+        ..constructItemShopDummyUnit(ITEM_TINDER_DUMMY_UNIT)
+    )
+public constant ITEM_MUSHROOM_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MUSHROOM_DUMMY_UNIT")
+public constant ITEM_MUSHROOM_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MUSHROOM)
         ..setInterfaceIcon(LocalIcons.bTNMushroom)
         ..setModelUsed(Doodads.shroomsBlue)
         ..setNameEnhance("Mushroom")
         ..setTooltipExtended(TT_MUSHROOM)
         ..setDescription(TT_MUSHROOM)
-        ..setLumberCost(2)
+        ..setLumberCost(MUSHROOM_LUMBER_COST)
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
         ..setCooldownGroup("")
         ..setScalingValue(0.50)
-
-@compiletime function createClayBall() returns ItemDefinition
-    return createBasicItem(ITEM_CLAY_BALL)
+        ..constructItemShopDummyUnit(ITEM_MUSHROOM_DUMMY_UNIT)
+    )
+public constant ITEM_CLAY_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLAY_DUMMY_UNIT")
+public constant ITEM_CLAY_BALL_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CLAY_BALL)
         ..setInterfaceIcon(Icons.bTNThunderLizardEgg)
         ..setModelUsed(Objects.thunderLizardEgg1)
         ..setNameEnhance("Clay Ball")
         ..setTooltipExtended(TT_CLAY)
         ..setDescription("A ball of clay that can be used for building")
-        ..setLumberCost(3)
+        ..setLumberCost(CLAY_LUMBER_COST)
         ..setTintingColor1Red(255)
         ..setTintingColor2Green(255)
         ..setTintingColor3Blue(255)
         ..setCooldownGroup("")
         ..setScalingValue(1.50)
-
-@compiletime function createElkHide() returns ItemDefinition
-    return createBasicItem(ITEM_ELK_HIDE)
+        ..constructItemShopDummyUnit(ITEM_CLAY_DUMMY_UNIT)
+    )
+public constant ITEM_ELK_HIDE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ELK_HIDE_DUMMY_UNIT")
+public constant ITEM_ELK_HIDE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ELK_HIDE)
         ..setInterfaceIcon(LocalIcons.bTNElkHide)
         ..setModelUsed(LocalItems.hideElk)
         ..setNameEnhance("Elk Hide")
@@ -180,9 +200,10 @@ constant TT_SCALE     = "A rare scale."
         ..setTintingColor3Blue(180)
         ..setCooldownGroup("")
         ..setScalingValue(0.90)
-
-@compiletime function createWolfHide() returns ItemDefinition
-    return createBasicItem(ITEM_JUNGLE_WOLF_HIDE)
+        ..constructItemShopDummyUnit(ITEM_ELK_HIDE_DUMMY_UNIT)
+    )
+public constant ITEM_JUNGLE_WOLF_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_JUNGLE_WOLF_DUMMY_UNIT")
+public constant ITEM_JUNGLE_WOLF_HIDE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_JUNGLE_WOLF_HIDE)
         ..setInterfaceIcon(LocalIcons.bTNWolfHide)
         ..setModelUsed(LocalItems.hideWolf)
         ..setNameEnhance("Wolf Hide")
@@ -194,9 +215,10 @@ constant TT_SCALE     = "A rare scale."
         ..setTintingColor3Blue(140)
         ..setCooldownGroup("")
         ..setScalingValue(0.90)
-
-@compiletime function createBearHide() returns ItemDefinition
-    return createBasicItem(ITEM_JUNGLE_BEAR_HIDE)
+        ..constructItemShopDummyUnit(ITEM_JUNGLE_WOLF_DUMMY_UNIT)
+    )
+public constant ITEM_JUNGLE_BEAR_HIDE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_JUNGLE_BEAR_HIDE_DUMMY_UNIT")
+public constant ITEM_JUNGLE_BEAR_HIDE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_JUNGLE_BEAR_HIDE)
         ..setInterfaceIcon(LocalIcons.bTNBearHide)
         ..setModelUsed(LocalItems.hideBear)
         ..setNameEnhance("Bear Hide")
@@ -208,9 +230,10 @@ constant TT_SCALE     = "A rare scale."
         ..setTintingColor3Blue(150)
         ..setCooldownGroup("")
         ..setScalingValue(1.20)
-
-@compiletime function createBone() returns ItemDefinition
-    return createBasicItem(ITEM_BONE)
+        ..constructItemShopDummyUnit(ITEM_JUNGLE_BEAR_HIDE_DUMMY_UNIT)
+    )
+public constant ITEM_BONE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_DUMMY_UNIT")
+public constant ITEM_BONE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BONE)
         ..setInterfaceIcon(LocalIcons.bTNBone)
         ..setModelUsed(Doodads.skull0)
         ..setNameEnhance("Bone")
@@ -222,9 +245,10 @@ constant TT_SCALE     = "A rare scale."
         ..setTintingColor3Blue(255)
         ..setAbilities("AIth") // +2 Damage
         ..setScalingValue(1.00)
-
-@compiletime function createManaCrystal() returns ItemDefinition
-    return createBasicItem(ITEM_MANA_CRYSTAL)
+        ..constructItemShopDummyUnit(ITEM_BONE_DUMMY_UNIT)
+    )
+public constant ITEM_MANA_CRYSTAL_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MANA_CRYSTAL_DUMMY_UNIT")
+public constant ITEM_MANA_CRYSTAL_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MANA_CRYSTAL)
         ..setInterfaceIcon(Icons.bTNManaStone)
         ..setModelUsed(LocalItems.manaStone)
         ..setNameEnhance("Mana Crystal")
@@ -236,9 +260,10 @@ constant TT_SCALE     = "A rare scale."
         ..setTintingColor3Blue(255)
         ..setCooldownGroup("")
         ..setScalingValue(0.55)
-
-@compiletime function createStone() returns ItemDefinition
-    return createPerishableItem(ITEM_STONE)
+        ..constructItemShopDummyUnit(ITEM_MANA_CRYSTAL_DUMMY_UNIT)
+    )
+public constant ITEM_STONE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STONE_DUMMY_UNIT")
+public constant ITEM_STONE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STONE)
         ..setInterfaceIcon(Icons.bTNGolemStormBolt)
         ..setModelUsed(Doodads.lords_Rock6)
         ..setNameEnhance("Stone")
@@ -253,9 +278,11 @@ constant TT_SCALE     = "A rare scale."
         ..setAbilities(ABIL_STONE.toRawCode())
         ..setCooldownGroup(ABILITY_SPEAR.toRawCode())
         ..setNumberofCharges(1)
-
-@compiletime function createMagic() returns ItemDefinition
-    return createPerishableItem(ITEM_MAGIC)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_STONE_DUMMY_UNIT)
+    )
+public constant ITEM_MAGIC_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGIC_DUMMY_UNIT")
+public constant ITEM_MAGIC_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAGIC)
         ..setInterfaceIcon(Icons.bTNMoonStone)
         ..setModelUsed(LocalItems.moonStone)
         ..setNameEnhance("Magic")
@@ -271,9 +298,11 @@ constant TT_SCALE     = "A rare scale."
         ..setAbilities(ABIL_MAGIC.toRawCode())
         ..setNumberofCharges(1)
         ..setClassification("Purchasable")
-
-@compiletime function createThistles() returns ItemDefinition
-    return createPerishableItem(ITEM_THISTLES)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_MAGIC_DUMMY_UNIT)
+    )
+public constant ITEM_THISTLES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_THISTLES_DUMMY_UNIT")
+public constant ITEM_THISTLES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_THISTLES)
         ..setInterfaceIcon(Icons.bTNQuillSprayOff)
         ..setModelUsed(Doodads.felwood_Thorns5)
         ..setNameEnhance("Thistles")
@@ -288,9 +317,10 @@ constant TT_SCALE     = "A rare scale."
         ..setCooldownGroup("Asp6")
         ..setNumberofCharges(5)
         ..setCanBeSoldToMerchants(false)
-
-@compiletime function createDarkThistles() returns ItemDefinition
-    return createPerishableItem(ITEM_DARK_THISTLES)
+        ..constructItemShopDummyUnit(ITEM_THISTLES_DUMMY_UNIT)
+    )
+public constant ITEM_DARK_THISTLES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_DARK_THISTLES_DUMMY_UNIT")
+public constant ITEM_DARK_THISTLES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_DARK_THISTLES)
         ..setInterfaceIcon(Icons.bTNQuillSpray)
         ..setModelUsed(Doodads.felwood_Thorns5)
         ..setNameEnhance("Dark Thistles")
@@ -304,9 +334,10 @@ constant TT_SCALE     = "A rare scale."
         ..setScalingValue( 0.75)
         ..setCooldownGroup("Asp6")
         ..setNumberofCharges(3)
-
-@compiletime function createPoisonThistles() returns ItemDefinition
-    return createPerishableItem(ITEM_POISON_THISTLES)
+        ..constructItemShopDummyUnit(ITEM_DARK_THISTLES_DUMMY_UNIT)
+    )
+public constant ITEM_POISON_THISTLES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POISON_THISTLES_DUMMY_UNIT")
+public constant ITEM_POISON_THISTLES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_POISON_THISTLES)
         ..setInterfaceIcon(LocalIcons.bTNPoisonQuill)
         ..setModelUsed(Doodads.felwood_Thorns5)
         ..setNameEnhance("Poison Thistles")
@@ -319,10 +350,11 @@ constant TT_SCALE     = "A rare scale."
         ..setCooldownGroup("")
         ..setScalingValue( 0.75)
         ..setCooldownGroup("Asp6")
-        ..setNumberofCharges(3)
-
-@compiletime function createHawkEgg() returns ItemDefinition
-    return createBasicItem(ITEM_HAWK_EGG)
+        ..setNumberofCharges(5)
+        ..constructItemShopDummyUnit(ITEM_POISON_THISTLES_DUMMY_UNIT)
+    )
+public constant ITEM_HAWK_EGG_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HAWK_EGG_DUMMY_UNIT")
+public constant ITEM_HAWK_EGG_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HAWK_EGG)
         ..setInterfaceIcon(Icons.bTNPhoenixEgg)
         ..setModelUsed(Doodads.ruins_Rock8)
         ..setLumberCost(5)
@@ -334,9 +366,10 @@ constant TT_SCALE     = "A rare scale."
         ..setNumberofCharges(1)
         ..setTintingColor1Red(100)
         ..setTintingColor2Green(100)
-
-@compiletime function createScale() returns ItemDefinition
-    return createBasicItem(ITEM_HYDRA_SCALE)
+        ..constructItemShopDummyUnit(ITEM_HAWK_EGG_DUMMY_UNIT)
+    )
+public constant ITEM_HYDRA_SCALE_THISTLES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HYDRA_SCALE_THISTLES_DUMMY_UNIT")
+public constant ITEM_HYDRA_SCALE_THISTLES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HYDRA_SCALE)
         ..setInterfaceIcon(Icons.bTNNagaArmorUp1)
         ..setModelUsed(LocalItems.scale)
         ..setLumberCost(52)
@@ -344,3 +377,30 @@ constant TT_SCALE     = "A rare scale."
         ..setScalingValue(1)
         ..setTooltipExtended(TT_SCALE)
         ..setDescription(TT_SCALE)
+        ..constructItemShopDummyUnit(ITEM_HYDRA_SCALE_THISTLES_DUMMY_UNIT)
+    )
+
+public function initializeBasicMaterials()
+    new CustomItemType(ITEM_STICK, ITEM_STICK_DEFINITION)
+    new CustomItemType(ITEM_TINDER, ITEM_TINDER_DEFINITION)
+    new CustomItemType(ITEM_FLINT, ITEM_FLINT_DEFINITION)
+    new CustomItemType(ITEM_MUSHROOM, ITEM_MUSHROOM_DEFINITION)
+    new CustomItemType(ITEM_CLAY_BALL, ITEM_CLAY_BALL_DEFINITION)
+    new CustomItemType(ITEM_ELK_HIDE, ITEM_ELK_HIDE_DEFINITION)
+    new CustomItemType(ITEM_JUNGLE_WOLF_HIDE, ITEM_JUNGLE_WOLF_HIDE_DEFINITION)
+    new CustomItemType(ITEM_JUNGLE_BEAR_HIDE, ITEM_JUNGLE_BEAR_HIDE_DEFINITION)
+    new CustomItemType(ITEM_BONE, ITEM_BONE_DEFINITION)
+    new CustomItemType(ITEM_MANA_CRYSTAL, ITEM_MANA_CRYSTAL_DEFINITION)
+    new CustomItemType(ITEM_STONE, ITEM_STONE_DEFINITION)
+    new CustomItemType(ITEM_MAGIC, ITEM_MAGIC_DEFINITION)
+    new CustomItemType(ITEM_THISTLES, ITEM_THISTLES_DEFINITION)
+    new CustomItemType(ITEM_DARK_THISTLES, ITEM_POISON_THISTLES_DEFINITION)
+    new CustomItemType(ITEM_POISON_THISTLES, ITEM_POISON_THISTLES_DEFINITION)
+    new CustomItemType(ITEM_HAWK_EGG, ITEM_HAWK_EGG_DEFINITION)
+    new CustomItemType(ITEM_HYDRA_SCALE, ITEM_HYDRA_SCALE_THISTLES_DEFINITION)
+
+
+
+init
+    doAfter(1.) -> 
+        initializeBasicMaterials()

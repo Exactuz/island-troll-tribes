@@ -30,7 +30,7 @@ import QuickMake
 import AxesDefinition
 import InstantDummyCaster
 import DamageEvent
-import CustomItemDefinition
+import CustomItemType
 import PlayerExtensions
 import HashList
 import AxeThrow
@@ -43,10 +43,10 @@ import WhirlingAxes
 
 public HashMap<unit, WeaponsOfChoice> weaponsOfChoiceInstances = new HashMap<unit, WeaponsOfChoice>()
 let TT_WEAPONS_OF_CHOICE = "Gurubashi Warrior gains different abilitites depending on weapons he has equipped:\n"+
-                            "\n{0} - Axe Throw".format("One-handed axe".color(COLOR_GOLD_STR))+
-                            "\n{0} - Whirlwind".format("Two-handed axe".color(COLOR_GOLD_STR))+
+                            "\n{0} - Axe Throw".format("One-handed weapon".color(COLOR_GOLD_STR))+
+                            "\n{0} - Whirlwind".format("Two-handed weapon".color(COLOR_GOLD_STR))+
                             "\n{0} - Shield Charge, replaces Spiked Net".format("Shield".color(COLOR_GOLD_STR))+
-                            "\n{0} - Empowered Axe Throw, Whirling Axes; replaces Spiked Net".format("Two weapons".color(COLOR_GOLD_STR))
+                            "\n{0} - Whirling Axes; replaces Spiked Net".format("Two weapons".color(COLOR_GOLD_STR))
 
 HashList<int> weaponsOfChoiceAbilitites = new HashList<int>()
     ..add(ABILITY_AXE_THROW)
@@ -142,8 +142,8 @@ public class WeaponsOfChoice
         if isDualWielding()
             //print("dualWielding")
             abilities.put(ABILITY_SPIKED_NET, false)
-            abilities.put(ABILITY_AXE_THROW, false)
-            abilities.put(ABILITY_AXE_THROW_DW, true)
+            abilities.put(ABILITY_AXE_THROW, true)
+            //abilities.put(ABILITY_AXE_THROW_DW, true)
             abilities.put(ABILITY_WHIRLING_AXES, true)
 
         if hasShield()
@@ -204,10 +204,10 @@ public class WeaponsOfChoice
         let inventory = troll.getInventory()
         let equippedItems = troll.getOwner().getEquipmentSlots().currentItems
         for each in equippedItems
-            let damageBonus = customItemDefinitions.get(equippedItems.get(each).getTypeId()).damageBonus
+            let damageBonus = CustomItemType.getInstance(equippedItems.get(each).getTypeId()).damageBonus
             itemsDamageBonus+=damageBonus
         for each in inventory
-            let damageBonus = customItemDefinitions.get(each.getTypeId()).damageBonus
+            let damageBonus = CustomItemType.getInstance(each.getTypeId()).damageBonus
             itemsDamageBonus+=damageBonus
         attackDamage = (troll.getBaseDamage(0)+itemsDamageBonus).toReal()
         destroy inventory

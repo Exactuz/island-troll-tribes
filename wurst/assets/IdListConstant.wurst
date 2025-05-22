@@ -2,6 +2,7 @@ package IdListConstant
 import LinkedList
 import LocalObjectIDs
 import BuffIds
+import LocalObjectIDs2
 
 public constant BOSS_LIST = asList(
     UNIT_ALLIGATOR_MAN,
@@ -223,7 +224,9 @@ public constant CRAFTED_MATERIAL_LIST = asList(
     ITEM_STEEL_INGOT,
     ITEM_SPIRIT_WATER,
     ITEM_SPIRIT_WIND,
-    ITEM_SPIRIT_DARKNESS
+    ITEM_SPIRIT_DARKNESS,
+    ITEM_LESSER_ESSENCE,
+    ITEM_GREATER_ESSENCE
 )
 
 public constant CRAFT_BUILDING_ABILITY_ID_LIST = asList(
@@ -328,14 +331,16 @@ public constant AXE_LIST = asList(
     ITEM_BATTLE_STAFF,
     ITEM_CHAMELEON_HATCHET_STR,
     ITEM_CHAMELEON_HATCHET_AGI,
-    ITEM_CHAMELEON_HATCHET_INT
+    ITEM_CHAMELEON_HATCHET_INT,
+    ITEM_TIDEBRINGER
 )
 
 public constant TWO_HANDED_WEAPON_LIST = asList(
     ITEM_BATTLE_AXE,
     ITEM_IRON_STAFF,
     ITEM_CONDUCTING_ROD,
-    ITEM_BATTLE_STAFF
+    ITEM_BATTLE_STAFF,
+    ITEM_TIDEBRINGER
 )
 
 public constant SHIELD_LIST = asList(

@@ -23,6 +23,9 @@ public function createUsableItem(int newId) returns ItemDefinition
 public function createPerishableItem(int newId) returns ItemDefinition
     return createPerishableItem(newId, 'bspd')
 
+public function createPowerUpItem(int newId) returns ItemDefinition
+    return createPowerUpItem(newId, 'bspd')
+
 function createBasicItem(int newId, int oldId) returns ItemDefinition
     return new ItemDefinition(newId, oldId)
         ..setGoldCost(0)
@@ -46,6 +49,14 @@ function createPerishableItem(int newId, int oldId) returns ItemDefinition
         ..setNumberofCharges(1)
         // Used for omnitower cast
         ..setClassification("Charged")
+
+function createPowerUpItem(int newId, int oldId) returns ItemDefinition
+    return createUsableItem(newId, oldId)
+        ..setPerishable(true)
+        ..setNumberofCharges(1)
+        // Used for omnitower cast
+        ..setClassification("PowerUp")
+        ..setAbilities("")
 
 //Item Abilities
 //Attack Bonus ability (Axes)

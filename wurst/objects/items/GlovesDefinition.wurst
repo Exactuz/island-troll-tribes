@@ -15,6 +15,10 @@ import LocalItemObjEditing
 import BattleGlovesCritical
 import ScrollsDefinition
 import HealingItems
+import CustomItemDefinition
+import ObjectIdGenerator
+import ObjectIDManager
+import LocalObjectIDs2
 
 let ABILITY_ID_ATTACK_BONUS_3 = "AIat".fromRawCode() // Item Damage bonus + 3, not implemented in stdlib
 
@@ -161,6 +165,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setName("Attack Speed Increase 20")
         ..setEditorSuffix("(Wurst)")
 
+    new AbilityDefinitionAttackSpeedIncrease(ABILITY_NEGATIVE_ATTACK_SPEED_20)
+        ..setAttackSpeedIncrease(1, -0.20)
+        ..setName("Attack Speed Reduction 20")
+        ..setEditorSuffix("(Wurst)")
+
     new AbilityDefinitionAttackSpeedIncrease(ABILITY_ATTACK_SPEED_25)
         ..setAttackSpeedIncrease(1, 0.25)
         ..setName("Attack Speed Increase 25")
@@ -190,8 +199,8 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setEditorSuffix("(Wurst)")
 
 
-@compiletime function createElkSkinGloves() returns ItemDefinition
-    return createBasicItem(ITEM_ELK_SKIN_GLOVES)
+public constant ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT")
+public constant ITEM_ELK_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ELK_SKIN_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_10
             )
@@ -208,9 +217,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Elk Skin Gloves")
         ..setTooltipExtended(TT_ELK_SKIN_GLOVES)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_10))
+        ..constructItemShopDummyUnit(ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT)
+        )
 
-@compiletime function createWolfSkinGloves() returns ItemDefinition
-    return createBasicItem(ITEM_WOLF_SKIN_GLOVES)
+public constant ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT")
+public constant ITEM_WOLF_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_SKIN_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_15,
             AbilityIds.attackBonusPlus2,
@@ -229,9 +240,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Wolf Skin Gloves")
         ..setTooltipExtended(TT_WOLF_SKIN_GLOVES)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_15))
+        ..constructItemShopDummyUnit(ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT)
+        )
 
-@compiletime function createWolfsBloodlustClaws() returns ItemDefinition
-    return createBasicItem(ITEM_WOLFS_BLOODLUST_CLAWS)
+public constant ITEM_WOLFS_BLOODLUST_CLAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLFS_BLOODLUST_CLAWS_DUMMY_UNIT")
+public constant ITEM_WOLFS_BLOODLUST_CLAWS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLFS_BLOODLUST_CLAWS)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_30,
             AbilityIds.attackBonusPlus4,
@@ -251,10 +264,12 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Claws of Wolf's Bloodlust")
         ..setTooltipExtended(TT_WOLF_BLOODLUST_CLAWS)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_30))
+        ..constructItemShopDummyUnit(ITEM_WOLFS_BLOODLUST_CLAWS_DUMMY_UNIT)
+        )
 
 
-@compiletime function createBearSkinGloves() returns ItemDefinition
-    return createUsableItem(ITEM_BEAR_SKIN_GLOVES)
+public constant ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT")
+public constant ITEM_BEAR_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_SKIN_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_20,
             ABILITY_ID_ATTACK_BONUS_3,
@@ -273,9 +288,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Bear Skin Gloves")
         ..setTooltipExtended(TT_BEAR_SKIN_GLOVES)
         ..setActivelyUsed(true)
+        ..constructItemShopDummyUnit(ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT)
+        )
         
-@compiletime function createPawsOfBearsGreed() returns ItemDefinition
-    return createUsableItem(ITEM_BEARS_GREED_PAWS)
+public constant ITEM_BEARS_GREED_PAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEARS_GREED_PAWS_DUMMY_UNIT")
+public constant ITEM_BEARS_GREED_PAWS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEARS_GREED_PAWS)
         ..setAbilities(commaList(
             ABIL_HONEY,            
             ABILITY_ATTACK_SPEED_20,
@@ -299,10 +316,12 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Paws of Bear's Greed")
         ..setTooltipExtended(TT_BEARS_GREED_PAWS)
         ..setActivelyUsed(true)
-        ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_20))        
+        ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_20))
+        ..constructItemShopDummyUnit(ITEM_BEARS_GREED_PAWS_DUMMY_UNIT)
+        )        
 
-@compiletime function createPawsOfBearsGreedEmpty() returns ItemDefinition
-    return createUsableItem(ITEM_BEARS_GREED_PAWS_EMPTY)
+public constant ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT")
+public constant ITEM_BEARS_GREED_PAWS_EMPTY_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEARS_GREED_PAWS_EMPTY)
         ..setAbilities(commaList(
             ABILITY_BEARS_GREED_PAWS_ACTIVE,            
             ABILITY_ATTACK_SPEED_20,
@@ -327,9 +346,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setTooltipExtended(TT_BEARS_GREED_PAWS_EMPTY)
         ..setActivelyUsed(true)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_20))
+        ..constructItemShopDummyUnit(ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT)
+        )
 
-@compiletime function createBoneGloves() returns ItemDefinition
-    return createBasicItem(ITEM_BONE_GLOVES)
+public constant ITEM_BONE_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_GLOVES_DUMMY_UNIT")
+public constant ITEM_BONE_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BONE_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_20,
             AbilityIds.attackBonusPlus1,
@@ -348,9 +369,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Bone Gloves")
         ..setTooltipExtended(TT_BONE_GLOVES)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_20))
+        ..constructItemShopDummyUnit(ITEM_BONE_GLOVES_DUMMY_UNIT)
+        )
 
-@compiletime function createIronGloves() returns ItemDefinition
-    return createBasicItem(ITEM_IRON_GLOVES)
+public constant ITEM_IRON_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_GLOVES_DUMMY_UNIT")
+public constant ITEM_IRON_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_25,
             AbilityIds.attackBonusPlus2,
@@ -369,9 +392,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Iron Gloves")
         ..setTooltipExtended(TT_IRON_GLOVES)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_25))
+        ..constructItemShopDummyUnit(ITEM_IRON_GLOVES_DUMMY_UNIT)
+        )
 
-@compiletime function createSteelGloves() returns ItemDefinition
-    return createBasicItem(ITEM_STEEL_GLOVES)
+public constant ITEM_STEEL_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_GLOVES_DUMMY_UNIT")
+public constant ITEM_STEEL_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_35,
             AbilityIds.attackBonusPlus4,
@@ -390,9 +415,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Steel Gloves")
         ..setTooltipExtended(TT_STEEL_GLOVES)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_35))
+        ..constructItemShopDummyUnit(ITEM_STEEL_GLOVES_DUMMY_UNIT)
+        )
 
-@compiletime function createBattleGloves() returns ItemDefinition
-    return createBasicItem(ITEM_BATTLE_GLOVES)
+public constant ITEM_BATTLE_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_GLOVES_DUMMY_UNIT")
+public constant ITEM_BATTLE_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_30,
             ABILITY_STATS_BONUS_4 ,
@@ -411,9 +438,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Battle Gloves")
         ..setTooltipExtended(TT_BATTLE_GLOVES)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_10))
+        ..constructItemShopDummyUnit(ITEM_BATTLE_GLOVES_DUMMY_UNIT)
+        )
 
-@compiletime function createHydraClaws() returns ItemDefinition
-    return createUsableItem(ITEM_HYDRA_CLAWS)
+public constant ITEM_HYDRA_CLAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HYDRA_CLAWS_DUMMY_UNIT")
+public constant ITEM_HYDRA_CLAWSUNIT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HYDRA_CLAWS)
         ..setAbilities(commaList(
             ABILITY_TSUNAMI,
             ABILITY_ATTACK_SPEED_35,
@@ -433,9 +462,11 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Hydra Claws")
         ..setTooltipExtended(ARTIFACT_PREFIX + TT_HYDRA_CLAWS)
         ..setCooldownGroup(toRawCode(ABILITY_TSUNAMI))
+        ..constructItemShopDummyUnit(ITEM_HYDRA_CLAWS_DUMMY_UNIT)
+        )
 
-@compiletime function createMageFist() returns ItemDefinition
-    return createBasicItem(ITEM_MAGEFIST)
+public constant ITEM_MAGEFIST_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGEFIST_DUMMY_UNIT")
+public constant ITEM_MAGEFIST_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAGEFIST)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_30,
             ABILITY_ARMOR_BONUS_4,
@@ -454,3 +485,5 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setNameEnhance("Magefist")
         ..setTooltipExtended(TT_MAGEFIST)
         ..setCooldownGroup(toRawCode(ABILITY_ATTACK_SPEED_35))
+        ..constructItemShopDummyUnit(ITEM_MAGEFIST_DUMMY_UNIT)
+        )

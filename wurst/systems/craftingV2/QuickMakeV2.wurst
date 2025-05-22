@@ -13,7 +13,7 @@ import IdListConstant
 import UnitExtensions
 import HashList
 import ItemRecipeV2
-import initlater CustomItemDefinition
+import initlater CustomItemType
 import PlayerExtensions
 import initlater EquipmentSlots
 import EquipmentSlotFrames
@@ -21,7 +21,8 @@ import GatheringSlot
 
 public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
 public let BUILDING_CRAFTING_AOE = 900.
-let QM_SUCCESS_CD = 15.
+public let TROLL_CRAFTING_AOE = 200.
+let QM_SUCCESS_CD = 5.
 let MESSAGE_MISSING_UNIT_REQUIRED = "Missing required building: "
 let MESSAGE_DURATION = 10.
 public HashList<int> baseItems  = new HashList<int>()
@@ -73,7 +74,7 @@ public class QuickMakeV2
         initialize()
 
     function initialize() 
-        itemRecipe = customItemDefinitions.get(itemId).recipe 
+        itemRecipe = CustomItemType.getInstance(itemId).recipe
         if parentInstance == null       
             cashItems()                   
         quickMakes.put(itemId, this)
@@ -84,7 +85,7 @@ public class QuickMakeV2
         list.add(itemRecipe.itemId)
         for each in list
             //print("iterating over item "+GetObjectName(each))
-            let itemRecipe = customItemDefinitions.get(each).recipe
+            let itemRecipe = CustomItemType.getInstance(each).recipe
             if itemRecipe.isCrafted
                 generateItemsUsedList(itemRecipe.ingredients)
             else
@@ -105,12 +106,13 @@ public class QuickMakeV2
         //for each in itemsUsedInRecipe
         //    print(GetObjectName(each))
         let pos = caster.getPos()
-        searchSpace = Rect(pos.x - BUILDING_CRAFTING_AOE, pos.y - BUILDING_CRAFTING_AOE, pos.x + BUILDING_CRAFTING_AOE, pos.y + BUILDING_CRAFTING_AOE)
+        let aoe = caster.isTroll() ? TROLL_CRAFTING_AOE : BUILDING_CRAFTING_AOE
+        searchSpace = Rect(pos.x - aoe, pos.y - aoe, pos.x + aoe, pos.y + aoe)
         forItemsInRect(searchSpace) (item i) ->
             if true //itemsUsedInRecipe.has(i.getTypeId())
                 cashedItems.add(i)
         unitsInRadius = CreateGroup()
-            ..enumUnitsInRange(caster.getPos(), BUILDING_CRAFTING_AOE)
+            ..enumUnitsInRange(caster.getPos(), aoe)
         for u in unitsInRadius
             if u.isAllyOf(caster.getOwner()) or u.getOwner() == caster.getOwner()
                 let inventory = u.getInventory()
@@ -141,7 +143,12 @@ public class QuickMakeV2
         if not assertUnitRequirement()
             printToTeam(MESSAGE_MISSING_UNIT_REQUIRED+GetObjectName(unitRequirementId))
             isCraftFailed = true
-
+        if itemRecipe == null
+            Log.debug("itemRecipe for item "+GetObjectName(itemId)+" is missing")
+            isCraftFailed = true
+        if itemRecipe.ingredients.isEmpty()
+            Log.debug("itemRecipe for item "+GetObjectName(itemId)+" is empty")
+            isCraftFailed = true  
         for each in itemRecipe.ingredients
             //print("next ingredient is "+GetObjectName(each))
             let found = findNextIngredient(each)
@@ -214,12 +221,12 @@ public class QuickMakeV2
         return null
 
     function craftIngredient(int itemId) returns item
-        let customItemDefinition = customItemDefinitions.get(itemId)
-        if customItemDefinition.recipe.isCrafted == false
+        let customItemType = CustomItemType.getInstance(itemId)
+        if customItemType.recipe.isCrafted == false
             //print("recipe is missing or item is a basic material")
             registerMissingItem(itemId)
             return null
-        if customItemDefinition.preventBeingCraftedAsIngridient == true
+        if customItemType.preventBeingCraftedAsIngridient == true
             registerMissingItem(itemId)
             // prevent certain items from being crafted as intermediary ingridient
             return null
@@ -325,8 +332,9 @@ public class QuickMakeV2
         craftedItem.setVisible(true)      
         //print("successfully crafted "+GetObjectName(itemId))
         if parentInstance == null
-            doAfter(ANIMATION_PERIOD) -> 
-                caster.startAbilityCooldown(abilId, QM_SUCCESS_CD)
+            if EQUIPMENT_LIST.has(itemId)
+                doAfter(ANIMATION_PERIOD) -> 
+                    caster.startAbilityCooldown(abilId, QM_SUCCESS_CD)
             printToTeam("Successfuly crafted "+GetObjectName(craftedItem.getTypeId()))
         removeConsumedItems()
         if this!= null
@@ -361,7 +369,7 @@ public class QuickMakeV2
 function initializeBaseItems()
     for each in EQUIPMENT_LIST
         baseItems.add(each)
-    baseItems.add(ITEM_THISTLES)       
+    //baseItems.add(ITEM_THISTLES)       
 
 
 init

@@ -11,6 +11,8 @@ import Orders
 // Local imports:
 import LocalAssets
 import TradeShipStop
+import ItemShopDummyHandler
+import Merchants
 
 let TRADE_SHIP_PAUSE_TIME_DEST = 0
 let TRADE_SHIP_PAUSE_TIME_SELL = 0
@@ -55,7 +57,7 @@ public class TradeShipSupervisor
             firstStop.getPos(),
             firstStop.getPos().angleTo(nextStop.getPos())
         )..setMoveSpeed(125.)
-
+        new ItemShopDummyHandler(ship, tradeShipIdToItemsMap.get(shipId))
         // Create the dummy unit used to display the gold mine minimap icon.
         dummy = createUnit(
             // Use a different player to prevent formation while stopped.

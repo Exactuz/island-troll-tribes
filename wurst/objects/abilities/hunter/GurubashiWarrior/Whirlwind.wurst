@@ -84,7 +84,7 @@ function onCast(unit caster)
     doPeriodicallyTimed(DAMAGE_INTERVAL, DURATION) (CallbackCounted cb) ->    
         forUnitsInRange(caster.getPos(), AOE) (unit u) ->
             //print(damagePerTick)
-            if u.isAlive() and not u.isAllyOf(caster.getOwner())
+            if u.isAlive() and (not u.isAllyOf(caster.getOwner()) or u.getTypeId() == UNIT_FAWN)
                 caster.damageTarget(u, damagePerTick, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
 
 

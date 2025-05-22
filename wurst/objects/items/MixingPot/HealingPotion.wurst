@@ -14,6 +14,8 @@ import ToolTipsUtils
 import ClosureTimers
 import ClosureEvents
 import InstantDummyCaster
+import CustomItemDefinition
+import ObjectIDManager
 
 public constant POT_HEAL = 100.
 public constant CAST_RANGE = 600.
@@ -47,8 +49,8 @@ public constant TT_HEALING_POTION = "" +
     ..setCastRange(1, CAST_RANGE)
     ..setTargetsAllowed(1, TARGETS_ALLOWED)
 
-@compiletime function createHealingPotion() returns ItemDefinition
-    return createPerishableItem(ITEM_HEALING_POTION)
+public constant ITEM_HEALING_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HEALING_POTION_DUMMY_UNIT")
+public constant ITEM_HEALING_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HEALING_POTION)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionPurpleLesser)
         ..setNameEnhance(NAME)
@@ -60,6 +62,9 @@ public constant TT_HEALING_POTION = "" +
         ..setCooldownGroup(commaList(ABILITY_HEALING_POTION))
         ..setStockReplenishInterval(120)
         ..setNumberofCharges(1)
-        ..setStockMaximum(3)
+        ..setStockMaximum(6)
+        ..setItemPerishable()
+        ..constructItemShopDummyUnit(ITEM_HEALING_POTION_DUMMY_UNIT)
+        )
 
            

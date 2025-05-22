@@ -21,6 +21,7 @@ import Radars
 import PingHerbs
 import UnitIds
 import StateMachine
+import Transformation
 
 
 public HashMap<unit, ScoutHawk> scoutHawkInstances = new HashMap<unit,ScoutHawk>()
@@ -46,11 +47,13 @@ public class ScoutHawk
 
     function onLevel()
         troll.setAbilityLevel(ABILITY_HAWK_SWOOP, 2)
-        if troll.getLevel() == 4 and troll.getTrollClassType() == ClassType.SUB_CLASS
+        if troll.hasAbility(ABILITY_HAWK_RESCUE) and (troll.getLevel() >= 4 or troll.getTrollClassType() == ClassType.SUPER_CLASS)
             troll.setAbilityLevel(ABILITY_HAWK_RESCUE, 2)
 
     function onSub()
         hawk.setScale(1.25)
+        nullTimer() -> 
+            onLevel()
 
 class ScoutHawkDefinition extends UnitDefinition
     construct(int unitId)
@@ -94,6 +97,5 @@ function onSub(unit caster)
 init
     initializeScouts()
 
-    EventListener.onCast(ABILITY_OBSERVER) (unit caster) ->
-        onSub(caster) 
-
+    registerAfterEffect() (unit target, int unitID) ->
+        onSub(target)

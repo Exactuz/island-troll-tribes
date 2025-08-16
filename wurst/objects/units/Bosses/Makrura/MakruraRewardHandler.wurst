@@ -88,7 +88,7 @@ function onDeath(unit dyingUnit, unit killingUnit)
 
     let rewardHandlerUnit = createUnit(players[PLAYER_NEUTRAL_PASSIVE], UNIT_MAKRURA_REWARD_SELECTOR, dyingUnit.getPos(), dyingUnit.getFacingAngle())
     doAfter(ANIMATION_PERIOD) -> 
-        new BossRewardHandler(rewardHandlerUnit, MAKRURA_REWARDS_LIST)
+        new BossRewardHandler(rewardHandlerUnit, UNIT_MAKRURA, MAKRURA_REWARDS_LIST)
 
 init
 

@@ -15,6 +15,8 @@ import PlayerExtensions
 import TribeBoard
 import Tribe
 import UnitExtensions
+import GameConfig
+import Objective
 
 class PlayerAllianceSetting
     string name
@@ -59,6 +61,16 @@ function handlePlayerAllianceSettingToggle(player triggerPlayer, LinkedList<stri
     if setting.setting == ALLIANCE_SHARED_ADVANCED_CONTROL
         TribeBoard.findForPlayer(triggerPlayer).fixDisplay()
 
+function printObjective(player p)
+    let objective = gameConfig.getObjective()
+    if objective == Objective.KingOfTheHill
+        printTimedToPlayer("Objective is King Of The Hill", 10, p)
+    else if objective == Objective.TugOfWar
+        printTimedToPlayer("Objective is Tug of War", 10, p)
+    else if objective == Objective.EarlyDuel
+        printTimedToPlayer("Objective is Early Duel", 10, p)
+    
+
 init
     settings
         ..put("ac", new PlayerAllianceSetting("advanced control", ALLIANCE_SHARED_ADVANCED_CONTROL))
@@ -68,7 +80,7 @@ init
     registerCommandAll("clear") (triggerPlayer, args) ->
         if localPlayer == triggerPlayer
             ClearTextMessages()
-
+            
     registerCommandAll("rn") (triggerPlayer, args) ->
         for tribe in Tribe.getTribes()
             let names = tribe
@@ -117,6 +129,13 @@ init
     GameStates.modesSelection.onExit() state ->
         deregisterCommandAll("obs")
         deregisterCommandAll("obs-new")
+
+        registerCommandAll("objective") (triggerPlayer, args) ->
+            printObjective(triggerPlayer)
+                
+        registerCommandAll("obj") (triggerPlayer, args) ->
+            printObjective(triggerPlayer)
+
 
     GameStates.tribeInitialization.onExit() state ->
         registerCommandAll("ac", (triggerPlayer, args) -> handlePlayerAllianceSettingToggle(triggerPlayer, args))

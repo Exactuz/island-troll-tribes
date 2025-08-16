@@ -1,0 +1,175 @@
+package KingOfTheHill
+
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import UnitIds
+import GameState
+import Objective
+import LocalObjectIDs2
+
+public constant POINTS_AOE_MIN = 1000.
+public constant POINTS_AOE_MAX = 250.
+constant POINTS_MIN_MULTIPLIER = 0.25
+constant POINTS_MAXIMUM = 200.
+constant SCORE_DISPLAY_RANGE = 400
+constant SCORE_UPDATE_FREAQUENCY = 1.
+constant POINTS_PER_SECOND_PER_TEAM = 1
+constant EFX = Abilities.warStompCaster
+
+class KingOfTheHill
+    real array[12] tribePoints
+    texttag array[12] textTags
+    int tribeCount
+    unit kingOfTheHillUnit
+    Tribe winner = null
+    CallbackPeriodic cb 
+    CallbackPeriodic freezeAnimation
+    LinkedList<Tribe> tribes
+
+    construct(unit kingOfTheHillUnit)
+        this.kingOfTheHillUnit = kingOfTheHillUnit
+        kingOfTheHillUnit.setInvulnerable(true)
+        OBJECTIVE_UNIT = kingOfTheHillUnit
+        tribeCount = gameConfig.getNumTribes()
+        tribes = Tribe.getTribes()
+        Log.debug("Initializing King of the Hill objective.")
+        initializeTextTags()
+        cb = doPeriodically(SCORE_UPDATE_FREAQUENCY) (CallbackPeriodic cb) ->
+            if cb != null
+                update()
+        GameStates.objective.onExit() (GameState state) ->
+            onExit()
+
+    function update()
+        enumerateTrolls()
+        updateScores()
+        if winner != null
+            onWin()
+            destroy cb
+
+    function onWin()
+        //playEfx()
+        winnerTribe = winner
+        GameStates.gameplay.exit()
+        GameStates.objective.exit()
+
+    function onExit()
+        Log.debug(winner.getName()+" won the King of the Hill challenge")
+        doAfter(3.) -> 
+            destroy freezeAnimation   
+        int index = 0
+        for each in tribes
+            textTags[index].destr()
+            index+=1
+
+    function freezeAnimation()
+        freezeAnimation = doPeriodically(ANIMATION_PERIOD*2) (CallbackPeriodic cb) ->
+            kingOfTheHillUnit.setAnimation("Stand")
+
+    function initializeTextTags()
+        let offset = PI2/tribeCount
+        int index = 0
+        vec2 scoreTextPos = kingOfTheHillUnit.getPos()
+        scoreTextPos.x-=325
+        scoreTextPos.y+=100
+        for each in tribes
+            let score = tribePoints[index]
+            //print(-1/2*offset+offset*index)
+            scoreTextPos.x +=SCORE_DISPLAY_RANGE*(offset*index).cos() //-1/2*offset+
+            scoreTextPos.y +=SCORE_DISPLAY_RANGE*(offset*index).sin()    //-1/2*offset+
+            textTags[index] = standardTextTag(scoreTextPos, score.toString().substring(0,4))
+                ..setVelocity(0, 0)
+                ..setScaledText(score.toString().substring(0,4), 1.75)
+                ..setLifespan(99999.)
+                ..setColor(players[index].getColor().toColor().withAlpha(255))
+            index+=1    
+
+    function enumerateTrolls()
+        int index = 0
+        if index > tribeCount
+            return
+        for tribe in tribes
+            let pointsPerTick = POINTS_PER_SECOND_PER_TEAM*SCORE_UPDATE_FREAQUENCY/tribe.getMembers().size()         
+            for p in tribe.getMembers()
+                let troll = p.getTroll()
+                if troll.isAlive() and troll.getPos().distanceTo(OBJECTIVE_POS)< POINTS_AOE_MIN
+                    addPoints(p.getTroll(), index, pointsPerTick)
+            index+=1
+
+    function addPoints(unit troll, int index, real pointsPerTick)
+        let distance = troll.getPos().distanceTo(kingOfTheHillUnit.getPos())
+        if distance >POINTS_AOE_MIN
+            return
+        let distanceMultiplier =  1 - max((distance-POINTS_AOE_MAX), 0) / (POINTS_AOE_MIN-POINTS_AOE_MAX)
+        let totalPointsMultiplier = POINTS_MIN_MULTIPLIER+(1-POINTS_MIN_MULTIPLIER)*distanceMultiplier
+        let currentPoints = tribePoints[index]
+        let newPoints = currentPoints+totalPointsMultiplier*pointsPerTick
+        tribePoints[index] = newPoints
+
+    function updateScores()
+        int index = 0
+        int winners = 0
+        for each in tribes
+            let score = tribePoints[index]
+            if score >= POINTS_MAXIMUM
+                winners+=1
+                winner = each
+            let textTag = textTags[index]
+            textTag.setText(score.toString())
+            index+=1
+        if winners>=2
+            resetScores()
+
+    function playEfx()
+        flashEffect(EFX, kingOfTheHillUnit.getPos(), 1.5)
+
+    function resetScores()
+        winner = null
+        int index = 0
+        playEfx()
+        for each in tribes
+            tribePoints[index] = 0
+            index+=1
+
+init
+    GameStates.objective.onEnter() (GameState state) ->
+        if gameConfig.getObjective() == Objective.KingOfTheHill
+            let OBJECTIVE_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_OBJECTIVE, OBJECTIVE_POS, angle(PI))
+            nullTimer() -> 
+                new KingOfTheHill(OBJECTIVE_UNIT)
+

@@ -1,0 +1,237 @@
+package BossFight
+
+// Standard library imports:
+import ClosureTimers
+
+// Local imports:
+import ColorUtils
+import GameStates
+import GameConfig
+import TimerUtils
+import GameState
+import PlayerExtensions
+import Tribe
+import UnitExtensions
+import Objective
+import ClosureEvents
+import Abilities
+import Respawn
+import Knockback3
+import LocalObjectIDs
+import Preparation
+import BossRewardHandler
+import ReduceHealing
+import UnitIndexer
+import HashList
+import Orders
+import AbilityIds
+
+constant PAUSE_TIME = 3.
+constant MAMMOTH_BASE_HP = 250
+constant MAMMOTH_HP_PER_PLAYER = 1250.
+public unit BOSS_UNIT = null
+unit rewardHandlerUnit = null
+
+function handleLoserTeams()
+    for tribe in Tribe.getTribes()
+        if tribe != winnerTribe 
+            let pos = tribe.spawn.randomPoint()
+            for each in tribe.getMembers()
+                each.getTroll().setPos(pos)
+                each.panCamToTimed(each.getTroll(), 0.1)
+
+function handleWinnerTeam()
+    for member in winnerTribe.getMembers()
+        let troll = member.getTroll()
+        if not troll.isAlive()
+            revive(troll, 0)
+            nullTimer() -> 
+                troll.setPos(vec2(OBJECTIVE_POS.x+GetRandomInt(-100, 100), OBJECTIVE_POS.y+GetRandomInt(-100, 100)))
+                resetState(troll)
+        resetState(troll)
+        member.panCamToTimed(troll, 0.1)
+        performKnockBack(troll)
+
+function resetState(unit troll)
+    troll
+    ..pause()
+    ..removeBuffs(true, true)
+    ..setPos(vec2(6, -167))
+    ..setHP(troll.getMaxHP())
+    ..setMana(troll.getMaxMana())
+    ..setHeat(gameConfig.getMaxHeat())
+    ..resetCooldown()
+    ..reduceHealingReduction(9999.)
+    doAfter(PAUSE_TIME) -> 
+        troll.unpause()
+
+
+function supplyMeat()
+    for each in winnerTribe.getMembers()
+        let troll = each.getTroll()
+        for i = 0 to 5
+            let itm = troll.itemInSlot(i)
+            if itm.getTypeId() == ITEM_COOKED_MEAT
+                itm.setPos(winnerTribe.spiritTotem.getPos())
+                nullTimer() -> 
+                    winnerTribe.spiritTotem.addItemHandle(itm)
+        let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
+        flashEffect(Abilities.blinkCaster, troll.getPos())
+        nullTimer() -> 
+            meat.setCharges(10)
+            nullTimer() -> 
+                troll.addItemHandle(meat)
+
+
+function playTeleportEfx()
+    for each in winnerTribe.getMembers()
+        let troll = each.getTroll()
+        let efxCastingTroll = addEffect(Abilities.massTeleportTo, troll.getPos())
+        let efxGroundTroll = addEffect(Abilities.massTeleportCaster, troll.getPos())
+        let efxCastingSpiritTotem = addEffect(Abilities.massTeleportTo, winnerTribe.spawn.getCenter())
+        doPeriodicallyTimed(ANIMATION_PERIOD, TELEPORT_ANIMATION_DURATION) (CallbackCounted cb) ->
+            let pos = troll.getPos()
+            efxCastingTroll.setPos(pos)
+            efxGroundTroll.setPos(pos)
+            if cb.isLast()
+                efxCastingTroll.destr()
+                efxGroundTroll.destr()
+                efxCastingSpiritTotem.destr()
+                let efxFinish = addEffect(Abilities.massTeleportTarget, troll.getPos())
+                ..destr()
+
+function performKnockBack(unit troll)
+    Knockback3.add(troll, 1500., OBJECTIVE_POS.angleTo(troll.getPos()), 80..asAngleDegrees())
+    
+function playStompEfx()
+    let count = 3
+    flashEffect(Abilities.warStompCaster, OBJECTIVE_POS)
+    OBJECTIVE_UNIT.setScale(1.5)   
+    doPeriodicallyCounted(1., count) (CallbackCounted cb) ->
+        let ratio = cb.progress()
+        let scaleMultiplier = 1/2*count*ratio
+        let scale = 1.5+scaleMultiplier
+        OBJECTIVE_UNIT.setScale(scale)
+        let efx = addEffect(Abilities.warStompCaster, OBJECTIVE_POS)
+            ..setScale(1+scaleMultiplier/2)
+        doAfter(1.) -> 
+            efx.destr()
+
+
+function spawnBoss()
+    BOSS_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_MAMMOTH, OBJECTIVE_POS, OBJECTIVE_UNIT.getFacingAngle())
+    let newHp = MAMMOTH_BASE_HP + MAMMOTH_HP_PER_PLAYER * winnerTribe.getMembers().size()
+    BOSS_UNIT.setMaxHP(newHp.toInt())
+    BOSS_UNIT.setHP(newHp)
+
+function onEnter()
+    handleWinnerTeam()
+    handleLoserTeams()
+    playStompEfx()
+    doAfter(1.5) -> 
+        supplyMeat()
+    doAfter(3.) -> 
+        OBJECTIVE_UNIT.remove()
+        spawnBoss()        
+
+
+function onMammothKilled(unit dyingUnit)
+    if dyingUnit.getTypeId() != UNIT_MAMMOTH
+        return
+    playTeleportEfx()
+    doAfter(TELEPORT_ANIMATION_DURATION) ->
+        teleportBossRewardHandler()
+        //spreadUnitsInArch()     
+        teleportWinnerTribeBack()
+        GameStates.bossFight.exit()
+
+function teleportBossRewardHandler()
+    let instances = BossRewardHandler.instances
+    for each in instances
+        let instance = instances.get(each) castTo BossRewardHandler
+        if instance.bossId == UNIT_MAMMOTH
+            let pos = getRandomVisiblePos(winnerTribe)
+            rewardHandlerUnit = instance.thisUnit
+            instance.thisUnit.setPos(pos)
+            instance.thisUnit.setScale(1.0)
+            return
+
+function getRandomVisiblePos(Tribe tribe) returns vec2
+    let randomPos = tribe.getSpawn().randomPoint()
+    if tribe.getMembers().getFirst().hasVisibility(randomPos)
+        return randomPos
+    else
+        return getRandomVisiblePos(tribe)
+
+
+function onMammothWin()
+    print(("Tribe "+winnerTribe.getName()+" has lost the fight against Mammoth!").color(COLOR_RED))
+    GameStates.bossFight.exit()
+    for each in winnerTribe.getMembers()
+        let troll = each.getTroll()
+        revive(troll, 0.)
+        resetState(troll)
+        BOSS_UNIT.remove()
+
+
+function teleportWinnerTribeBack()
+    let spawn = winnerTribe.spawn
+    for each in winnerTribe.getMembers()
+        let pos = spawn.randomPoint()
+        each.getTroll().setPos(pos)
+        each.panCamToTimed(each.getTroll(), 0.1)  
+
+function onTrollDeath(unit dyingUnit)
+    if not dyingUnit.isTroll()
+        return
+    if dyingUnit.getOwner().getTribe() != winnerTribe
+        return
+    for each in winnerTribe.getMembers()
+        if each.getTroll().isAlive()
+            return
+    onMammothWin()
+
+function spreadUnitsInArch()
+    if not GetOrderedUnit().getOwner().getTribe() == winnerTribe
+        return
+    if not GetIssuedOrderId() == OrderIds.move
+        return
+    let startAngle = -PI/6
+    let endAngle = -startAngle
+    let units = new HashList<unit>()
+    let searchRadius = 1200.
+    let archRadius = 500.
+    let searchCenter = winnerTribe.getSpawn().getCenter()
+    let center  = vec2(GetOrderPointX(), GetOrderPointY())
+    ENUM_GROUP.enumUnitsInRange(searchCenter, searchRadius)
+    for each in ENUM_GROUP
+        if each.isStructure() and each.getOwner().getTribe() == winnerTribe
+            units.add(each)
+    let count = units.size()
+    if count == 0
+        return
+    let angleStep = 0.4
+    var i = 0
+    let z = rewardHandlerUnit.getPos3Real().z
+    for each in units
+        each.addAbility(AbilityIds.crowForm)
+        each.removeAbility(AbilityIds.crowForm)
+        let angle = startAngle + angleStep * i
+        let pos = center.add(archRadius*Cos(angle), archRadius*Sin(angle))
+        each.setPathing(false)
+        each.setPos(pos)
+        nullTimer() -> 
+            each.setPathing(true)
+        flashEffect(Abilities.blinkCaster, pos)
+        i += 1
+    winnerTribe.getSpawn().moveTo(center)
+    destroy units
+
+init
+    GameStates.bossFight.onEnter() (GameState state) ->
+        onEnter()
+
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
+        if GameStates.bossFight.active
+            onMammothKilled(GetDyingUnit())
+            onTrollDeath(GetDyingUnit())

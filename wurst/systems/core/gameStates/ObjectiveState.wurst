@@ -1,0 +1,33 @@
+package ObjectiveState
+
+import GameStates
+import Objective
+import GameConfig
+import GameState
+
+function onEnter()
+    let rnd = GetRandomInt(Objective.KingOfTheHill castTo int, Objective.EarlyDuel castTo int)
+    Log.debug("Selecting an Objective")
+    Objective objective = gameConfig.getObjective()
+    if objective == null
+        Log.debug("Selecting Random objective")
+        switch rnd
+            case Objective.KingOfTheHill castTo int
+                objective = Objective.KingOfTheHill
+                Log.debug("Selecting King of the Hill objective")
+            case Objective.TugOfWar castTo int
+                objective = Objective.TugOfWar
+                Log.debug("Selecting Tug of War objective")
+            case Objective.EarlyDuel castTo int
+                objective = Objective.EarlyDuel
+                Log.debug("Selecting Early Duel objective")
+            default
+                Log.debug("Failed to random an objective, selecting default option.")
+                objective = Objective.KingOfTheHill
+        gameConfig.setObjective(objective)
+    gameConfig.setObjective(Objective.TugOfWar)
+    GameStates.objective.enter()
+
+init
+    GameStates.modesSelection.onExit() state -> 
+        onEnter()

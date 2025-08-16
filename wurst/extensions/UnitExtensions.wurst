@@ -19,6 +19,8 @@ import HashMap
 import IdListConstant
 import LocalObjectIDs
 import initlater PlayerExtensions
+import initlater ReduceHealing
+import initlater UnitIndexer
 
 
 public constant DUMMY_ITEM_ID = compiletime(ITEM_ID_GEN.next())
@@ -103,6 +105,14 @@ public function unit.setHeat(int heat)
 
 public function unit.addHeat(int delta)
     this.setHeat(this.getOwner().getGold() + delta)
+
+public function unit.addHealingReduction(real delta)
+    let state = states[this.getIndex()]
+    if state != null
+        state.adjustAmountHealed(delta)    
+
+public function unit.reduceHealingReduction(real delta)
+    this.addHealingReduction(-delta)
 
 public function unit.subHeat(int heat)
     this.addHeat(-heat)

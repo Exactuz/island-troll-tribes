@@ -1,0 +1,38 @@
+package MammothDefinition
+
+
+// Standard library imports:
+import Assets
+import UnitObjEditing
+import LinkedList
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import ObjEditingUtils
+import BossAbilities
+import AbilityObjEditing
+import MakruraCuirass
+import MakruraAbilitites
+import MidBossDefinition
+import LocalObjectIDs2
+
+public constant MAMMOTH_MOVEMENT_SPEED = 400
+
+@compiletime function createJungleMammoth() returns UnitDefinition
+    return createMidBoss(UNIT_MAMMOTH)
+        ..addAbilities(asList(ABILITY_MAMMOTH_TOSS))
+        ..setAttack1CooldownTime(3.5)
+        ..setAttack1DamageNumberofDice(2)
+        ..setAttack1DamageBase(50)
+        ..setHitPointsMaximumBase(2750)
+        ..setScalingValue(3.0)
+        ..setName("Jungle Mammoth")
+        ..setSelectionScale(6.0)
+        ..setDefenseBase(6)
+        ..setAcquisitionRange(500.)
+        ..setShadowImageWidth(400.)
+        ..setSpeedBase(MAMMOTH_MOVEMENT_SPEED)
+        ..setTooltipBasic("Hire THE MAMMOTH!?!")
+        ..setTooltipExtended("Super Heavy melee unit")
+        ..setTilesets("Z")

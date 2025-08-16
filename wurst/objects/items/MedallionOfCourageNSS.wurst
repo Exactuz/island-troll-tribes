@@ -19,6 +19,9 @@ import PlayerExtensions
 import LinkedList
 import TrollUpgrade
 import HashMap
+import ClosureTimers
+import ObjectIDManager
+import CustomItemDefinition
 
 // The description for the item.
 let DESCRIPTION = "" +
@@ -38,15 +41,19 @@ IterableMap<int, int> trollUpgradeMap = new IterableMap<int, int>
 @compiletime function createMedallionAbility()
     createItemBerserkCast(ABILITY_SUPERSUB_COURAGE_NSS)
 
-@compiletime function createMedallionOfCourage()
-    createUsableItem(ITEM_MEDALLION_COURAGE_NSS)
+
+public constant ITEM_MEDALLION_COURAGE_NSS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MEDALLION_COURAGE_NSS_DUMMY_UNIT")
+public constant ITEM_MEDALLION_COURAGE_NSS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MEDALLION_COURAGE_NSS)
         ..setAbilities(commaList(ABILITY_SUPERSUB_COURAGE))
         ..setName("Medallion of Courage")
+        ..setLumberCost(50)
         ..setDescription(DESCRIPTION)
         ..setTooltipExtended(DESCRIPTION)
         ..setInterfaceIcon(Icons.bTNMedalionOfCourage)
         ..setModelUsed(Objects.potofGold)
-        ..setCanBeSoldToMerchants(false)
+        ..setCanBeSoldToMerchants(false)    
+        ..constructItemShopDummyUnit(ITEM_MEDALLION_COURAGE_NSS_DUMMY_UNIT)
+        )
 
 
 // Validates and unlocks the research corresponding to the Medallion of Courage.
@@ -77,6 +84,8 @@ function onUse(unit caster, item target)
     target.remove()
 
     upgradeUnit(caster, trollUpgradeMap.get(caster.getTrollBaseClass()))
+    doAfter(ANIMATION_PERIOD) ->
+        caster.setLevel(4, true)
 
 
 init

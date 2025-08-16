@@ -6,8 +6,13 @@ import ClosureForGroups
 import ChannelAbilityPreset
 import Assets
 import ToolTipsUtils
+import MeatCollector
+import LocalObjectIDs2
 
-@configurable let COOK_MEAT_RANGE = 600.0
+@configurable let COOK_MEAT_RANGE = 800.0
+let TT_COOK_AND_COLLECT_MEAT_EXT = "Cooks all the corpses around the fire and collects all meat within "+
+                                    "{0} range and stores it in the building's inventory.".format(MEAT_COLLECT_RANGE.toToolTipLightBlue())+
+                                    "\nMeat cannot be collected if there is an enemy in range.".color(COLOR_GOLD_STR)
 
 @compiletime function createCookMeat() returns ChannelAbilityPreset
     return new ChannelAbilityPreset(ABILITY_COOK_MEAT, 1, true)
@@ -27,11 +32,34 @@ import ToolTipsUtils
         ..setFollowThroughTime(1, 0)
         ..setEditorSuffix("(Wurst)")
 
+@compiletime function createCookAndCollectMeat() returns ChannelAbilityPreset
+    return new ChannelAbilityPreset(ABILITY_COOK_AND_COLLECT_MEAT, 1, true)
+        ..presetManaCost(lvl -> 0)
+        ..presetCooldown(lvl -> 1.0)
+        ..setHeroAbility(false)
+        ..setItemAbility(false)
+        ..setHotkeyNormal("C")
+        ..setName("Cook and collect Meat")
+        ..presetTooltipNormal(lvl -> makeToolTipNorm("C", "Cook and collect Meat"))
+        ..presetTooltipNormalExtended(lvl -> TT_COOK_AND_COLLECT_MEAT_EXT)
+        ..setIconNormal(Icons.bTNMonsterLure)
+        ..setIconResearch(Icons.bTNMonsterLure)
+        ..setIconTurnOff(Icons.bTNMonsterLure)
+        ..setButtonPositionNormalX(2)
+        ..setButtonPositionNormalY(2)
+        ..setFollowThroughTime(1, 0)
+        ..setEditorSuffix("(Wurst)")
+
+function cookMeat(unit whichUnit)
+    let firePos = whichUnit.getPos()
+    forUnitsInRange(firePos, COOK_MEAT_RANGE) (unit u) ->
+        if u.getTypeId() == UNIT_MEAT
+            createItem(ITEM_COOKED_MEAT, u.getPos())
+            u.remove()
 
 init
     registerSpellEffectEvent(ABILITY_COOK_MEAT) ->
-        let firePos = GetSpellAbilityUnit().getPos()
-        forUnitsInRange(firePos, COOK_MEAT_RANGE) (unit u) ->
-            if u.getTypeId() == UNIT_MEAT
-                createItem(ITEM_COOKED_MEAT, u.getPos())
-                u.remove()
+        cookMeat(GetSpellAbilityUnit())
+
+    registerSpellEffectEvent(ABILITY_COOK_AND_COLLECT_MEAT) ->
+        cookMeat(GetSpellAbilityUnit())

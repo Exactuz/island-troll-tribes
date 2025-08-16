@@ -14,6 +14,16 @@ import LocalObjectIDs
 import PlayerExtensions
 import GameStates
 import GameConfig
+import LocalAssets
+import LinkedList
+import LocalObjectIDs2
+
+let SPIRIT_WARD_ABIL = asList(
+            ABILITY_COOK_AND_COLLECT_MEAT,
+            ABILITY_CAMP_FIRE_HEAT_CAST,
+            LocalAbilityIds.selectHero,
+            LocalAbilityIds.inventoryBuilding
+            )
 
 @compiletime function createSpiritWard()
     new BuildingDefinition(UNIT_SPIRIT_WARD, UnitIds.scouttower)
@@ -21,21 +31,29 @@ import GameConfig
         ..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNAbsorbMagic.blp")
         ..setAIPlacementRadius(24.0)
         ..setCollisionSize(144.0)
-        ..setModelFile("Units\\Creeps\\MonsterLure\\MonsterLure.mdl")
+        ..setModelFile(Buildings.taurenTotem1)
         ..setRepairGoldCost(0)
         ..setHotkey("")
-        ..setHitPointsMaximumBase(100)
+        ..setArmorType(ArmorType.Fortified)
+        ..setDefenseBase(5)
+        ..setHitPointsMaximumBase(500)
         ..setRepairLumberCost(0)
-        ..setScalingValue(1.6)
-        ..setName("Spirit Ward")
+        ..setScalingValue(0.8)
+        ..setNormalAbilities(commaList(SPIRIT_WARD_ABIL))
+        ..setName("Troll Totem")
+        ..setTooltipBasic("Build Troll Totem")
         ..setRepairTime(10)
-        ..setRevivesDeadHeros(true)
-        ..setTooltipBasic("Build Spirit Ward")
+        //..setRevivesDeadHeros(true)
+        ..setDefaultActiveAbility(ABILITY_CAMP_FIRE_HEAT_CAST.toRawCode())
+        ..setTooltipBasic("Build Troll Totem")
         ..setGroundTexture("")
         ..setTooltipExtended("Revives slain heroes")
         ..setUnitSoundSet("")
         ..setUpgradesTo("")
         ..setUpgradesUsed("")
+        ..setPlacementRequires("")
+        ..setGroundTexture("")
+        ..setPathingMap(PathingTextures.simpleSolid4x4)
 
 let map = new HashMap<unit, unit>()
 

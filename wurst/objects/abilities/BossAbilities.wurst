@@ -118,77 +118,7 @@ public let ABILITY_SPELL_DMG_REDUCTION_DUMMY_BUFF = compiletime(
     ).abilId
 )
 
-let MAKRURA_CARAPACE_BOSS_CD = 10.
-public let ABILITY_MAKRURA_CARAPACE_BOSS_BUFF = compiletime(
-    createDummyBuffObject(
-        "Makrura Carapace".color(COLOR_GREEN),
-        "Makrura's impenetrable carapace allows it to block an attack and reflect premitigated damage back to the attacker. "+
-        "Has a separate {0} seconds cooldown.".format(MAKRURA_CARAPACE_BOSS_CD.toToolTipBlue()),
-        LocalIcons.bTNMakruraCarapace
-    ).abilId
-)
 
-//personal cd per unit
-HashList<unit>makruraCarapaceCooldown = new HashList<unit>()
-
-// Used by Makrura
-function onMakruraAttacked(unit source, unit target, real originalAmount)
-    //cast Pin
-    if makruraCarapaceCooldown.size()>1 // use cuirass ability if attacked by 2 separate units
-    and target.getAbilityCooldownRemaining(ABILITY_MAKRURA_CUIRASS_ACTIVE) ==0.
-        IssueImmediateOrderById(target, OrderIds.berserk)
-        let efx = addEffect("Models\\Abilities\\Bubbles.mdx", target, "origin")
-                    ..setScale(2.0)
-        doAfter(MAKRURA_CUIRASS_DURATION) -> 
-            efx.destr()
-    if makruraCarapaceCooldown.has(source)
-        return
-    makruraCarapaceCooldown.add(source)
-    let currentHp = target.getHP()
-    target.setHP(currentHp+originalAmount)
-    if not source.isInvulnerable()
-        target.damageTarget(source, originalAmount, true, false, ATTACK_TYPE_HERO, DAMAGE_TYPE_NORMAL, null)
-        flashEffect("Objects\\Spawnmodels\\Naga\\NagaDeath\\NagaDeath.mdl", source.getPos())
-    doAfter(MAKRURA_CARAPACE_BOSS_CD)->
-        makruraCarapaceCooldown.remove(source) 
-
-function onMakruraAttack(unit source, unit target)
-    if source.getAbilityCooldownRemaining(ABILITY_MAKRURA_BOSS_PIN)==0.
-        InstantDummyCaster.castTarget(source.getOwner(), ABILITY_MAKRURA_BOSS_PIN, 1, OrderIds.entanglingroots, target)
-        source.startAbilityCooldown(ABILITY_MAKRURA_BOSS_PIN)
-        //target.issueTargetOrderById(OrderIds.entanglingroots, source)
-        
-function onMakruraEnter(unit u)
-    if u.getTypeId() == UNIT_MAKRURA
-        u.removeAbility(ABILITY_HARDENED_SKIN)
-        u.removeAbility(ABILITY_HARDENED_SKIN_DUMMY_BUFF)
-        new MakruraCuirass(u)      
-
-let MAKRURA_BOSS_PIN_DURATION = 2.5
-let MAKRURA_BOSS_PIN_DPS      =20.
-@compiletime function createMakruraBossPinAbility()
-    new AbilityDefinitionEntanglingRootscreep(ABILITY_MAKRURA_BOSS_PIN)
-        ..setDummyAbility()
-        ..setBuffs(1, BUFF_MAKRURA_PIN.toRawCode())
-        ..setMissileArt("")
-        ..setArtTarget("")
-        ..setArtEffect("")
-        ..setAnimationNames("Attack")
-        ..setDurationHero(1, MAKRURA_BOSS_PIN_DURATION)
-        ..setDurationNormal(1, 8.)
-        ..setTargetsAllowed(1, commaList(
-            TargetsAllowed.enemies,
-            TargetsAllowed.ground,
-            TargetsAllowed.neutral,
-            TargetsAllowed.organic,
-            TargetsAllowed.hero,
-            TargetsAllowed.nonhero
-            ))
-        ..setCastRange(1, 300.)
-        ..setCooldown(1, 20.)
-        ..setDamageperSecond(1, MAKRURA_BOSS_PIN_DPS)
-        ..setName("Pin")
-        ..setEditorSuffix("(Wurst)")    
 
 // Used by bosses
 @compiletime function createBossSpellResistance() returns AbilityDefinitionRunedBracers
@@ -198,22 +128,6 @@ let MAKRURA_BOSS_PIN_DPS      =20.
         ..setEditorSuffix("(modded)")
 
 
-init
-    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->     
-        if DamageEvent.getTarget().getTypeId() == UNIT_MAKRURA and DamageEvent.getType() == DamageType.ATTACK
-            onMakruraAttacked(DamageEvent.getSource(), DamageEvent.getTarget(), DamageEvent.getUnreducedOriginalAmount())
-
-    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->     
-        if DamageEvent.getSource().getTypeId() == UNIT_MAKRURA and DamageEvent.getType() == DamageType.ATTACK
-            onMakruraAttack(DamageEvent.getSource(), DamageEvent.getTarget())
-
-    //flasheffect for Pin
-    EventListener.onTargetCast(ABILITY_MAKRURA_BOSS_PIN) (unit caster, unit target) ->
-        flashEffect(Abilities.stampedeMissileDeath, target.getPos())        
-        doPeriodicallyCounted(0.5, 5) (CallbackCounted cb) ->
-            flashEffect(Abilities.stampedeMissileDeath, target.getPos())
-
-    onEnter()->
-        onMakruraEnter(getEnterLeaveUnit())        
+    
 
 

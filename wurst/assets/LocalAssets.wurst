@@ -4,6 +4,7 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant bTNMammothBoots                          ="ReplaceableTextures\\CommandButtons\\bTNMammothBoots.blp"
     static constant bTNAxeThrowDebuff                          ="ReplaceableTextures\\CommandButtons\\bTNAxeThrowDebuff.blp"
     static constant bTNScrollSlot                           ="ReplaceableTextures\\CommandButtons\\pASBTNScrollSlot.blp"
     static constant bTNWhirlingAxes                            ="ReplaceableTextures\\CommandButtons\\bTNWhirlingAxes.blp"
@@ -247,6 +248,7 @@ public class LocalBuildings
     static constant workshop   = "Models\\Buildings\\OrcLumbermill(noground)V2.01.mdx"
 
 public class LocalAbilities
+    static constant earthQuakeTarget              = "Models\\Abilities\\EarthQuakeTarget.mdx"
     static constant hawkClawAnimation              = "Models\\Abilities\\Reaper'sClawsRed.mdx"
     static constant undeadDissipate                = "Models\\Abilities\\pizdec.mdx"
     static constant bladeStorm                     = "Models\\Abilities\\BladeStorm.mdx"

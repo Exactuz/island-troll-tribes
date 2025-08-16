@@ -1,0 +1,220 @@
+package MammothBoots
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+
+// Local imports:
+import LocalObjectIDs
+import StringBuilder
+import ToolTipsUtils
+import BuffObjEditing
+import BuffIds
+import Abilities
+import OrderIds
+//import PumpUp
+import Icons
+import InstantDummyCaster
+import ClosureTimers
+import UnitExtensions
+import ObjEditingUtils
+import ObjectIds
+import ItemObjEditing
+import Items
+import LocalAssets
+import LocalItemObjEditing
+import AxesDefinition
+import ColorUtils
+import ObjectIDManager
+import CustomItemDefinition
+import LocalObjectIDs2
+import ChannelAbilityPreset
+import JumpSystem
+import HashSet
+import Knockback3
+import AttachmentPoints
+import Objects
+import SoundUtils
+import MammothTrample
+
+let MAMMOTH_BOOTS_TRAMPLE_MAX_DISTANCE = 1000.
+let MAMMOTH_BOOTS_TRAMPLE_CHARGE_SPEED = 750.
+let MAMMOTH_BOOTS_TRAMPLE_DAMAGE_BASE = 20
+let MAMMOTH_BOOTS_TRAMPLE_DAMAGE_STRENGTH_MULTIPLIER = 1.0
+let MAMMOTH_BOOTS_TRAMPLE_PUSH_AOE = 250.
+let MAMMOTH_BOOTS_TRAMPLE_DESTRUCTABLE_AREA = 144.
+let COOLDOWN = 2.
+let ABIL_MAMMOTH_BOOTS = commaList(ABILITY_MAMMOTH_BOOTS_TRAMPLE, ABILITY_SPEED_BONUS_100, ABILITY_STR_BONUS_10, ABILITY_ARMOR_BONUS_5)
+let TT_MAMMOTH_BOOTS = "A pair of boots crafted a hide of The Mammoth."+
+                              "\n+{0} Movement Speed.".format("100".color(COLOR_ORANGE))+
+                              "\n+{0} Strength.".format("10".color(COLOR_ORANGE))+
+                              "\n+{0} Armor.".format("5".color(COLOR_GREEN))+
+                              "\n\nTrample".color(COLOR_TURQUOISE)+
+                              ": \nCan be activated to charge in a direction, trampling enemies in a {0} radius around you, dealing {1} +{2}x{3} damage and pushing them back.".format(
+                                MAMMOTH_BOOTS_TRAMPLE_PUSH_AOE.toString().color(COLOR_LIGHT_BLUE), MAMMOTH_BOOTS_TRAMPLE_DAMAGE_BASE.toString().color(COLOR_RED), 
+                                MAMMOTH_BOOTS_TRAMPLE_DAMAGE_STRENGTH_MULTIPLIER.toString().color(COLOR_RED),"Strength".color(COLOR_ORANGE))+
+                              "\n{0} seconds cooldown.".format(COOLDOWN.toString().color(ENERGY_COLOR))
+
+
+public constant ITEM_MAMMOTH_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAMMOTH_BOOTS_DUMMY_UNIT")
+public constant ITEM_MAMMOTH_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAMMOTH_BOOTS)
+        ..setAbilities(ABIL_MAMMOTH_BOOTS)
+        ..setInterfaceIcon(LocalIcons.bTNMammothBoots)
+        ..setDescription("Boots crafted from a hide of The Mammoth, granting you the ability to trample your enemies.")
+        ..setTintingColor1Red(50)
+        ..setTintingColor2Green(50)
+        ..setTintingColor3Blue(50)
+        ..setModelUsed(LocalItems.bootsOfBearTenacity)
+        ..setLumberCost(50)
+        ..setNameEnhance("Mammoth Boots")
+        ..setTooltipExtended(TT_MAMMOTH_BOOTS)
+        ..setCooldownGroup(toRawCode(ABILITY_SPEED_BONUS_60))
+        ..constructItemShopDummyUnit(ITEM_MAMMOTH_BOOTS_DUMMY_UNIT)
+        )
+
+
+class MammothBootsTrample
+    unit caster
+    real angleRadians
+    real totalDistance 
+    item thisItem
+    bool isActive = false
+    real currentScale = 1.0
+    vec2 targetPos
+    rect destructableArea = Rect(-MAMMOTH_BOOTS_TRAMPLE_DESTRUCTABLE_AREA, -MAMMOTH_BOOTS_TRAMPLE_DESTRUCTABLE_AREA, MAMMOTH_BOOTS_TRAMPLE_DESTRUCTABLE_AREA, MAMMOTH_BOOTS_TRAMPLE_DESTRUCTABLE_AREA)
+    CallbackCounted update
+    HashSet<unit> damagedUnits = new HashSet<unit>()
+    static HashMap<item, thistype> instances = new HashMap<item, thistype>()
+
+    construct(item thisItem)
+        instances.put(thisItem, this)
+        print("created")
+        //startTrample()
+
+    function changeScale(real scaleTowards)
+        let callAmount = 10
+        let duration = 0.5
+        let differential = (scaleTowards - currentScale)/callAmount
+        doPeriodicallyCounted(duration/callAmount, callAmount) (CallbackCounted cb) ->
+            currentScale += differential
+            caster.setScale(currentScale)
+
+    function startTrample(unit caster, vec2 targetPos)
+        if isActive
+            return
+        this.caster = caster
+        isActive = true
+        changeScale(2.0)
+        print("start trample")
+        totalDistance = min(caster.getPos().distanceTo(targetPos), MAMMOTH_BOOTS_TRAMPLE_MAX_DISTANCE)
+        this.targetPos = getJumpPos(caster.getPos(), targetPos, totalDistance)
+        caster.pauseEx()
+        caster.setAnimation(8)
+        trampleSfx.playOnPoint(caster.getPos3Real())
+        caster.disableAttack(true, false)
+        caster.setPathing(false)
+
+        let callAmount = (totalDistance/MAMMOTH_BOOTS_TRAMPLE_CHARGE_SPEED/ANIMATION_PERIOD).floor()
+
+        update = doPeriodicallyCounted(ANIMATION_PERIOD, callAmount) (CallbackCounted cb) ->
+            update()
+            let freaquency = 10
+            let number = cb.getCount()/freaquency
+            if number == I2R(R2I(number))
+                //LocalAbilities.earthQuakeTarget
+                let efx = addEffect(Abilities.warStompCaster, caster, "foot,left")
+                ..setScale(0.3)
+                ..setTime(1.0)
+                doAfter(ANIMATION_PERIOD*freaquency) -> 
+                    //efx.setTime(1.0)
+                    efx.setPos(vec2(-9999., -9999.))
+                    //efx.destr()
+                    
+            if cb.isLast()
+                print("trample done")
+                caster.setPathing(true)
+                caster.unpauseEx()
+                isActive = false
+                doAfter(0.5) -> 
+                    changeScale(1.0)
+                caster.setAnimation("stand")
+                caster.disableAttack(false, false)
+                damagedUnits.clear()        
+
+    function update()
+        let distance = totalDistance*ANIMATION_PERIOD/(totalDistance/MAMMOTH_BOOTS_TRAMPLE_CHARGE_SPEED)
+        let newPos = caster.getPos().moveTowards(targetPos, distance)
+        caster.setXY(newPos)
+        destructableArea.moveTo(newPos)
+        EnumDestructablesInRectAll(destructableArea) ->
+            let d = GetEnumDestructable()
+            d.kill()
+        for each in ENUM_GROUP
+            doAfter(ANIMATION_PERIOD*3) ->
+                damageAndPushUnit(each)
+            
+    function damageUnit(unit target)
+        let damage = MAMMOTH_BOOTS_TRAMPLE_DAMAGE_BASE + caster.getStr(true) * MAMMOTH_BOOTS_TRAMPLE_DAMAGE_STRENGTH_MULTIPLIER
+        caster.damageTarget(target, damage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+
+    function damageAndPushUnit(unit target)
+        if damagedUnits.has(target)
+            return
+        if target.isAllyOf(caster)
+            return
+        if not target.isAlive()
+            return
+        if target.getTypeId() == UNIT_HAWK
+            return
+        damagedUnits.add(target)
+        flashEffect(Objects.impaleTargetDust, target.getPos())
+        damageUnit(target)
+        let angle = caster.getPos().angleTo(target.getPos())
+        if caster.getPos().distanceTo(targetPos) < MAMMOTH_BOOTS_TRAMPLE_PUSH_AOE
+            Knockback3.add(target, 1500., angle, 80..asAngleDegrees())
+
+
+@compiletime function createDummyAbility()
+    new ChannelAbilityPreset(ABILITY_MAMMOTH_BOOTS_TRAMPLE, 1, true)
+        ..presetCastRange(lvl -> 9999.)
+        ..presetIcon(Icons.bTNMammoth)
+        ..presetTargetTypes(Targettype.POINT)
+        ..presetHotkey("R")
+        ..presetButtonPosNormal(2, 3)
+        ..presetCooldown(lvl->COOLDOWN)    
+        ..presetTargetsAllowed(_ -> commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.nonancient,
+            TargetsAllowed.organic
+            )
+        )
+
+function onItemUse(unit caster, vec2 targetPos)
+    let itm = caster.getItemById(ITEM_MAMMOTH_BOOTS)
+    if itm == null
+        return
+    let instance = MammothBootsTrample.instances.get(itm)
+    if instance == null
+        return
+    instance.startTrample(caster, targetPos)
+    //caster.issueImmediateOrderById(OrderIds.holdposition)
+    //doAfter(0.3) -> 
+        //caster.setAnimation("decay flesh") 
+
+function onPickUp()
+    let itm = GetManipulatedItem()
+    if itm.getTypeId() != ITEM_MAMMOTH_BOOTS
+        return
+    let instance = MammothBootsTrample.instances.get(itm)
+    if instance == null
+        new MammothBootsTrample(itm)
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) -> 
+        onPickUp()
+    
+    EventListener.onPointCast(ABILITY_MAMMOTH_BOOTS_TRAMPLE) (unit caster, vec2 target) ->
+        onItemUse(caster, target)

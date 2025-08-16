@@ -146,7 +146,7 @@ public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new It
 
 
 // Basic Troll Spells
-public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0, LocalAbilityIds.corpseConsume ,ABILITY_HERO_GLOW, ABILITY_TROLL_MS_PER_LVL)
+public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0, LocalAbilityIds.corpseConsume ,ABILITY_HERO_GLOW)
 
 // Unsub Hero Spells
 public constant HERO_SPELLS_HUNTER       = commaList(ABILITY_TRACK,            ABILITY_WARRIOR,        ABILITY_TRACKER)

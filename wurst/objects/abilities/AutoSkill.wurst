@@ -20,8 +20,7 @@ let skillMap = new HashMap<int, int>()
     // Hunter
     ..put(UNIT_HUNTER,               ABILITY_TRACK)
     ..put(UNIT_HUNTER_1,             ABILITY_TRACK)
-    //..put(UNIT_WARRIOR,              ABILITY_WARRIOR_SPELLBOOK)
-    //..put(UNIT_WARRIOR,              HERO_SPELLS_WARRIOR)
+    ..put(UNIT_WARRIOR,              ABILITY_WEAPONS_OF_CHOICE)
     ..put(UNIT_TRACKER,              ABILITY_TRACKER_SPELLBOOK)
     ..put(UNIT_JUGGERNAUT,           ABILITY_TITANS_GRIP)
 
@@ -100,10 +99,11 @@ public function autoSkill(unit target)
     let strength = (attributeGrowth.strength*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
     let agility = (attributeGrowth.agility*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
     let intelligence = (attributeGrowth.intelligence*(lvl+2+subTrollLvls+superSubTrollLvls)).ceil()
+    let newSpeed = target.getDefaultMovespeed() + (lvl+subTrollLvls+superSubTrollLvls)*7.5
     target.setStr(strength)
     target.setAgi(agility)
     target.setInt(intelligence)
-    target.setAbilityLevel(ABILITY_TROLL_MS_PER_LVL, (lvl+2+subTrollLvls+superSubTrollLvls))
+    target.setMoveSpeed(newSpeed)
 
     // Look up the instance of the ability.
     let skill = target.getAbility(abilityID)

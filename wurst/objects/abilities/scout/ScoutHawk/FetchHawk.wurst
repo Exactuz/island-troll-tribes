@@ -73,14 +73,14 @@ public class FetchHawk extends HawkState
         //if zOffset<FLIGHT_HEIGHT
         //    zOffset+=15.
         //newPos3.z=zOffset  
-        hawk.setPosReal(newPos3)
+        hawk.setXYZ(newPos3)
         hawk.setFacing(currentPos.angleTo2d(troll.getPos3Real()))
         currentPos=newPos3
 
     function setTargetPos()
         targetPos = hawk.getPos3Real()
         targetPos.z-=50.
-        target.setPosReal(targetPos)
+        target.setXYZ(targetPos)
 
     function playSound()
         for i=0 to GetBJMaxPlayerSlots()-1

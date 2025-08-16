@@ -18,6 +18,7 @@ import PlayerExtensions
 import initlater EquipmentSlots
 import EquipmentSlotFrames
 import GatheringSlot
+import Tribe
 
 public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
 public let BUILDING_CRAFTING_AOE = 900.
@@ -105,7 +106,7 @@ public class QuickMakeV2
         //generateItemsUsedList(itemRecipe.ingredients)
         //for each in itemsUsedInRecipe
         //    print(GetObjectName(each))
-        let pos = caster.getPos()
+        let pos = caster.isTroll() ? caster.getPos() : caster.getOwner().getTribe().spiritTotem.getPos()
         let aoe = caster.isTroll() ? TROLL_CRAFTING_AOE : BUILDING_CRAFTING_AOE
         searchSpace = Rect(pos.x - aoe, pos.y - aoe, pos.x + aoe, pos.y + aoe)
         forItemsInRect(searchSpace) (item i) ->

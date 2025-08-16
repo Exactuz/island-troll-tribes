@@ -5,8 +5,11 @@ import ColorUtils
 import Game
 import Respawn
 import ShrinkingMap
-import ForcedDuel
+import GurubashiArena
 import TimeUtils
+import EarlyDuel
+import GameConfig
+import Objective
 
 // Following code imported from https://github.com/Frotty/EBR/blob/8e58de4a392b1d6fef6a089b2d1b3d0ced5404b3/wurst/MapStuff/MultiboardClass.wurst
 // My initial design was bad so I just decided to look up frotty's code
@@ -93,15 +96,18 @@ public function getGameTimersBoardTitle() returns string
     let time = GAME_TIMER.getElapsed().toInt()
     let gpRemaining = GRACE_PERIOD_TIMER.getRemaining().toInt()
     let fdRemaining = DUEL_TIMER.getRemaining().toInt()
+    let gaRemaining = GURUBASHI_ARENA_OPEN_TIMER.getRemaining().toInt()
     let ffRemaining = FOREST_FIRE_TIMER.getRemaining().toInt()
 
     var title = "Time[" + toTimeString(time).color(GENERAL_COLOR) + "]"
 
     if gpRemaining > 0
         title += " - Respawn[" + toTimeString(gpRemaining).color(GREEN_COLOR) + "]"
+    else if gaRemaining > 0 //and fdRemaining < 0
+        title += " - Gurubashi Arena opens[" + toTimeString(gaRemaining).color(ENERGY_COLOR) + "]"
 
-    if fdRemaining > 0
-        title += " - Duel[" + toTimeString(fdRemaining).color(ENERGY_COLOR) + "]"
+    if fdRemaining > 0 and gameConfig.getObjective() == Objective.EarlyDuel
+        title += " - Duel[" + toTimeString(fdRemaining).color(RED_COLOR) + "]"
 
     if ffRemaining > 0
         title += " - Fire[" + toTimeString(ffRemaining).color(RED_COLOR) + "]"

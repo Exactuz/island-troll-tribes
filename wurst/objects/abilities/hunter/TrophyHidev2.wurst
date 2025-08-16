@@ -64,7 +64,7 @@ constant ABILITY_PANTHER_FANG_TROPHY = asList(ABIL_DMG_STONE)
 public constant TROPHY_LIST = asList(ITEM_HUNTER_TROPHY_ELK_HIDE, ITEM_HUNTER_TROPHY_WOLF_HIDE, ITEM_HUNTER_TROPHY_BEAR_HIDE, ITEM_HUNTER_TROPHY_FANG)                                   
 public constant TROPHY_BASE_LIST=HIDE_LIST.copy()
     ..add(ITEM_PANTHER_FANG)
-    ..add(ITEM_HORN_MAMMOTH)
+    ..add(ITEM_LEFT_MAMMOTH_HORN)
 
 public IterableMap<unit, TrophyHide> trophyHideInstances = new IterableMap<unit, TrophyHide>()
 IterableMap<int, Attachment> attachments = new IterableMap<int, Attachment>()
@@ -204,7 +204,7 @@ class TrophyHide
 
     function replaceHideWithTrophy(item itemHandle)
         suspendTriggersFlag = true
-        if itemHandle.getTypeId() == ITEM_HORN_MAMMOTH
+        if itemHandle.getTypeId() == ITEM_LEFT_MAMMOTH_HORN
             trophyHide = itemHandle
             hero.removeItem(hunterDummyItem) 
             nullTimer() ->
@@ -233,7 +233,7 @@ class TrophyHide
                         attachment.apply(hero)        
 
     function replaceTrophyWithHide()
-        if trophyHide.getTypeId() == ITEM_HORN_MAMMOTH
+        if trophyHide.getTypeId() == ITEM_LEFT_MAMMOTH_HORN
             trophyHide = null
             return
         nullTimer() -> 
@@ -274,7 +274,7 @@ function cacheAttachmentIds()
     attachments.get(ITEM_JUNGLE_BEAR_HIDE).setIDs(id3)
 
 function onHideDrop(unit hero, item itemHandle)
-    if (not trophyToHideMap.has(itemHandle.getTypeId())) and (itemHandle.getTypeId() != ITEM_HUNTER_TROPHY_HIDE_DUMMY) and (itemHandle.getTypeId() != ITEM_HORN_MAMMOTH)
+    if (not trophyToHideMap.has(itemHandle.getTypeId())) and (itemHandle.getTypeId() != ITEM_HUNTER_TROPHY_HIDE_DUMMY) and (itemHandle.getTypeId() != ITEM_LEFT_MAMMOTH_HORN)
         return    
     let instance = trophyHideInstances.get(hero)
     if instance == null

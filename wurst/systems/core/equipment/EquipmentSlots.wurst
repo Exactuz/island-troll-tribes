@@ -127,7 +127,9 @@ public class EquipmentSlots
         removeBonuses(itm.getTypeId(), troll)
         refreshFrames()
         equippedItems.remove(itm)
-        printTimedToPlayer("Unequiped "+GetObjectName(itm.getTypeId()), 5, troll.getOwner())        
+        if itm != null
+            let objName = GetObjectName(itm.getTypeId())
+            printTimedToPlayer("Unequipped "+objName, 5, troll.getOwner())
         destroy inventory   
         if cb != null
             destroy cb
@@ -299,8 +301,8 @@ function onTargetOrder()
 init
     EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())  
 
-    EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
-        onDeath(GetTriggerUnit())
+    //EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
+    //    onDeath(GetTriggerUnit())
 
     registerAfterEffect() (unit target, int unitID) ->
         onTransformation(target)

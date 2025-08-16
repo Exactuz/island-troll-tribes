@@ -45,6 +45,7 @@ public class Tribe
 
     int tribeId
     rect spawn
+    unit spiritTotem = null
     let tribePlayers = new OwnedLinkedList<player>()
     let tribe = CreateForce()
     let name = ""
@@ -82,7 +83,7 @@ public class Tribe
         for pid = range.min to range.max
             let member = players[pid]
             //print(member.getName())
-            if not member.isObserver() and (member.isIngame() or gameConfig.isTestModeEnabled())
+            if not member.isObserver() and (member.isIngame() or gameConfig.fillEmptySlots == true)
                 addMember(member)
                 defeated = false
 

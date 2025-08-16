@@ -1,0 +1,94 @@
+package Preparation
+
+// Standard library imports:
+import ClosureTimers
+
+// Local imports:
+import ColorUtils
+import GameStates
+import GameConfig
+import TimerUtils
+import GameState
+import PlayerExtensions
+import Tribe
+import UnitExtensions
+import Objective
+import ClosureEvents
+import Abilities
+import Respawn
+import Knockback3
+import LocalObjectIDs
+import SoundUtils
+import Objects
+
+public constant PREPARATION_TIME_SECONDS = 60.
+public constant TELEPORT_ANIMATION_DURATION = 3.
+public constant DUEL_WARNING = new SoundDefinition(Sounds.arrangedTeamInvitation)
+constant DUEL_MEAT_STACK_AMOUNT = 2
+
+function displayTimer()
+    let msg = "Gurubashi Arena will begin in {0} seconds|r".format(PREPARATION_TIME_SECONDS.toInt().toString()).color(COLOR_RED)
+    let preparationTimer = getTimer()
+    let timerDialog = preparationTimer.createTimerDialog()
+    print(msg)
+    timerDialog.setTitle("Gurubashi Arena")
+    timerDialog.display(true)
+    preparationTimer.doAfter(PREPARATION_TIME_SECONDS) ->
+        timerDialog.display(false)
+        timerDialog.destr()
+
+function reviveTrolls()
+    for each in winnerTribe.getMembers()
+        let troll = each.getTroll()
+        revive(troll, 0.)
+        doAfter(ANIMATION_PERIOD) ->
+            troll.resetCooldown()            
+
+function supplyMeat()
+    for tribe in Tribe.getTribes()
+        let spiritTotem = tribe.spiritTotem
+        for each in tribe.getMembers()
+            let troll = each.getTroll()
+            for i = 0 to 5
+                let itm = troll.itemInSlot(i)
+                if itm.getTypeId() == ITEM_COOKED_MEAT
+                    itm.remove()
+                    flashEffect(Abilities.blinkTarget, troll.getPos())
+            let meat = createItem(ITEM_COOKED_MEAT, tribe.spawn.getCenter())
+            for i = 1 to DUEL_MEAT_STACK_AMOUNT 
+                flashEffect(Abilities.blinkCaster, spiritTotem.getPos())
+                nullTimer() -> 
+                    meat.setCharges(10)
+                    nullTimer() -> 
+                        spiritTotem.addItemHandle(meat)
+
+
+function onEnter()
+    reviveTrolls()
+    supplyMeat()
+    displayTimer()
+    DUEL_WARNING.play()
+    doAfter(PREPARATION_TIME_SECONDS) ->
+        GameStates.preparation.exit() 
+    doAfter(PREPARATION_TIME_SECONDS-TELEPORT_ANIMATION_DURATION) -> 
+        playTeleportEfx()
+
+function playTeleportEfx()
+    for tribe in Tribe.getTribes()
+        for each in tribe.getMembers()
+            let troll = each.getTroll()
+            let efxCastingTroll = addEffect(Abilities.massTeleportTo, troll.getPos())
+            let efxGroundTroll = addEffect(Abilities.massTeleportCaster, troll.getPos())
+            doPeriodicallyTimed(ANIMATION_PERIOD, TELEPORT_ANIMATION_DURATION) (CallbackCounted cb) ->
+                let pos = troll.getPos()
+                efxCastingTroll.setPos(pos)
+                efxGroundTroll.setPos(pos)
+                if cb.isLast()
+                    efxCastingTroll.destr()
+                    efxGroundTroll.destr()
+                    let efxFinish = addEffect(Abilities.massTeleportTarget, troll.getPos())
+                    ..destr()
+                
+init
+    GameStates.preparation.onEnter() (GameState state) ->
+        onEnter()

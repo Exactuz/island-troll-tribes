@@ -42,10 +42,12 @@ public constant TT_BOSS_REWARD_EXT = "You can purchase items for merchant's {0}.
                                      "\nItem {0} cost is equivalent to {1} cost.".format("Favour".color(COLOR_LIGHT_BLUE), "gold".color(COLOR_GOLD_STR))
 
 public class BossRewardHandler extends ItemShopDummyHandler
-    construct(unit whichUnit, LinkedList<int> soldItems)
+    int bossId = 0
+
+    construct(unit whichUnit, int bossId ,LinkedList<int> soldItems)
         super(whichUnit, soldItems)
-        //doAfter(ANIMATION_PERIOD) -> 
-        thisUnit.addAbility(ABILITY_BOSS_REWARD_HANDLRER) 
+        thisUnit.addAbility(ABILITY_BOSS_REWARD_HANDLRER)
+        this.bossId = bossId
             
 
     override function handleUnitSold()

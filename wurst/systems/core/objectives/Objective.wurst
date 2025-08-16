@@ -1,0 +1,111 @@
+package Objective
+
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+import LocalAssets
+import UnitIds
+import LocalObjectIDs
+import ObjEditingUtils
+import LinkedList
+import initlater BossAbilities
+import Units
+import LocalObjectIDs2
+import initlater Tribe
+import ClosureForGroups
+import HashList
+import ClosureTimers
+import GameStates
+import GameState
+import initlater GameConfig
+import initlater PlayerExtensions
+import ColorUtils
+import initlater Preparation
+
+public Tribe winnerTribe = null
+public constant OBJECTIVE_POS = vec2(6, -167)
+public constant GURUBASHI_ARENA_VISION = Rect(OBJECTIVE_POS.x-1200, OBJECTIVE_POS.y-1200, OBJECTIVE_POS.x+1200, OBJECTIVE_POS.y+1200)
+public constant GURUBASHI_ARENA_ENTRANCE_LEFT = gg_rct_GurubashiArenaEntranceLeft
+public constant GURUBASHI_ARENA_ENTRANCE_RIGHT = gg_rct_GurubashiArenaEntranceRight
+public unit OBJECTIVE_UNIT = null
+public let gurubashiArenaGates = new HashList<destructable>()
+public int GURUBASHI_ARENA_GATE_ID = 'B004'
+constant OBJECTIVE_MSG_INTRO = "The Gods' challange is..".color(COLOR_LIGHT_BLUE)
+
+public enum Objective
+    KingOfTheHill
+    TugOfWar
+    EarlyDuel
+
+public constant OBJECTIVE_ABILITIES_LIST = asList(
+    AbilityIds.resistantSkin,
+    ABILITY_HARDENED_SKIN,
+    ABILITY_HARDENED_SKIN_DUMMY_BUFF,
+    ABILITY_SPELL_DMG_REDUCTION,
+    ABILITY_SPELL_DMG_REDUCTION_DUMMY_BUFF
+)
+
+
+function initializeGurubashiGates()
+    let boundRect = Rect(OBJECTIVE_POS.x-2000, OBJECTIVE_POS.y-2000, OBJECTIVE_POS.x+2000, OBJECTIVE_POS.y+2000)
+    //forUnitsOfType(UnitId2String(UNIT_GU)) target ->
+    forDestructablesInRect(boundRect) (destructable d) ->
+        if d.getTypeId() == GURUBASHI_ARENA_GATE_ID
+            d.setInvulnerable(true)
+            gurubashiArenaGates.add(d)
+
+public function openGurubashiGates()
+    for each in gurubashiArenaGates
+        // Open the gate.
+        each.kill()
+
+            // Ensure that the gate is destroyed and not merely opened.
+        each.setAnimation("death")
+        doAfter(5.) ->
+            each.setAnimation("stand")
+            each.restoreLife(each.getMaxLife(), true)
+
+@compiletime function createObjectiveUnit()
+    new UnitDefinition(UNIT_OBJECTIVE, UnitIds.sentryward)
+    ..setModelFile(Units.mammothBlack1)
+    ..setScalingValue(1.0)
+    ..setArmorType(ArmorType.Hero)
+    ..setSightRadiusDay(1200)
+    ..setSightRadiusNight(1200)
+    ..setName("")
+    ..setTargetedAs("ground")
+    ..setAnimationBlendTimeseconds(9999.)
+    ..setNormalAbilities(commaList(OBJECTIVE_ABILITIES_LIST))
+    ..setDefenseBase(0)
+
+function shareObjectiveVision()
+    for i = 0 to 23
+        createFogModifier(players[i], FOG_OF_WAR_VISIBLE, OBJECTIVE_POS, 1400., true, false).start()
+
+function printObjectiveSelectedMessage()
+    print(OBJECTIVE_MSG_INTRO)
+    string OBJECTIVE_MSG = ""
+    let objective = gameConfig.getObjective()
+    if objective == Objective.KingOfTheHill
+        OBJECTIVE_MSG = "King of the Hill!".color(COLOR_LIGHT_BLUE)
+    else if objective == Objective.TugOfWar
+        OBJECTIVE_MSG = "Tug of War!".color(COLOR_LIGHT_BLUE)
+    else if objective == Objective.EarlyDuel
+        DUEL_WARNING.play()
+        OBJECTIVE_MSG = "The Gods are bloodthirsty!".color(COLOR_RED)+
+                        "\nNo challenge today, you will fight to the death in Gurubashi Arena!".color(COLOR_LIGHT_BLUE)
+    doAfter(3.) -> 
+        print(OBJECTIVE_MSG)
+        
+init
+    GameStates.objective.onEnter() (GameState state) ->
+        if gameConfig.getObjective() != Objective.EarlyDuel
+            printObjectiveSelectedMessage()
+            doAfter(1.) ->    
+                shareObjectiveVision()
+    initializeGurubashiGates()

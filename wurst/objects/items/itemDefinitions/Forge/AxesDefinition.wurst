@@ -229,7 +229,8 @@ public constant ITEM_TIDEBRINGER_DEFINITION = compiletime(new CustomItemDefiniti
         ..setActivelyUsed(true)
         ..constructItemShopDummyUnit(ITEM_TIDEBRINGER_DUMMY_UNIT)
         )
-        
+
+           
 @compiletime function createStoneAxeAttackBonusAbility() returns AbilityDefinitionAttackBonusPlus1
     return new AbilityDefinitionAttackBonusPlus1(ABIL_DMG_STONE)
         ..setName("Stone Axe Damage Bonus")

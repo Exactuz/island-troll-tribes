@@ -1,0 +1,293 @@
+package MammothToss
+
+
+// Standard lib Imports:
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIdGenerator
+import ObjectIds
+import Assets
+
+// Local Imports:
+import LocalObjectIDs
+import LocalAssets
+import ColorUtils
+import ToolTipsUtils
+import DamageEvent
+import DamageListeners
+import LinkedList
+import ClosureTimers
+import Orders
+import ClosureEvents
+import OnUnitEnterLeave
+import MakruraCuirass
+import HashList
+import InstantDummyCaster
+import BossAbilities
+import JumpSystem
+import UnitExtensions
+import ClosureForGroups
+import LocalObjectIDs2
+import ChannelAbilityPreset
+import MammothTrample
+import Objective
+
+constant DURATION = 5.
+constant TOSS_DAZE_MS_FACTOR = 1.0
+constant CATCHING_DISTANCE = 125.
+constant TOSS_DISTANCE = 1400.
+constant TOSS_DAMAGE = 100.
+constant TOSS_CAST_RANGE = 300.
+constant COOLDOWN = 25.
+constant PERIOD = 0.125
+constant DEFAULT_ANIMATION_TIME = 1.5
+constant TOSS_ORDER = "heal"
+constant ANIMATION_TIME = 0.75
+public constant TT_BUFF_MAMMOTH_DAZED = "Your allies failed to catch you. You are dazed."
+constant TT_BUFF_MAMMOTH_TOSS = "You are airborne and cannot move or attack. Let's hope your allies catch you."
+constant TOSS_WARNING_MESSAGE = "Catch!".color(COLOR_RED)
+MammothToss mammothTossInstance = null
+
+public class MammothToss
+    bool onCooldown = false
+    unit mammoth
+    CallbackPeriodic spellUsage
+    static thistype instance
+
+    construct(unit mammoth)
+        instance = this
+        this.mammoth = mammoth
+        doAfter(5.) -> 
+            registerSpellUsage()
+    
+    function startToss(unit target)
+        print("toss started")
+        //performTossAnimation()
+        //mammoth.setFacing(mammoth.getPos().angleTo(target.getPos()))
+        doAfter(ANIMATION_TIME-0.25) -> 
+            let landingPos = getLandingPos(target)
+            new TossInstance(mammoth, target, landingPos, DURATION)
+            printWarningMessage()
+
+    function performTossAnimation()
+        mammoth.disableAttack(true, false)
+        mammoth.setAnimation("spell")
+        mammoth.setTimeScale(DEFAULT_ANIMATION_TIME/ANIMATION_TIME)
+        doAfter(ANIMATION_TIME) ->
+            mammoth.disableAttack(false, false)
+            mammoth.setTimeScale(1.0)
+
+    function printWarningMessage()
+        for each in winnerTribe.getMembers()
+            printTimedToPlayer(TOSS_WARNING_MESSAGE, 5, each)
+
+    function registerSpellUsage()
+        spellUsage = doPeriodically(PERIOD) (CallbackPeriodic cb) ->
+            findValidTarget()
+    
+    function findValidTarget()
+        if onCooldown
+            return
+        //print("finding valid target")
+        ENUM_GROUP.enumUnitsInRange(mammoth.getPos(), TOSS_CAST_RANGE+50.)
+        for each in ENUM_GROUP
+            if not each.isAllyOf(mammoth.getOwner()) and each.isAlive()
+                if mammoth.issueTargetOrder(TOSS_ORDER, each)
+                    startCooldown()
+                    Log.debug("toss issued order")
+                else
+                    Log.debug("toss failed to issue order")
+                return
+        ENUM_GROUP.clear()
+
+    function getLandingPos(unit target) returns vec2
+        let distance = GetRandomReal(0.5, 1.)*TOSS_DISTANCE
+        let angleAsRad = mammoth.getPos().angleTo(target.getPos()).radians()
+        let newPos = OBJECTIVE_POS.polarOffset(GetRandomDirectionDeg().asAngleDegrees(), distance) //mammoth.getPos().add(distance*Cos(angleAsRad), distance*Sin(angleAsRad))
+        let validPos = getJumpPos(mammoth.getPos(), newPos, distance)
+        return validPos
+
+    function startCooldown()
+        onCooldown = true
+        doAfter(COOLDOWN) -> 
+            onCooldown = false
+            
+
+public class TossInstance extends JumpInstance
+    unit mammoth
+    unit foundAlly = null
+
+    construct(unit mammoth, unit u, vec2 targetPos,  real duration)
+        super(u, targetPos, duration)
+        this.mammoth = mammoth
+        u.pauseEx()
+        u.addAbility(AbilityIds.ghostVisible)
+        u.setInvulnerable(true)
+
+    function onLanding()
+        u.setInvulnerable(false)
+        forUnitsInRange(u.getPos(), CATCHING_DISTANCE) (unit foundUnit)->
+            if foundUnit.isAlive()
+                and foundUnit.isAllyOf(u.getOwner())
+                and foundUnit.isTroll()
+                and foundUnit != u
+                foundAlly = foundUnit
+
+        if foundAlly == null
+            onFailure()
+            return
+        onSuccess()
+
+    function onSuccess()
+        let startingPos = foundAlly.getPos()
+        foundAlly.setPos(startingPos)
+        let radians = GetRandomDirectionDeg()*DEGTORAD
+        let offset = 200.
+        let x = offset*Cos(radians)
+        let y = offset*Sin(radians)
+        let newPos = startingPos.add(x, y)
+        new JumpInstance(u, newPos, 0.6, 350.) 
+
+    function onFailure()
+        doAfter(ANIMATION_PERIOD) -> 
+            InstantDummyCaster.castTarget(mammoth.getOwner(), ABILITY_MAMMOTH_TOSS_DAZE, 0, OrderIds.shadowstrike, u, u.getPos())
+
+    override function onFinish()
+        onLanding()
+        u.unpauseEx()
+        u.removeAbility(AbilityIds.ghostVisible)
+        u.removeAbility(BUFF_MAMMOTH_TOSS)
+        doAfter(1.5) ->  
+            MammothTrample.instance.startTrample()
+
+
+@compiletime function createTossSpell()
+    new BuffDefinition(BUFF_MAMMOTH_TOSS_DAZE, BuffIds.shadowStrike)
+        ..setTooltipNormal("Dazed")
+        ..setTooltipNormalExtended(TT_BUFF_MAMMOTH_DAZED)
+        ..setArtTarget(Abilities.stasisTotemTarget)
+        ..setIcon(Icons.bTNStun)
+        //..setArtSpecial("")
+        //..setAreaEffect("")      
+
+    new AbilityDefinitionShadowStrikeCreep(ABILITY_MAMMOTH_TOSS_DAZE)
+        ..presetDecayingDamage(lvl->0.)
+        ..presetDurationHero(lvl->DURATION)
+        ..presetDurationNormal(lvl ->DURATION)
+        ..presetDecayPower(lvl->0.15)
+        ..presetManaCost(lvl->0)
+        ..presetInitialDamage(lvl->TOSS_DAMAGE)
+        ..presetAttackSpeedFactor(lvl->TOSS_DAZE_MS_FACTOR)
+        ..presetMovementSpeedFactor(lvl->TOSS_DAZE_MS_FACTOR)
+        ..setBuffs(1, toRawCode(BUFF_MAMMOTH_TOSS_DAZE))
+        ..setMissileArc(0.50)
+        ..setMissileSpeed(9999)
+        ..setArtTarget(Abilities.warStompCaster)
+        ..setArtCaster("")
+        ..setArtSpecial("")
+        ..setArtEffect("")   
+        ..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt("")        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            //TargetsAllowed.alive,
+            //TargetsAllowed.organic,
+            TargetsAllowed.neutral,
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.self
+        ))         
+        ..setDummyAbility()
+
+@compiletime function createTossAbility()
+/*
+    new ChannelAbilityPreset(ABILITY_MAMMOTH_TOSS, 1, true)
+        ..presetCastRange(lvl -> TOSS_CAST_RANGE)
+        ..presetIcon(Icons.bTNMammoth)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetHotkey("D")
+        ..presetButtonPosNormal(2, 3)
+        ..presetCooldown(lvl->COOLDOWN)
+        ..presetBaseOrderID(lvl->TOSS_ORDER)
+        //..presetTooltipNormal(lvl->TT_NAME)
+        //..setName(TT_NAME)
+        //..presetTooltipNormalExtended(lvl->TT_EXT)    
+        ..presetTargetsAllowed(_ -> commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.nonancient,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero
+            )
+        )
+*/   
+
+
+    new BuffDefinition(BUFF_MAMMOTH_TOSS, BuffIds.heal)
+        ..setTooltipNormal("Airborne".color(COLOR_RED))
+        ..setTooltipNormalExtended(TT_BUFF_MAMMOTH_TOSS)
+        ..setArtTarget(Abilities.stasisTotemTarget)
+        ..setIcon(Icons.bTNAttackGround)
+        ..setArtSpecial("")
+        ..setAreaEffect("")     
+
+    new AbilityDefinitionHeal(ABILITY_MAMMOTH_TOSS)
+        ..presetHitPointsGained(lvl->0)
+        ..presetDurationHero(lvl->5.)
+        ..presetDurationNormal(lvl ->5.)
+        ..presetCastRange(lvl-> TOSS_CAST_RANGE)
+        ..presetManaCost(lvl->0)
+        ..setBuffs(1, toRawCode(BUFF_MAMMOTH_TOSS))
+        //..presetCastingTime(lvl-> 0.25)
+        ..setMissileArc(0.50)
+        ..setMissileSpeed(9999)
+        ..setArtTarget("")
+        ..setArtCaster("")
+        ..setArtSpecial("")
+        ..setArtEffect("")   
+        ..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt("")        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(_ -> commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.nonancient,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero
+            ))      
+
+
+
+function onCast()
+    let abilId = GetSpellAbilityId()
+    if abilId != ABILITY_MAMMOTH_TOSS
+        return
+    let target = GetSpellTargetUnit()
+    let instance = MammothToss.instance
+    if instance == null
+        return
+    doAfter(0.15) ->      
+        instance.startToss(target)
+
+function onUnitEnter(unit whichUnit)
+    if whichUnit.getTypeId() != UNIT_MAMMOTH
+        return
+    new MammothToss(whichUnit)
+
+
+
+init
+    //EventListener.onTargetCast(ABILITY_MAMMOTH_TOSS) (unit caster, unit target) ->
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) -> 
+        onCast()
+
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))         

@@ -1,0 +1,163 @@
+package MammothRightHorn
+
+// Standard library imports:
+import AbilityObjEditing
+import HashMap
+import ClosureEvents
+import ObjectIdGenerator
+
+// Local imports:
+import LocalObjectIDs
+import StringBuilder
+import ToolTipsUtils
+import BuffObjEditing
+import BuffIds
+import Abilities
+import OrderIds
+//import PumpUp
+import Icons
+import InstantDummyCaster
+import ClosureTimers
+import UnitExtensions
+import ObjEditingUtils
+import ObjectIds
+import ItemObjEditing
+import Items
+import LocalAssets
+import LocalItemObjEditing
+import AxesDefinition
+import ColorUtils
+import ObjectIDManager
+import CustomItemDefinition
+import LocalObjectIDs2
+import ChannelAbilityPreset
+import JumpSystem
+
+
+
+let ABIL_RIGHT_MAMMOTH_HORN = commaList(ABILITY_RIGHT_MAMMOTH_HORN_TOSS, ABIL_DMG_STEEL, ABILITY_STR_BONUS_12)
+let ABIL_MAKRURA_CLAWS_DMG   = compiletime(ABIL_ID_GEN.next())
+let CAST_RANGE = 175.
+let TOSS_RANGE = 400.
+let TOSS_DAMAGE_AOE = 300.
+let MAMMOTH_RIGHT_HORN_CD = 2.
+let DURATION_HERO = 2.5
+let DURATION_NORMAL = 8.
+let TOSS_DURATION = 0.75
+let TOSS_DAZE_MS_FACTOR = .8
+let RIGHT_HORN_TOSS_BASE_DAMAGE = 20
+let RIGHT_HORN_TOSS_STR_DAMAGE_MULTIPLIER = 1.0
+
+public let TT_RIGHT_MAMMOTH_HORN = "A two-handed weapon crafted of Mammoth' right horn."+
+                              "\n+{0} Attack Damage.".format("12".color(COLOR_GREEN))+
+                              "\n+{0} Strength.".format("12".color(COLOR_GREEN))+
+                              "\n\nFling".color(COLOR_TURQUOISE)+
+                              ": \nCan be activated to fling an enemy behind you, dealing {0} +{1}x{2} damage ".format(
+                                RIGHT_HORN_TOSS_BASE_DAMAGE.toString().color(COLOR_RED), RIGHT_HORN_TOSS_STR_DAMAGE_MULTIPLIER.toString().color(COLOR_RED),"Strength".color(COLOR_ORANGE))+
+                              "and applying decaying {0} slow for {1} seconds to the targets in {2} radius.".format(
+                                TOSS_DAZE_MS_FACTOR.toToolTipOrange(), DURATION_HERO.toString().color(ENERGY_COLOR), TOSS_DAMAGE_AOE.toString().color(COLOR_LIGHT_BLUE))+
+                              "\n{0} seconds cooldown.".format(MAMMOTH_RIGHT_HORN_CD.toString().color(ENERGY_COLOR))
+
+public constant ITEM_RIGHT_MAMMOTH_HORN_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_RIGHT_MAMMOTH_HORN_DUMMY_UNIT")
+public constant ITEM_RIGHT_MAMMOTH_HORN_DEFINITION = compiletime(new CustomItemDefinition(ITEM_RIGHT_MAMMOTH_HORN)
+        ..setInterfaceIcon(Icons.bTNHornOfDoom)
+        ..setModelUsed(LocalItems.hornOfMammoth)
+        ..setNameEnhance("Right Mammoth Horn")
+        ..setHotkey("A")
+        ..setTooltipExtended(TT_RIGHT_MAMMOTH_HORN)
+        ..setScalingValue(1.0)
+        ..setTintingColor1Red(35)
+        ..setTintingColor2Green(35)
+        ..setTintingColor3Blue(35)
+        ..setLumberCost(50)
+        ..setAbilities(ABIL_RIGHT_MAMMOTH_HORN)
+        ..setActivelyUsed(true)
+        ..constructItemShopDummyUnit(ITEM_RIGHT_MAMMOTH_HORN_DUMMY_UNIT)
+        )            
+
+@compiletime function createRightMammothHornAbility()
+    new ChannelAbilityPreset(ABILITY_RIGHT_MAMMOTH_HORN_TOSS, 1, true)
+        ..presetCastRange(lvl -> CAST_RANGE)
+        ..presetIcon(Icons.bTNMammoth)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetHotkey("R")
+        ..presetButtonPosNormal(2, 3)
+        ..presetBaseOrderID(lvl->"shadowstrike")
+        //..presetTooltipNormal(lvl->TT_NAME)
+        //..setName(TT_NAME)
+        //..presetTooltipNormalExtended(lvl->TT_EXT)    
+        ..presetTargetsAllowed(_ -> commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.nonancient,
+            TargetsAllowed.organic
+            )
+        )
+
+    new AbilityDefinitionShadowStrikeCreep(ABILITY_RIGHT_MAMMOTH_HORN_TOSS_DAZE)
+        ..presetDecayingDamage(lvl->0.)
+        ..presetDurationHero(lvl->DURATION_HERO)
+        ..presetDurationNormal(lvl ->DURATION_NORMAL)
+        ..presetDecayPower(lvl->0.25)
+        ..presetInitialDamage(lvl->0.)
+        ..presetAttackSpeedFactor(lvl->TOSS_DAZE_MS_FACTOR)
+        ..presetMovementSpeedFactor(lvl->TOSS_DAZE_MS_FACTOR)
+        ..setBuffs(1, toRawCode(BUFF_MAMMOTH_TOSS_DAZE))
+        ..setMissileArc(0.50)
+        ..setMissileSpeed(9999)
+        ..setArtTarget("")
+        ..setArtCaster("")
+        ..setArtSpecial("")
+        ..setArtEffect("")   
+        ..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt("")        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            //TargetsAllowed.alive,
+            //TargetsAllowed.organic,
+            TargetsAllowed.neutral,
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.self
+        ))         
+        ..setDummyAbility()
+
+class MammothRightHornToss extends JumpInstance
+    unit caster
+    let gravity = 175.
+
+    construct(unit caster, unit u, vec2 targetPos)
+        super(u, targetPos, TOSS_DURATION, gravity)
+        this.caster = caster
+        u.addAbility(AbilityIds.ghostVisible)
+    
+    override function onFinish()
+        let damage = RIGHT_HORN_TOSS_BASE_DAMAGE+ caster.getStr(true)*RIGHT_HORN_TOSS_STR_DAMAGE_MULTIPLIER
+        doAfter(ANIMATION_PERIOD) -> 
+            u.removeAbility(AbilityIds.ghostVisible)
+            flashEffect(Abilities.warStompCaster, u.getPos())
+        ENUM_GROUP.enumUnitsInRange(u.getPos(), TOSS_DAMAGE_AOE)
+        for each in ENUM_GROUP
+            if not each.isAllyOf(caster.getOwner()) or each.getTypeId() == UNIT_FAWN
+                caster.damageTarget(each, damage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+                InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_RIGHT_MAMMOTH_HORN_TOSS_DAZE, 0, OrderIds.shadowstrike, each, each.getPos())
+        ENUM_GROUP.clear()
+
+function onCast(unit caster, unit target)
+    let startingPos = target.getPos()
+    let targetPos = startingPos.moveTowards(caster.getPos(), TOSS_RANGE+startingPos.distanceTo(caster.getPos()))
+    new MammothRightHornToss(caster, target, targetPos)
+                      
+
+        
+
+init
+    EventListener.onTargetCast(ABILITY_RIGHT_MAMMOTH_HORN_TOSS) (unit caster, unit target) ->
+        nullTimer() -> 
+            onCast(caster, target)

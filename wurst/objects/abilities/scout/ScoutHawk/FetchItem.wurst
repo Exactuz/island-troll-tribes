@@ -80,7 +80,7 @@ public class FetchItem extends HawkState
         if zOffset<FLIGHT_HEIGHT
             zOffset+=15.
         newPos3.z=zOffset  
-        hawk.setPosReal(newPos3)
+        hawk.setXYZ(newPos3)
         hawk.setFacing(currentPos.angleTo(troll.getPos()))
         currentPos=newPos2
 
@@ -90,7 +90,7 @@ public class FetchItem extends HawkState
             return
         dummyUnitPos = hawk.getPos3Real()
         dummyUnitPos.z-=100.
-        dummyUnit.setPosReal(dummyUnitPos)
+        dummyUnit.setXYZ(dummyUnitPos)
     /*
     function playSound()
         switch GetRandomInt(1, 2)

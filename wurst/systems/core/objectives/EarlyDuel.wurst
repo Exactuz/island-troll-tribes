@@ -1,0 +1,70 @@
+package EarlyDuel
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import UnitIds
+import GameState
+import Objective
+import TimerUtils
+import SoundUtils
+import GurubashiArena
+
+public timer DUEL_TIMER
+
+
+class EarlyDuel
+    LinkedList<Tribe> tribes
+    real timeOffset = 600.
+    int randomTime
+    construct()
+        gameConfig.gurubashiArenaEnabled = false
+        randomTime = GetRandomInt(0, 8)*30  
+        //DUEL_TIMER = getTimer()..doAfter(10.)->
+        DUEL_TIMER = getTimer()..doAfter(timeOffset+randomTime)->
+            GameStates.gurubashiArena.enter()
+
+            
+
+
+
+
+init
+    GameStates.objective.onEnter() (GameState state) ->
+        if gameConfig.getObjective() == Objective.EarlyDuel
+            //let earlyDuel = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_OMINOUS_ALTAR, KING_OF_THE_HILL_POS)
+            nullTimer() -> 
+                new EarlyDuel()            

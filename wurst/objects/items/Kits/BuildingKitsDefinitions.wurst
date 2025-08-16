@@ -125,7 +125,7 @@ function createKitAbility(int abilId) returns AbilityDefinitionBuildTinyCastle
     return createKitAbility(ABIL_SPIRIT_WARD)
         ..setIconNormal(Icons.bTNAbsorbMagic)
         ..setName("Build Spirit Ward")
-        ..setDurationNormal(1, 30.0)
+        ..setDurationNormal(1, 10.0)
         ..setUnitCreatedperplayerrace(1, commaList(UNIT_SPIRIT_WARD))
 
 @compiletime function createMudHutAbility() returns AbilityDefinitionBuildTinyCastle
@@ -160,7 +160,7 @@ function createKitAbility(int abilId) returns AbilityDefinitionBuildTinyCastle
     return createKitAbility(ABIL_WORKSHOP)
         ..setIconNormal(LocalIcons.bTNOrcLumberMill)
         ..setName("Build Workshop")
-        ..setDurationNormal(1, 13.0)
+        ..setDurationNormal(1, 10.0)
         ..setUnitCreatedperplayerrace(1, commaList(UNIT_WORKSHOP))
 
 @compiletime function createTeleportBeaconAbility() returns AbilityDefinitionBuildTinyCastle

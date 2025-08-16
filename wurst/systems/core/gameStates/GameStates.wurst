@@ -14,6 +14,8 @@ public class GameStates
     // This state handles
     static let modesSelection = new LinearGameState()
 
+    static let objective = new GameState()
+
     // This state handles initialization between modes and class selection.
     static let tribeInitialization = new LinearGameState()
 
@@ -22,6 +24,15 @@ public class GameStates
 
     // This state handles the actual gameplay.
     static let gameplay = new LinearGameState()
+
+    // This state handles the boss fight.
+    static let bossFight = new LinearGameState()
+
+    // This stat handles the preparation before duel.
+    static let preparation = new LinearGameState()
+
+    // This stat handles the Gurubashi arena.
+    static let gurubashiArena = new LinearGameState()
 
     // This state handles the postgame display.
     static let postgame = new LinearGameState()

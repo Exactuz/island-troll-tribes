@@ -17,6 +17,8 @@ import LocalObjectIDs
 import ToolTipsUtils
 import UnitExtensions
 import ColorUtils
+import ObjectIDManager
+import CustomItemDefinition
 
 let ABIL_HORN_SPELLBOOK = compiletime(ABIL_ID_GEN.next())
 let ABIL_HORN_HEALTH    = compiletime(ABIL_ID_GEN.next())
@@ -171,20 +173,37 @@ let TT_HORN_HEAT = "" +
             )
         )
 
-@compiletime function createHornOfMammothItem()
-    createUsableItem(ITEM_HORN_MAMMOTH)
+
+public constant ITEM_LEFT_MAMMOTH_HORN_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_LEFT_MAMMOTH_HORN_DUMMY_UNIT")
+public constant ITEM_LEFT_MAMMOTH_HORN_DEFINITION = compiletime(new CustomItemDefinition(ITEM_LEFT_MAMMOTH_HORN)
         ..setAbilities(ABIL_HORN_SPELLBOOK.toRawCode())
         ..setDescription("A Great item.")
         ..setModelUsed(LocalItems.hornOfMammoth)
         ..setInterfaceIcon(Icons.bTNHornOfFog)
-        ..setLumberCost(100)
+        ..setLumberCost(50)
         ..setName("Horn Of the Mammoth")
         ..setCanBeSoldToMerchants(false)
         ..setCanBeSoldByMerchants(false)
         ..setTooltipBasic("Horn of the Mammoth")
         ..setTooltipExtended(UNIQUE_PREFIX + TT_HORN_ITEM)
         ..setCooldownGroup(AbilityIds.cloudofFogItem.toRawCode())
-
+        ..constructItemShopDummyUnit(ITEM_LEFT_MAMMOTH_HORN_DUMMY_UNIT)
+        )
+/*
+@compiletime function createHornOfMammothItem()
+    createUsableItem(ITEM_LEFT_MAMMOTH_HORN)
+        ..setAbilities(ABIL_HORN_SPELLBOOK.toRawCode())
+        ..setDescription("A Great item.")
+        ..setModelUsed(LocalItems.hornOfMammoth)
+        ..setInterfaceIcon(Icons.bTNHornOfFog)
+        ..setLumberCost(50)
+        ..setName("Horn Of the Mammoth")
+        ..setCanBeSoldToMerchants(false)
+        ..setCanBeSoldByMerchants(false)
+        ..setTooltipBasic("Horn of the Mammoth")
+        ..setTooltipExtended(UNIQUE_PREFIX + TT_HORN_ITEM)
+        ..setCooldownGroup(AbilityIds.cloudofFogItem.toRawCode())
+*/
 
 init
     registerSpellEffectEvent(ABIL_HORN_HEALTH) ->

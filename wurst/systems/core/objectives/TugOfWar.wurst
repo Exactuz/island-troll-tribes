@@ -1,0 +1,164 @@
+package TugOfWar
+
+// Standard library imports:
+import HashMap
+import AbilityObjEditing
+import ClosureEvents
+import DamageEvent
+import InstantDummyCaster
+import StandardTextTags
+
+// Local imports:
+import ColorUtils
+import ChatCommands
+import ChatUtils
+import LocalObjectIDs
+import UnitExtensions
+import ToolTipsUtils
+import ObjectIds
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import StupefyField
+import DamageListeners
+import LocalAssets
+import SimError
+import FoodSlots
+import ItemPoolExtensions
+import LinkedList
+import OnUnitEnterLeave
+import GameStates
+import Tribe
+import PlayerExtensions
+import GameConfig
+import UnitIds
+import GameState
+import Objective
+import LocalObjectIDs2
+
+constant SCORE_DISPLAY_RANGE = 400
+constant SCORE_UPDATE_FREAQUENCY = 0.2
+public constant OBJECTIVE_ARMOUR = 6.
+public constant OBJECTIVE_HP_PER_PLAYER = 1000
+public constant OBJECTIVE_HP_BASE = 600
+
+class TugOfWar
+    real array[12] tribePoints
+    texttag textTag
+    int tribeCount
+    unit tugOfWarUnit
+    real score = 0.
+    int teamSize = 1
+    CallbackPeriodic update
+    CallbackPeriodic freezeAnimation
+    Tribe winningTeam = null
+    LinkedList<Tribe> tribes
+
+    construct(unit tugOfWarUnit)
+        this.tugOfWarUnit = tugOfWarUnit
+        OBJECTIVE_UNIT = tugOfWarUnit
+        tribeCount = gameConfig.getNumTribes()
+        tribes = Tribe.getTribes()
+        teamSize = tribes.getFirst().getMembers().size()
+        initializeTextTag()
+        doAfter(ANIMATION_PERIOD) -> 
+            initializeObjective() 
+        Log.debug("Initializing Tug of War objective.")
+        DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+            onDamage()
+        GameStates.objective.onExit() (GameState state) ->
+            onExit()
+
+        update = doPeriodically(SCORE_UPDATE_FREAQUENCY) (CallbackPeriodic cb) ->
+            if this.update != null
+                update()
+
+    function update()
+        updateScores()
+
+    function onExit()
+        destroy update
+        doAfter(3.) -> 
+            destroy freezeAnimation
+        Log.debug(winningTeam.getName()+" won the Tug of War challenge")
+        textTag.destr()
+
+    function onDeath()
+        winnerTribe = winningTeam
+        GameStates.gameplay.exit()
+        GameStates.objective.exit()
+
+    function initializeObjective()
+        let hp = OBJECTIVE_HP_BASE+OBJECTIVE_HP_PER_PLAYER*teamSize
+        tugOfWarUnit.setMaxHP(hp, true)
+        tugOfWarUnit.setArmor(OBJECTIVE_ARMOUR)
+        tugOfWarUnit.setVertexColor(170, 170, 170, 255)
+        freezeAnimation = doPeriodically(ANIMATION_PERIOD*2) (CallbackPeriodic cb) ->
+            tugOfWarUnit.setAnimation("Stand")
+            
+
+    function onDamage()
+        let target = DamageEvent.getTarget()
+        if target != tugOfWarUnit
+            return        
+        let source = DamageEvent.getSource()
+        let tribe = source.getOwner().getTribe()
+        if tribe == null
+            return
+        let damage = DamageEvent.getAmount()
+
+        if target.getHP()-damage <=0
+            DamageEvent.setAmount(0.)
+            target.setHP(99999.)
+            target.setInvulnerable(true)
+            onDeath()
+            return
+
+        if winningTeam == null
+            updateWinningTeam(tribe)
+
+        if tribe != winningTeam
+            DamageEvent.setAmount(0.)
+            let newHp = target.getHP() + damage
+            if newHp >= target.getMaxHP()
+                updateWinningTeam(tribe)
+            target.setHP(newHp)
+
+    function updateWinningTeam(Tribe whichTribe)
+        winningTeam = whichTribe
+        updateColour()
+
+    function updateColour()
+        let index = tribes.indexOf(winningTeam)
+        let colour = players[index].getColor()
+        let msg = "Objective is now tagged by team "+colour.getName()
+        Log.debug(msg)
+        tugOfWarUnit.setColor(colour)
+        textTag.setColor(colour.toColor().withAlpha(255))
+
+
+    function initializeTextTag()
+        vec2 scoreTextPos = tugOfWarUnit.getPos()
+        ///scoreTextPos.x-=325
+        scoreTextPos.y+=100
+        textTag = standardTextTag(scoreTextPos, score.toString().substring(0,4))
+            ..setVelocity(0, 0)
+            ..setScaledText(score.toString().substring(0,4), 1.75)
+            ..setLifespan(99999.)
+            ..setColor(COLOR_GOLD)
+
+    function updateScores()
+        let text = tugOfWarUnit.getHP()
+        textTag.setScaledText(text.toString().substring(0,4), 1.75)        
+
+init
+    GameStates.objective.onEnter() (GameState state) ->
+        if gameConfig.getObjective() == Objective.TugOfWar
+            let OBJECTIVE_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_OBJECTIVE, OBJECTIVE_POS, angle(PI))
+            nullTimer() -> 
+                new TugOfWar(OBJECTIVE_UNIT)

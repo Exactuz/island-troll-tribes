@@ -54,7 +54,7 @@ public class Returning extends HawkState
             //print("changed next state to Idle")
             return
         ////print("returning update") 
-        hawk.setPos(newPos)
+        hawk.setXY(newPos)
         hawk.setFacing(currentPos.angleTo(troll.getPos()))
         currentPos=newPos
         ////print("x = "+pos.x.toString()+" y = "+pos.y.toString()+" radians = "+radians.toString())  

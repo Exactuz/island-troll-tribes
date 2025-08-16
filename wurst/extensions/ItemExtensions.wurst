@@ -58,7 +58,7 @@ public function item.isAllyFireAround(real radius, unit caster) returns bool
 
 // TODO: Automate this check somehow.
 public function item.isSpellbook() returns bool
-    return this.getTypeId() == ITEM_HORN_MAMMOTH
+    return this.getTypeId() == ITEM_LEFT_MAMMOTH_HORN
 
 public function item.isPole() returns bool
     return POLE_LIST.has(this.getTypeId())

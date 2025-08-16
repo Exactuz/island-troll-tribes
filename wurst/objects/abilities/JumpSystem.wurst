@@ -49,18 +49,26 @@ public function onStartCast(real maxRange)
 
 public function getJumpPos(vec2 casterPos, vec2 targetPos, real maxRange) returns vec2
     var jumpPos = targetPos
+    var jumpPosMin = targetPos
+    var jumpPosMax = targetPos
     let ang = casterPos.angleTo(jumpPos)
 
     //Limit range if ability used beyond jump range
     if (casterPos.distanceTo(jumpPos) >= maxRange)
         var distance = maxRange
-        jumpPos = casterPos.polarOffset(ang, distance)
-
         //Find furthest point towards cast point where we can jump
-        while distance >= TARGET_SEARCH_MIN_RANGE and not canJumpToTarget(jumpPos)
+        while distance >= TARGET_SEARCH_MIN_RANGE and not canJumpToTarget(jumpPosMin)
             distance = distance - TARGET_SEARCH_INCREMENT
-            jumpPos = casterPos.polarOffset(ang, distance)
+            jumpPosMin = casterPos.polarOffset(ang, distance)
+        
+        while distance <= (TARGET_SEARCH_MIN_RANGE + maxRange) and not canJumpToTarget(jumpPosMax)
+            distance = distance + TARGET_SEARCH_INCREMENT
+            jumpPosMax = casterPos.polarOffset(ang, distance)
 
+    if jumpPosMin.distanceTo(targetPos) < jumpPosMax.distanceTo(casterPos)
+        jumpPos = jumpPosMin
+    else
+        jumpPos = jumpPosMax
     return jumpPos
 
 /**
@@ -86,7 +94,7 @@ public function performJump(unit u, vec2 targetPos, int indexAnim, real starting
         u.unpause()
         u.setTimeScale(1)
 
-class JumpInstance
+public class JumpInstance
     unit u
     vec3 velocity
     vec2 targetPos
@@ -141,18 +149,19 @@ class JumpInstance
         doPeriodicallyTimed(ANIMATION_PERIOD, this.flightTime) cb ->
             updateLoop()
             if cb.isLast()
+                onFinish()
                 //Destructor finishes the jump
                 destroy this
 
     function updateLoop()
         u.setFacing(ang)
-        u.setPos(u.getPos() + this.velocity.toVec2() * ANIMATION_PERIOD)
+        u.setXY(u.getPos() + this.velocity.toVec2() * ANIMATION_PERIOD)
         this.height += this.velocity.z
         this.velocity.z -= this.gravity * ANIMATION_PERIOD
         u.setFlyHeight(this.height, HEIGHT_CHANGE_RATE)
 
     function finishJump()
-        u.setPos(targetPos)
+        u.setXY(targetPos)
         u.setFacing(ang)
         u.setTurnSpeed(this.originalTurnspeed)
         u.setPathing(true)
@@ -165,6 +174,8 @@ class JumpInstance
             if InstantDummyCaster.castImmediate(u.getOwner(), JUMP_STOMP_ID, 1, OrderIds.creepthunderclap, u.getPos()) == false
                 error("Jump Stomp cast failed")
             flashEffect(Abilities.warStompCaster, u.getPos())
+
+    function onFinish()
 
     ondestroy
         finishJump()

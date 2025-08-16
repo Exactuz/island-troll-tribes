@@ -1,0 +1,74 @@
+package MammothPush
+
+// Standard lib Imports:
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIdGenerator
+import ObjectIds
+import Assets
+
+// Local Imports:
+import LocalObjectIDs
+import LocalAssets
+import ColorUtils
+import ToolTipsUtils
+import DamageEvent
+import DamageListeners
+import LinkedList
+import ClosureTimers
+import Orders
+import ClosureEvents
+import OnUnitEnterLeave
+import MakruraCuirass
+import HashList
+import InstantDummyCaster
+import BossAbilities
+import JumpSystem
+import UnitExtensions
+import ClosureForGroups
+import LocalObjectIDs2
+import Knockback3
+import TerrainUtils
+import Objective
+
+let PUSH_CHANCE = 20
+real TARGET_SEARCH_INCREMENT = 25.
+
+function onDamage()
+    let source = DamageEvent.getSource()
+    let target = DamageEvent.getTarget()
+    if source.getTypeId() != UNIT_MAMMOTH
+        return
+    if target.isAllyOf(source.getOwner())
+        return
+    if DamageEvent.getType() != DamageType.ATTACK
+        return
+    if GetRandomInt(0, 100) >PUSH_CHANCE
+        return
+    let angleRadians = source.getPos().angleTo(target.getPos()).radians()
+    let randomOffset = GetRandomReal(-1/2, 1/2)*PI
+    let angle = (angleRadians + randomOffset).asAngleRadians()
+    Knockback3.add(target, 1500., angle, 80..asAngleDegrees())
+    doAfter(0.8) ->
+        let pos = target.getPos()
+        if not pos.isTerrainWalkable()
+            let newPos = getClosestWalkablePosTo(pos, OBJECTIVE_POS, 3000.)
+            target.setPos(newPos)
+
+public function getClosestWalkablePosTo(vec2 startingPos, vec2 targetPos, real maxRange) returns vec2
+    var foundPos = startingPos
+    let ang = startingPos.angleTo(targetPos)
+
+    //Limit range if ability used beyond jump range
+    if (startingPos.distanceTo(foundPos) <= maxRange)
+        var distance = 0.
+        //Find furthest point towards cast point where we can jump
+        while distance <= maxRange and not foundPos.isTerrainWalkable()
+            distance = distance + TARGET_SEARCH_INCREMENT
+            foundPos = startingPos.polarOffset(ang, distance)
+
+    return foundPos
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_DAMAGED) ->
+        onDamage()

@@ -124,7 +124,7 @@ public class Swoop extends HawkState
             queueNextState()
             return
         ////print("swoop update") 
-        hawk.setPosReal(newPos)
+        hawk.setXYZ(newPos)
         hawk.setFacing(currentPos.angleTo2d(target.getPos3Real()))
         currentPos=newPos
 

@@ -18,9 +18,10 @@ import ClosureForGroups
 import SimError
 import HashList
 import ToolTipsUtils
+import LocalObjectIDs2
 
 
-let MEAT_COLLECT_RANGE = 800.
+public let MEAT_COLLECT_RANGE = 800.
 let COOLDOWN = 5.0
 let MANACOST = 0
 let TT_EXT = "Collects cooked meat within {0} range and stores it in the building's inventory.".format(MEAT_COLLECT_RANGE.toToolTipLightBlue())+
@@ -128,3 +129,8 @@ class MeatCollector
 init
     registerSpellEffectEvent(ABILITY_MEAT_COLLECTOR) ->  
         new MeatCollector(GetSpellAbilityUnit())
+
+    registerSpellEffectEvent(ABILITY_COOK_AND_COLLECT_MEAT) ->
+        let abilityUnit = GetSpellAbilityUnit()
+        doAfter(ANIMATION_PERIOD) ->     
+            new MeatCollector(abilityUnit)        

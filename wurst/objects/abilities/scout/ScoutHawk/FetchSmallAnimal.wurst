@@ -84,7 +84,7 @@ public class FetchSmallAnimal extends HawkState
     function setTargetPos()
         targetPos = hawk.getPos3Real()
         targetPos.z-=30.
-        target.setPosReal(targetPos)
+        target.setXYZ(targetPos)
 
     function playSound()
         if swoopTargetType == SwoopTargets.smallAnimal

@@ -12,6 +12,7 @@ import ObjEditingUtils
 import BossAbilities
 import AbilityObjEditing
 import MakruraCuirass
+import MakruraAbilitites
 
 let ATTACK_SPEED_BONUS =1.0
 
@@ -32,10 +33,10 @@ let midBossAbilities = asList(
         ..setEditorSuffix("(Wurst)")
 
 // Add the given abilities to the standard list, rather than overwriting.
-function UnitDefinition.addAbilities(LinkedList<int> additional)
+public function UnitDefinition.addAbilities(LinkedList<int> additional)
     this.setNormalAbilities(commaList(midBossAbilities, additional))
 
-function createMidBoss(int unitId) returns UnitDefinition
+public function createMidBoss(int unitId) returns UnitDefinition
     return new UnitDefinition(unitId, UnitIds.diremammoth)
         ..setNormalAbilities(commaList(midBossAbilities))
         ..setAcquisitionRange(250.0)
@@ -47,20 +48,6 @@ function createMidBoss(int unitId) returns UnitDefinition
         ..setLevel(30)
         ..setUnitClassification("ancient")
 
-
-@compiletime function createJungleMammoth() returns UnitDefinition
-    return createMidBoss(UNIT_MAMMOTH)
-        ..setAttack1CooldownTime(3.5)
-        ..setAttack1DamageNumberofDice(2)
-        ..setAttack1DamageBase(50)
-        ..setHitPointsMaximumBase(2750)
-        ..setScalingValue(3.0)
-        ..setName("Jungle Mammoth")
-        ..setSelectionScale(6.0)
-        ..setSpeedBase(200)
-        ..setTooltipBasic("Hire THE MAMMOTH!?!")
-        ..setTooltipExtended("Super Heavy melee unit")
-        ..setTilesets("Z")
 
 @compiletime function createMakrura() returns UnitDefinition
     return createMidBoss(UNIT_MAKRURA)

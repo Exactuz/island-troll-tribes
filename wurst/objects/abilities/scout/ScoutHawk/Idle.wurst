@@ -57,7 +57,9 @@ public class Idle extends HawkState
         pos.z+=300
         pos.x +=hawkCirclingArea/2*radians.cos()
         pos.y +=hawkCirclingArea/2*radians.sin()
-        hawk.setPosFly(pos)
+        hawk.setXY(pos.toVec2())
+        hawk.setFlyHeight(pos.z, 9999.)
+        //hawk.setPosFly(pos)
         hawk.setFacing(angle(radians+Deg2Rad(-100.))) 
 
 

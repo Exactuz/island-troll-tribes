@@ -55,6 +55,7 @@ let spawnRegion = CreateRegion()
     ..addRect(gg_rct_spawn_area_4_1)
     ..addRect(gg_rct_spawn_area_4_2)
     ..addRect(gg_rct_spawn_area_4_3)
+    ..addRect(gg_rct_spawn_area_4_4)
 
 let spawnRecanglesNW = asList(gg_rct_spawn_area_1_1, 
                             gg_rct_spawn_area_1_2, 
@@ -73,7 +74,8 @@ let spawnRecanglesSE = asList(gg_rct_spawn_area_3_1,
 
 let spawnRecanglesSW = asList(gg_rct_spawn_area_4_1, 
                             gg_rct_spawn_area_4_2, 
-                            gg_rct_spawn_area_4_3
+                            gg_rct_spawn_area_4_3,
+                            gg_rct_spawn_area_4_4
                             )
 
 let spawnPoolNW = new Pool<rect>()

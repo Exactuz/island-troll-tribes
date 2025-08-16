@@ -55,6 +55,10 @@ import MakruraClaw
 import ShieldsDefinition
 import LocalObjectIDs2
 import AxesDefinition
+import MedallionOfCourageNSS
+import HornOfMammoth
+import MammothRightHorn
+import MammothBoots
 
 
 
@@ -101,6 +105,18 @@ function addItems()
     ..addBonusStrength(8)
     ..addBonusIntelligence(8)
 
+    new CustomItemType(ITEM_MEDALLION_COURAGE_NSS, ITEM_MEDALLION_COURAGE_NSS_DEFINITION)
+
+    new CustomItemType(ITEM_LEFT_MAMMOTH_HORN, ITEM_LEFT_MAMMOTH_HORN_DEFINITION)
+
+    new CustomItemType(ITEM_RIGHT_MAMMOTH_HORN , ITEM_RIGHT_MAMMOTH_HORN_DEFINITION)
+    ..addBonusDamage(12)
+    ..addBonusStrength(12)
+
+    new CustomItemType(ITEM_MAMMOTH_BOOTS, ITEM_MAMMOTH_BOOTS_DEFINITION)
+    ..addBonusDamage(10)
+    ..addBonusStrength(8)
+    ..addBonusIntelligence(8)
 init
     doAfter(1.) -> 
         addItems()

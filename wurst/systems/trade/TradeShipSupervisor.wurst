@@ -122,7 +122,7 @@ public class TradeShipSupervisor
         // Issue the required order.
         issueMoveOrder()
         if nextStop.isLastStop()
-            ship.setMoveSpeed(522.)  
+            ship.setMoveSpeed(125.)  
 
     function issueMoveOrder()
         // Prevent the next issued order from generating another order.

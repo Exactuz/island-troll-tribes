@@ -68,8 +68,8 @@ public class ClassSelector
 
         if not gameConfig.isAllTrollEnabled()
             selectionTime = gameConfig.getSelectionTimeAllowed()
-            print("Choose a troll class.".color(GENERAL_COLOR))
-            print("Your class will be random otherwise.".color(GENERAL_COLOR))
+            //print("Choose a troll class.".color(GENERAL_COLOR))
+            //print("Your class will be random otherwise.".color(GENERAL_COLOR))
 
         let clock = getTimer()
 
@@ -207,9 +207,7 @@ public class ClassSelector
             ..setLevel(gameConfig.startingLevel, false)
 
         if gameConfig.isStartWithFire()
-            troll.addItemById(ITEM_FIRE_KIT)
-        if gameConfig.isStartWithSpiritWard()
-            troll.addItemById(ITEM_SPIRIT_WARD_KIT)
+            troll.addItemById(ITEM_FIRE_KIT)       
         
 
     function handleTrollRemoval(player p)

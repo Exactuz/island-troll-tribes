@@ -1,4 +1,5 @@
 package GameConfig
+import Objective
 
 class GameConfig
     var numTribes = 2
@@ -8,8 +9,8 @@ class GameConfig
     var allTrollEnabled = false
     var allTrollUnitId = 0
     var startingLevel = 0
-    var forcedDuelEnabled = false
-    var forcedDuelAfter = 0
+    var gurubashiArenaEnabled = true
+    var gurubashiArenaAfter = 900
     var mammothGateDuration = 0
     var gracePeriodDuration = 480
     var respawnSystemEnabled = false
@@ -18,7 +19,7 @@ class GameConfig
     var noSuperSubs = false
     var passMeatAbility = false
     var startWithOneFire = false
-    var startWithSpiritWard = false
+    var startWithSpiritWard = true
     var oldRandomEnabled = false
     var selectionTimeAllowed = 40
     var eliminationMode = false
@@ -31,6 +32,8 @@ class GameConfig
     var inventoryLimits = true
     var tameableFawn = false
     var MAX_ANIMALS = 60
+    var fillEmptySlots = false
+    Objective objective = null
 
     var baddieBase = 1.00
     var statDegradeAmount = 1
@@ -153,18 +156,18 @@ class GameConfig
     function getNumPlayersPerTribe() returns integer
         return playersPerTribe
 
-    function setForcedDuel(int numSeconds) returns boolean
+    function setGurubashiArena(int numSeconds) returns boolean
         if numSeconds < gracePeriodDuration
             return false
-        forcedDuelEnabled = true
-        forcedDuelAfter = numSeconds
+        gurubashiArenaEnabled = true
+        gurubashiArenaAfter = numSeconds
         return true
 
-    function isForcedDuelEnabled() returns boolean
-        return forcedDuelEnabled
+    function isGurubashiArenaEnabled() returns boolean
+        return gurubashiArenaEnabled
 
-    function getForcedDuelAfter() returns int
-        return forcedDuelAfter
+    function getGurubashiArenaAfter() returns int
+        return gurubashiArenaAfter
 
     function isRespawnSystemEnabled() returns boolean
         return respawnSystemEnabled
@@ -173,7 +176,7 @@ class GameConfig
         respawnSystemEnabled = value
 
     function setGracePeriodDuration(int numSeconds) returns boolean
-        if forcedDuelEnabled and numSeconds > forcedDuelAfter
+        if gurubashiArenaEnabled and numSeconds > gurubashiArenaAfter
             return false
         gracePeriodDuration = numSeconds
         return true
@@ -322,6 +325,12 @@ class GameConfig
         // setLevel(1) on a level 1 hero will set him to level 2
         if value > 1
             startingLevel = value
+
+    function setObjective(Objective objective)
+        this.objective = objective
+
+    function getObjective() returns Objective
+        return objective
 
     function setMammothGateDuration(int numSeconds) returns boolean
         // The input is not restricted in any way. The user is allowed to set

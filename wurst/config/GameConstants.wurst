@@ -41,4 +41,5 @@ public class GameConstants
     static let foodCeiling=999
     static let upkeepUsage=asList(53,103,153,10000,10000,10000,10000,10000,10000,10000)
     static let upkeepGoldTax=asList(0.00,0.20,0.40,0.60,0.60,0.60,0.60,0.60,0.60,0.60)
+    static let HeroMaxReviveTime=30.00
     static let canDeactivateBladestorm = 1

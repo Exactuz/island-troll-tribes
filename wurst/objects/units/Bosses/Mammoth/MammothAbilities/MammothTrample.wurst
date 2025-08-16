@@ -1,0 +1,168 @@
+package MammothTrample
+
+
+// Standard lib Imports:
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIdGenerator
+import ObjectIds
+import Assets
+
+// Local Imports:
+import LocalObjectIDs
+import LocalAssets
+import ColorUtils
+import ToolTipsUtils
+import DamageEvent
+import DamageListeners
+import LinkedList
+import ClosureTimers
+import Orders
+import ClosureEvents
+import OnUnitEnterLeave
+import MakruraCuirass
+import HashSet
+import InstantDummyCaster
+import BossAbilities
+import JumpSystem
+import UnitExtensions
+import ClosureForGroups
+import LocalObjectIDs2
+import Knockback3
+import ChannelAbilityPreset
+import MammothDefinition
+import SoundUtils
+import TerrainUtils
+import MammothPush
+import Objective
+
+constant TRAMPLE_PUSH_DISTANCE = 300.
+constant TRAMPLE_PUSH_AOE = 300.
+constant TRAMPLE_CHARGE_MAXIMUM_DISTANCE = 2500.
+constant TRAMPLE_CHARGE_MOVEMENT_SPEED = 522.
+constant COOLDOWN = 15.
+public let trampleSfx = new SoundDefinition(Sounds.mammothYes1, false, true)
+
+class MammothTrample
+    real mammothDamage
+    unit mammoth
+    real angleRadians
+    real totalDistance 
+    bool onCooldown = false
+    vec2 targetPos
+    CallbackCounted update
+    HashSet<unit> damagedUnits = new HashSet<unit>()
+    static thistype instance
+
+    construct(unit mammoth)
+        instance = this
+        this.mammoth = mammoth
+        this.mammothDamage = mammoth.getBaseDamage(0).toReal()
+        
+    function findFarthestUnitInRange() returns unit
+        unit farthestUnit = null
+        real maxDistance = 0.
+        ENUM_GROUP.enumUnitsInRange(mammoth.getPos(), TRAMPLE_CHARGE_MAXIMUM_DISTANCE)
+        for each in ENUM_GROUP
+            if each.isAlive() and each.isEnemyOf(mammoth) and each.isTroll()
+                let distance = each.getPos().distanceTo(mammoth.getPos())
+                if distance > maxDistance
+                    maxDistance = distance
+                    farthestUnit = each
+        ENUM_GROUP.clear()
+        return farthestUnit
+
+    function startTrample()
+        if onCooldown
+            return
+        this.targetPos = findFarthestUnitInRange().getPos()
+        totalDistance = mammoth.getPos().distanceTo(targetPos)
+        mammoth.addAbility(AbilityIds.ghostVisible)
+        mammoth.disableAttack(true, false)
+        mammoth.issuePointOrderById(OrderIds.move, targetPos)
+        mammoth.setMoveSpeed(TRAMPLE_CHARGE_MOVEMENT_SPEED)
+        trampleSfx.playOnPoint(mammoth.getPos3Real())
+
+        startCooldown()
+        let callAmount = (totalDistance/TRAMPLE_CHARGE_MOVEMENT_SPEED/ANIMATION_PERIOD).ceil()
+        update = doPeriodicallyCounted(ANIMATION_PERIOD, callAmount) (CallbackCounted cb) ->
+            update()
+            if cb.isLast()
+                print("trample finished")
+                mammoth.addAbility(AbilityIds.ghostVisible)
+                mammoth.disableAttack(false, false)
+                mammoth.setMoveSpeed(MAMMOTH_MOVEMENT_SPEED.toReal())
+                damagedUnits.clear()        
+    
+    function startCooldown()
+        onCooldown = true
+        doAfter(COOLDOWN) -> 
+            onCooldown = false
+
+    function update()
+        //let distance = totalDistance*ANIMATION_PERIOD/(totalDistance/TRAMPLE_CHARGE_MOVEMENT_SPEED)
+        //let newPos = mammoth.getPos().moveTowards(targetPos, distance)
+        //mammoth.setXY(newPos)   
+        ENUM_GROUP.enumUnitsInRange(mammoth.getPos(), TRAMPLE_PUSH_AOE)
+        for each in ENUM_GROUP
+            damageAndPushUnit(each)
+            
+
+    function damageAndPushUnit(unit target)
+        if damagedUnits.has(target)
+            return
+        if target.isAllyOf(mammoth)
+            return
+        damagedUnits.add(target)
+        doAfter(0.5) -> 
+            damagedUnits.remove(target)
+        flashEffect(Abilities.warStompCaster, target.getPos())
+        mammoth.damageTarget(target, mammothDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+        let angle = mammoth.getPos().angleTo(target.getPos())
+        Knockback3.add(target, 1500., angle, 80..asAngleDegrees())
+        doAfter(0.8) ->
+            let pos = target.getPos()
+            if not pos.isTerrainWalkable()
+                let newPos = getClosestWalkablePosTo(pos, OBJECTIVE_POS, 3000.)
+                target.setPos(newPos)
+
+
+@compiletime function createDummyAbility()
+    new ChannelAbilityPreset(ABILITY_MAMMOTH_TRAMPLE, 1, true)
+        ..presetCastRange(lvl -> TRAMPLE_CHARGE_MAXIMUM_DISTANCE)
+        ..presetIcon(Icons.bTNMammoth)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetHotkey("R")
+        ..presetButtonPosNormal(2, 3)
+        ..presetBaseOrderID(lvl->"shadowstrike")
+        //..presetTooltipNormal(lvl->TT_NAME)
+        //..setName(TT_NAME)
+        //..presetTooltipNormalExtended(lvl->TT_EXT)    
+        ..presetTargetsAllowed(_ -> commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.nonancient,
+            TargetsAllowed.organic,
+            TargetsAllowed.hero
+            )
+        )
+
+
+
+public function onTrample(unit caster, unit target)
+    let targetPos = target.getPos()
+    let instance = MammothTrample.instance
+    if instance != null
+        instance.startTrample()
+
+function onUnitEnter(unit whichUnit)
+    if whichUnit.getTypeId() != UNIT_MAMMOTH
+        return
+    new MammothTrample(whichUnit)
+
+init
+    //EventListener.onTargetCast(ABILITY_MAMMOTH_TRAMPLE) (unit caster, unit target) ->
+    //    onCast(caster, target)
+
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))  

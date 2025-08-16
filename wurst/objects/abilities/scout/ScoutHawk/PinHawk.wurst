@@ -95,7 +95,7 @@ public class PinHawk extends HawkState
                 hawk.damageTarget(target, dmg*PIN_DMG_PERIOD/PIN_DURATION, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
                 playEfx()        
         doAfter(ANIMATION_PERIOD) ->
-            target.setPosReal(hawk.getPos3Real()) 
+            target.setXYZ(hawk.getPos3Real()) 
             
     function playEfx()
         attackEfx = addEffect(LocalAbilities.hawkClawAnimation, hawk.getPos())

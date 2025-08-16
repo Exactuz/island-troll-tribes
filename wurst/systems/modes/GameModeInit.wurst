@@ -15,6 +15,7 @@ import GameConfig
 import GameMode
 import GameStates
 import ErrorHandling
+import Objective
 
 init
     new GameMode("players-per-tribe", "ppt", "General", "Set the number of players in each tribe, eg: \"-ppt 6\"") (mode, args) ->
@@ -58,8 +59,8 @@ init
     new GameMode("tournament", "to", "Pro", "Tournament Modes (-sf, -el, -fd, -tg, -tb, -rs)") (mode, args) ->
         mode.message("Tournament mode".color(HIGHLIGHT_COLOR) + " enabled:")
         GameMode.find("sf").enable()
-        GameMode.find("fd").enable()
-        GameMode.find("el").enable()
+        //GameMode.find("fd").enable()
+        //GameMode.find("el").enable()
         GameMode.find("ns").enable()
         GameMode.find("pma").enable()
         GameMode.find("rs").enable()
@@ -120,6 +121,32 @@ init
         mode.deregister()
         mode.message("Every troll will start with a " + "fire kit".color(ENERGY_COLOR))
         gameConfig.setStartWithFire(true)
+
+    new GameMode("fill-empty-slots", "fes", "General", "Fills empty slots with bots. For debugging purposes.") (mode, args) ->
+        let newState = gameConfig.fillEmptySlots == true ? false : true
+        gameConfig.fillEmptySlots = newState
+        mode.message("Fill Empty Slots state set to "+newState.toString())
+
+    new GameMode("objective", "obj", "General", "Manual objective selection. tow/koth/ed") (mode, args) ->
+        let str = args.get(1)
+        Objective objective = null
+        let errorMessage = "Sellect one of the following arguments:"+
+                            "\n\ntow for Tug of War"+
+                            "\n\nkoth for King Of The Hill"+
+                            "\n\ned for Early Duel"
+        switch str
+            case "tow"
+                objective = Objective.TugOfWar
+                mode.message("Tug Of War objective selected")
+            case "koth"
+                objective = Objective.KingOfTheHill
+                mode.message("King Of The Hill objective selected")
+            case "ed"
+                objective = Objective.EarlyDuel
+                mode.message("Early Duel objective selected")
+            default
+                printTimedToPlayer(errorMessage, 20, GameMode.modePlayer)
+        gameConfig.setObjective(objective)
 
     new GameMode("no-super-subs", "ns", "General", "Subbed trolls cannot level up beyond level 4. Global experience at lvl 4.") (mode, args) ->
         mode.deregister()
@@ -192,10 +219,10 @@ init
         mode.message("Respawn system".color(ENERGY_COLOR) + " enabled")
 
     new GameMode("forced-duel", "fd", "Pro", "Set a forced duel after a time limit, defaults to 1 h, eg: \"-fd 60\"") (mode, args) ->
-        var amount = 1800
+        var amount = 900
         if (args.size() > 1)
             amount = args.get(1).toInt()
-        if (not gameConfig.setForcedDuel(amount))
+        if (not gameConfig.setGurubashiArena(amount))
             mode.error("Force duel must be after end of the grace period")
         else
             mode.message("Forced duel".color(ENERGY_COLOR) + " after " + amount.toString() + " seconds.")

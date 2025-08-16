@@ -39,7 +39,6 @@ globals
     rect                    gg_rct_out_4_1             = null
     rect                    gg_rct_out_4_2             = null
     rect                    gg_rct_out_5_2             = null
-    rect                    gg_rct_Rain                = null
     rect                    gg_rct_revive_1            = null
     rect                    gg_rct_revive_10           = null
     rect                    gg_rct_revive_11           = null
@@ -130,6 +129,9 @@ globals
     rect                    gg_rct_Thief_Bush_NW_A_In_Copy = null
     rect                    gg_rct_Thief_Bush_NW_A_Out_Copy = null
     rect                    gg_rct_ship_B_1            = null
+    rect                    gg_rct_GurubashiArenaEntranceLeft = null
+    rect                    gg_rct_GurubashiArenaEntranceRight = null
+    rect                    gg_rct_spawn_area_4_4      = null
 endglobals
 
 function InitGlobals takes nothing returns nothing
@@ -159,8 +161,6 @@ function CreateNeutralHostile takes nothing returns nothing
 
     set u = BlzCreateUnitWithSkin( p, 'd115', -11338.7, -9959.1, 313.436, 'd115' )
     set u = BlzCreateUnitWithSkin( p, 'd115', -9543.0, -10428.1, 27.493, 'd115' )
-    set u = BlzCreateUnitWithSkin( p, 'd116', 436.9, -170.2, 231.125, 'd116' )
-    call SetUnitAcquireRange( u, 200.0 )
     set u = BlzCreateUnitWithSkin( p, 'nlsn', -3721.0, 10844.0, 264.350, 'nlsn' )
     set u = BlzCreateUnitWithSkin( p, 'nlsn', 5224.6, -11064.0, 128.880, 'nlsn' )
     set u = BlzCreateUnitWithSkin( p, 'd115', -9184.1, 8966.0, 335.641, 'd115' )
@@ -182,7 +182,6 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     local real life
 
     set u = BlzCreateUnitWithSkin( p, 'd112', -4352.0, -11904.0, 270.000, 'd112' )
-    set u = BlzCreateUnitWithSkin( p, 'd110', 1216.0, 576.0, 270.000, 'd110' )
     set u = BlzCreateUnitWithSkin( p, 'd107', -1344.0, 6528.0, 270.000, 'd107' )
     set u = BlzCreateUnitWithSkin( p, 'd001', 3072.0, -8192.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd120', 1728.0, -10880.0, 270.000, 'd120' )
@@ -191,10 +190,6 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd119', 1984.0, -10880.0, 270.000, 'd119' )
     set u = BlzCreateUnitWithSkin( p, 'd106', -6208.0, -3520.0, 270.000, 'd106' )
     set u = BlzCreateUnitWithSkin( p, 'd106', 8000.0, -4160.0, 270.000, 'd106' )
-    set u = BlzCreateUnitWithSkin( p, 'd102', 448.0, 448.0, 270.000, 'd102' )
-    set u = BlzCreateUnitWithSkin( p, 'd102', 1472.0, -128.0, 270.000, 'd102' )
-    set u = BlzCreateUnitWithSkin( p, 'd107', -64.0, 448.0, 270.000, 'd107' )
-    set u = BlzCreateUnitWithSkin( p, 'd107', 1344.0, -832.0, 270.000, 'd107' )
     set u = BlzCreateUnitWithSkin( p, 'd107', 5568.0, -4288.0, 270.000, 'd107' )
     set u = BlzCreateUnitWithSkin( p, 'd108', -704.0, -6016.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd001', 9024.0, 9280.0, 270.000, 'd001' )
@@ -214,8 +209,8 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd102', 6336.0, 8640.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd107', 5696.0, 320.0, 270.000, 'd107' )
     set u = BlzCreateUnitWithSkin( p, 'd107', -6336.0, 6208.0, 270.000, 'd107' )
-    set u = BlzCreateUnitWithSkin( p, 'd107', -320.0, -4544.0, 270.000, 'd107' )
-    set u = BlzCreateUnitWithSkin( p, 'd108', 1024.0, -2368.0, 270.000, 'd108' )
+    set u = BlzCreateUnitWithSkin( p, 'd107', -1152.0, -1728.0, 270.000, 'd107' )
+    set u = BlzCreateUnitWithSkin( p, 'd108', 576.0, -3136.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', -8000.0, 2304.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', -6016.0, -4032.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd117', 2624.0, -10880.0, 270.000, 'd117' )
@@ -240,7 +235,7 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd108', -6656.0, 7808.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', 64.0, 4992.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd102', 1472.0, -9280.0, 270.000, 'd102' )
-    set u = BlzCreateUnitWithSkin( p, 'd102', 5568.0, 1216.0, 270.000, 'd102' )
+    set u = BlzCreateUnitWithSkin( p, 'd102', 5568.0, 1664.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd102', 8896.0, 64.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd001', -2880.0, 10176.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd102', 6464.0, -1216.0, 270.000, 'd102' )
@@ -251,7 +246,7 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd107', -3776.0, -1472.0, 270.000, 'd107' )
     set u = BlzCreateUnitWithSkin( p, 'd102', -6464.0, -192.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd102', -7872.0, -5888.0, 270.000, 'd102' )
-    set u = BlzCreateUnitWithSkin( p, 'd102', -448.0, -3264.0, 270.000, 'd102' )
+    set u = BlzCreateUnitWithSkin( p, 'd102', 3328.0, -4224.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd100', -5312.0, -1344.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd102', -4800.0, -3264.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd100', -2880.0, 7360.0, 270.000, 'd100' )
@@ -265,11 +260,10 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd001', -4800.0, 1216.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd100', -3456.0, -3968.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd001', -2112.0, -4544.0, 270.000, 'd001' )
-    set u = BlzCreateUnitWithSkin( p, 'd102', -2880.0, 832.0, 270.000, 'd102' )
-    set u = BlzCreateUnitWithSkin( p, 'd100', 1472.0, -2240.0, 270.000, 'd100' )
-    set u = BlzCreateUnitWithSkin( p, 'd001', -3072.0, 576.0, 270.000, 'd001' )
+    set u = BlzCreateUnitWithSkin( p, 'd102', 1856.0, 0.0, 270.000, 'd102' )
+    set u = BlzCreateUnitWithSkin( p, 'd100', 1280.0, -2240.0, 270.000, 'd100' )
+    set u = BlzCreateUnitWithSkin( p, 'd001', -2496.0, 1152.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd001', -8640.0, -6592.0, 270.000, 'd001' )
-    set u = BlzCreateUnitWithSkin( p, 'd100', -2112.0, 1472.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd100', 4928.0, 3456.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd001', 320.0, 5952.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd100', 2240.0, 6464.0, 270.000, 'd100' )
@@ -281,10 +275,9 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd108', -3328.0, -9536.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', 7616.0, -768.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', -6336.0, -8896.0, 270.000, 'd108' )
-    set u = BlzCreateUnitWithSkin( p, 'd108', -1152.0, 1664.0, 270.000, 'd108' )
+    set u = BlzCreateUnitWithSkin( p, 'd108', -1152.0, 1984.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd108', 7424.0, -4608.0, 270.000, 'd108' )
     set u = BlzCreateUnitWithSkin( p, 'd105', 2304.0, -6656.0, 270.000, 'd105' )
-    set u = BlzCreateUnitWithSkin( p, 'd105', 1856.0, -832.0, 270.000, 'd105' )
     set u = BlzCreateUnitWithSkin( p, 'd001', 8896.0, -2240.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd102', -960.0, 4800.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd105', -3136.0, 5568.0, 270.000, 'd105' )
@@ -302,7 +295,6 @@ function CreateNeutralPassive takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd113', -12392.6, 11233.4, 317.760, 'd113' )
     set u = BlzCreateUnitWithSkin( p, 'd113', 11091.5, 11214.6, 225.980, 'd113' )
     set u = BlzCreateUnitWithSkin( p, 'd113', 11170.4, -12327.9, 134.340, 'd113' )
-    set u = BlzCreateUnitWithSkin( p, 'd111', -64.0, 0.0, 329.320, 'd111' )
 endfunction
 
 //===========================================================================
@@ -341,7 +333,7 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_fish_new_6 = Rect( 7680.0, 1856.0, 8896.0, 2592.0 )
     set gg_rct_fish_new_7 = Rect( 6112.0, -8032.0, 6560.0, -7168.0 )
     set gg_rct_fish_new_8 = Rect( -6176.0, -9632.0, -5376.0, -9056.0 )
-    set gg_rct_our_5_1 = Rect( 512.0, -4320.0, 1344.0, -3008.0 )
+    set gg_rct_our_5_1 = Rect( 192.0, -4480.0, 1024.0, -3168.0 )
     set gg_rct_out_1_1 = Rect( -7040.0, 160.0, -4160.0, 576.0 )
     set gg_rct_out_1_2 = Rect( -3776.0, 1856.0, -1888.0, 2208.0 )
     set gg_rct_out_2_1 = Rect( -3648.0, 1024.0, -3040.0, 1856.0 )
@@ -349,10 +341,7 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_out_3_1 = Rect( -1216.0, 5216.0, -96.0, 6752.0 )
     set gg_rct_out_4_1 = Rect( 3552.0, 704.0, 4384.0, 1984.0 )
     set gg_rct_out_4_2 = Rect( 3296.0, -2336.0, 3936.0, 96.0 )
-    set gg_rct_out_5_2 = Rect( -256.0, -5664.0, 704.0, -4512.0 )
-    set gg_rct_Rain = Rect( -1248.0, -1760.0, 1408.0, 704.0 )
-    set we = AddWeatherEffect( gg_rct_Rain, 'RAlr' )
-    call EnableWeatherEffect( we, true )
+    set gg_rct_out_5_2 = Rect( 64.0, -5312.0, 576.0, -4704.0 )
     set gg_rct_revive_1 = Rect( -4160.0, 5728.0, -3680.0, 6272.0 )
     set gg_rct_revive_10 = Rect( 6688.0, -1952.0, 7264.0, -1568.0 )
     set gg_rct_revive_11 = Rect( 6752.0, 5184.0, 7328.0, 5568.0 )
@@ -365,8 +354,8 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_revive_7 = Rect( -1888.0, 896.0, -1312.0, 1280.0 )
     set gg_rct_revive_8 = Rect( -2144.0, -5408.0, -1568.0, -5024.0 )
     set gg_rct_revive_9 = Rect( -5696.0, -6176.0, -5120.0, -5792.0 )
-    set gg_rct_ship_B_2 = Rect( 320.0, -5440.0, 416.0, -5312.0 )
-    set gg_rct_ship_BL_1 = Rect( 416.0, -4128.0, 512.0, -4032.0 )
+    set gg_rct_ship_B_2 = Rect( 32.0, -5696.0, 192.0, -5504.0 )
+    set gg_rct_ship_BL_1 = Rect( 512.0, -4128.0, 608.0, -4032.0 )
     set gg_rct_ship_BL_2 = Rect( -1696.0, -3456.0, -1600.0, -3360.0 )
     set gg_rct_ship_BL_3 = Rect( -1856.0, -2880.0, -1728.0, -2752.0 )
     set gg_rct_ship_BL_4 = Rect( -2112.0, -2272.0, -2016.0, -2176.0 )
@@ -396,11 +385,11 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_spawn_area_1_3 = Rect( -2368.0, 3040.0, -960.0, 9088.0 )
     set gg_rct_spawn_area_2_1 = Rect( -416.0, 4160.0, 9600.0, 9408.0 )
     set gg_rct_spawn_area_2_2 = Rect( 1376.0, 2560.0, 9056.0, 4416.0 )
-    set gg_rct_spawn_area_2_3 = Rect( 4096.0, -160.0, 9120.0, 2592.0 )
+    set gg_rct_spawn_area_2_3 = Rect( 3808.0, -160.0, 9120.0, 2592.0 )
     set gg_rct_spawn_area_3_1 = Rect( 4064.0, -10496.0, 9888.0, -736.0 )
-    set gg_rct_spawn_area_3_2 = Rect( 736.0, -9792.0, 2272.0, -5248.0 )
+    set gg_rct_spawn_area_3_2 = Rect( 544.0, -9792.0, 2272.0, -3584.0 )
     set gg_rct_spawn_area_3_3 = Rect( 2240.0, -9760.0, 4096.0, -1952.0 )
-    set gg_rct_spawn_area_4_1 = Rect( -10464.0, -9792.0, -384.0, 640.0 )
+    set gg_rct_spawn_area_4_1 = Rect( -10464.0, -9792.0, -1856.0, 640.0 )
     set gg_rct_spawn_area_4_2 = Rect( -160.0, 704.0, 3264.0, 2688.0 )
     set gg_rct_spawn_area_4_3 = Rect( 1632.0, -1888.0, 3200.0, 704.0 )
     set gg_rct_Thief_Bush_NE_A_In = Rect( 1504.0, 7392.0, 1632.0, 7552.0 )
@@ -433,7 +422,7 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_Pantsu_Waterfall_Right_In = Rect( 8000.0, -7904.0, 8160.0, -7584.0 )
     set gg_rct_ship_R_1 = Rect( 9472.0, -544.0, 9568.0, -416.0 )
     set gg_rct_ship_R_2 = Rect( 3808.0, -640.0, 3936.0, -512.0 )
-    set gg_rct_ship_BR_4 = Rect( 1248.0, -4384.0, 1376.0, -4256.0 )
+    set gg_rct_ship_BR_4 = Rect( 800.0, -4000.0, 928.0, -3872.0 )
     set gg_rct_ship_TR_4 = Rect( 3840.0, 1216.0, 3968.0, 1344.0 )
     set gg_rct_ship_TR_5 = Rect( 3808.0, 64.0, 3936.0, 192.0 )
     set gg_rct_ship_TL_4 = Rect( -736.0, 2848.0, -672.0, 2912.0 )
@@ -443,6 +432,9 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_Thief_Bush_NW_A_In_Copy = Rect( -8320.0, 2816.0, -8128.0, 3040.0 )
     set gg_rct_Thief_Bush_NW_A_Out_Copy = Rect( -8544.0, 3008.0, -8416.0, 3136.0 )
     set gg_rct_ship_B_1 = Rect( 192.0, -8704.0, 288.0, -8576.0 )
+    set gg_rct_GurubashiArenaEntranceLeft = Rect( -1440.0, 192.0, -1408.0, 224.0 )
+    set gg_rct_GurubashiArenaEntranceRight = Rect( 1408.0, -512.0, 1440.0, -480.0 )
+    set gg_rct_spawn_area_4_4 = Rect( -1888.0, -5888.0, 32.0, -1504.0 )
 endfunction
 
 //***************************************************************************
@@ -815,7 +807,7 @@ endfunction
 function main takes nothing returns nothing
     call SetCameraBounds( -12672.0 + GetCameraMargin(CAMERA_MARGIN_LEFT), -12672.0 + GetCameraMargin(CAMERA_MARGIN_BOTTOM), 11648.0 - GetCameraMargin(CAMERA_MARGIN_RIGHT), 11648.0 - GetCameraMargin(CAMERA_MARGIN_TOP), -12672.0 + GetCameraMargin(CAMERA_MARGIN_LEFT), 11648.0 - GetCameraMargin(CAMERA_MARGIN_TOP), 11648.0 - GetCameraMargin(CAMERA_MARGIN_RIGHT), -12672.0 + GetCameraMargin(CAMERA_MARGIN_BOTTOM) )
     call SetDayNightModels( "Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl" )
-    call SetTerrainFogEx( 0, 5000.0, 5000.0, 0.000, 0.000, 1.000, 1.000 )
+    call SetTerrainFogEx( 1, 5000.0, 5000.0, 0.000, 0.831, 0.369, 0.098 )
     call SetWaterBaseColor( 100, 255, 255, 255 )
     call NewSoundEnvironment( "lake" )
     call SetAmbientDaySound( "SunkenRuinsDay" )

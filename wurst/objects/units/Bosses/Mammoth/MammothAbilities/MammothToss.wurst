@@ -61,7 +61,6 @@ public class MammothToss
             registerSpellUsage()
     
     function startToss(unit target)
-        print("toss started")
         //performTossAnimation()
         //mammoth.setFacing(mammoth.getPos().angleTo(target.getPos()))
         doAfter(ANIMATION_TIME-0.25) -> 
@@ -88,7 +87,6 @@ public class MammothToss
     function findValidTarget()
         if onCooldown
             return
-        //print("finding valid target")
         ENUM_GROUP.enumUnitsInRange(mammoth.getPos(), TOSS_CAST_RANGE+50.)
         for each in ENUM_GROUP
             if not each.isAllyOf(mammoth.getOwner()) and each.isAlive()

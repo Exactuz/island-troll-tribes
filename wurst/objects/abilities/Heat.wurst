@@ -76,7 +76,7 @@ function createUnsafeHeat(int abilId) returns AbilityDefinitionTornadoDamage
 // Used on arena fire
 @compiletime function createBonfireAura() returns AbilityDefinitionArchMageBrillianceAura
     return new AbilityDefinitionArchMageBrillianceAura(ABILITY_BONFIRE_AURA)
-        ..setAreaofEffect(1, 200.0)
+        ..setAreaofEffect(1, 300.0)
         ..setIconNormal(Icons.dISPASBTNImmolation)
         ..setBuffs(1, BUFF_BON_FIRE_HEAT.toRawCode())
         ..setButtonPositionNormalX(0)

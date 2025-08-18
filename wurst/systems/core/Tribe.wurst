@@ -17,6 +17,7 @@ import PlayerExtensions
 import initlater TribeBoard
 import initlater Boards
 import initlater ScoreBoard
+import initlater GurubashiArenaBorders
 
 let names = asList(
     "Darkspear",
@@ -46,6 +47,7 @@ public class Tribe
     int tribeId
     rect spawn
     unit spiritTotem = null
+    GurubashiArenaBorders bordersAccess = null
     let tribePlayers = new OwnedLinkedList<player>()
     let tribe = CreateForce()
     let name = ""
@@ -77,6 +79,7 @@ public class Tribe
     construct(int id, string name)
         this.tribeId = id
         this.name = name
+        this.bordersAccess = new GurubashiArenaBorders(this)
 
         let range = getPlayerIdRangeForTribe(tribeId)
 

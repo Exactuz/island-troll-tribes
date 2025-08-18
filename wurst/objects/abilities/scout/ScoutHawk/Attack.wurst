@@ -68,7 +68,7 @@ public class Attack extends HawkState
         newPos.x+=xOffset
         newPos.y+=yOffset
         ////print("attack update") 
-        hawk.setPosReal(newPos)
+        hawk.setXYZ(newPos)
         let angleOffset = 180.
         hawk.setFacing(target.getFacingAngle().op_plus(angleOffset.asAngleDegrees()))
         //hawk.setFacing(currentPos.angleTo2d(target.getPos3Real()))

@@ -17,6 +17,7 @@ import ReduceHealing
 import UnitIndexer
 import LocalObjectIDs
 import initlater Respawn
+import initlater GurubashiArenaBorders
 
 public timer GURUBASHI_ARENA_OPEN_TIMER      
 
@@ -24,6 +25,7 @@ function onEnter()
     let tribes = Tribe.getTribes()
     print("Gurubashi Arena has begun!".color(GENERAL_COLOR))
     createUnit(players[PLAYER_NEUTRAL_PASSIVE], UNIT_BONFIRE, OBJECTIVE_POS)
+    updateBorderAccessOnDuel()
 
     for tribe in tribes
         let index = tribes.indexOf(tribe)
@@ -46,7 +48,7 @@ function onEnter()
                 doAfter(3.0) -> 
                     troll.unpause() 
 
-function closeGates()
+public function closeGates()
     for each in gurubashiArenaGates
         each.restoreLife(each.getMaxLife(), true)
         each.setAnimation("stand")
@@ -63,6 +65,18 @@ function resetTroll(unit troll)
         ..resetCooldown()
         ..reduceHealingReduction(9999.)
 
+function updateBorderAccessOnGatesOpen()
+    for tribe in Tribe.getTribes()
+        let bordersAccess = GurubashiArenaBorders.getInstance(tribe)
+        bordersAccess.insideGurubashiArena = true
+        bordersAccess.outsideGurubashiArena = true
+
+function updateBorderAccessOnDuel()
+    for tribe in Tribe.getTribes()
+        let bordersAccess = GurubashiArenaBorders.getInstance(tribe)
+        bordersAccess.insideGurubashiArena = true
+        bordersAccess.outsideGurubashiArena = false
+
 init
     GameStates.gurubashiArena.onEnter() (GameState state) ->
         onEnter()
@@ -72,3 +86,4 @@ init
             let time = gameConfig.getGurubashiArenaAfter()
             GURUBASHI_ARENA_OPEN_TIMER = getTimer()..doAfter(time.toReal()) ->
                 openGurubashiGates()
+                updateBorderAccessOnGatesOpen()

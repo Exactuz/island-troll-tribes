@@ -46,7 +46,6 @@ constant ANIMATION_TIME = 0.75
 public constant TT_BUFF_MAMMOTH_DAZED = "Your allies failed to catch you. You are dazed."
 constant TT_BUFF_MAMMOTH_TOSS = "You are airborne and cannot move or attack. Let's hope your allies catch you."
 constant TOSS_WARNING_MESSAGE = "Catch!".color(COLOR_RED)
-MammothToss mammothTossInstance = null
 
 public class MammothToss
     bool onCooldown = false
@@ -110,6 +109,11 @@ public class MammothToss
         doAfter(COOLDOWN) -> 
             onCooldown = false
             
+    ondestroy
+        if spellUsage != null
+            destroy spellUsage
+            spellUsage = null
+        instance = null
 
 public class TossInstance extends JumpInstance
     unit mammoth
@@ -203,30 +207,6 @@ public class TossInstance extends JumpInstance
         ..setDummyAbility()
 
 @compiletime function createTossAbility()
-/*
-    new ChannelAbilityPreset(ABILITY_MAMMOTH_TOSS, 1, true)
-        ..presetCastRange(lvl -> TOSS_CAST_RANGE)
-        ..presetIcon(Icons.bTNMammoth)
-        ..presetTargetTypes(Targettype.UNIT)
-        ..presetHotkey("D")
-        ..presetButtonPosNormal(2, 3)
-        ..presetCooldown(lvl->COOLDOWN)
-        ..presetBaseOrderID(lvl->TOSS_ORDER)
-        //..presetTooltipNormal(lvl->TT_NAME)
-        //..setName(TT_NAME)
-        //..presetTooltipNormalExtended(lvl->TT_EXT)    
-        ..presetTargetsAllowed(_ -> commaList(
-            TargetsAllowed.enemies,
-            TargetsAllowed.ground,
-            TargetsAllowed.neutral,
-            TargetsAllowed.nonancient,
-            TargetsAllowed.organic,
-            TargetsAllowed.hero
-            )
-        )
-*/   
-
-
     new BuffDefinition(BUFF_MAMMOTH_TOSS, BuffIds.heal)
         ..setTooltipNormal("Airborne".color(COLOR_RED))
         ..setTooltipNormalExtended(TT_BUFF_MAMMOTH_TOSS)
@@ -281,6 +261,13 @@ function onUnitEnter(unit whichUnit)
         return
     new MammothToss(whichUnit)
 
+function onDeath()
+    let u = GetDyingUnit()
+    if u.getTypeId() != UNIT_MAMMOTH
+        return
+    let instance = MammothToss.instance
+    if instance != null 
+        destroy instance
 
 
 init
@@ -288,4 +275,8 @@ init
     EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) -> 
         onCast()
 
-    onEnter(()->onUnitEnter(getEnterLeaveUnit()))         
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))
+
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) ->
+        onDeath() 
+                 

@@ -1,0 +1,87 @@
+package GurubashiArenaBorders
+
+// Standard lib Imports:
+import AbilityObjEditing
+import BuffObjEditing
+import ObjectIdGenerator
+import ObjectIds
+import Assets
+
+// Local Imports:
+import LocalObjectIDs
+import LocalAssets
+import ColorUtils
+import ToolTipsUtils
+import DamageEvent
+import DamageListeners
+import LinkedList
+import ClosureTimers
+import Orders
+import ClosureEvents
+import OnUnitEnterLeave
+import MakruraCuirass
+import HashList
+import InstantDummyCaster
+import BossAbilities
+import JumpSystem
+import UnitExtensions
+import ClosureForGroups
+import LocalObjectIDs2
+import Objective
+import SimError
+import HashMap
+import Tribe
+import PlayerExtensions
+import GurubashiArena
+
+public constant GURUBASHI_ARENA_BORDER_AOE = 1650.
+
+
+public class GurubashiArenaBorders
+    bool insideGurubashiArena = false
+    bool outsideGurubashiArena = true
+    static HashMap<Tribe, thistype> instances = new HashMap<Tribe, thistype>()
+    construct(Tribe tribe)
+        instances.put(tribe, this)
+
+    static function getInstance(unit u) returns thistype
+        let tribe = u.getOwner().getTribe()
+        if tribe == null
+            Log.debug("Unit {0} has no tribe, cannot get GurubashiArenaBorders instance.".format(u.getName()))
+            return null
+        return instances.get(tribe)
+
+    static function getInstance(Tribe tribe) returns thistype
+        return instances.get(tribe)
+
+function onOrder(vec2 targetPos)
+    if not GetOrderedUnit().isTroll()
+        return
+    if GetIssuedOrderId() == Orders.smart
+        return
+    let orderUnit = EventData.getOrderedUnit()
+    bool isInsideGurubashiArena = false
+    bool cancelOrder = false
+    let bordersAccess = GurubashiArenaBorders.getInstance(orderUnit)
+
+    if OBJECTIVE_POS.distanceTo(targetPos) < GURUBASHI_ARENA_BORDER_AOE
+        isInsideGurubashiArena = true
+    else 
+        isInsideGurubashiArena = false
+    if isInsideGurubashiArena and not bordersAccess.insideGurubashiArena
+        cancelOrder = true
+    if not isInsideGurubashiArena and not bordersAccess.outsideGurubashiArena
+        cancelOrder = true
+
+    if cancelOrder
+        orderUnit.issueImmediateOrder("stop")
+        simError(orderUnit.getOwner(),"You cannot access that area"
+        )
+        return
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER) -> 
+        onOrder(EventData.getOrderPos())
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER) -> 
+        onOrder(EventData.getOrderTargetPos())

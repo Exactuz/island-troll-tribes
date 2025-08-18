@@ -25,6 +25,8 @@ import UnitIndexer
 import HashList
 import Orders
 import AbilityIds
+import GurubashiArenaBorders
+import GurubashiArena
 
 constant PAUSE_TIME = 3.
 constant MAMMOTH_BASE_HP = 250
@@ -127,6 +129,7 @@ function spawnBoss()
 function onEnter()
     handleWinnerTeam()
     handleLoserTeams()
+    updateBorderAccessOnBossFight()    
     playStompEfx()
     doAfter(1.5) -> 
         supplyMeat()
@@ -227,11 +230,31 @@ function spreadUnitsInArch()
     winnerTribe.getSpawn().moveTo(center)
     destroy units
 
+
+
+function updateBorderAccessOnBossFight()
+    for tribe in Tribe.getTribes()
+        let bordersAccess = GurubashiArenaBorders.getInstance(tribe)
+        if tribe == winnerTribe
+            bordersAccess.insideGurubashiArena = true
+            bordersAccess.outsideGurubashiArena = false
+        else
+            bordersAccess.insideGurubashiArena = false
+            bordersAccess.outsideGurubashiArena = true
+
+function updateBorderAccessOnBossFightFinish()
+    for tribe in Tribe.getTribes()
+        let bordersAccess = GurubashiArenaBorders.getInstance(tribe)
+        bordersAccess.insideGurubashiArena = false
+        bordersAccess.outsideGurubashiArena = true
+
 init
     GameStates.bossFight.onEnter() (GameState state) ->
         onEnter()
 
     EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
         if GameStates.bossFight.active
+            updateBorderAccessOnBossFightFinish()
             onMammothKilled(GetDyingUnit())
             onTrollDeath(GetDyingUnit())
+            closeGates()

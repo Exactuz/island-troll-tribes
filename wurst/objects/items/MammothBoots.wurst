@@ -45,7 +45,7 @@ let MAMMOTH_BOOTS_TRAMPLE_DAMAGE_BASE = 20
 let MAMMOTH_BOOTS_TRAMPLE_DAMAGE_STRENGTH_MULTIPLIER = 1.0
 let MAMMOTH_BOOTS_TRAMPLE_PUSH_AOE = 250.
 let MAMMOTH_BOOTS_TRAMPLE_DESTRUCTABLE_AREA = 144.
-let COOLDOWN = 2.
+let COOLDOWN = 35.
 let ABIL_MAMMOTH_BOOTS = commaList(ABILITY_MAMMOTH_BOOTS_TRAMPLE, ABILITY_SPEED_BONUS_100, ABILITY_STR_BONUS_10, ABILITY_ARMOR_BONUS_5)
 let TT_MAMMOTH_BOOTS = "A pair of boots crafted a hide of The Mammoth."+
                               "\n+{0} Movement Speed.".format("100".color(COLOR_ORANGE))+
@@ -90,8 +90,6 @@ class MammothBootsTrample
 
     construct(item thisItem)
         instances.put(thisItem, this)
-        print("created")
-        //startTrample()
 
     function changeScale(real scaleTowards)
         let callAmount = 10
@@ -107,7 +105,6 @@ class MammothBootsTrample
         this.caster = caster
         isActive = true
         changeScale(2.0)
-        print("start trample")
         totalDistance = min(caster.getPos().distanceTo(targetPos), MAMMOTH_BOOTS_TRAMPLE_MAX_DISTANCE)
         this.targetPos = getJumpPos(caster.getPos(), targetPos, totalDistance)
         caster.pauseEx()
@@ -133,9 +130,9 @@ class MammothBootsTrample
                     //efx.destr()
                     
             if cb.isLast()
-                print("trample done")
                 caster.setPathing(true)
                 caster.unpauseEx()
+                caster.setPos(caster.getPos())
                 isActive = false
                 doAfter(0.5) -> 
                     changeScale(1.0)
@@ -151,6 +148,7 @@ class MammothBootsTrample
         EnumDestructablesInRectAll(destructableArea) ->
             let d = GetEnumDestructable()
             d.kill()
+        ENUM_GROUP.enumUnitsInRange(newPos, MAMMOTH_BOOTS_TRAMPLE_PUSH_AOE)
         for each in ENUM_GROUP
             doAfter(ANIMATION_PERIOD*3) ->
                 damageAndPushUnit(each)
@@ -158,6 +156,7 @@ class MammothBootsTrample
     function damageUnit(unit target)
         let damage = MAMMOTH_BOOTS_TRAMPLE_DAMAGE_BASE + caster.getStr(true) * MAMMOTH_BOOTS_TRAMPLE_DAMAGE_STRENGTH_MULTIPLIER
         caster.damageTarget(target, damage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+        damagedUnits.add(target)
 
     function damageAndPushUnit(unit target)
         if damagedUnits.has(target)
@@ -168,11 +167,10 @@ class MammothBootsTrample
             return
         if target.getTypeId() == UNIT_HAWK
             return
-        damagedUnits.add(target)
         flashEffect(Objects.impaleTargetDust, target.getPos())
         damageUnit(target)
         let angle = caster.getPos().angleTo(target.getPos())
-        if caster.getPos().distanceTo(targetPos) < MAMMOTH_BOOTS_TRAMPLE_PUSH_AOE
+        if caster.getPos().distanceTo(targetPos) > MAMMOTH_BOOTS_TRAMPLE_PUSH_AOE
             Knockback3.add(target, 1500., angle, 80..asAngleDegrees())
 
 

@@ -34,7 +34,9 @@ public constant GURUBASHI_ARENA_ENTRANCE_LEFT = gg_rct_GurubashiArenaEntranceLef
 public constant GURUBASHI_ARENA_ENTRANCE_RIGHT = gg_rct_GurubashiArenaEntranceRight
 public unit OBJECTIVE_UNIT = null
 public let gurubashiArenaGates = new HashList<destructable>()
-public int GURUBASHI_ARENA_GATE_ID = 'B004'
+public let gurubashiArenaGateIds = new HashList<int>()
+    ..add('B00G')
+    ..add('B004')
 constant OBJECTIVE_MSG_INTRO = "The Gods' challange is..".color(COLOR_LIGHT_BLUE)
 
 public enum Objective
@@ -55,20 +57,18 @@ function initializeGurubashiGates()
     let boundRect = Rect(OBJECTIVE_POS.x-2000, OBJECTIVE_POS.y-2000, OBJECTIVE_POS.x+2000, OBJECTIVE_POS.y+2000)
     //forUnitsOfType(UnitId2String(UNIT_GU)) target ->
     forDestructablesInRect(boundRect) (destructable d) ->
-        if d.getTypeId() == GURUBASHI_ARENA_GATE_ID
+        if gurubashiArenaGateIds.has(d.getTypeId())
             d.setInvulnerable(true)
             gurubashiArenaGates.add(d)
 
 public function openGurubashiGates()
+    print("Gurubashi Arena gates are now open!".color(COLOR_LIGHT_BLUE))
     for each in gurubashiArenaGates
         // Open the gate.
         each.kill()
 
             // Ensure that the gate is destroyed and not merely opened.
         each.setAnimation("death")
-        doAfter(5.) ->
-            each.setAnimation("stand")
-            each.restoreLife(each.getMaxLife(), true)
 
 @compiletime function createObjectiveUnit()
     new UnitDefinition(UNIT_OBJECTIVE, UnitIds.sentryward)

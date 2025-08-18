@@ -127,7 +127,9 @@ public class WhirlingAxe
         pos = troll.getPos3Real()
         pos.x +=currentDistance/2*radians.cos()
         pos.y +=currentDistance/2*radians.sin()
-        efx.setPos(pos)
+        efx.setX(pos.x)
+        efx.setY(pos.y)
+        efx.setZ(pos.z)
         damageEnemies()
 
 

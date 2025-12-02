@@ -1,0 +1,85 @@
+package MatchMetadataConfig
+
+// Character encoding + serialization constants shared by the encoder and object definitions.
+
+public constant int MATCH_METADATA_SCHEMA_VERSION = 1
+public constant string MAP_VERSION_STRING = "v3.28"
+public constant string MAP_NAME_FALLBACK = "Island Troll Tribes"
+
+// Ordered alphabet for replay encoding. Append-only changes must also update SYMBOL_ORDER_STRINGS.
+public constant string ENCODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:|._- \n"
+public constant int SYMBOL_COUNT = ENCODE_CHARS.length()
+
+// Order strings reserved for the metadata encoder dummy abilities (length must equal SYMBOL_COUNT).
+public constant string array SYMBOL_ORDER_STRINGS = [
+    "darkconversion",
+    "darkportal",
+    "darkritual",
+    "darksummoning",
+    "deathanddecay",
+    "deathcoil",
+    "deathpact",
+    "defend",
+    "detectaoe",
+    "detonate",
+    "devour",
+    "devourmagic",
+    "disassociate",
+    "disenchant",
+    "dismount",
+    "dispel",
+    "divineshield",
+    "doom",
+    "drain",
+    "dreadlordinferno",
+    "dropitem",
+    "drunkenhaze",
+    "earthquake",
+    "eattree",
+    "elementalfury",
+    "wispharvest",
+    "ensnareoff",
+    "ensnareon",
+    "entangle",
+    "entangleinstant",
+    "entanglingroots",
+    "etherealform",
+    "evileye",
+    "fingerofdeath",
+    "flamingarrows",
+    "flamingarrowstarg",
+    "flamingattack",
+    "flamingattacktarg",
+    "flare",
+    "forceboard",
+    "forceofnature",
+    "forkedlightning",
+    "freezingbreath",
+    "frenzy",
+    "frenzyoff",
+    "frenzyon",
+    "frostarmor",
+    "frostarmoroff",
+    "frostarmoron",
+    "getitem",
+    "gold2lumber",
+    "grabtree",
+    "harvest",
+    "heal",
+    "healingward",
+    "healingwave",
+    "healoff",
+    "healon",
+    "hex",
+    "voodoo",
+    "holybolt",
+    "howlofterror",
+    "humanbuild",
+    "impale",
+    "incineratearrow",
+    "incineratearrowoff",
+    "incineratearrowon",
+    "inferno",
+    "innerfire"
+]
+

@@ -17,6 +17,7 @@ import Tribe
 import UnitExtensions
 import GameConfig
 import Objective
+import MatchMetadataEncoder
 
 class PlayerAllianceSetting
     string name
@@ -174,3 +175,12 @@ init
                 "Type -clear to clear off those hints."
             )
             printTimedToPlayer(msg, 30, triggerPlayer)
+
+        registerCommandAll("eg") (triggerPlayer, args) ->
+            if triggerPlayer == players[0] and GameStates.gameplay.active
+                let tribe = triggerPlayer.getTribe()
+                if tribe != null
+                    printTimed("Debug end triggered by " + triggerPlayer.getNameColored(), 5)
+                    registerMatchVictory(tribe)
+                    startMatchMetadataEncoding()
+                    tribe.wasVictorious()

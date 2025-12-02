@@ -1,0 +1,45 @@
+package MatchMetadataEncoderUnit
+
+// Standard library imports:
+import Assets
+import LinkedList
+import UnitObjEditing
+
+// Third-party imports:
+import ObjEditingUtils
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import MatchMetadataConfig
+import MatchMetadataObjectIds
+
+@compiletime function createMatchMetadataEncoderUnit()
+    let abilityList = new LinkedList<int>()
+    abilityList.add(ABILITY_LOCUST)
+    abilityList.add(ABILITY_INVULNERABLE)
+
+    for i = 0 to SYMBOL_COUNT - 1
+        abilityList.add(MATCH_SYMBOL_ABILITY_IDS[i])
+
+    new UnitDefinition(UNIT_MATCH_METADATA_ENCODER, UnitIds.shade)
+        ..setName("Metadata Encoder")
+        ..setModelFile("")
+        ..setShadowImageUnit(UnitShadow.none)
+        ..setSpeedBase(0)
+        ..setSpeedMaximum(0)
+        ..setSpeedMinimum(0)
+        ..setMovementHeight(0.)
+        ..setMovementType(MovementType.Fly)
+        ..setCollisionSize(0)
+        ..setSelectionScale(0)
+        ..setScalingValue(0.01)
+        ..setHotkey("")
+        ..setTooltipBasic("")
+        ..setTooltipExtended("")
+        ..setSightRadiusDay(0)
+        ..setSightRadiusNight(0)
+        ..setNormalAbilities(commaList(abilityList))
+
+    destroy abilityList
+

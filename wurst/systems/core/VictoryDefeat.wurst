@@ -7,6 +7,7 @@ import LinkedList
 import Lodash
 import Respawn
 import GameStates
+import MatchMetadataEncoder
 
 
 var gameOver = false
@@ -25,6 +26,9 @@ init
             let aliveTribes = Tribe.getTribes().lodashFilter(Tribe.isNotDefeated)
             if aliveTribes.size() == 1
                 gameOver = true
-                aliveTribes.getFirst().wasVictorious()
+                let winner = aliveTribes.getFirst()
+                registerMatchVictory(winner)
+                startMatchMetadataEncoding()
+                winner.wasVictorious()
 
             destroy aliveTribes

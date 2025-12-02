@@ -93,7 +93,7 @@ class MeatCollector
                 // Pick up last dropped stack of meat in the end
                 building.addItemHandle(stackOfMeat)
                 doAfter(ANIMATION_PERIOD) -> 
-                    triggerSmoothPickup(building, stackOfMeat)                 
+                    building.triggerSmoothPickup(stackOfMeat)                 
                     destroy this                     
 
 
@@ -101,7 +101,7 @@ class MeatCollector
         let sucess = building.addItemHandle(meat)
         if not sucess
         // If inventory is full, drop a stack of meat from mud hut
-            triggerSmoothPickup(building, meat)
+            building.triggerSmoothPickup(meat)
             stackOfMeat = findFullStackOfMeat()
             building.removeItem(stackOfMeat)        
 

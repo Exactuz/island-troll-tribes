@@ -255,7 +255,7 @@ public function unit.isBoss() returns bool
     return BOSS_LIST.has(this.getTypeId())
 
 public function unit.triggerSmoothPickup(item whichItem)
-    triggerSmoothPickup(this, whichItem)
+    this.stackItem(whichItem)
 
 // Corrects the color of the unit to match the color of the player. Some color-
 // coded effects, e.g. hero glow, will use the slot color incorrectly.

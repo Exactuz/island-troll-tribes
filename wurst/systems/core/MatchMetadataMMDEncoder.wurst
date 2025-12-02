@@ -1,0 +1,56 @@
+package MatchMetadataMMDEncoder
+
+// MMD-based metadata encoder strategy.
+// Uses the w3mmd standard protocol for embedding metadata in replays.
+// This is the most reliable approach as w3mmd is a well-established standard.
+// See: https://github.com/jlfarris91/WurstMMD
+
+// Standard library imports:
+import LinkedList
+
+// Third-party imports:
+import MMD
+
+// Local imports:
+import MatchMetadataEncoder
+import MatchMetadataConfig
+
+class MMDEncoderStrategy implements MetadataEncoderStrategy
+    override function encode(string payload)
+        startMMDEncoding(payload)
+
+function startMMDEncoding(string payload)
+    // Log map info using MMD custom data
+    MMD.logCustom("itt_version", MAP_VERSION_STRING)
+    MMD.logCustom("itt_schema", MATCH_METADATA_SCHEMA_VERSION.toString())
+    
+    // Log the full payload in chunks (MMD has message size limits)
+    let chunks = chunkPayload(payload, 200)
+    var chunkIndex = 0
+    for chunk in chunks
+        MMD.logCustom("itt_data_" + chunkIndex.toString(), chunk)
+        chunkIndex++
+    
+    MMD.logCustom("itt_chunks", chunkIndex.toString())
+    
+    destroy chunks
+
+/** Chunk payload into smaller pieces for MMD */
+function chunkPayload(string payload, int maxSize) returns LinkedList<string>
+    let chunks = new LinkedList<string>()
+    var position = 0
+    let payloadLength = payload.length()
+
+    while position < payloadLength
+        let remaining = payloadLength - position
+        let chunkSize = remaining < maxSize ? remaining : maxSize
+        let chunk = payload.substring(position, position + chunkSize)
+        chunks.add(chunk)
+        position += chunkSize
+
+    return chunks
+
+init
+    // Register this encoder strategy
+    registerEncoderStrategy(new MMDEncoderStrategy())
+

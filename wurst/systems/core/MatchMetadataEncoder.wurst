@@ -27,6 +27,7 @@ public class MatchPlayerMetadata
     int slotIndex
     string name
     string raceCode
+    string trollClass
     int team
     string result
     // Stats
@@ -42,10 +43,11 @@ public class MatchPlayerMetadata
     int killsBear = 0
     int killsPanther = 0
 
-    construct(int slotIndex, string name, string raceCode, int team, string result)
+    construct(int slotIndex, string name, string raceCode, string trollClass, int team, string result)
         this.slotIndex = slotIndex
         this.name = name
         this.raceCode = raceCode
+        this.trollClass = trollClass
         this.team = team
         this.result = result
 
@@ -127,6 +129,7 @@ function buildMatchMetadata() returns MatchMetadata
                     member.getId(),
                     sanitizeValue(member.getName()),
                     getRaceCode(member),
+                    getTrollClassName(member),
                     tribe.getId(),
                     determineResult(member, tribe)
                 )
@@ -152,11 +155,12 @@ public function serializeMatchMetadata(MatchMetadata meta) returns string
     payload += "playerCount:" + meta.playerCount.toString() + "\n"
 
     for playerMeta in meta.players
-        // Format: player:slot|name|race|team|result|dmg|selfHeal|allyHeal|gold|meat|elk|hawk|snake|wolf|bear|panther
-        payload += "player:{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}\n".format(
+        // Format v3: player:slot|name|race|class|team|result|dmg|selfHeal|allyHeal|gold|meat|elk|hawk|snake|wolf|bear|panther
+        payload += "player:{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}\n".format(
             playerMeta.slotIndex.toString(),
             playerMeta.name,
             playerMeta.raceCode,
+            playerMeta.trollClass,
             playerMeta.team.toString(),
             playerMeta.result,
             playerMeta.damageTroll.toString(),
@@ -238,6 +242,13 @@ function getRaceCode(player whichPlayer) returns string
         return "UD"
     else
         return "RN"
+
+function getTrollClassName(player whichPlayer) returns string
+    let troll = whichPlayer.getTroll()
+    if troll == null
+        return "Unknown"
+    let className = GetObjectName(troll.getTypeId())
+    return sanitizeValue(className)
 
 function generateMatchId() returns string
     let elapsedMs = (GAME_TIMER.getElapsed() * 1000.).toInt()

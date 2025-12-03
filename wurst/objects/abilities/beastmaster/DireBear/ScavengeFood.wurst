@@ -90,7 +90,7 @@ class ScavengedStash
                     nullTimer() -> 
                         scavengedStash.removeItem(each)
                         nullTimer() -> 
-                            troll.triggerSmoothPickup(each)                       
+                            triggerSmoothPickup(troll, each)                       
             destroy scavengedStashInventory         
             generateFoodItem()   
             let bearFoodSlotInstance = bearFoodSlotInstances.get(troll)
@@ -106,7 +106,7 @@ class ScavengedStash
         if troll.getLevel()>=4
             food.setCharges(2)
         if troll.hasItemById(food.getTypeId())
-            troll.triggerSmoothPickup(food)
+            triggerSmoothPickup(troll, food)
         else
             troll.addItemHandle(food)
    

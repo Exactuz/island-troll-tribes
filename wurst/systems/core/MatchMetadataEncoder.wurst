@@ -1,0 +1,266 @@
+package MatchMetadataEncoder
+
+// Standard library imports:
+import HashSet
+import LinkedList
+import RegisterEvents
+import StringBuilder
+
+// Local imports:
+import Game
+import GameStates
+import MatchMetadataConfig
+import PlayerExtensions
+import PlayerScore
+import Tribe
+
+constant int MATCH_CHECKSUM_MOD = 1000000007
+
+// Callback type for encoder strategies
+public interface MetadataEncoderStrategy
+    function encode(string payload)
+
+// Registry of encoder strategies
+let encoderStrategies = new LinkedList<MetadataEncoderStrategy>()
+
+public class MatchPlayerMetadata
+    int slotIndex
+    string name
+    string raceCode
+    string trollClass
+    int team
+    string result
+    // Stats
+    int damageTroll = 0
+    int selfHealing = 0
+    int allyHealing = 0
+    int goldAcquired = 0
+    int meatEaten = 0
+    int killsElk = 0
+    int killsHawk = 0
+    int killsSnake = 0
+    int killsWolf = 0
+    int killsBear = 0
+    int killsPanther = 0
+
+    construct(int slotIndex, string name, string raceCode, string trollClass, int team, string result)
+        this.slotIndex = slotIndex
+        this.name = name
+        this.raceCode = raceCode
+        this.trollClass = trollClass
+        this.team = team
+        this.result = result
+
+    function loadStats(Score score)
+        this.damageTroll = score.damageTroll
+        this.selfHealing = score.selfHealing
+        this.allyHealing = score.allyHealing
+        this.goldAcquired = score.goldAmount
+        this.meatEaten = score.meatEaten
+        this.killsElk = score.playerKill.get("Elk")
+        this.killsHawk = score.playerKill.get("Hawk")
+        this.killsSnake = score.playerKill.get("Snake")
+        this.killsWolf = score.playerKill.get("Wolf")
+        this.killsBear = score.playerKill.get("Bear")
+        this.killsPanther = score.playerKill.get("Panther")
+
+public class MatchMetadata
+    int schemaVersion = MATCH_METADATA_SCHEMA_VERSION
+    string mapName = MAP_NAME_FALLBACK
+    string mapVersion = MAP_VERSION_STRING
+    string matchId = ""
+    int startTimeGame = 0
+    int endTimeGame = 0
+    int durationSeconds = 0
+    int playerCount = 0
+    int checksum = 0
+    LinkedList<MatchPlayerMetadata> players
+
+    construct()
+        players = new LinkedList<MatchPlayerMetadata>()
+
+// State tracking
+let playersWhoLeft = new HashSet<player>()
+let winningTribes = new HashSet<Tribe>()
+bool encoderStarted = false
+string currentMatchId = ""
+int matchStartTimeSeconds = 0
+
+/** Register a new encoder strategy. Call this during init. */
+public function registerEncoderStrategy(MetadataEncoderStrategy strategy)
+    encoderStrategies.add(strategy)
+
+public function registerMatchVictory(Tribe tribe)
+    if tribe != null
+        winningTribes.add(tribe)
+
+public function startMatchMetadataEncoding()
+    if encoderStarted
+        return
+
+    encoderStarted = true
+
+    let metadata = buildMatchMetadata()
+    let payload = serializeMatchMetadata(metadata)
+
+    if payload.length() == 0
+        return
+
+    // Call all registered encoder strategies
+    for strategy in encoderStrategies
+        strategy.encode(payload)
+
+function buildMatchMetadata() returns MatchMetadata
+    let meta = new MatchMetadata()
+
+    meta.matchId = currentMatchId.length() > 0 ? currentMatchId : generateMatchId()
+    meta.mapName = sanitizeValue(MAP_NAME_FALLBACK)
+    meta.mapVersion = MAP_VERSION_STRING
+    meta.startTimeGame = matchStartTimeSeconds
+    meta.endTimeGame = GAME_TIMER.getElapsed().toInt()
+    meta.durationSeconds = meta.endTimeGame - meta.startTimeGame
+    if meta.durationSeconds < 0
+        meta.durationSeconds = 0
+
+    for tribe in Tribe.getTribes()
+        for member in tribe.getMembers()
+            if member != null and not member.isObserver()
+                let entry = new MatchPlayerMetadata(
+                    member.getId(),
+                    sanitizeValue(member.getName()),
+                    getRaceCode(member),
+                    getTrollClassName(member),
+                    tribe.getId(),
+                    determineResult(member, tribe)
+                )
+                // Load player stats if available
+                if playerScores.has(member)
+                    entry.loadStats(playerScores.get(member))
+                meta.players.add(entry)
+
+    meta.playerCount = meta.players.size()
+
+    return meta
+
+public function serializeMatchMetadata(MatchMetadata meta) returns string
+    var payload = ""
+
+    payload += "v" + meta.schemaVersion.toString() + "\n"
+    payload += "mapName:" + meta.mapName + "\n"
+    payload += "mapVersion:" + meta.mapVersion + "\n"
+    payload += "matchId:" + meta.matchId + "\n"
+    payload += "startTime:" + meta.startTimeGame.toString() + "\n"
+    payload += "endTime:" + meta.endTimeGame.toString() + "\n"
+    payload += "duration:" + meta.durationSeconds.toString() + "\n"
+    payload += "playerCount:" + meta.playerCount.toString() + "\n"
+
+    for playerMeta in meta.players
+        // Format v3: player:slot|name|race|class|team|result|dmg|selfHeal|allyHeal|gold|meat|elk|hawk|snake|wolf|bear|panther
+        payload += "player:{0}|{1}|{2}|{3}|{4}|{5}|{6}|{7}|{8}|{9}|{10}|{11}|{12}|{13}|{14}|{15}|{16}\n".format(
+            playerMeta.slotIndex.toString(),
+            playerMeta.name,
+            playerMeta.raceCode,
+            playerMeta.trollClass,
+            playerMeta.team.toString(),
+            playerMeta.result,
+            playerMeta.damageTroll.toString(),
+            playerMeta.selfHealing.toString(),
+            playerMeta.allyHealing.toString(),
+            playerMeta.goldAcquired.toString(),
+            playerMeta.meatEaten.toString(),
+            playerMeta.killsElk.toString(),
+            playerMeta.killsHawk.toString(),
+            playerMeta.killsSnake.toString(),
+            playerMeta.killsWolf.toString(),
+            playerMeta.killsBear.toString(),
+            playerMeta.killsPanther.toString()
+        )
+
+    meta.checksum = computeChecksum(payload)
+    payload += "checksum:" + meta.checksum.toString() + "\n"
+    payload += "END"
+
+    return payload
+
+public function sanitizeValue(string value) returns string
+    if value == null
+        return ""
+
+    let builder = new StringBuilder()
+
+    for i = 0 to value.length() - 1
+        var char = value.charAt(i)
+
+        if char == "\n" or char == "\r"
+            char = " "
+
+        if charToSymbolIndex(char) < 0
+            char = "_"
+
+        builder.add(char)
+
+    return builder.build("")
+
+public function computeChecksum(string payload) returns int
+    var result = 0
+
+    for i = 0 to payload.length() - 1
+        let char = payload.charAt(i)
+        let idx = charToSymbolIndex(char)
+        let contribution = idx >= 0 ? idx + 1 : char.getHash()
+        result = (result + contribution) mod MATCH_CHECKSUM_MOD
+
+    return result
+
+public function charToSymbolIndex(string char) returns int
+    return ENCODE_CHARS.indexOf(char)
+
+public function symbolIndexToChar(int idx) returns string
+    if idx < 0 or idx >= SYMBOL_COUNT
+        return ""
+
+    return ENCODE_CHARS.substring(idx, idx + 1)
+
+function determineResult(player whichPlayer, Tribe tribe) returns string
+    if whichPlayer.getSlotState() == PLAYER_SLOT_STATE_LEFT or playersWhoLeft.has(whichPlayer)
+        return "LEAVE"
+
+    if tribe != null and winningTribes.has(tribe)
+        return "WIN"
+
+    return "LOSE"
+
+function getRaceCode(player whichPlayer) returns string
+    let raceType = GetPlayerRace(whichPlayer)
+    if raceType == RACE_HUMAN
+        return "HUM"
+    else if raceType == RACE_ORC
+        return "ORC"
+    else if raceType == RACE_NIGHTELF
+        return "NE"
+    else if raceType == RACE_UNDEAD
+        return "UD"
+    else
+        return "RN"
+
+function getTrollClassName(player whichPlayer) returns string
+    let troll = whichPlayer.getTroll()
+    if troll == null
+        return "Unknown"
+    let className = GetObjectName(troll.getTypeId())
+    return sanitizeValue(className)
+
+function generateMatchId() returns string
+    let elapsedMs = (GAME_TIMER.getElapsed() * 1000.).toInt()
+    let randomPart = GetRandomInt(100000, 999999)
+    return elapsedMs.toString() + randomPart.toString()
+
+init
+    registerPlayerEvent(EVENT_PLAYER_LEAVE) ->
+        let leaver = GetTriggerPlayer()
+        if leaver != null
+            playersWhoLeft.add(leaver)
+
+    GameStates.gameplay.onEnter() state ->
+        matchStartTimeSeconds = GAME_TIMER.getElapsed().toInt()
+        currentMatchId = generateMatchId()

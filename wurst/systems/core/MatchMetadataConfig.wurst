@@ -1,0 +1,11 @@
+package MatchMetadataConfig
+
+// Configuration constants for match metadata encoding.
+
+public constant int MATCH_METADATA_SCHEMA_VERSION = 3
+public constant string MAP_VERSION_STRING = "v3.28"
+public constant string MAP_NAME_FALLBACK = "Island Troll Tribes"
+
+// Character set for payload encoding. Used for serialization and checksum.
+public constant string ENCODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:|._- \n"
+public constant int SYMBOL_COUNT = ENCODE_CHARS.length()

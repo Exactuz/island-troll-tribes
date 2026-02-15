@@ -1,0 +1,51 @@
+package PantherSniff
+
+import ClosureEvents
+import LocalObjectIDs
+import ColorUtils
+import ChannelAbilityPreset
+import LocalObjectIDs2
+import LocalAssets
+
+constant PANTHER_SNIFF_CD = 20.
+constant PANTHER_SNIFF_MANACOST = 0
+constant PANTHER_SNIFF_AOE = 2400.
+constant PANTHER_SNIFF_TT_NORM = "Sniff"
+constant PANTHER_SNIFF_TT_EXT = "Sniff around to find a trace of an elk."
+                                +"\nPings closest elk in {0} range.".format(PANTHER_SNIFF_AOE.toString().color(ENERGY_COLOR))
+                                +"\n{0} seconds cooldown.".format(PANTHER_SNIFF_CD.toInt().toString().color(ENERGY_COLOR))
+
+@compiletime function createSniffAbility()
+    new ChannelAbilityPreset(ABILITY_PANTHER_SNIFF, 1, true)
+        ..setTargetType(1, 0)
+        ..setAnimationNames("spell")
+        //..setButtonPositionNormalX(btnPositionX)
+        //..setButtonPositionNormalY(btnPositionY)
+        ..setIconNormal(LocalIcons.bTNTracking)
+        //..setHeroAbility(false)
+        //..setItemAbility(false)
+        ..setHotkeyNormal("E")
+        ..setName(PANTHER_SNIFF_TT_NORM)
+        ..setDisableOtherAbilities(1, false)
+        ..setTooltipNormal(1, PANTHER_SNIFF_TT_NORM)
+        ..setTooltipNormalExtended(1, PANTHER_SNIFF_TT_EXT)
+        ..presetOptions(lvl -> 1)
+        ..presetCooldown(lvl -> PANTHER_SNIFF_CD)
+        ..presetManaCost(lvl -> PANTHER_SNIFF_MANACOST)
+        ..presetFollowThroughTime(lvl -> 1.)
+        ..presetBaseOrderID(lvl -> "blackarrow")
+
+function onCast(unit caster)
+    let owner = caster.getOwner()
+    let foundUnits = ENUM_GROUP
+    ..enumUnitsInRange(caster.getPos(), PANTHER_SNIFF_AOE, null)
+    for each in foundUnits
+        if each.getTypeId() == UNIT_ELK and not each.isAllyOf(owner) and each != caster
+            PingMinimapForForceEx(GetPlayersAllies(owner), each.getPos().x, each.getPos().y, 5, bj_MINIMAPPINGSTYLE_SIMPLE, 0, 255, 0)
+            return
+    Log.debug("Found no elks in {0} radius.".format(PANTHER_SNIFF_AOE.toString()))
+init
+    EventListener.onCast(ABILITY_PANTHER_SNIFF) (unit caster) ->
+        onCast(caster)
+        
+        

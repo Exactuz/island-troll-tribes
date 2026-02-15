@@ -3,7 +3,6 @@ package UnloadItems
 // Standard lib Imports:
 import RegisterEvents
 import ChannelAbilityPreset
-import Assets
 
 // local Imports:
 import InventoryUtils

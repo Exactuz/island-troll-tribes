@@ -105,7 +105,7 @@ function createCloak(int newId) returns CustomItemDefinition
         ..setCooldownGroup(commaList(ABILITY_CLOAK_FLAMES))
 
 
-public constant ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT")
 public constant ITEM_CLOAK_OF_FLAMES_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_FLAMES)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfInferno)
         ..setNameEnhance("Cloak of Flames")
@@ -118,7 +118,7 @@ public constant ITEM_CLOAK_OF_FLAMES_DEFINITION = compiletime(createCloak(ITEM_C
         ..constructItemShopDummyUnit(ITEM_CLOAK_OF_FLAMES_DUMMY_UNIT)
         )
 
-public constant ITEM_CLOAK_OF_HEALING_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_HEALING_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_HEALING_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CLOAK_OF_HEALING_DUMMY_UNIT")
 public constant ITEM_CLOAK_OF_HEALING_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_HEALING)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfHealing)
         ..setNameEnhance("Cloak of Healing")
@@ -131,7 +131,7 @@ public constant ITEM_CLOAK_OF_HEALING_DEFINITION = compiletime(createCloak(ITEM_
         ..constructItemShopDummyUnit(ITEM_CLOAK_OF_HEALING_DUMMY_UNIT)
         )
 
-public constant ITEM_CLOAK_OF_MANA_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_MANA_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_MANA_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CLOAK_OF_MANA_DUMMY_UNIT")
 public constant ITEM_CLOAK_OF_MANA_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_MANA)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfMana)
         ..setNameEnhance("Cloak of Mana")
@@ -144,7 +144,7 @@ public constant ITEM_CLOAK_OF_MANA_DEFINITION = compiletime(createCloak(ITEM_CLO
         ..constructItemShopDummyUnit(ITEM_CLOAK_OF_MANA_DUMMY_UNIT)
         )
 
-public constant ITEM_CLOAK_OF_FROST_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CLOAK_OF_FROST_DUMMY_UNIT")
+public constant ITEM_CLOAK_OF_FROST_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CLOAK_OF_FROST_DUMMY_UNIT")
 public constant ITEM_CLOAK_OF_FROST_DEFINITION = compiletime(createCloak(ITEM_CLOAK_OF_FROST)
         ..setInterfaceIcon(LocalIcons.bTNCloakOfFrost)
         ..setNameEnhance("Cloak of Frost")
@@ -157,7 +157,7 @@ public constant ITEM_CLOAK_OF_FROST_DEFINITION = compiletime(createCloak(ITEM_CL
         ..constructItemShopDummyUnit(ITEM_CLOAK_OF_FROST_DUMMY_UNIT)
         )
 
-public constant ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT")
+public constant ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT")
 public constant ITEM_NECROMANCERS_CLOAK_DEFINITION = compiletime(createCloak(ITEM_NECROMANCERS_CLOAK)
         ..setInterfaceIcon(LocalIcons.bTNSkullShroudGlowIncreased)
         ..setNameEnhance("Necromancer's Cloak")
@@ -168,7 +168,7 @@ public constant ITEM_NECROMANCERS_CLOAK_DEFINITION = compiletime(createCloak(ITE
         ..constructItemShopDummyUnit(ITEM_NECROMANCERS_CLOAK_DUMMY_UNIT)
         )
 
-public constant ITEM_EMPOWERED_NECROMANCERS_CLOAK_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_EMPOWERED_NECROMANCERS_CLOAK_DUMMY_UNIT")
+public constant ITEM_EMPOWERED_NECROMANCERS_CLOAK_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_EMPOWERED_NECROMANCERS_CLOAK_DUMMY_UNIT")
 public constant ITEM_EMPOWERED_NECROMANCERS_CLOAK_DEFINITION = compiletime(createCloak(ITEM_EMPOWERED_NECROMANCERS_CLOAK)
         ..setInterfaceIcon(LocalIcons.bTNSavageGladiatorChain)
         ..setNameEnhance("Empowered Necromancer's Cloak")

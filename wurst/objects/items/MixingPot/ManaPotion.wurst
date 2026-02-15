@@ -34,7 +34,7 @@ public constant TARGETS_ALLOWED = "friend,ground,hero,invulnerable,organic,self,
         ..setManaCost(1, 0)
         ..setCooldown(1, 0)
 
-public constant ITEM_MANA_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MANA_POTION_DUMMY_UNIT")
+public constant ITEM_MANA_POTION_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MANA_POTION_DUMMY_UNIT")
 public constant ITEM_MANA_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MANA_POTION)
         ..setNameEnhance(NAME)
         ..setInterfaceIcon(ICON)

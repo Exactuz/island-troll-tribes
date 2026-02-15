@@ -1,12 +1,7 @@
 package Debug
 
-// Standard library imports:
-import ClosureTimers
-
-// Third-party imports:
 import Setting
-import HashMap
-import OnUnitEnterLeave
+
 
 public let debug = new Setting("debug")
 //HashMap<player, bool> debugSettings = new HashMap<player, bool>()

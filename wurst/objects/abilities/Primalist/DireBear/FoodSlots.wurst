@@ -1,0 +1,261 @@
+package FoodSlots
+
+import LocalObjectIDs
+import HashMap
+import Items
+import LocalAssets
+import UnitExtensions
+import Orders
+import ClosureEvents
+import ClosureTimers
+import HashSet
+import ItemObjEditing
+import LinkedList
+import QuickMake
+
+
+public IterableMap<unit, DireBearFoodSlot> bearFoodSlotInstances = new IterableMap<unit, DireBearFoodSlot>()
+
+
+public let stolenItems = new HashSet<item>()
+public let bearFoodList = asList(ITEM_BANANA, ITEM_HONEYCOMB, ITEM_COCONUT, ITEM_SCAVENGED_MUSHROOM)
+
+let TT_NAME = "Happy Food Supplies"
+let TT_TOOLTIP = "A hungry bear always carries plenty of food on him."+
+                 "\nThis slot can hold coconuts, bananas, honey \nand scavenged mushrooms."
+
+
+@compiletime function createDummyItem() returns ItemDefinition
+    return createBasicItem(ITEM_DIRE_BEAR_FOOD_SLOT)
+            ..setName(TT_NAME)
+            ..setCanBeDropped(true)
+            ..setInterfaceIcon(LocalIcons.bTNBearFoodSlot)
+            ..setTooltipExtended(TT_TOOLTIP)
+            ..setCanBeSoldToMerchants(false)
+
+
+public class DireBearFoodSlot
+    unit hero = null
+    item dummy1 = null
+    item dummy2 = null
+    HashList<item> dummyItemsList = new HashList<item>() // false if dummy item is not in the inventory
+    bool pauseTriggers = false
+
+    construct(unit _hero)
+        hero = _hero
+        dummy1 = createItem(ITEM_DIRE_BEAR_FOOD_SLOT, hero.getPos())..setVisible(false)
+        dummy2 = createItem(ITEM_DIRE_BEAR_FOOD_SLOT, hero.getPos())..setVisible(false)
+        dummyItemsList.add(dummy1, dummy2)
+        for each in dummyItemsList
+            nullTimer() -> 
+                hero.addItemHandle(each)
+
+    function updateDummyItems()
+        pauseTriggers = true
+        let currentFoodItems = getCurrentFoodItems()
+        let currentDummyItems = getCurrentDummyItems()
+        
+        if (2-currentFoodItems > currentDummyItems)
+            for i = 1 to 2-currentFoodItems
+                //print("addDummy")
+                //print("currentFoodItems "+currentFoodItems.toString())
+                //print("currentDummyItems"+ currentDummyItems.toString())
+                nullTimer() ->        
+                    addDummyItem(i-1)
+
+        if  (2-currentFoodItems < currentDummyItems)
+            for i = 1 downto 2-currentFoodItems
+                //print("removeDummy")
+                //print("currentFoodItems "+currentFoodItems.toString())
+                //print("currentDummyItems"+ currentDummyItems.toString())
+                nullTimer() ->        
+                    removeDummyItem(2-currentFoodItems)
+        doAfter(ANIMATION_PERIOD) ->                                
+            pauseTriggers = false
+
+    function getCurrentFoodItems() returns int
+        int currentFoodItems = 0
+        let inventory = hero.getInventory()
+        for each in inventory
+            if bearFoodList.has(each.getTypeId())
+                currentFoodItems+=1
+        if currentFoodItems >2
+            currentFoodItems = 2
+        destroy inventory               
+        return currentFoodItems
+
+    function getCurrentDummyItems() returns int
+        int currentDummyItems = 0
+        let inventory = hero.getInventory()
+        for each in inventory
+            if each.getTypeId() == ITEM_DIRE_BEAR_FOOD_SLOT
+                currentDummyItems+=1 
+        destroy inventory       
+        return currentDummyItems       
+
+
+    function removeDummyItem(int index)
+        let dummy = dummyItemsList.get(index)
+        hero.removeItem(dummy)
+        nullTimer() -> 
+            dummy.setVisible(false)
+        //print("removed dummy item")
+
+    function addDummyItem(int index)
+        let dummy = dummyItemsList.get(index)
+        if hero.hasItem(dummy)
+            //print("hero already has dummy")
+            return                  
+        let inventory = hero.getInventory()
+        while hero.isInventoryFull()
+            if inventory.getLast().getTypeId() == ITEM_DIRE_BEAR_FOOD_SLOT
+                inventory.remove(inventory.getLast())
+            else
+                //print("removed item")
+                hero.removeItem(inventory.getLast())
+        hero.addItemHandle(dummyItemsList.get(index))
+        destroy inventory
+        //print("added dummy item "+index.toString())
+    
+    function onTargetOrder(item itm) 
+        if not bearFoodList.has(itm.getTypeId())
+            return
+        if hero.hasItem(itm) or itm == null
+            //print("handled by stack system")
+            return
+        var index = 0
+        if hero.hasItem(dummy1)
+            //print("found dumym1")
+            index = 0
+        else if hero.hasItem(dummy2)
+           // print("found dummy2")
+            index = 1
+        else
+            //print("full slot") 
+            return   
+        pauseTriggers= true    
+        removeDummyItem(index)
+        nullTimer() -> 
+            hero.addItemHandle(itm)
+            nullTimer() -> 
+                pauseTriggers= false
+                //print("added item to dummy "+index.toString())
+            
+
+
+
+
+
+function onSub(unit troll)
+    if not bearFoodSlotInstances.has(troll)
+        doAfter(ANIMATION_PERIOD)->
+            if not bearFoodSlotInstances.has(troll)
+                bearFoodSlotInstances.put(troll,new DireBearFoodSlot(troll))
+
+
+function onPickup(unit troll, item itm)
+    let instance = bearFoodSlotInstances.get(troll)
+    if instance == null
+        return
+    if instance.pauseTriggers == true
+        return
+    nullTimer() -> 
+        instance.updateDummyItems()
+
+function onDummyDrop(unit troll, item itm)
+    nullTimer() -> 
+        itm.setVisible(false)
+    if not troll.isAlive()
+        return
+    let instance = bearFoodSlotInstances.get(troll)
+    if instance == null
+        return
+    if instance.pauseTriggers == true
+        return    
+    nullTimer() -> 
+        //print(instance.pauseTriggers)
+        //print("added dummy on drop")
+        troll.addItemHandle(itm)
+
+function onRevive(unit troll)
+    let instance = bearFoodSlotInstances.get(troll)
+    if instance == null
+        //print("null instance")
+        return
+    if instance.pauseTriggers == true
+        //print("triggers paused")
+        return    
+    doAfter(ANIMATION_PERIOD) ->  
+        for each in instance.dummyItemsList
+            //print("added dummy on revive")
+            troll.addItemHandle(each)
+
+function onQuickMakePriorEffect(unit caster)
+    let instance = bearFoodSlotInstances.get(caster)
+    if instance == null
+        return
+    instance.pauseTriggers = true
+
+function onQuickMakeAfterEffect(unit caster)
+    let instance = bearFoodSlotInstances.get(caster)
+    if instance == null
+        return
+    instance.pauseTriggers = false
+    doAfter(ANIMATION_PERIOD) ->
+        instance.updateDummyItems() 
+        
+
+function onTargetOrder()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    let instance = bearFoodSlotInstances.get(u)
+    if instance == null
+        return
+    if instance.pauseTriggers == true
+        return
+    if order != Orders.smart or not u.isInventoryFull() or not bearFoodSlotInstances.has(u)
+        return
+    let target = GetOrderTargetItem()
+
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and bearFoodSlotInstances.has(u)
+        and u.isInventoryFull()
+        and u.hasItemById(ITEM_DIRE_BEAR_FOOD_SLOT))
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            nullTimer() ->
+                instance.onTargetOrder(target)
+
+
+init
+    EventListener.onCast(ABILITY_DIRE_BEAR) (unit caster) ->
+        onSub(caster)
+
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if bearFoodList.has(GetManipulatedItem().getTypeId()) and GetManipulatingUnit().getTypeId() == UNIT_DIRE_BEAR
+            onPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if bearFoodList.has(GetManipulatedItem().getTypeId()) and GetManipulatingUnit().getTypeId() == UNIT_DIRE_BEAR
+            onPickup(GetManipulatingUnit(), GetManipulatedItem())  
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatedItem().getTypeId() == ITEM_DIRE_BEAR_FOOD_SLOT and GetManipulatingUnit().getTypeId() == UNIT_DIRE_BEAR
+            onDummyDrop(GetManipulatingUnit(), GetManipulatedItem())           
+
+    registerPlayerUnitEvent(EVENT_PLAYER_HERO_REVIVE_FINISH)->
+        if GetTriggerUnit().getTypeId()==UNIT_DIRE_BEAR 
+            onRevive(GetTriggerUnit())  
+
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())  
+
+    registerQuickMakePriorEffect() (unit target, int unitID) ->
+        onQuickMakePriorEffect(target)
+
+    registerQuickMakeAfterEffect() (unit target, int unitID) ->
+        onQuickMakeAfterEffect(target)

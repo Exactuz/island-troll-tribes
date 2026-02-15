@@ -1,21 +1,11 @@
 package MammothDefinition
 
 
-// Standard library imports:
-import Assets
-import UnitObjEditing
 import LinkedList
-
-// Local imports:
 import LocalObjectIDs
-import LocalAssets
-import ObjEditingUtils
-import BossAbilities
-import AbilityObjEditing
-import MakruraCuirass
-import MakruraAbilitites
 import MidBossDefinition
 import LocalObjectIDs2
+import UnitObjEditing
 
 public constant MAMMOTH_MOVEMENT_SPEED = 400
 

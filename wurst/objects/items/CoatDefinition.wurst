@@ -192,7 +192,7 @@ public constant TT_SCALE_COAT = "" +
                 TargetsAllowed.vulnerable
             ))
 
-public constant ITEM_ELK_SKIN_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ELK_SKIN_COAT_DUMMY_UNIT")
+public constant ITEM_ELK_SKIN_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ELK_SKIN_COAT_DUMMY_UNIT")
 public constant ITEM_ELK_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ELK_SKIN_COAT)
         ..setInterfaceIcon(LocalIcons.bTNElkHideCoat)
         ..setModelUsed(LocalItems.skinCoat)
@@ -208,7 +208,7 @@ public constant ITEM_ELK_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefini
         ..constructItemShopDummyUnit(ITEM_ELK_SKIN_COAT_DUMMY_UNIT)
         )
 
-public constant ITEM_WOLF_SKIN_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_SKIN_COAT_DUMMY_UNIT")
+public constant ITEM_WOLF_SKIN_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WOLF_SKIN_COAT_DUMMY_UNIT")
 public constant ITEM_WOLF_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_SKIN_COAT)
         ..setInterfaceIcon(LocalIcons.bTNWolfHideCoat)
         ..setModelUsed(LocalItems.skinCoat)
@@ -224,7 +224,7 @@ public constant ITEM_WOLF_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefin
         ..constructItemShopDummyUnit(ITEM_WOLF_SKIN_COAT_DUMMY_UNIT)
         )
 
-public constant ITEM_WOLF_VORACITY_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_VORACITY_COAT_DUMMY_UNIT")
+public constant ITEM_WOLF_VORACITY_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WOLF_VORACITY_COAT_DUMMY_UNIT")
 public constant ITEM_WOLF_VORACITY_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_VORACITY_COAT)
         ..setInterfaceIcon(LocalIcons.bTNChestOfWolfVoracity)
         ..setModelUsed(LocalItems.coatOfWolfVoracity)
@@ -242,7 +242,7 @@ public constant ITEM_WOLF_VORACITY_COAT_DEFINITION = compiletime(new CustomItemD
         )
 
 
-public constant ITEM_BEAR_SKIN_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_SKIN_COAT_DUMMY_UNIT")
+public constant ITEM_BEAR_SKIN_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BEAR_SKIN_COAT_DUMMY_UNIT")
 public constant ITEM_BEAR_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_SKIN_COAT)
         ..setInterfaceIcon(LocalIcons.bTNBearHideCoat)
         ..setModelUsed(LocalItems.skinCoat)
@@ -258,7 +258,7 @@ public constant ITEM_BEAR_SKIN_COAT_DEFINITION = compiletime(new CustomItemDefin
         ..constructItemShopDummyUnit(ITEM_BEAR_SKIN_COAT_DUMMY_UNIT)
         )
 
-public constant ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT")
+public constant ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT")
 public constant ITEM_BEAR_PRESENCE_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_PRESENCE_COAT)
         ..setInterfaceIcon(LocalIcons.bTNCoatOfBearPresence)
         ..setModelUsed(LocalItems.coatOfBearPresence)
@@ -274,7 +274,7 @@ public constant ITEM_BEAR_PRESENCE_COAT_DEFINITION = compiletime(new CustomItemD
         ..constructItemShopDummyUnit(ITEM_BEAR_PRESENCE_COAT_DUMMY_UNIT)
         )
 
-public constant ITEM_BONE_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_COAT_DUMMY_UNIT")
+public constant ITEM_BONE_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BONE_COAT_DUMMY_UNIT")
 public constant ITEM_BONE_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BONE_COAT)
         ..setInterfaceIcon(LocalIcons.bTNBoneCoat)
         ..setModelUsed(LocalItems.boneCoat)
@@ -290,7 +290,7 @@ public constant ITEM_BONE_COAT_DEFINITION = compiletime(new CustomItemDefinition
         ..constructItemShopDummyUnit(ITEM_BONE_COAT_DUMMY_UNIT)
         )
 
-public constant ITEM_IRON_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_COAT_DUMMY_UNIT")
+public constant ITEM_IRON_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_IRON_COAT_DUMMY_UNIT")
 public constant ITEM_IRON_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_COAT)
         ..setInterfaceIcon(Icons.bTNImprovedMoonArmor)
         ..setModelUsed(LocalItems.armor)
@@ -306,7 +306,7 @@ public constant ITEM_IRON_COAT_DEFINITION = compiletime(new CustomItemDefinition
         ..constructItemShopDummyUnit(ITEM_IRON_COAT_DUMMY_UNIT)
         )
 
-public constant ITEM_STEEL_COAT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_COAT_DUMMY_UNIT")
+public constant ITEM_STEEL_COAT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STEEL_COAT_DUMMY_UNIT")
 public constant ITEM_STEEL_COAT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_COAT)
         ..setInterfaceIcon(Icons.bTNAdvancedMoonArmor)
         ..setModelUsed(LocalItems.armor)
@@ -323,7 +323,7 @@ public constant ITEM_STEEL_COAT_DEFINITION = compiletime(new CustomItemDefinitio
         ..constructItemShopDummyUnit(ITEM_STEEL_COAT_DUMMY_UNIT)
         )
 
-public constant ITEM_MAKRURA_CUIRASS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAKRURA_CUIRASS_DUMMY_UNIT")
+public constant ITEM_MAKRURA_CUIRASS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAKRURA_CUIRASS_DUMMY_UNIT")
 public constant ITEM_MAKRURA_CUIRASS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAKRURA_CUIRASS)
         ..setInterfaceIcon(Icons.bTNNagaArmorUp3)
         ..setModelUsed(LocalItems.makruraCuirass)
@@ -340,7 +340,7 @@ public constant ITEM_MAKRURA_CUIRASS_DEFINITION = compiletime(new CustomItemDefi
         ..constructItemShopDummyUnit(ITEM_MAKRURA_CUIRASS_DUMMY_UNIT)
         )
 
-public constant ITEM_BATTLE_ARMOR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_ARMOR_DUMMY_UNIT")
+public constant ITEM_BATTLE_ARMOR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BATTLE_ARMOR_DUMMY_UNIT")
 public constant ITEM_BATTLE_ARMOR_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_ARMOR)
         ..setInterfaceIcon(Icons.bTNNagaArmorUp2)
         ..setModelUsed(LocalItems.armor)
@@ -357,7 +357,7 @@ public constant ITEM_BATTLE_ARMOR_DEFINITION = compiletime(new CustomItemDefinit
         ..constructItemShopDummyUnit(ITEM_BATTLE_ARMOR_DUMMY_UNIT)
         )
 
-public constant ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT")
+public constant ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT")
 public constant ITEM_ROBE_OF_THE_MAGI_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ROBE_OF_THE_MAGI)
         ..setInterfaceIcon(Icons.bTNRobeOfTheMagi)
         ..setModelUsed(LocalItems.armor)
@@ -374,7 +374,7 @@ public constant ITEM_ROBE_OF_THE_MAGI_DEFINITION = compiletime(new CustomItemDef
         ..constructItemShopDummyUnit(ITEM_ROBE_OF_THE_MAGI_DUMMY_UNIT)
         )
 
-public constant ITEM_HARDEN_SCALES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HARDEN_SCALES_DUMMY_UNIT")
+public constant ITEM_HARDEN_SCALES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_HARDEN_SCALES_DUMMY_UNIT")
 public constant ITEM_HARDEN_SCALES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HARDEN_SCALES)
         ..setInterfaceIcon(Icons.bTNNagaArmorUp3)
         ..setModelUsed(LocalItems.hydraCoat)

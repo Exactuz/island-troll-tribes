@@ -8,10 +8,6 @@ import BasicMaterials
 import SpearsDefinition
 import Net
 import HealingSalve
-import ClosureKeyPresses
-import PlayerExtensions
-import ClosureEvents
-import GameTimer
 import LivingClay
 
 let UNIT_REQUIREMENT = UNIT_WORKSHOP

@@ -59,7 +59,7 @@ public constant TT_TWIN_ISLAND_POTION = "" +
         ..setName("Twin Island Potion Cast")
 
 
-public constant ITEM_POTION_TWIN_ISLANDS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POTION_TWIN_ISLANDS_DUMMY_UNIT")
+public constant ITEM_POTION_TWIN_ISLANDS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_POTION_TWIN_ISLANDS_DUMMY_UNIT")
 public constant ITEM_POTION_TWIN_ISLANDS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_POTION_TWIN_ISLANDS)
         ..setInterfaceIcon(Icons.bTNPotionGreenSmall)
         ..setModelUsed(LocalItems.potionGreenSmall)

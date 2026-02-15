@@ -6,7 +6,6 @@ import AbilityObjEditing
 import ObjectIds
 
 // Local lib Imports:
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -56,7 +55,7 @@ public constant TT_DRUNK_POTION = "" +
     ..setChanceToMiss(1, MISS_CHANCE)
     ..setEditorSuffix("(Wurst)")
 
-public constant ITEM_DRUNKS_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_DRUNKS_POTION_DUMMY_UNIT")
+public constant ITEM_DRUNKS_POTION_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_DRUNKS_POTION_DUMMY_UNIT")
 public constant ITEM_DRUNKS_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_DRUNKS_POTION)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionLesserInvulnerability)

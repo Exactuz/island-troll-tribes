@@ -1,7 +1,6 @@
 package DropItems
 
 // Standard library imports:
-import Assets
 import ChannelAbilityPreset
 import RegisterEvents
 

@@ -1,34 +1,18 @@
 package Rescue
 
 
-import Icons
 import ClosureEvents
-import Orders
-import ToolTipsUtils
 import LocalObjectIDs
-import ChannelAbilityPreset
-import Lodash
-import InstantDummyCaster
-import ClosureForGroups
-import ErrorHandling
 import HashMap
-import ClosureTimers
-import Classes
-import LinkedList
-import ClosuresForItems
-import GameStates
-import PlayerExtensions
-import Radars
-import PingHerbs
-import UnitIds
-import initlater ScoutHawk
+import ScoutHawk
 import StateMachine
-import initlater Idle
+import Idle
 import initlater Swoop
-import SoundUtils
 import JumpSystem
 import TerrainUtils
 import Abilities
+import UnitExtensions
+import LocalObjectIDs2
 
 let FLIGHT_SPEED_PER_TICK = 25.
 let FLIGHT_HEIGHT = 500.
@@ -87,9 +71,11 @@ public class Rescue extends HawkState
             zOffsetHawk+=40.
         if (currentTicks/totalTicks)>0.7
             zOffsetHawk = max(zOffsetHawk-30, 100.)        
-        newPos3.z=zOffsetHawk  
-        hawk.setPosFly(newPos3)
-        hawk.setFacing(currentPos.angleTo(targetPointPos))
+        newPos3.z=zOffsetHawk
+        hawk.setXYZ(newPos3)  
+        //hawk.setPosFly(newPos3)
+        hawk.setFacingEx(currentPos.angleTo(targetPointPos))
+        //hawk.setFacing(currentPos.angleTo(targetPointPos))
         currentPos=newPos2
 
     function setTargetPos()
@@ -111,6 +97,9 @@ public class Rescue extends HawkState
         target.addAbility(CROWFORM_ID)       
         hawk = scoutHawkInstance.hawk
         troll = scoutHawkInstance.troll
+        let cd = max(troll.getAbilityCooldownRemaining(ABILITY_HAWK_RESCUE), troll.getAbilityCooldownRemaining(ABILITY_HAWK_RESCUE_ALLY))
+        troll.startAbilityCooldown(ABILITY_HAWK_RESCUE, cd)        
+        troll.startAbilityCooldown(ABILITY_HAWK_RESCUE_ALLY, cd)        
 
     override function exitState()
         if targetPointPos.isTerrainShallowWater()
@@ -125,28 +114,28 @@ public class Rescue extends HawkState
         //print("destroy Rescue")
         //destroy this
 
-function onRescuePointCast(unit caster, vec2 target)
+function onRescueSelfCast(unit caster, vec2 target)
     let instance = scoutHawkInstances.get(caster)
     if instance == null
         return
     if GetSpellTargetUnit()!= null
         return
-    ////print("onRescuePointCast")
-    instance.stateMachine.onRescuePointCast(caster, target, instance)        
+    ////print("onRescueSelfCast")
+    instance.stateMachine.onRescueSelfCast(caster, target, instance)
 
-function onRescueTargetCast(unit caster, unit target)
+function onRescueAllyCast(unit caster, unit target)
     if caster == null or target == null
         return
     let instance = scoutHawkInstances.get(caster)
     if instance == null
         return
-    ////print("onRescueTargetCast")
-    instance.stateMachine.onRescueTargetCast(target, instance)   
+    ////print("onRescueAllyCast")
+    instance.stateMachine.onRescueAllyCast(target, instance)   
 
 init
     EventListener.onPointCast(ABILITY_HAWK_RESCUE) (unit caster, vec2 target) ->
-        onRescuePointCast(caster, target)
+        onRescueSelfCast(caster, target)
 
-    EventListener.onTargetCast(ABILITY_HAWK_RESCUE) (unit caster, unit target) ->
-        onRescueTargetCast(caster, target)        
+    EventListener.onTargetCast(ABILITY_HAWK_RESCUE_ALLY) (unit caster, unit target) ->
+        onRescueAllyCast(caster, target)        
 

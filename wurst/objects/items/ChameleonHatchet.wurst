@@ -2,46 +2,17 @@ package ChameleonHatchet
 
 // Standard library imports:
 import HashMap
-import AbilityObjEditing
 import ClosureEvents
-import DamageEvent
-import InstantDummyCaster
-import StandardTextTags
 
 // Local imports:
 import ColorUtils
-import ChatCommands
-import ChatUtils
 import LocalObjectIDs
-import UnitExtensions
-import ToolTipsUtils
-import ObjectIds
-import Sleep
 import ChannelAbilityPreset
 import ClosureTimers
-import Orders
-import HealingSystem
-import BuffObjEditing
-import BuffIds
-import Abilities
-import StupefyField
-import DamageListeners
 import LocalAssets
-import SimError
-import FoodSlots
-import ItemPoolExtensions
 import LinkedList
-import OnUnitEnterLeave
-import GameStates
-import Tribe
-import PlayerExtensions
-import GameConfig
-import Transformation
-import UnitIds
 import Items
 import LocalItemObjEditing
-import HashList
-import IdListConstant
 import AxesDefinition
 import CustomItemDefinition
 import ObjectIDManager
@@ -86,7 +57,7 @@ let ABILITIES_INT  = asList(ABILITY_CHAMELEON_AXE_DUMMY, ABIL_DMG_IRON, ABILITY_
 @compiletime function createHatchets()
     createItemBerserkCast(ABILITY_CHAMELEON_AXE_DUMMY)
 
-public constant ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT")
+public constant ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT")
 public constant ITEM_CHAMELEON_HATCHET_STR_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_STR)
         ..setStockReplenishInterval(120)
         ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetStr)
@@ -101,7 +72,7 @@ public constant ITEM_CHAMELEON_HATCHET_STR_DEFINITION = compiletime(new CustomIt
         ..constructItemShopDummyUnit(ITEM_CHAMELEON_HATCHET_STR_DUMMY_UNIT)
         )       
 
-public constant ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT")
+public constant ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT")
 public constant ITEM_CHAMELEON_HATCHET_AGI_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_AGI)
         ..setStockReplenishInterval(120)
         ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetAgi)
@@ -116,7 +87,7 @@ public constant ITEM_CHAMELEON_HATCHET_AGI_DEFINITION = compiletime(new CustomIt
         ..constructItemShopDummyUnit(ITEM_CHAMELEON_HATCHET_AGI_DUMMY_UNIT)
         )       
         
-public constant ITEM_CHAMELEON_HATCHET_INT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CHAMELEON_HATCHET_INT_DUMMY_UNIT")
+public constant ITEM_CHAMELEON_HATCHET_INT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CHAMELEON_HATCHET_INT_DUMMY_UNIT")
 public constant ITEM_CHAMELEON_HATCHET_INT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CHAMELEON_HATCHET_INT)
         ..setStockReplenishInterval(120)
         ..setInterfaceIcon(LocalIcons.bTNChameleonHatchetInt)

@@ -17,7 +17,7 @@ let MAX_TURNSPEED = 3.
 let HEIGHT_CHANGE_RATE = 10000.
 public let CROWFORM_ID = 'Amrf'
 
-let TARGET_SEARCH_MIN_RANGE = 200.
+let TARGET_SEARCH_MIN_RANGE = 128.
 let TARGET_SEARCH_INCREMENT = 25
 
 init
@@ -49,9 +49,9 @@ public function onStartCast(real maxRange)
 
 public function getJumpPos(vec2 casterPos, vec2 targetPos, real maxRange) returns vec2
     var jumpPos = targetPos
-    var jumpPosMin = targetPos
-    var jumpPosMax = targetPos
     let ang = casterPos.angleTo(jumpPos)
+    var jumpPosMin = casterPos.polarOffset(ang, TARGET_SEARCH_MIN_RANGE)
+    var jumpPosMax = casterPos.polarOffset(ang, maxRange)
 
     //Limit range if ability used beyond jump range
     if (casterPos.distanceTo(jumpPos) >= maxRange)

@@ -14,9 +14,7 @@ import Mixing
 import Tanning
 import SimError
 import TrollUnitTextConstant
-import Classes
 import Transformation
-import PlayerExtensions
 import UnitExtensions
 import LocalObjectIDs
 

@@ -2,7 +2,6 @@ package BearsTenacityBoots
 
 // Standard library imports:
 import AbilityObjEditing
-import DamageEvent
 import HashMap
 import ClosureEvents
 import ClosureTimers
@@ -11,7 +10,6 @@ import ObjectIds
 
 
 // Local imports:
-import LocalAssets
 import LocalObjectIDs
 import Panic
 import StringBuilder
@@ -21,7 +19,6 @@ import InstantDummyCaster
 import Orders
 import BuffIds
 import BuffObjEditing
-import Sounds
 import Icons
 import EquipmentSlots
 import HashList

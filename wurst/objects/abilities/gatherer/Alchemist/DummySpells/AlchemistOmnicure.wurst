@@ -10,7 +10,6 @@ import LinkedList
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
-import UnitExtensions
 import Lodash
 import Omnicure
 import InstantDummyCaster
@@ -55,7 +54,7 @@ constant HOTKEY = hotKeys.get(hotkeyIndex)
         //..setBaseOrderID(1, "acidbomb")
 
 
-@comipletime function createExtraDummyPotionBuff()
+@compiletime function createExtraDummyPotionBuff()
     new BuffDefinition(BUFF_ALCHEMIST_OMNICURE_POTION, BuffIds.slow)
         ..setIcon(ICON)
         ..setName(NAME)

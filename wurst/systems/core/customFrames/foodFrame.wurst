@@ -1,21 +1,11 @@
 package foodFrame
 
-import ClosureTimers
-import TableLayout
-import Icons
-import GameTimer
-import Textures
-import ClosureEvents
-import SoundUtils
-import AxesDefinition
+
 import FramehandleNames
 import LinkedList
-import UnitExtensions
 import PlayerExtensions
-import ClosureKeyPresses
 import HashMap
 import Tribe
-import HashList
 
 HashMap<framehandle, framehandle> foodFrameInstances = new HashMap<framehandle, framehandle>()
 

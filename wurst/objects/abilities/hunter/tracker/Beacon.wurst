@@ -6,7 +6,6 @@ import UnitExtensions
 import SimError
 import PlayerExtensions
 import PingMinimap
-import Assets
 import Lodash
 import ChannelAbilityPreset
 import LocalObjectIDs

@@ -2,9 +2,6 @@ package DreamStealer
 
 import ClosureEvents
 import LocalObjectIDs
-import Icons
-import Lodash
-import ToolTipsUtils
 import ChannelAbilityPreset
 import Abilities
 import SimError
@@ -48,6 +45,9 @@ class Dream
     construct(unit _target, DreamEater _instance)
         target = _target
         instance = _instance
+        updateDuration()
+
+    function updateDuration()
         cb = doPeriodicallyTimed(0.125, DREAM_DURATION) (CallbackCounted cb) ->
             if cb.isLast()
                 destroy this

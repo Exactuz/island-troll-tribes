@@ -2,26 +2,17 @@ package StealMeat
 
 // Standard-library imports:
 import Assets
-import BuffObjEditing
 import ClosureTimers
 import ClosureEvents
-import ClosureForGroups
 import ChannelAbilityPreset
-import GroupUtils
 import HashMap
 import HashSet
-import InstantDummyCaster
-import OnUnitEnterLeave
-import OrderIds
 
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
 import UnitExtensions
-import DamageListeners
 import HealingSystem
 import ThiefsPocket
 import ColorUtils

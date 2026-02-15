@@ -1,12 +1,9 @@
 package ReplenishEnergy
 
 // Standard library imports:
-import Assets
 import BuffObjEditing
 import ChannelAbilityPreset
 
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import ColorUtils

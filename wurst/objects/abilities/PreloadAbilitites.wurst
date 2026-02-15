@@ -1,39 +1,20 @@
 package PreloadAbilitites
 
 // Standard-library imports:
-import Assets
-import BuffObjEditing
 import ClosureTimers
-import ClosureEvents
-import ClosureForGroups
-import ChannelAbilityPreset
-import GroupUtils
 import HashMap
-import HashSet
 import InstantDummyCaster
-import OnUnitEnterLeave
 import OrderIds
 
-// Third-party imports:
-import Lodash
 
 // Local imports:
-import GameStates
 import LocalObjectIDs
-import ToolTipsUtils
-import UnitExtensions
-import DamageListeners
-import HealingSystem
-import ThiefsPocket
-import ColorUtils
-import LinkedList
-import LocalAssets
-import SimError
-import DummyCaster
 import DummyRecycler
-import Preloader
 
-IterableMap<int, int>abilitiesToPreload = null
+IterableMap<int, int>abilitiesToPreload = new IterableMap<int,int>()
+        ..put(ABILITY_LIGHTNING_SHIELD, OrderIds.lightningshield)
+        ..put(ABILITY_ANTI_MAGIC, OrderIds.antimagicshell)
+        ..put(ABILITY_BOOSTER_FORTITUDE, OrderIds.antimagicshell)
 
 
 function initiateAbilities()
@@ -53,8 +34,4 @@ function initiateAbilities()
 
 init
     doAfter(1.) -> 
-        abilitiesToPreload = new IterableMap<int,int>()
-        ..put(ABILITY_LIGHTNING_SHIELD, OrderIds.lightningshield)
-        ..put(ABILITY_ANTI_MAGIC, OrderIds.antimagicshell)
-        ..put(ABILITY_BOOSTER_FORTITUDE, OrderIds.antimagicshell)
         initiateAbilities()  

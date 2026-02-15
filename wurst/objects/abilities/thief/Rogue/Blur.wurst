@@ -204,7 +204,12 @@ class State
 
         // Destroy the state after its effects conclude.
         doAfter(STATE_DURATION) ->
-            destroy this
+            onFinish()
+
+
+    function onFinish()
+        destroy this
+
 
     ondestroy
         // Release the groups.

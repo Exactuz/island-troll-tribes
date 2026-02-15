@@ -9,7 +9,6 @@ import LinkedList
 import LocalObjectIDs
 import ToolTipsUtils
 import HealingSystem
-import UnitExtensions
 import Lodash
 import HealingPotion
 import SimError

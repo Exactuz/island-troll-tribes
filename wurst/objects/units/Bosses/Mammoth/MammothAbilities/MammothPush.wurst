@@ -1,37 +1,15 @@
 package MammothPush
 
-// Standard lib Imports:
-import AbilityObjEditing
-import BuffObjEditing
-import ObjectIdGenerator
-import ObjectIds
-import Assets
 
-// Local Imports:
 import LocalObjectIDs
-import LocalAssets
-import ColorUtils
-import ToolTipsUtils
-import DamageEvent
-import DamageListeners
-import LinkedList
 import ClosureTimers
-import Orders
 import ClosureEvents
-import OnUnitEnterLeave
-import MakruraCuirass
-import HashList
-import InstantDummyCaster
-import BossAbilities
-import JumpSystem
-import UnitExtensions
-import ClosureForGroups
-import LocalObjectIDs2
 import Knockback3
 import TerrainUtils
 import Objective
+import DamageEvent
 
-let PUSH_CHANCE = 20
+let PUSH_CHANCE = 15
 real TARGET_SEARCH_INCREMENT = 25.
 
 function onDamage()

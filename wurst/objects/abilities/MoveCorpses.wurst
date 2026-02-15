@@ -11,21 +11,17 @@ import LastOrder
 import LinkedList
 import HashMap
 import HashList
-import ObjectIds
 import ObjectIdGenerator
 import Orders
 
 // Local imports:
-import LocalObjectIDs
 import ColorUtils
 import DummyCorpse
 import LocalAssets
 import PlayerExtensions
 import SimError
 import Transformation
-import HealingItems
-import HealingSystem
-import UnitExtensions
+import TrollGroup
 
 // The time for which new abilities are disabled to prevent accidental rollback.
 // TODO: Use a per-player setting for this.
@@ -121,7 +117,7 @@ public let switches = new HashMap<int, int>()
 // TODO: Base tooltip directly on gameplay constant for decay time.
 @compiletime function createGrabCorpse()
     for index = 0 to MAX_COUNT
-        new AbilityDefinitionRaiseDead(GRAB_IDS.get(index))
+        new AbilityDefinitionCannibalizecreep(GRAB_IDS.get(index))//AbilityDefinitionRaiseDead(GRAB_IDS.get(index))
             ..setIconNormal(GRAB_ICONS.get(index))
             // The two abilities share the same slot.
             ..setButtonPositionNormalX(POSITION_X)
@@ -134,9 +130,9 @@ public let switches = new HashMap<int, int>()
             ..setArtEffect("")
             // The ability only ever summons a single dummy unit.
             ..setLevels(1)
-            ..presetUnitTypeOne(lvl -> commaList(LocalUnitIds.dummyMeatGather))
-            ..presetUnitsSummonedTypeOne(lvl -> 1)
-            ..presetUnitsSummonedTypeTwo(lvl -> 0)
+            //..presetUnitTypeOne(lvl -> commaList(LocalUnitIds.dummyMeatGather))
+            //..presetUnitsSummonedTypeOne(lvl -> 1)
+            //..presetUnitsSummonedTypeTwo(lvl -> 0)
             ..presetManaCost(lvl -> 0)
             ..presetCooldown(lvl -> 0)
             ..presetButtonPosNormal(POSITION_X, POSITION_Y)
@@ -144,6 +140,9 @@ public let switches = new HashMap<int, int>()
             ..presetAreaofEffect(lvl -> 800)
             // The ability is cast at melee range.
             ..presetCastRange(lvl -> 128)
+            ..presetDurationNormal(lvl->0.01)
+            ..presetDurationHero(lvl->0.01)
+            ..presetHitPointsperSecond(lvl->0.01)
             ..presetTooltipNormal(lvl -> "|c00ffcc00C|r - Grab Corpse")
             ..presetTooltipNormalExtended(lvl -> "Grabs a nearby corpse and stores it for later use. Unattended corpses will rot after two minutes.|n" + "Current Capacity: {0} / {1}".color(GOLD_COLOR).format(index.toString(), MAX_COUNT.toString()))
             ..presetTooltipTurnOff(lvl -> "Right-click or CTRL + Z to begin dropping corpses.".color(ENERGY_COLOR))
@@ -253,6 +252,13 @@ function onGrab(unit caster, unit target)
 
     // Increment the count.
     updateCount(caster, 1)
+
+function onGrab2(unit caster, int abilId)
+    if not GRAB_IDS.has(abilId)
+        return
+
+    updateCount(caster, 1)
+
 
 public function updateCount(unit target, int differential)
     // Exit if no work is required.
@@ -404,10 +410,21 @@ function fixCorpseSystem(unit target)
     doAfter(0.4) -> 
         corpse.remove()
                    
+function cannibalizeFullHpFix()
+    for troll in getTrolls()
+        if troll.getHP() == troll.getMaxHP()
+            troll.setHP(troll.getMaxHP()-0.1)
+
 
 init
+    doPeriodically(0.1) (CallbackPeriodic cb) ->
+        cannibalizeFullHpFix()
+
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SUMMON) ->
         onGrab(EventData.getSummoningUnit(), EventData.getSummonedUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH) -> 
+        onGrab2(EventData.getSpellAbilityUnit(), EventData.getSpellAbilityId())
 
     for index = 0 to MAX_COUNT
         registerSpellEffectEvent(getDropID.run(index)) ->
@@ -415,7 +432,6 @@ init
 
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_ISSUED_ORDER) ->
         onOrder(EventData.getOrderedUnit(), EventData.getIssuedOrderId())
-
     
     // TODO: Support dropping meat if only the origin supports grabbing corpses.
     registerAfterEffect() (unit target, int unitID) ->

@@ -6,7 +6,7 @@ import TrollUnitTextConstant
 import UnitObjEditing
 import Assets
 import LocalAssets
-import ObjEditingUtils
+import LocalObjectIDs2
 
 
 
@@ -37,7 +37,7 @@ function createHunter(int unitId) returns HeroDefinition
         ..setNameEditorSuffix("(Custom Skin 1)")
     /*
     createHunter(UNIT_HUNTER_ELK_TROPHY_HIDE)
-        ..setModelFile(LocalUnits.ForestTrollWithElkHide)
+        ..setModelFile(LocalUnits.forestTrollWithElkHide)
         ..setNameEditorSuffix("(Custom Skin 1)")        
     */
 
@@ -46,7 +46,7 @@ function createWarrior(int unitId) returns HeroDefinition
         ..setNameEnhance("Gurubashi Warrior")
         ..setAttackDamage(11)
         ..setAttackSpeed(1.95)
-        ..setModelFile(LocalUnits.GurubashiWarrior)
+        ..setModelFile(LocalUnits.gurubashiWarrior)
         ..setIcons(Icons.bTNHeadHunterBerserker)
         ..setUnitSoundSet(Soundsets.headHunter)
         ..setSpeedBase(300)
@@ -357,9 +357,9 @@ function createSage(int unitId) returns HeroDefinition
     createSage(UNIT_SAGE)
 
 
-function createBeastMaster(int unitId) returns HeroDefinition
+function createPrimalist(int unitId) returns HeroDefinition
     return createBasicTroll(unitId)
-        ..setNameEnhance("Beastmaster")
+        ..setNameEnhance("Primalist")
         ..setAttackDamage(10)
         ..setAttackSpeed(1.77)
         ..setModelFile(Units.shaman1)
@@ -371,15 +371,15 @@ function createBeastMaster(int unitId) returns HeroDefinition
         ..setScalingValue(1)
         ..setSightRadiusDay(1400)
         ..setSightRadiusNight(675)
-        ..setTooltipExtended(TOOLTIP_BEASTMASTER)
-        ..setProperNames(NAME_BEASTMASTER)
+        ..setTooltipExtended(TOOLTIP_PRIMALIST)
+        ..setProperNames(NAME_PRIMALIST)
         ..setProperNamesUsed(5)
         ..setHotkey("Z")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_BEASTMASTER, HERO_SPELLS_BEASTMASTER)
+        ..setAbilitiesEnhance(NORMAL_SPELLS_PRIMALIST, HERO_SPELLS_PRIMALIST_HUMANOID)
 
-@compiletime function createBeastMaster()
-    createBeastMaster(UNIT_BEASTMASTER)
-    createBeastMaster(UNIT_BEASTMASTER_1)
+@compiletime function createPrimalist()
+    createPrimalist(UNIT_PRIMALIST)
+    createPrimalist(UNIT_PRIMALIST_1)
         ..setModelFile(LocalUnits.shama1)
         ..setNameEditorSuffix("(Custom Skin 1)")
 
@@ -402,7 +402,7 @@ function createWolfForm(int unitId) returns HeroDefinition
         ..setProperNames(NAME_SHAPESHIFTER[0])
         ..setProperNamesUsed(1)
         ..setHotkey("Q")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_SHAPESHIFTER_WOLF, HERO_SPELLS_SHAPESHIFTER_WOLF)
+        ..setAbilitiesEnhance(NORMAL_SPELLS_PRIMALIST, HERO_SPELLS_PRIMALIST_WOLF)
 
 @compiletime function createWolfForm()
     createWolfForm(UNIT_SHAPESHIFTER_WOLF)
@@ -448,7 +448,7 @@ function createBearForm(int unitId) returns HeroDefinition
         ..setProperNames(NAME_SHAPESHIFTER[1])
         ..setProperNamesUsed(1)
         ..setHotkey("W")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_SHAPESHIFTER_BEAR, HERO_SPELLS_SHAPESHIFTER_BEAR)
+        ..setAbilitiesEnhance(NORMAL_SPELLS_PRIMALIST_BEAR, HERO_SPELLS_PRIMALIST_BEAR)
 
 @compiletime function createBearForm()
     createBearForm(UNIT_SHAPESHIFTER_BEAR)
@@ -495,7 +495,7 @@ function createPantherForm(int unitId) returns HeroDefinition
         ..setProperNames(NAME_SHAPESHIFTER[2])
         ..setProperNamesUsed(1)
         ..setHotkey("E")
-        ..setAbilitiesEnhance(NORMAL_SPELLS_SHAPESHIFTER_PANTHER, HERO_SPELLS_SHAPESHIFTER_PANTHER)
+        ..setAbilitiesEnhance(NORMAL_SPELLS_PRIMALIST, HERO_SPELLS_PRIMALIST_PANTHER)
 
 @compiletime function createPantherForm()
     createPantherForm(UNIT_SHAPESHIFTER_PANTHER)
@@ -528,7 +528,7 @@ function createTigerForm(int unitId) returns HeroDefinition
 function createDruid(int unitId) returns HeroDefinition
     return createSubTroll(unitId)
     ..setNameEnhance("Druid")
-    ..setAttackDamage(10)
+    ..setAttackDamage(9)
     ..setAttackSpeed(1.85)
     ..setModelFile(LocalUnits.druid)
     ..setIcons(LocalIcons.bTNDruid)
@@ -548,6 +548,29 @@ function createDruid(int unitId) returns HeroDefinition
 @compiletime function createDruid()
     createDruid(UNIT_DRUID)
 
+
+function createTreeForm(int unitId) returns HeroDefinition
+    return createSuperSubTroll(unitId)
+        ..setNameEnhance("Tree Form")
+        ..setAttackDamage(8)
+        ..setAttackSpeed(1.85)
+        ..setModelFile(Buildings.ancientofLore)
+        ..setIcons(Icons.bTNAncientOfLore)
+        ..setUnitSoundSet(Soundsets.druidOfTheClaw)
+        ..setSpeedBase(330)
+        ..setButtonPositionX(3)
+        ..setButtonPositionY(0)
+        ..setScalingValue(0.8)
+        ..setSightRadiusDay(1700)
+        ..setSightRadiusNight(1000)
+        ..setTooltipExtended(TOOLTIP_JUNGLE_TYRANT)
+        ..setProperNames(NAME_TREEFORM)
+        ..setProperNamesUsed(1)
+        ..setHotkey("E")
+        ..setAbilitiesEnhance(NORMAL_SPELLS_DRUID, HERO_SPELLS_TREEFORM)
+
+@compiletime function createTreeForm()
+    createTreeForm(UNIT_TREEFORM)
 
 function createUltimateForm(int unitId) returns HeroDefinition
     return createSuperSubTroll(unitId)
@@ -888,7 +911,7 @@ function createAlchemist(int unitId) returns HeroDefinition
         ..setNameEnhance("Alchemist")
         ..setAttackDamage(8)
         ..setAttackSpeed(1.80)
-        ..setModelFile(LocalUnits.TrollHexerMasked)
+        ..setModelFile(LocalUnits.trollHexerMasked)
         ..setIcons(LocalIcons.bTNAlchemist)
         ..setUnitSoundSet(Soundsets.batTroll)
         ..setSpeedBase(310)

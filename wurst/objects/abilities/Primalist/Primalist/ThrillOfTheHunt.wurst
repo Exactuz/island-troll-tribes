@@ -1,0 +1,29 @@
+package ThrillOfTheHunt
+
+import LocalObjectIDs2
+import LocalAssets
+import AbilityObjEditing
+
+constant MS_BONUS = 100
+constant TT_ABILITY_NORM = "Thrill of the Hunt"
+constant TT_ABILITY_EXT = "Panic mana cost is removed while in panther form."+
+                          "Level 4: ".color(COLOR_GOLD_STR)+
+                          "+{0} movement speed while in panther form. ".format(MS_BONUS.toString().color(COLOR_GOLD_STR))
+
+@compiletime function createRavenousBeastDummy()
+    new AbilityDefinitionMoveSpeedBonus(ABILITY_PANTHER_THRILL)
+        ..setLevels(1)
+        ..presetMovementSpeedBonus(lvl->MS_BONUS)    
+        ..setIconNormal(LocalIcons.bTNPantherPassive)
+        ..setTooltipNormal(1, TT_ABILITY_NORM)
+        ..setTooltipLearn(TT_ABILITY_NORM)
+        ..setTooltipLearnExtended(TT_ABILITY_EXT)
+        ..setTooltipNormalExtended(1, TT_ABILITY_EXT)
+
+    new AbilityDefinitionEvasion(ABILITY_PANTHER_THRILL_DUMMY)
+        ..setLevels(1)  
+        ..setIconNormal(LocalIcons.bTNPantherPassive)
+        ..setTooltipNormal(1, TT_ABILITY_NORM)
+        ..setTooltipLearn(TT_ABILITY_NORM)
+        ..setTooltipLearnExtended(TT_ABILITY_EXT)
+        ..setTooltipNormalExtended(1, TT_ABILITY_EXT)

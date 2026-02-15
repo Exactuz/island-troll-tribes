@@ -2,25 +2,15 @@ package EnvenomedHarpoon
 
 // Standard library imports:
 import Assets
-import UnitObjEditing
-import LinkedList
 
 // Local imports:
 import LocalObjectIDs
-import LocalAssets
-import ObjEditingUtils
-import BossAbilities
-import AbilityObjEditing
-import BuffObjEditing
-import ObjectIds
 import ClosureEvents
 import ClosureTimers
 import ColorUtils
-import SpearsDefinition
 import ChannelAbilityPreset
 import MurlocPoison
 import Orders
-import DamageEvent
 import DamageListeners
 
 let DAMAGE = 40.

@@ -8,7 +8,6 @@ import LinkedList
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
-import UnitExtensions
 import Lodash
 import ManaPotion
 import SimError

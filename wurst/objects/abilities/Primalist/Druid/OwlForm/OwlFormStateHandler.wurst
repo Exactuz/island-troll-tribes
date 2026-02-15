@@ -1,0 +1,100 @@
+package OwlFormStateHandler
+
+import OwlFormIdle
+import OwlFormState
+import OwlForm
+import ClosureEvents
+import LocalObjectIDs2
+import Orders
+import ClosureTimers
+import OwlFormSpiritState
+import HashMap
+import JumpSystem
+
+
+
+
+public class OwlFormStateHandler
+    unit caster
+    CallbackPeriodic update
+    OwlFormState currentState
+    OwlFormState nextState
+    bool isUpdatePaused = false
+    static HashMap<unit, thistype> instances = new HashMap<unit, thistype>()
+    construct(unit caster, destructable targetTree)
+        this.caster = caster
+        instances.put(caster, this)
+        currentState = new OwlFormSpiritState(caster, targetTree)
+        enterState(currentState)
+        removeCollision()
+        update = doPeriodically(UPDATE_PERIOD) (CallbackPeriodic cb) ->
+            update()
+    
+    static function onSentinelCast()
+        if EventData.getSpellAbilityId() != ABILITY_DRUID_OWLFORM
+            return
+        let caster = EventData.getSpellAbilityUnit()
+        let target = EventData.getSpellTargetDestructable()
+        if target == null
+            return
+        caster.issueImmediateOrderById(OrderIds.stop)
+        caster.startAbilityCooldown(ABILITY_DRUID_OWLFORM)
+        new OwlFormStateHandler(caster, target)
+
+    static function onMoveOrder()
+        let orderId = EventData.getIssuedOrderId()
+        if not (orderId == OrderIds.move or (orderId == OrderIds.smart and EventData.getOrderTargetUnit() == null))
+            return
+        let caster = EventData.getOrderedUnit()
+        let targetPos = EventData.getOrderPos()
+        let instance = instances.get(caster)
+        if instance == null
+            return
+        if not instance.currentState instanceof OwlFormIdle
+            return
+        let exitPos = getJumpPos(caster.getPos(), targetPos, OWLFORM_MAXIMUM_EXIT_DISTANCE)
+        let newState = new OwlFormSpiritState(caster, exitPos)
+        instance.enterState(newState)
+
+    function removeCollision()
+        caster.setInvulnerable(true)
+        caster.setPathing(false)
+        caster.setVertexColor(0,0,0,0)
+        caster.setPropWindow(angle(0))
+
+    function restoreCollision()
+        caster.setInvulnerable(false)
+        caster.setPathing(true)
+        caster.setVertexColor(255,255,255,255)
+        caster.setPropWindow(caster.getDefaultPropWindow())
+
+    function finish()
+        restoreCollision()
+        destroy this
+
+    function update()
+        if currentState != nextState or isUpdatePaused or currentState == null
+            return
+        currentState.update()
+
+    function enterState(OwlFormState nextState)
+        currentState.exit()
+        nextState.enter()
+        this.nextState = nextState
+        currentState = nextState    
+            
+    ondestroy
+        instances.remove(caster)
+        restoreCollision()
+        destroy update
+
+
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) ->
+        OwlFormStateHandler.onSentinelCast()
+
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_POINT_ORDER) -> 
+        OwlFormStateHandler.onMoveOrder()
+        

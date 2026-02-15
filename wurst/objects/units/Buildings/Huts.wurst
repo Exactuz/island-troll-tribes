@@ -10,7 +10,6 @@ import ObjectIdGenerator
 // Local imports:
 import LocalAssets
 import LocalObjectIDs
-import MeatCollector
 
 public constant ABILITY_MUD_HUT_AURA = compiletime(ABIL_ID_GEN.next())
 

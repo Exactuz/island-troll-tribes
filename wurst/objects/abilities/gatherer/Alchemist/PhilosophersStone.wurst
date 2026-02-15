@@ -65,7 +65,8 @@ let TT_PHILOSOPHERS_STONE = "Philosopher's stone converts Alchemist's mana into 
 
 
 
-class PhilosophersStoneInstance
+public class PhilosophersStone
+    static HashMap<unit, thistype> instances = new HashMap<unit, thistype>()
     private unit hero
     private real baseClock
     private item itemHandle
@@ -78,6 +79,7 @@ class PhilosophersStoneInstance
         this.hero = hero
         this.baseClock = 0
         this.itemHandle = createItem(ITEM_PHILOSOPHERS_STONE, hero.getPos())
+        instances.put(hero, this)
         doAfter(ANIMATION_PERIOD) ->       
             hero.addItemHandle(itemHandle)
             //this.itemHandle = hero.addItemById(ITEM_PHILOSOPHERS_STONE)  
@@ -86,6 +88,9 @@ class PhilosophersStoneInstance
             hero.getOwner().setAbilityIcon(ABILITY_ALCHEMIST_SPELLBOOK, Icons.bTNHeartOfSearinox)            
             this.cb = doPeriodically(chargesRegenPeriod) cb ->
                 updateCharges()          
+
+    static function getInstance(unit whichUnit) returns thistype
+        return instances.get(whichUnit)
 
     function updateCharges()
         if hero.getMana()<=20. and hero.hasItem(itemHandle)
@@ -96,8 +101,11 @@ class PhilosophersStoneInstance
             return
         hero.setMana(hero.getMana()-2*chargesRegenPeriod*chargesRegenPerSecond)
         charges=charges+chargesRegenPeriod*chargesRegenPerSecond
-        itemHandle.setCharges(charges.floor())
+        itemHandle.setCharges(charges.round())
 
+    function setMaximumCharges()
+        let chargesCap = 10+MAX_ENERGY_INT_MULTIPLIER*hero.getInt(true)
+        itemHandle.setCharges(chargesCap.round())
 
     function spendCharges(int chargesSpent) returns bool
         if charges>=chargesSpent
@@ -112,15 +120,16 @@ class PhilosophersStoneInstance
     
 
     ondestroy
-        hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, false, false) 
+        hero.disableAbility(ABILITY_CREATE_PHILOSOPHERS_STONE, false, false)
+        instances.remove(hero) 
         destroy cb
 
-public IterableMap<unit, PhilosophersStoneInstance> instances = new IterableMap<unit, PhilosophersStoneInstance>()
+public IterableMap<unit, PhilosophersStone> instances = new IterableMap<unit, PhilosophersStone>()
 
 function onAbilityCreatePhilosophersStone(unit u)
     if u.isTroll()
         if not instances.has(u) and not u.hasItemById(ITEM_PHILOSOPHERS_STONE)
-            instances.put(u, new PhilosophersStoneInstance(u))
+            instances.put(u, new PhilosophersStone(u))
             flashEffect(Abilities.tomeOfRetrainingCaster, u.getPos())
 
 function onDropPhilosophersStone(unit u, item itm)

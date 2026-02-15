@@ -4,7 +4,6 @@ package OmnicurePotion
 import ObjectIds
 
 // Local imports:
-import Items
 import LocalAssets
 import LocalObjectIDs
 import LocalItemObjEditing
@@ -17,7 +16,7 @@ let ICON  = Icons.bTNMinorRejuvPotion
 let MODEL = LocalItems.potionPurpleSmall
 let TT    = "This potion is said to be able to cure all allies."
 
-public constant ITEM_OMNICURE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_OMNICURE_DUMMY_UNIT")
+public constant ITEM_OMNICURE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_OMNICURE_DUMMY_UNIT")
 public constant ITEM_OMNICURE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_OMNICURE)
         ..setNameEnhance("Omnicure Potion")
         ..setInterfaceIcon(ICON)

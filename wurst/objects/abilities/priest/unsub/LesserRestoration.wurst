@@ -6,8 +6,6 @@ import ClosureEvents
 import ChannelAbilityPreset
 import ClosureTimers
 
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import HealingSystem
@@ -16,14 +14,9 @@ import ToolTipsUtils
 import ColorUtils
 import BuffObjEditing
 import LocalAssets
-import DamageEvent
 import DamageListeners
-import Orders
-import OrderStringFactory
 import LinkedList
-import OnUnitEnterLeave
 import HashMap
-import SimError
 
 //let ABILITY_ID = 'XPRH'
 let CAST_RANGE = 6000.

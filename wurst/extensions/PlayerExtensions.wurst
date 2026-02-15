@@ -7,7 +7,7 @@ import HashSet
 // Local imports:
 import ForceExtensions
 import initlater Tribe
-import UnitExtensions
+import  UnitExtensions
 import TrollUnitTextConstant
 import initlater EquipmentSlots
 // TODO: Although this import is not used, it is needed to avoid breaking the

@@ -174,7 +174,7 @@ let TT_HORN_HEAT = "" +
         )
 
 
-public constant ITEM_LEFT_MAMMOTH_HORN_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_LEFT_MAMMOTH_HORN_DUMMY_UNIT")
+public constant ITEM_LEFT_MAMMOTH_HORN_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_LEFT_MAMMOTH_HORN_DUMMY_UNIT")
 public constant ITEM_LEFT_MAMMOTH_HORN_DEFINITION = compiletime(new CustomItemDefinition(ITEM_LEFT_MAMMOTH_HORN)
         ..setAbilities(ABIL_HORN_SPELLBOOK.toRawCode())
         ..setDescription("A Great item.")

@@ -6,11 +6,6 @@ import ClosureTimers
 // Local imports:
 import ColorUtils
 import GameStates
-import Objective
-import GameConfig
-import GurubashiArena
-import TimerUtils
-import SoundUtils
 import GameState
 
 // A timer for the core gameplay.

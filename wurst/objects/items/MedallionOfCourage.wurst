@@ -55,7 +55,7 @@ function onUse(unit caster, item target)
     let unitId = caster.getTypeId()
 
     // Block certain classes from using the medallion.
-    if unitId == UNIT_HUNTER or unitId == UNIT_BEASTMASTER
+    if unitId == UNIT_HUNTER or unitId == UNIT_PRIMALIST
         simError(owner, "Your class cannot use this item.")
         return
 

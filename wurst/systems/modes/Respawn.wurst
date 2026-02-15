@@ -5,7 +5,6 @@ import Assets
 import ClosureForGroups
 import ClosureTimers
 import LinkedList
-import RegisterEvents
 
 // Local imports:
 import ChatCommands
@@ -13,18 +12,15 @@ import ColorUtils
 import Game
 import GameStates
 import GameConfig
-import GroupExtensions
 import LocalObjectIDs
-import Mammoth
 import PlayerExtensions
 import TimerUtils
-import UnitExtensions
-import EarlyDuel
 import ClosureEvents
 import IdListConstant
 import HashList
 import HashMap
 import Tribe
+import UnitExtensions
 
 public constant GRACE_PERIOD_REVIVE_DELAY = 10.0
 public constant REGULAR_DELAY = 30.

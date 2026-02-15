@@ -4,19 +4,12 @@ package WolfsVoracityCoat
 import AbilityObjEditing
 import HashMap
 import ClosureEvents
-import ObjectIdGenerator
 
 // Local imports:
 import LocalObjectIDs
 import HealingItems
-import Panic
-import StringBuilder
-import ToolTipsUtils
-import LocalAssets
 import HealingSystem
 import UnitExtensions
-import Sounds
-import Orders
 import ClosureTimers
 import Transformation
 import MoveCorpses

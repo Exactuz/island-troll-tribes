@@ -1,0 +1,53 @@
+package Rejuvenation
+
+// Standard Library Imports:
+import AbilityObjEditing
+import ClosureEvents
+import ClosureTimers
+
+// Local Imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import HealingSystem
+import ColorUtils
+
+
+let COOLDOWN = 30.
+let MANA_COST = 30
+let HEAL_AMOUNT_BASE = 25.
+let HEAL_AMOUNT_INT_MULTIPLIER = 2.
+let HEAL_PERIOD = 1.
+let DURATION = 10.
+let HOTKEY = "E"
+let NAME = "Rejuvenation"
+let TOOLTIP_EXT   = "Heal a target friendly unit for {0} + {1}x {2} over {3} seconds.".format(
+                    HEAL_AMOUNT_BASE.toToolTipGreen(), HEAL_AMOUNT_INT_MULTIPLIER.toToolTipGreen(), 
+                    "Intelligence".color(COLOR_TURQUOISE), DURATION.toString().color(COLOR_LIGHT_BLUE))+
+                    "\nHas {0} seconds cooldown.".format(COOLDOWN.toToolTipLightBlue())
+
+@compiletime function createRejuvenationAbility() returns AbilityDefinitionRejuvination
+    return new AbilityDefinitionRejuvination(ABILITY_REJUVENATION)
+        ..setName(NAME)
+        ..presetManaPointsGained(_ -> 0)
+        // This cannot be 0 or the spell won't cast.
+        ..presetHitPointsGained(_ -> 0.01)
+        ..presetAllowWhenFull(_ -> 1)
+        ..presetDurationHero(_ -> DURATION)
+        ..presetDurationNormal(_ -> DURATION)
+        ..presetCooldown(_ -> COOLDOWN)
+        ..presetManaCost(_ -> MANA_COST)
+        ..presetCastRange(_ -> 250.)
+        ..presetButtonPosNormal(2, 0)
+        ..presetHotkey(HOTKEY)
+        ..presetTooltipNormal(_ -> makeToolTipNorm(HOTKEY, NAME))
+        ..presetTooltipNormalExtended(_ -> TOOLTIP_EXT)
+        ..setRequirements("")
+
+function onHeal(unit caster, unit target)
+    let healAmount = (HEAL_AMOUNT_BASE + caster.getInt(true) * HEAL_AMOUNT_INT_MULTIPLIER) / DURATION
+    doPeriodicallyTimed(HEAL_PERIOD, DURATION) (CallbackCounted cb) ->
+        new HealingInstance(target, caster, healAmount * HEAL_PERIOD, HealingType.ABILITY)
+
+init
+    EventListener.onTargetCast(ABILITY_REJUVENATION) (unit caster, unit target) ->
+        onHeal(caster, target)

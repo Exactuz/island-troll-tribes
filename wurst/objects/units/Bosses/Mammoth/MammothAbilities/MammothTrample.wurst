@@ -1,32 +1,13 @@
 package MammothTrample
 
 
-// Standard lib Imports:
-import AbilityObjEditing
-import BuffObjEditing
-import ObjectIdGenerator
-import ObjectIds
 import Assets
-
-// Local Imports:
 import LocalObjectIDs
-import LocalAssets
-import ColorUtils
-import ToolTipsUtils
-import DamageEvent
-import DamageListeners
-import LinkedList
 import ClosureTimers
 import Orders
-import ClosureEvents
 import OnUnitEnterLeave
-import MakruraCuirass
 import HashSet
-import InstantDummyCaster
-import BossAbilities
-import JumpSystem
 import UnitExtensions
-import ClosureForGroups
 import LocalObjectIDs2
 import Knockback3
 import ChannelAbilityPreset
@@ -88,7 +69,6 @@ class MammothTrample
         update = doPeriodicallyCounted(ANIMATION_PERIOD, callAmount) (CallbackCounted cb) ->
             update()
             if cb.isLast()
-                print("trample finished")
                 mammoth.addAbility(AbilityIds.ghostVisible)
                 mammoth.disableAttack(false, false)
                 mammoth.setMoveSpeed(MAMMOTH_MOVEMENT_SPEED.toReal())

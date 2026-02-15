@@ -7,7 +7,6 @@ import TradeShipStop
 import TradeShipCoordinator
 import TradeShipRoutePair
 import GameConfig
-import LinkedList
 
 let TRADE_SHIP_PAUSE_TIME = 11.0
 TradeShipCoordinator coordinator

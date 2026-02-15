@@ -10,7 +10,6 @@ import ObjectIds
 
 // Local imports:
 import Ensnare
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -67,7 +66,7 @@ let TT_NET = "A twine net that can be used to net enemies."
         ..setCastRange(1, NET_CAST_RANGE)
         ..setEditorSuffix("(Wurst)")
 
-public constant ITEM_HUNTING_NET_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HUNTING_NET_DUMMY_UNIT")
+public constant ITEM_HUNTING_NET_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_HUNTING_NET_DUMMY_UNIT")
 public constant ITEM_HUNTING_NET_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HUNTING_NET)
         ..setAbilities(toRawCode(HUNTING_NET_ENSNARE))
         ..setCooldownGroup(toRawCode(ABILITY_ENSNARE))
@@ -85,7 +84,7 @@ public constant ITEM_HUNTING_NET_DEFINITION = compiletime(new CustomItemDefiniti
         ..constructItemShopDummyUnit(ITEM_HUNTING_NET_DUMMY_UNIT)
         )
 
-public constant ITEM_NETS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_NETS_DUMMY_UNIT")
+public constant ITEM_NETS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_NETS_DUMMY_UNIT")
 public constant ITEM_NETS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_NETS)
         ..setAbilities(toRawCode(ABILITY_ENSNARE))
         ..setCooldownGroup(toRawCode(ABILITY_ENSNARE))

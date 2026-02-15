@@ -9,7 +9,6 @@ import CustomItemDefinition
 import ObjectIDManager
 
 // Local lib Imports:
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -42,7 +41,7 @@ public constant TT_ANTI_MAGIC_POTION = "" +
     ..setCooldown(1, COOLDOWN)
     ..setEditorSuffix("(Wurst)")
 
-public constant ITEM_ANTI_MAGIC_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ANTI_MAGIC_POTION_DUMMY_UNIT")
+public constant ITEM_ANTI_MAGIC_POTION_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ANTI_MAGIC_POTION_DUMMY_UNIT")
 public constant ITEM_ANTI_MAGIC_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ANTI_MAGIC_POTION)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionAntiMagic)

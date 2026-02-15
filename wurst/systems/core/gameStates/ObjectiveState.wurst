@@ -19,13 +19,17 @@ function onEnter()
                 objective = Objective.TugOfWar
                 Log.debug("Selecting Tug of War objective")
             case Objective.EarlyDuel castTo int
+                // a hack to effectively reduce the chance of Early Duel
+                if GetRandomInt(0, 1) == 1
+                    onEnter()
+                    return
                 objective = Objective.EarlyDuel
                 Log.debug("Selecting Early Duel objective")
             default
                 Log.debug("Failed to random an objective, selecting default option.")
                 objective = Objective.KingOfTheHill
         gameConfig.setObjective(objective)
-    gameConfig.setObjective(Objective.TugOfWar)
+    //gameConfig.setObjective(Objective.TugOfWar)
     GameStates.objective.enter()
 
 init

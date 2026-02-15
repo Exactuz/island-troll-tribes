@@ -8,7 +8,6 @@ import HashMap
 import InstantDummyCaster
 import LinkedList
 import TerrainUtils
-import Texttag
 
 // Local imports:
 import ClosuresForItems
@@ -147,7 +146,7 @@ class TeleGatherInstance
         this.caster.removeItem(itm)
         itm.setPos(sortingPos.pos)
         flashEffect(Abilities.blinkTarget, itm.getPos())
-        var text=itemLimit-itemCounter
+        let text=itemLimit-itemCounter
         standardTextTag(caster.getPos(), text.toString().substring(0,2))
             ..setVisibility(GetLocalPlayer() == caster.getOwner())
             ..setColor(36, 131, 219, 255)

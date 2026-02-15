@@ -1,15 +1,8 @@
 package EagleSight
 
-import Icons
 import ClosureEvents
-import Orders
-import ToolTipsUtils
 import LocalObjectIDs
-import ChannelAbilityPreset
-import Lodash
-import InstantDummyCaster
 import ClosureForGroups
-import ErrorHandling
 import HashMap
 import ClosureTimers
 import Classes
@@ -17,8 +10,6 @@ import LinkedList
 import ClosuresForItems
 import GameStates
 import PlayerExtensions
-import Radars
-import PingHerbs
 import HashList
 
 public let SCAN_PERIOD = 0.25

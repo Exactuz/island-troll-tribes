@@ -1,0 +1,94 @@
+package TreeForm
+import AbilityObjEditing
+import LocalObjectIDs2
+import LocalAssets
+import ColorUtils
+import BuffObjEditing
+import BuffIds
+import ObjectIds
+import ClosureEvents
+import Transformation
+import ClosureTimers
+import NaturesBlessing
+import BonusHandler
+import HashMap
+
+
+public let NATURES_BLESSING_SELF_EFFECT_MULTIPLIER = 0.5
+public let TT_TREEFORM_NORM = "Treeform"
+public let TT_BUFF_EXT = "{0} applies to you at {1}% of the power.".format(
+                            "Nature's Blessing".color(COLOR_LIGHT_BLUE), (NATURES_BLESSING_SELF_EFFECT_MULTIPLIER * 100).toString().color(COLOR_LIGHT_BLUE)
+                            )
+public let TT_TREEFORM_EXT = "By taking on the form of a tree, the druid strengthens his body with the power of nature."+
+                            "\n"+TT_BUFF_EXT
+                    
+@compiletime function createTreeForm()
+    new BuffDefinition(BUFF_TREEFORM, BuffIds.commandAura)
+        ..setArtSpecial("")
+        ..setArtTarget("")
+        ..setName(TT_TREEFORM_NORM)
+        ..setTooltipNormal(TT_TREEFORM_NORM)
+        ..setTooltipNormalExtended(TT_TREEFORM_EXT)
+        ..setIcon(LocalIcons.pASBTNNaturesBlessing)
+
+    new AbilityDefinitionAuraCommandCreep(ABILITY_TREEFORM)
+        ..setAttackDamageIncrease(1, 0)
+        ..setBuffs(1, toRawCode(BUFF_TREEFORM))
+        ..setAreaofEffect(1, 1)
+        ..setArtEffect("")
+        ..setArtSpecial("")
+        ..setArtCaster("")
+        ..setArtTarget("")
+        ..setLevels(1)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)   
+        ..setTargetsAllowed(1, TargetsAllowed.self)
+        ..setIconNormal(LocalIcons.pASAncientOfLore)
+        ..setTooltipNormal(1, TT_TREEFORM_NORM)
+        ..setTooltipLearn(TT_TREEFORM_NORM)
+        ..setTooltipLearnExtended(TT_TREEFORM_EXT)
+        ..setTooltipNormalExtended(1, TT_TREEFORM_EXT)
+
+class TreeForm
+    static HashMap<unit, thistype> instances = new HashMap<unit, thistype>()
+    unit troll
+    real currentArmourBonus = 0
+    real currentHpBonus = 0
+    construct(unit troll)
+        this.troll = troll
+        instances.put(troll, this)
+    
+    static function updateNaturesBlessingBonus(unit troll)
+        let instance = instances.get(troll)
+        if instance == null
+            return
+        instance.updateNaturesBlessingBonus()
+
+    static function onSub(unit troll)
+        if troll.getTypeId() == UNIT_TREEFORM
+            new TreeForm(troll)
+
+    function updateNaturesBlessingBonus()
+        troll.addBonus(Bonus.ARMOR, -currentArmourBonus)
+        troll.addBonus(Bonus.LIFE, -currentHpBonus)
+        currentArmourBonus = (troll.getInt(true) * NATURES_BLESSING_ARMOUR_INT_MULTIPLIER * NATURES_BLESSING_SELF_EFFECT_MULTIPLIER).ceil().toReal()
+        currentHpBonus = (troll.getInt(true) * NATURES_BLESSING_HP_INT_MULTIPLIER * NATURES_BLESSING_SELF_EFFECT_MULTIPLIER).ceil().toReal()
+        troll.addBonus(Bonus.ARMOR, currentArmourBonus)
+        troll.addBonus(Bonus.LIFE, currentHpBonus)
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) -> 
+        TreeForm.updateNaturesBlessingBonus(GetManipulatingUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) -> 
+        TreeForm.updateNaturesBlessingBonus(GetManipulatingUnit())        
+
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) -> 
+        TreeForm.updateNaturesBlessingBonus(GetTriggerUnit()) 
+
+    EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) -> 
+        TreeForm.updateNaturesBlessingBonus(GetTriggerUnit()) 
+
+    registerAfterEffect() (unit target, int unitID) ->
+        doAfter(ANIMATION_PERIOD)->
+            TreeForm.onSub(target)

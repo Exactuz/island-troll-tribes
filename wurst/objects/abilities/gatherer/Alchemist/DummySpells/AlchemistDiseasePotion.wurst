@@ -9,7 +9,6 @@ import LinkedList
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
-import UnitExtensions
 import Lodash
 import DiseasePotion
 import InstantDummyCaster
@@ -59,7 +58,7 @@ constant TARGET_ALLOWED = commaList(TargetsAllowed.organic,
         ..setEditorSuffix("(Wurst)")
         ..setBaseOrderID(1, "acidbomb")
 
-@comipletime function createExtraDummyPotionBuff()
+@compiletime function createExtraDummyPotionBuff()
     new BuffDefinition(BUFF_ALCHEMIST_DISEASE_POTION, BuffIds.slow)
         ..setIcon(ICON)
         ..setName(NAME)

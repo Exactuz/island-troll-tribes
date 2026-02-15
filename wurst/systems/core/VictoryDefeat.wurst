@@ -1,11 +1,10 @@
 package VictoryDefeat
-import GameConfig
+
 import RegisterEvents
 import UnitExtensions
 import Tribe
 import LinkedList
 import Lodash
-import Respawn
 import GameStates
 import MatchMetadataEncoder
 

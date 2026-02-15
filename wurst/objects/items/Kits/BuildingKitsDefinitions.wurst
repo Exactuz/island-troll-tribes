@@ -7,7 +7,6 @@ import ObjectIdGenerator
 import ObjectIds
 
 // Local Imports:
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -225,7 +224,7 @@ function createKit(int itemId) returns CustomItemDefinition
         ..setHotkey("")
 
 
-public constant ITEM_ARMORY_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ARMORY_KIT_DUMMY_UNIT")
+public constant ITEM_ARMORY_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ARMORY_KIT_DUMMY_UNIT")
 public constant ITEM_ARMORY_KIT_DEFINITION = compiletime(createKit(ITEM_ARMORY_KIT)
     ..setInterfaceIcon(LocalIcons.bTNArmory)
     ..setModelUsed(Doodads.barricade0)
@@ -239,7 +238,7 @@ public constant ITEM_ARMORY_KIT_DEFINITION = compiletime(createKit(ITEM_ARMORY_K
     ..constructItemShopDummyUnit(ITEM_ARMORY_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT")
+public constant ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT")
 public constant ITEM_ENSNARE_TRAP_KIT_DEFINITION = compiletime(createKit(ITEM_ENSNARE_TRAP_KIT)
     ..setInterfaceIcon(Icons.bTNCOP)
     ..setModelUsed(Doodads.junkPile0)
@@ -254,7 +253,7 @@ public constant ITEM_ENSNARE_TRAP_KIT_DEFINITION = compiletime(createKit(ITEM_EN
     ..constructItemShopDummyUnit(ITEM_ENSNARE_TRAP_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_FIRE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_FIRE_KIT_DUMMY_UNIT")
+public constant ITEM_FIRE_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_FIRE_KIT_DUMMY_UNIT")
 public constant ITEM_FIRE_KIT_DEFINITION = compiletime(createKit(ITEM_FIRE_KIT)
     ..setInterfaceIcon(Icons.bTNFire)
     ..setModelUsed(Doodads.firePitTrashed)
@@ -268,7 +267,7 @@ public constant ITEM_FIRE_KIT_DEFINITION = compiletime(createKit(ITEM_FIRE_KIT)
     ..constructItemShopDummyUnit(ITEM_FIRE_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_MAGE_FIRE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGE_FIRE_KIT_DUMMY_UNIT")
+public constant ITEM_MAGE_FIRE_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAGE_FIRE_KIT_DUMMY_UNIT")
 public constant ITEM_MAGE_FIRE_KIT_DEFINITION = compiletime(createKit(ITEM_MAGE_FIRE_KIT)
     ..setInterfaceIcon(Icons.bTNFire)
     ..setModelUsed(Doodads.firePitTrashed)
@@ -283,7 +282,7 @@ public constant ITEM_MAGE_FIRE_KIT_DEFINITION = compiletime(createKit(ITEM_MAGE_
     ..constructItemShopDummyUnit(ITEM_MAGE_FIRE_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_TENT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TENT_KIT_DUMMY_UNIT")
+public constant ITEM_TENT_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_TENT_KIT_DUMMY_UNIT")
 public constant ITEM_TENT_KIT_DEFINITION = compiletime(createKit(ITEM_TENT_KIT)
     ..setInterfaceIcon(LocalIcons.bTNTent)
     ..setModelUsed(Doodads.emptyCrates0)
@@ -297,7 +296,7 @@ public constant ITEM_TENT_KIT_DEFINITION = compiletime(createKit(ITEM_TENT_KIT)
     ..constructItemShopDummyUnit(ITEM_TENT_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_TROLL_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TROLL_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_TROLL_HUT_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_TROLL_HUT_KIT_DUMMY_UNIT")
 public constant ITEM_TROLL_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_TROLL_HUT_KIT)
     ..setInterfaceIcon(Icons.bTNSpiritLodge)
     ..setModelUsed(Doodads.crates1)
@@ -311,7 +310,7 @@ public constant ITEM_TROLL_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_TROLL
     ..constructItemShopDummyUnit(ITEM_TROLL_HUT_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT")
+public constant ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT")
 public constant ITEM_SMOKE_HOUSE_KIT_DEFINITION = compiletime(createKit(ITEM_SMOKE_HOUSE_KIT)
     ..setInterfaceIcon(Icons.bTNRockTower)
     ..setModelUsed(Doodads.barricade0)
@@ -325,7 +324,7 @@ public constant ITEM_SMOKE_HOUSE_KIT_DEFINITION = compiletime(createKit(ITEM_SMO
     ..constructItemShopDummyUnit(ITEM_SMOKE_HOUSE_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_STORAGE_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STORAGE_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_STORAGE_HUT_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STORAGE_HUT_KIT_DUMMY_UNIT")
 public constant ITEM_STORAGE_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_STORAGE_HUT_KIT)
     ..setInterfaceIcon(LocalIcons.bTNForestTrollHut1)
     ..setModelUsed(Doodads.treasurePile0)
@@ -339,7 +338,7 @@ public constant ITEM_STORAGE_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_STO
     ..constructItemShopDummyUnit(ITEM_STORAGE_HUT_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT")
+public constant ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT")
 public constant ITEM_SPIRIT_WARD_KIT_DEFINITION = compiletime(createKit(ITEM_SPIRIT_WARD_KIT)
     ..setInterfaceIcon(Icons.bTNAbsorbMagic)
     ..setModelUsed(Objects.humanCaptureFlag)
@@ -353,7 +352,7 @@ public constant ITEM_SPIRIT_WARD_KIT_DEFINITION = compiletime(createKit(ITEM_SPI
     ..constructItemShopDummyUnit(ITEM_SPIRIT_WARD_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_MUD_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MUD_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_MUD_HUT_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MUD_HUT_KIT_DUMMY_UNIT")
 public constant ITEM_MUD_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_MUD_HUT_KIT)
     ..setInterfaceIcon(Icons.bTNGoldmine)
     ..setModelUsed(Doodads.crates0)
@@ -367,7 +366,7 @@ public constant ITEM_MUD_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_MUD_HUT
     ..constructItemShopDummyUnit(ITEM_MUD_HUT_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_OMNITOWER_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_OMNITOWER_KIT_DUMMY_UNIT")
+public constant ITEM_OMNITOWER_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_OMNITOWER_KIT_DUMMY_UNIT")
 public constant ITEM_OMNITOWER_KIT_DEFINITION = compiletime(createKit(ITEM_OMNITOWER_KIT)
     ..setInterfaceIcon(Icons.bTNOrcTower)
     ..setModelUsed(Doodads.barricade0)
@@ -381,7 +380,7 @@ public constant ITEM_OMNITOWER_KIT_DEFINITION = compiletime(createKit(ITEM_OMNIT
     ..constructItemShopDummyUnit(ITEM_OMNITOWER_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_POT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POT_KIT_DUMMY_UNIT")
+public constant ITEM_POT_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_POT_KIT_DUMMY_UNIT")
 public constant ITEM_POT_KIT_DEFINITION = compiletime(createKit(ITEM_POT_KIT)
     ..setInterfaceIcon(Icons.bTNSacrificialPit)
     ..setModelUsed(Doodads.barricade1)
@@ -395,7 +394,7 @@ public constant ITEM_POT_KIT_DEFINITION = compiletime(createKit(ITEM_POT_KIT)
     ..constructItemShopDummyUnit(ITEM_POT_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_TANNERY_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TANNERY_KIT_DUMMY_UNIT")
+public constant ITEM_TANNERY_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_TANNERY_KIT_DUMMY_UNIT")
 public constant ITEM_TANNERY_KIT_DEFINITION = compiletime(createKit(ITEM_TANNERY_KIT)
     ..setInterfaceIcon(Icons.bTNPigFarm)
     ..setModelUsed(Buildings.barrelsUnit)
@@ -409,7 +408,7 @@ public constant ITEM_TANNERY_KIT_DEFINITION = compiletime(createKit(ITEM_TANNERY
     ..constructItemShopDummyUnit(ITEM_TANNERY_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_WORKSHOP_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WORKSHOP_KIT_DUMMY_UNIT")
+public constant ITEM_WORKSHOP_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WORKSHOP_KIT_DUMMY_UNIT")
 public constant ITEM_WORKSHOP_KIT_DEFINITION = compiletime(createKit(ITEM_WORKSHOP_KIT)
     ..setInterfaceIcon(LocalIcons.bTNOrcLumberMill)
     ..setModelUsed(Doodads.barricade1)
@@ -423,7 +422,7 @@ public constant ITEM_WORKSHOP_KIT_DEFINITION = compiletime(createKit(ITEM_WORKSH
     ..constructItemShopDummyUnit(ITEM_WORKSHOP_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT")
+public constant ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT")
 public constant ITEM_TELEPORT_BEACON_KIT_DEFINITION = compiletime(createKit(ITEM_TELEPORT_BEACON_KIT)
     ..setInterfaceIcon(Icons.bTNEnergyTower)
     ..setModelUsed(Doodads.barricade0)
@@ -437,7 +436,7 @@ public constant ITEM_TELEPORT_BEACON_KIT_DEFINITION = compiletime(createKit(ITEM
     ..constructItemShopDummyUnit(ITEM_TELEPORT_BEACON_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT")
+public constant ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT")
 public constant ITEM_WITCH_DOCTORS_HUT_KIT_DEFINITION = compiletime(createKit(ITEM_WITCH_DOCTORS_HUT_KIT)
     ..setInterfaceIcon(Icons.bTNVoodooLounge)
     ..setModelUsed(Units.tNTBarrel)
@@ -451,7 +450,7 @@ public constant ITEM_WITCH_DOCTORS_HUT_KIT_DEFINITION = compiletime(createKit(IT
     ..constructItemShopDummyUnit(ITEM_WITCH_DOCTORS_HUT_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_HATCHERY_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HATCHERY_KIT_DUMMY_UNIT")
+public constant ITEM_HATCHERY_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_HATCHERY_KIT_DUMMY_UNIT")
 public constant ITEM_HATCHERY_KIT_DEFINITION = compiletime(createKit(ITEM_HATCHERY_KIT)
     ..setInterfaceIcon(Icons.bTNSnowOwl)
     ..setModelUsed(Doodads.barricade1)
@@ -465,7 +464,7 @@ public constant ITEM_HATCHERY_KIT_DEFINITION = compiletime(createKit(ITEM_HATCHE
     ..constructItemShopDummyUnit(ITEM_HATCHERY_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_MAGIC_SEED_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGIC_SEED_DUMMY_UNIT")
+public constant ITEM_MAGIC_SEED_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAGIC_SEED_DUMMY_UNIT")
 public constant ITEM_MAGIC_SEED_DEFINITION = compiletime(createKit(ITEM_MAGIC_SEED)
     ..setInterfaceIcon(Icons.bTNRoot)
     ..setModelUsed(Objects.crystalShard)
@@ -481,7 +480,7 @@ public constant ITEM_MAGIC_SEED_DEFINITION = compiletime(createKit(ITEM_MAGIC_SE
     )
 
 
-public constant ITEM_MAGIC_TREE_SEED_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGIC_TREE_SEED_DUMMY_UNIT")
+public constant ITEM_MAGIC_TREE_SEED_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAGIC_TREE_SEED_DUMMY_UNIT")
 public constant ITEM_MAGIC_TREE_SEED_DEFINITION = compiletime(createKit(ITEM_MAGIC_TREE_SEED)
     ..setInterfaceIcon(Icons.bTNAcorn)
     ..setModelUsed(Objects.crystalShard)
@@ -495,7 +494,7 @@ public constant ITEM_MAGIC_TREE_SEED_DEFINITION = compiletime(createKit(ITEM_MAG
     ..constructItemShopDummyUnit(ITEM_MAGIC_TREE_SEED_DUMMY_UNIT)
     )
 
-public constant ITEM_FORGE_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_FORGE_KIT_DUMMY_UNIT")
+public constant ITEM_FORGE_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_FORGE_KIT_DUMMY_UNIT")
 public constant ITEM_FORGE_KIT_DEFINITION = compiletime(createKit(ITEM_FORGE_KIT)
     ..setInterfaceIcon(LocalIcons.bTNForge)
     ..setModelUsed(Doodads.barricade0)
@@ -509,7 +508,7 @@ public constant ITEM_FORGE_KIT_DEFINITION = compiletime(createKit(ITEM_FORGE_KIT
     ..constructItemShopDummyUnit(ITEM_FORGE_KIT_DUMMY_UNIT)
     )
 
-public constant ITEM_TRANSPORT_SHIP_KIT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TRANSPORT_SHIP_KIT_DUMMY_UNIT")
+public constant ITEM_TRANSPORT_SHIP_KIT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_TRANSPORT_SHIP_KIT_DUMMY_UNIT")
 public constant ITEM_TRANSPORT_SHIP_KIT_DEFINITION = compiletime(createKit(ITEM_TRANSPORT_SHIP_KIT)
     ..setInterfaceIcon(Icons.bTNNightElfTransport)
     ..setModelUsed(Doodads.barricade0)

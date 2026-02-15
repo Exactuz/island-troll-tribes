@@ -2,29 +2,20 @@ package SoulRend
 
 import ClosureEvents
 import LocalObjectIDs
-import Icons
 import Lodash
 import ToolTipsUtils
 import ChannelAbilityPreset
 import Abilities
-import SimError
 import HashMap
-import LinkedList
 import ClosureTimers
-import HealingSystem
 import ColorUtils
 import LocalAssets
-import Sleep
-import InstantDummyCaster
 import BuffObjEditing
-import ReplenishHealth
 import BuffIds
 import AttachmentPoints
 import Orders
-import DamageEvent
 import DamageListeners
 import Dreamwalking
-import Transformation
 
 IterableMap<unit, SoulRend> soulRendInstances = new IterableMap<unit, SoulRend>()
 

@@ -1,23 +1,6 @@
 package ItemRecipeV2
 
-// Standard library imports:
-import LinkedList
-import HashMap
-import ClosureEvents
-import ClosureTimers
-import ErrorHandling
 
-// Extension library imports:
-import Lodash
-
-// Local imports:
-import ClosuresForItems
-import LocalObjectIDs
-import ObjectIDManager
-import IdListConstant
-import ResourceSpawns
-import UnitExtensions
-import ColorUtils
 import HashList
 
 //public HashMap<int, ItemRecipe> itemRecipes  = new HashMap<int, ItemRecipe>()

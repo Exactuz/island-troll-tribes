@@ -244,6 +244,17 @@ function initializeArrays()
     for index = 0 to bj_MAX_PLAYER_SLOTS - 1
         hinted[index] = false
 
+
+
+public function unit.reduceHealingReduction(real delta)
+    this.addHealingReduction(-delta)
+
+
+public function unit.addHealingReduction(real delta)
+    let state = states[this.getIndex()]
+    if state != null
+        state.adjustAmountHealed(delta)    
+
 init
     onUnitHealed() ->
         let healingInstance = getHealingInstance()

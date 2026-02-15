@@ -4,6 +4,10 @@ package LocalAssets
 import ObjectIdGenerator
 
 public class LocalIcons
+    static constant pASAncientOfLore                          ="ReplaceableTextures\\CommandButtons\\PASAncientOfLore.blp"
+    static constant pASBTNEntanglingRoots                          ="ReplaceableTextures\\CommandButtons\\pASEntanglingRoots.blp"
+    static constant pASBTNNaturesBlessing                          ="ReplaceableTextures\\CommandButtons\\PASBTNNaturesBlessing.blp"
+    static constant bTNSingleMindedFury                          ="ReplaceableTextures\\CommandButtons\\BTNJTRDualAxes.blp"
     static constant bTNMammothBoots                          ="ReplaceableTextures\\CommandButtons\\bTNMammothBoots.blp"
     static constant bTNAxeThrowDebuff                          ="ReplaceableTextures\\CommandButtons\\bTNAxeThrowDebuff.blp"
     static constant bTNScrollSlot                           ="ReplaceableTextures\\CommandButtons\\pASBTNScrollSlot.blp"
@@ -87,7 +91,7 @@ public class LocalIcons
     static constant bTNBearTrophyHide ="ReplaceableTextures\\CommandButtons\\BTNBearTrophyHide.blp"
     static constant bTNElkTrophyHide = "ReplaceableTextures\\CommandButtons\\BTNElkTrophyHide.blp"
     static constant bTNAlchemist   = "ReplaceableTextures\\CommandButtons\\BTNAlchemist.blp"
-	static constant bTNPoisonQuill = "ReplaceableTextures\\CommandButtons\\BTNPoisonQuill.blp"
+    static constant bTNPoisonQuill = "ReplaceableTextures\\CommandButtons\\BTNPoisonQuill.blp"
 	static constant dISBTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\DISBTNWeaknessAura.blp"
 	static constant bTNWeaknessAura ="ReplaceableTextures\\CommandButtons\\BTNWeaknessAura.blp"
 	static constant dISBTNBootsOfBearTenacity ="ReplaceableTextures\\CommandButtons\\DISBTNBootsOfBearTenacity.blp"
@@ -207,10 +211,10 @@ public class LocalIcons
 
 public class LocalUnits
     // A nonexistent model used to hide units.
-    static constant GurubashiWarrior                      = "Models\\Units\\GurubashiWarrior.mdx"
+    static constant gurubashiWarrior                      = "Models\\Units\\GurubashiWarrior.mdx"
     static constant hawkTroll                      = "Models\\Units\\HawkFix.mdx"
-    static constant ForestTrollWithElkHide         = "Models\\Units\\ForestTrollWithElkHide.mdx"
-    static constant TrollHexerMasked               = "Models\\Units\\TrollHexerMasked.mdx"
+    static constant forestTrollWithElkHide         = "Models\\Units\\ForestTrollWithElkHide.mdx"
+    static constant trollHexerMasked               = "Models\\Units\\TrollHexerMasked.mdx"
     static constant dummy                          = "Models\\Units\\Dummy.mdl"
     static constant axeTroll                       = "Models\\Units\\Skins\\AxeTroll.mdx"
     static constant blackStagMaleFixed             = "Models\\Units\\BlackStagMaleFixed.mdx"

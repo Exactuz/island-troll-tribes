@@ -1,13 +1,9 @@
 package DreamEater2
 
-import ClosureEvents
 import LocalObjectIDs
-import Icons
 import Lodash
 import ToolTipsUtils
 import ChannelAbilityPreset
-import Abilities
-import SimError
 import ColorUtils
 
 public let DREAM_EATER_MANACOST = 10

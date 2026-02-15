@@ -1,31 +1,13 @@
 package StateMachine
 
-import Icons
-import ClosureEvents
-import Orders
-import ToolTipsUtils
 import LocalObjectIDs
-import ChannelAbilityPreset
-import Lodash
-import InstantDummyCaster
 import ClosureForGroups
-import ErrorHandling
-import HashMap
 import ClosureTimers
-import Classes
-import LinkedList
-import ClosuresForItems
-import GameStates
-import PlayerExtensions
-import Radars
-import PingHerbs
-import UnitIds
 import initlater ScoutHawk
 import initlater Idle
 import initlater Swoop
 import SimError
 import initlater Cyclone
-import Execute
 
 public enum HawkStates
     idle
@@ -137,10 +119,10 @@ public class StateMachine
     function onSwoopTargetCast(unit target, item targetItem, ScoutHawk instance)
         queuedState = new Swoop(HawkStates.swoop, target, targetItem, instance) 
 
-    function onRescuePointCast(unit target, vec2 targetPos, ScoutHawk instance)
+    function onRescueSelfCast(unit target, vec2 targetPos, ScoutHawk instance)
         queuedState = new Swoop(HawkStates.swoop, target, targetPos, instance) 
 
-    function onRescueTargetCast(unit target, ScoutHawk instance)
+    function onRescueAllyCast(unit target, ScoutHawk instance)
         queuedState = new Swoop(HawkStates.swoop, target, null, instance)
 
     function onCycloneCast(unit target, ScoutHawk instance)

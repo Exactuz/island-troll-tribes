@@ -46,6 +46,7 @@ public class Tribe
 
     int tribeId
     rect spawn
+    int levelCap = 4
     unit spiritTotem = null
     GurubashiArenaBorders bordersAccess = null
     let tribePlayers = new OwnedLinkedList<player>()

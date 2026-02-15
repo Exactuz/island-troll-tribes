@@ -9,7 +9,6 @@ import ChannelAbilityPreset
 import InstantDummyCaster
 import DummyCaster
 import OrderIds
-import OnUnitEnterLeave
 
 // Local Import :
 import Items
@@ -284,7 +283,7 @@ public let CYCLONE_TT = "Grants the unit the ability to cast Cyclone which tosse
             TargetsAllowed.ward
             ))
 
-public constant ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT")
+public constant ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT")
 public constant ITEM_SCROLL_ENTANGLING_ROOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_ENTANGLING_ROOTS)
         ..setCooldownGroup(ABILITY_ROOT_CAST.toRawCode())
         ..setLumberCost(15)
@@ -298,7 +297,7 @@ public constant ITEM_SCROLL_ENTANGLING_ROOTS_DEFINITION = compiletime(new Custom
         ..constructItemShopDummyUnit(ITEM_SCROLL_ENTANGLING_ROOTS_DUMMY_UNIT)
         )
         
-public constant ITEM_SCROLL_FIREBALL_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_FIREBALL_DUMMY_UNIT")
+public constant ITEM_SCROLL_FIREBALL_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SCROLL_FIREBALL_DUMMY_UNIT")
 public constant ITEM_SCROLL_FIREBALL_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_FIREBALL)
         ..setCooldownGroup(ABILITY_SPEAR.toRawCode())
         ..setLumberCost(7)
@@ -312,7 +311,7 @@ public constant ITEM_SCROLL_FIREBALL_DEFINITION = compiletime(new CustomItemDefi
         ..constructItemShopDummyUnit(ITEM_SCROLL_FIREBALL_DUMMY_UNIT)
         )
 
-public constant ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT")
+public constant ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT")
 public constant ITEM_SCROLL_LIVING_DEAD_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_LIVING_DEAD)
         ..setCooldownGroup(ABILITY_SKELETAL_MINION.toRawCode())
         ..setLumberCost(7)
@@ -325,7 +324,7 @@ public constant ITEM_SCROLL_LIVING_DEAD_DEFINITION = compiletime(new CustomItemD
         ..constructItemShopDummyUnit(ITEM_SCROLL_LIVING_DEAD_DUMMY_UNIT)
         )
 
-public constant ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT")
+public constant ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT")
 public constant ITEM_SCROLL_STONE_ARMOR_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_STONE_ARMOR)
         ..setCooldownGroup(ABILITY_FROST_ARMOR.toRawCode())
         ..setLumberCost(9)
@@ -339,7 +338,7 @@ public constant ITEM_SCROLL_STONE_ARMOR_DEFINITION = compiletime(new CustomItemD
         ..constructItemShopDummyUnit(ITEM_SCROLL_STONE_ARMOR_DUMMY_UNIT)
         )
 
-public constant ITEM_SCROLL_HASTE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_HASTE_DUMMY_UNIT")
+public constant ITEM_SCROLL_HASTE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SCROLL_HASTE_DUMMY_UNIT")
 public constant ITEM_SCROLL_HASTE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_HASTE)
         ..setCooldownGroup(ABILITY_HASTE_AOE.toRawCode())
         ..setLumberCost(25)
@@ -352,7 +351,7 @@ public constant ITEM_SCROLL_HASTE_DEFINITION = compiletime(new CustomItemDefinit
         ..constructItemShopDummyUnit(ITEM_SCROLL_HASTE_DUMMY_UNIT)
         )
 
-public constant ITEM_SCROLL_TSUNAMI_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_TSUNAMI_DUMMY_UNIT")
+public constant ITEM_SCROLL_TSUNAMI_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SCROLL_TSUNAMI_DUMMY_UNIT")
 public constant ITEM_SCROLL_TSUNAMI_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_TSUNAMI)
         ..setCooldownGroup(ABILITY_TSUNAMI.toRawCode())
         ..setLumberCost(9)
@@ -366,7 +365,7 @@ public constant ITEM_SCROLL_TSUNAMI_DEFINITION = compiletime(new CustomItemDefin
         ..constructItemShopDummyUnit(ITEM_SCROLL_TSUNAMI_DUMMY_UNIT)
         )
 
-public constant ITEM_SCROLL_CYCLONE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SCROLL_CYCLONE_DUMMY_UNIT")
+public constant ITEM_SCROLL_CYCLONE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SCROLL_CYCLONE_DUMMY_UNIT")
 public constant ITEM_SCROLL_CYCLONE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SCROLL_CYCLONE)
         ..setCooldownGroup(ABILITY_CYCLONE.toRawCode())
         ..setLumberCost(9)

@@ -1,30 +1,14 @@
 package MagicTree
 
 // Standard library imports:
-import AbilityObjEditing
-import HashMap
 import ClosureEvents
-import ObjectIdGenerator
 import ClosureTimers
-import ChannelAbilityPreset
-import ObjEditingUtils
-import OnUnitEnterLeave
 
 // Local imports:
 import LocalObjectIDs
-import HealingItems
-import Panic
-import StringBuilder
-import ToolTipsUtils
-import LocalAssets
-import ObjectIds
-import ItemIds
-import HealingSystem
-import Orders
-import UnitExtensions
-import HashList
 import UnitIds
 import DestructableObjEditing
+import UnitObjEditing
 
 /*
 @compiletime function create_w3b_B001()
@@ -53,17 +37,23 @@ import DestructableObjEditing
 class MagicTree
     unit treeBuilder
     destructable tree
+    vec2 pos
     CallbackPeriodic cb
 
     construct(unit treeBuilder)
-        let pos =treeBuilder.getPos()
+        pos = treeBuilder.getPos()
         treeBuilder.remove()
         tree = createDestructable('B001', pos, angle(0), 1.35, 0)
         tree.setOccluderHeight(0.)
         tree.setLife(360.)
-        cb =doPeriodically(60) (CallbackPeriodic cb) ->
-            if not tree.isAliveTrick()
-                destroy this
+        cb = doPeriodically(60) (CallbackPeriodic cb) ->
+            update()
+
+    function update()
+        if not tree.isAliveTrick()
+            destroy cb
+            destroy this
+        else
             CreateItem(ITEM_COCONUT, pos.x+GetRandomReal(-100, 100), pos.y+GetRandomReal(-100, 100))
 
     ondestroy

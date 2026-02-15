@@ -6,7 +6,6 @@ import ChannelAbilityPreset
 import BuffObjEditing
 
 // Local lib Imports:
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -51,7 +50,7 @@ public constant TT_NETHER_POTION = "" +
     ..setMissileArt(Abilities.goldBottleMissile)
     ..setEditorSuffix("(Wurst)")
 
-public constant ITEM_NETHER_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_NETHER_POTION_DUMMY_UNIT")
+public constant ITEM_NETHER_POTION_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_NETHER_POTION_DUMMY_UNIT")
 public constant ITEM_NETHER_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_NETHER_POTION)
         ..setInterfaceIcon(Icons.bTNPotionOfOmniscience)
         ..setModelUsed(LocalItems.potionOmniscience)

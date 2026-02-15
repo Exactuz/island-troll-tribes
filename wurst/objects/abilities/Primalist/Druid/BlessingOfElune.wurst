@@ -1,0 +1,69 @@
+package BlessingOfElune
+
+
+// Standard library imports:
+import ClosureEvents
+import DamageEvent
+
+// Local imports:
+import ColorUtils
+import ToolTipsUtils
+import ChannelAbilityPreset
+import HashList
+import LocalObjectIDs2
+import Starfall
+
+public constant BLESSING_OF_ELUNE_CHANCE = 25
+let REDUCED_MANACOST = (1-STARFALL_MULTICAST_DMG_PENALTY)
+public constant TT_BLESSING_OF_ELUNE_NORM = "Blessing of Elune"
+public constant TT_BLESSING_OF_ELUNE_EXT = "Imbues the Druid with natural energy. Performing an attack or casting a spell has {0}% chance".format(
+                                            BLESSING_OF_ELUNE_CHANCE.toString().color(COLOR_LIGHT_BLUE))+
+                                            " to instantly cast {0} on the same target, paying {1}% of the spell manacost.".format("Starfall".color(COLOR_GOLD_STR), (REDUCED_MANACOST*100).toString().color(COLOR_LIGHT_BLUE))+
+                                            "\n"+"Starfall ".color(COLOR_GOLD_STR)+"cast this way can does {0} less damage.".format(STARFALL_MULTICAST_DMG_PENALTY.toToolTipRed())+
+                                            "\nThis ability is disabled if you have less than {0} mana.".color(COLOR_GOLD_STR).format(STARFALL_MIN_MANA.toString().color(COLOR_LIGHT_BLUE))
+
+@compiletime function createRavenousBeastDummy()
+    new AbilityDefinitionEvasion(ABILITY_BLESSING_OF_ELUNE)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setIconNormal(Icons.pASBTNElunesBlessing)
+        ..setTooltipNormal(1, TT_BLESSING_OF_ELUNE_NORM)
+        ..setTooltipLearn(TT_BLESSING_OF_ELUNE_NORM)
+        ..setTooltipLearnExtended(TT_BLESSING_OF_ELUNE_EXT)
+        ..setTooltipNormalExtended(1, TT_BLESSING_OF_ELUNE_EXT)
+
+class BlessingOfElune
+    static HashList<unit> druids = new HashList<unit>()
+
+    construct()
+
+    static function rollProc() returns bool
+        if GetRandomInt(0, 100) <= BLESSING_OF_ELUNE_CHANCE
+            return true
+        return false
+
+    static function onAttack(unit caster, unit target)
+        //if not druids.has(DamageEvent.getSource())
+        if not DamageEvent.getType() == DamageType.ATTACK
+            return
+        if not caster.hasAbility(ABILITY_BLESSING_OF_ELUNE)
+            return
+        if not target.isAlive()
+            return
+        if target.isAllyOf(caster.getOwner())
+            return
+        if rollProc() and Starfall.assertManaCost(caster)
+            new Starfall(caster, target, 0, true)
+        
+
+init
+    //registerAfterEffect() (unit target, int unitID) ->
+    //    if target.getTypeId() == UNIT_DRUID
+    //        BlessingOfElune.registerDruid(target)
+    //doAfter(1.) ->      
+    EventListener.add(EVENT_PLAYER_UNIT_DAMAGED) -> 
+        BlessingOfElune.onAttack(DamageEvent.getSource(), DamageEvent.getTarget())
+        
+    EventListener.onCast(ABILITY_DRUID_ENTANGLING_ROOTS) (unit caster) ->
+        BlessingOfElune.onAttack(caster, EventData.getSpellTargetUnit())
+        

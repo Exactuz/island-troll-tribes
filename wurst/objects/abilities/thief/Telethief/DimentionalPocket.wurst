@@ -2,34 +2,22 @@ package DimentionalPocket
 
 // Standard-library imports:
 import Assets
-import BuffObjEditing
 import ClosureTimers
 import ClosureEvents
-import ClosureForGroups
 import ChannelAbilityPreset
-import GroupUtils
 import HashMap
 import HashSet
-import InstantDummyCaster
-import OnUnitEnterLeave
-import OrderIds
 
-// Third-party imports:
-import Lodash
 
 // Local imports:
-import LocalObjectIDs
-import ToolTipsUtils
 import UnitExtensions
-import DamageListeners
-import HealingSystem
 import ThiefsPocket
 import ColorUtils
 import LinkedList
 import InventoryEvent
 import Classes
-import StackNSplit
 import Transformation
+import LocalObjectIDs
 
 
 let DIMENTIONAL_POCKET_MANACOST = 40

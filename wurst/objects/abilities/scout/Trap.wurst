@@ -276,7 +276,7 @@ class PlaceBearTrapSpell extends PlaceTrapSpell
 
     new PlaceTrackTrapSpell(ABILITY_TRACK_TRAP, "Q", new Pair(0, 0))
     new PlaceSpikedTrapSpell(ABILITY_SPIKED_TRAP, "Q", new Pair(1, 0))
-    new PlaceBearTrapSpell(ABILITY_BEAR_TRAP, "R", new Pair(2, 0))
+    new PlaceBearTrapSpell(ABILITY_BEAR_TRAP, "Q", new Pair(1, 1))
     new PlaceBearTrapSpell(ABILITY_SPY_BEAR_TRAP, "S", new Pair(1, 1))
     // new TrackTrapSpell    (ABILITY_TRACK_TRAP     , "W", new Pair(0, 0))
     // new SpyTrackTrapSpell (ABILITY_SPY_TRACK_TRAP , "W", new Pair(0, 0))

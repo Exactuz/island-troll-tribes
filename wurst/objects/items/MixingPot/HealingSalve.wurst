@@ -5,7 +5,6 @@ import Assets
 import ChannelAbilityPreset
 
 // Local lib Imports:
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -14,7 +13,6 @@ import ClosureEvents
 import ClosureTimers
 import HealingSystem
 import BuffObjEditing
-import DamageEvent
 import DamageListeners
 import CustomItemDefinition
 import ObjectIDManager
@@ -60,7 +58,7 @@ public constant TT_HEALING_SALVE = "" +
 
 
 
-public constant ITEM_HEALING_SALVE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HEALING_SALVE_DUMMY_UNIT")
+public constant ITEM_HEALING_SALVE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_HEALING_SALVE_DUMMY_UNIT")
 public constant ITEM_HEALING_SALVE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HEALING_SALVE)
         ..setInterfaceIcon(LocalIcons.bTNBronzeBowlFullGreen)
         ..setModelUsed(LocalItems.healingSalve)

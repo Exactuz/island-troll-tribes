@@ -1,7 +1,6 @@
 package DreamEater
 import ClosureEvents
 import LocalObjectIDs
-import Icons
 import Lodash
 import ToolTipsUtils
 import ChannelAbilityPreset

@@ -1,42 +1,13 @@
 package TugOfWar
 
-// Standard library imports:
-import HashMap
-import AbilityObjEditing
-import ClosureEvents
-import DamageEvent
-import InstantDummyCaster
 import StandardTextTags
-
-// Local imports:
-import ColorUtils
-import ChatCommands
-import ChatUtils
-import LocalObjectIDs
-import UnitExtensions
-import ToolTipsUtils
-import ObjectIds
-import Sleep
-import ChannelAbilityPreset
 import ClosureTimers
-import Orders
-import HealingSystem
-import BuffObjEditing
-import BuffIds
-import Abilities
-import StupefyField
 import DamageListeners
-import LocalAssets
-import SimError
-import FoodSlots
-import ItemPoolExtensions
 import LinkedList
-import OnUnitEnterLeave
 import GameStates
 import Tribe
 import PlayerExtensions
 import GameConfig
-import UnitIds
 import GameState
 import Objective
 import LocalObjectIDs2
@@ -44,8 +15,8 @@ import LocalObjectIDs2
 constant SCORE_DISPLAY_RANGE = 400
 constant SCORE_UPDATE_FREAQUENCY = 0.2
 public constant OBJECTIVE_ARMOUR = 6.
-public constant OBJECTIVE_HP_PER_PLAYER = 1000
-public constant OBJECTIVE_HP_BASE = 600
+public constant OBJECTIVE_HP_PER_PLAYER = 700
+public constant OBJECTIVE_HP_BASE = 500
 
 class TugOfWar
     real array[12] tribePoints

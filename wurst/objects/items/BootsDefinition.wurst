@@ -12,7 +12,6 @@ import LocalAssets
 import ToolTipsUtils
 import LocalObjectIDs
 import LocalItemObjEditing
-import RegisterEvents
 import ObjectIdGenerator
 import ObjectIDManager
 import CustomItemDefinition
@@ -144,7 +143,7 @@ public let TT_HYDRA_FINS = TT_UNFORMAT_HYDRA_FINS_STRING.format(
         ..setItemAbility(true)
         ..setEditorSuffix("(Wurst)")
 
-public constant ITEM_ELK_SKIN_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ELK_SKIN_BOOTS_DUMMY_UNIT")
+public constant ITEM_ELK_SKIN_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ELK_SKIN_BOOTS_DUMMY_UNIT")
 public constant ITEM_ELK_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ELK_SKIN_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
@@ -166,7 +165,7 @@ public constant ITEM_ELK_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefin
         )
 
 
-public constant ITEM_WOLF_SKIN_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_SKIN_BOOTS_DUMMY_UNIT")
+public constant ITEM_WOLF_SKIN_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WOLF_SKIN_BOOTS_DUMMY_UNIT")
 public constant ITEM_WOLF_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_SKIN_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
@@ -190,7 +189,7 @@ public constant ITEM_WOLF_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefi
         )
 
 
-public constant ITEM_WOLFS_STAMINA_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLFS_STAMINA_BOOTS_DUMMY_UNIT")
+public constant ITEM_WOLFS_STAMINA_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WOLFS_STAMINA_BOOTS_DUMMY_UNIT")
 public constant ITEM_WOLFS_STAMINA_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLFS_STAMINA_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_100,
@@ -215,7 +214,7 @@ public constant ITEM_WOLFS_STAMINA_BOOTS_DEFINITION = compiletime(new CustomItem
 
 
 
-public constant ITEM_BEAR_SKIN_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_SKIN_BOOTS_DUMMY_UNIT")
+public constant ITEM_BEAR_SKIN_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BEAR_SKIN_BOOTS_DUMMY_UNIT")
 public constant ITEM_BEAR_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_SKIN_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
@@ -240,7 +239,7 @@ public constant ITEM_BEAR_SKIN_BOOTS_DEFINITION = compiletime(new CustomItemDefi
 
 
 
-public constant ITEM_BEARS_TENACITY_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEARS_TENACITY_BOOTS_DUMMY_UNIT")
+public constant ITEM_BEARS_TENACITY_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BEARS_TENACITY_BOOTS_DUMMY_UNIT")
 public constant ITEM_BEARS_TENACITY_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEARS_TENACITY_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_60,
@@ -264,7 +263,7 @@ public constant ITEM_BEARS_TENACITY_BOOTS_DEFINITION = compiletime(new CustomIte
         )
 
 
-public constant ITEM_BONE_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_BOOTS_DUMMY_UNIT")
+public constant ITEM_BONE_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BONE_BOOTS_DUMMY_UNIT")
 public constant ITEM_BONE_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BONE_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_70,
@@ -287,7 +286,7 @@ public constant ITEM_BONE_BOOTS_DEFINITION = compiletime(new CustomItemDefinitio
         )
 
 
-public constant ITEM_IRON_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_BOOTS_DUMMY_UNIT")
+public constant ITEM_IRON_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_IRON_BOOTS_DUMMY_UNIT")
 public constant ITEM_IRON_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_80,
@@ -310,7 +309,7 @@ public constant ITEM_IRON_BOOTS_DEFINITION = compiletime(new CustomItemDefinitio
         )
 
 
-public constant ITEM_STEEL_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_BOOTS_DUMMY_UNIT")
+public constant ITEM_STEEL_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STEEL_BOOTS_DUMMY_UNIT")
 public constant ITEM_STEEL_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_100,
@@ -333,7 +332,7 @@ public constant ITEM_STEEL_BOOTS_DEFINITION = compiletime(new CustomItemDefiniti
         )
 
 
-public constant ITEM_ANABOLIC_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ANABOLIC_BOOTS_DUMMY_UNIT")
+public constant ITEM_ANABOLIC_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ANABOLIC_BOOTS_DUMMY_UNIT")
 public constant ITEM_ANABOLIC_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ANABOLIC_BOOTS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_200,
@@ -357,7 +356,7 @@ public constant ITEM_ANABOLIC_BOOTS_DEFINITION = compiletime(new CustomItemDefin
         )
 
 
-public constant ITEM_HYDRA_FINS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HYDRA_FINS_DUMMY_UNIT")
+public constant ITEM_HYDRA_FINS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_HYDRA_FINS_DUMMY_UNIT")
 public constant ITEM_HYDRA_FINS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HYDRA_FINS)
         ..setAbilities(commaList(
             ABILITY_SPEED_BONUS_100,

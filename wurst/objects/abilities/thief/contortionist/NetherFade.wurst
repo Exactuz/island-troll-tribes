@@ -3,7 +3,6 @@ package NetherFade
 import ChannelAbilityPreset
 import LocalObjectIDs
 import Lodash
-import Assets
 import RegisterEvents
 import ToolTipsUtils
 import OrderIds

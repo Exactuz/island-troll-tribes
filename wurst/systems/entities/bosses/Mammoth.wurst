@@ -1,14 +1,8 @@
 package Mammoth
 
-// Standard library imports:
-import ClosureForGroups
 import LinkedList
-import MapBounds
-
-// Local imports:
 import Hostile
 import LocalObjectIDs
-import LocalAssets
 import GameConfig
 
 // TODO: Allow the respawn mode to register events.

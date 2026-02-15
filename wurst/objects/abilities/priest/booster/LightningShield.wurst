@@ -9,9 +9,6 @@ import ClosureEvents
 import BuffObjEditing
 import ClosureTimers
 import ColorUtils
-import Tribe
-import PlayerExtensions
-import DamageEvent
 
 let MANACOST = 20
 let DURATION = 20.

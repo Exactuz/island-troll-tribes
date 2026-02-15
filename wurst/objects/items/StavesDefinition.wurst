@@ -1,25 +1,21 @@
 package StavesDefinition
 
 // Standard lib Imports:
-import AbilityObjEditing
 import Assets
 import LinkedList
 import ObjectIdGenerator
 import ObjectIds
 
 // Third-party imports:
-import ManaBurn
 import StringBuilder
 
 // Local Imports:
-import Classes
 import ColorUtils
 import DamageListeners
 import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
-import ToolTipsUtils
 import PlayerExtensions
 import AxesDefinition
 import CustomItemDefinition
@@ -72,7 +68,7 @@ function createAxe(int staffId) returns ItemDefinition
         ..setCooldownGroup("AIas")
         ..setStockReplenishInterval(120)
 
-public constant ITEM_IRON_STAFF_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_STAFF_DUMMY_UNIT")
+public constant ITEM_IRON_STAFF_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_IRON_STAFF_DUMMY_UNIT")
 public constant ITEM_IRON_STAFF_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_STAFF)
         ..setInterfaceIcon(Icons.bTNWand)
         ..setModelUsed(LocalItems.ironAxe)
@@ -89,7 +85,7 @@ public constant ITEM_IRON_STAFF_DEFINITION = compiletime(new CustomItemDefinitio
         )        
 
 
-public constant ITEM_BATTLE_STAFF_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_STAFF_DUMMY_UNIT")
+public constant ITEM_BATTLE_STAFF_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BATTLE_STAFF_DUMMY_UNIT")
 public constant ITEM_BATTLE_STAFF_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_STAFF)
         ..setInterfaceIcon(LocalIcons.bTNBattleStaff)
 /*        
@@ -109,7 +105,7 @@ public constant ITEM_BATTLE_STAFF_DEFINITION = compiletime(new CustomItemDefinit
         ..constructItemShopDummyUnit(ITEM_BATTLE_STAFF_DUMMY_UNIT)
         )        
 
-public constant ITEM_CONDUCTING_ROD_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CONDUCTING_ROD_DUMMY_UNIT")
+public constant ITEM_CONDUCTING_ROD_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CONDUCTING_ROD_DUMMY_UNIT")
 public constant ITEM_CONDUCTING_ROD_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CONDUCTING_ROD)
         ..setInterfaceIcon(Icons.bTNAdvancedStrengthOfTheMoon)
         ..setModelUsed(LocalItems.battleAxe)
@@ -128,7 +124,7 @@ public constant ITEM_CONDUCTING_ROD_DEFINITION = compiletime(new CustomItemDefin
         ..constructItemShopDummyUnit(ITEM_CONDUCTING_ROD_DUMMY_UNIT)
         )        
 
-public constant ITEM_STAFF_OF_KNOWLEDGE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STAFF_OF_KNOWLEDGE_DUMMY_UNIT")
+public constant ITEM_STAFF_OF_KNOWLEDGE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STAFF_OF_KNOWLEDGE_DUMMY_UNIT")
 public constant ITEM_STAFF_OF_KNOWLEDGE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STAFF_OF_KNOWLEDGE)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
         ..setModelUsed(LocalItems.steelAxe)
@@ -147,7 +143,7 @@ public constant ITEM_STAFF_OF_KNOWLEDGE_DEFINITION = compiletime(new CustomItemD
         )        
 
 
-public constant ITEM_STAFF_OF_WISDOM_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STAFF_OF_WISDOM_DUMMY_UNIT")
+public constant ITEM_STAFF_OF_WISDOM_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STAFF_OF_WISDOM_DUMMY_UNIT")
 public constant ITEM_STAFF_OF_WISDOM_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STAFF_OF_WISDOM)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
         ..setModelUsed(LocalItems.steelAxe)

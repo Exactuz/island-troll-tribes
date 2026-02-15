@@ -1,0 +1,42 @@
+package WolfState
+
+// Standard library imports:
+import ClosureEvents
+
+// Local imports:
+import LocalObjectIDs
+import LocalObjectIDs2
+import ShapeshiftState
+import WolfsVoracityCoat
+import SimError
+import RipAndTear
+
+
+public class WolfState extends ShapeshiftState
+    int voracityCharges
+    construct(unit troll)
+        super(troll)
+        targetFormId = UNIT_SHAPESHIFTER_WOLF
+        EventListener.onCast(troll, ABILITY_WOLF_FORM_RAVENOUS_BEAST) (unit caster) ->
+            onCast()
+        //troll.makeAbilityPermanent(ABILITY_PRIMALIST_ROOT_CAST, true)
+        //troll.addPermanentAbility(ABILITY_TRANSFORM_HUMANOID)
+        //troll.disableAbility(abilId, flag, hideUI)
+
+    function onCast()
+        if voracityCharges == 0
+            troll.startAbilityCooldown(ABILITY_WOLF_FORM_RAVENOUS_BEAST, 20.)
+            troll.disableAbility(ABILITY_WOLF_FORM_RAVENOUS_BEAST, true, false)
+            return
+        if not onWolfVoracityCoat(troll)
+            simError(troll.getOwner(), "You don't have any raw meat on you.")
+            return
+        else
+            voracityCharges-=1
+
+    override function onEnter()
+        voracityCharges = troll.getLevel() >= 4 ? 2:1
+        //troll.disableAbility(ABILITY_WOLF_FORM_RAVENOUS_BEAST, false, false)
+        troll.getOwner().setAbilityActivatedExtendedTooltip(ABILITY_RIP_AND_TEAR, TT_WOLF_FORM_RIP_AND_TEAR_EXT, 1)
+
+

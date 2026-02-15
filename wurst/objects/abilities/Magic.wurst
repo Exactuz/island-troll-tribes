@@ -14,7 +14,6 @@ import ObjectIdGenerator
 // Local imports:
 import DiscoDuck
 import LocalObjectIDs
-import LocalAssets
 import Mammoth
 import ResourceSpawns
 import TheOne

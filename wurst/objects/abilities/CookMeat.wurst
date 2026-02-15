@@ -4,7 +4,6 @@ import RegisterEvents
 import LocalObjectIDs
 import ClosureForGroups
 import ChannelAbilityPreset
-import Assets
 import ToolTipsUtils
 import MeatCollector
 import LocalObjectIDs2

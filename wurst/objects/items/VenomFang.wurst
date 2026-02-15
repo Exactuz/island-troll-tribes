@@ -1,22 +1,15 @@
 package VenomFang
 
 // Standard lib Imports:
-import AbilityObjEditing
-import Assets
-import ClosureEvents
 import ChannelAbilityPreset
-import BuffObjEditing
 import ClosureTimers
 
 // Local Imports:
 import LocalObjectIDs
-import ToolTipsUtils
 
 // Third-party imports:
-import StringBuilder
 import ColorUtils
 import LocalAssets
-import ItemObjEditing
 import Items
 import LocalItemObjEditing
 import HashMap
@@ -85,14 +78,16 @@ class PoisonedUnit
         instances.put(this.target, this)
         createPoisonInstance(damage)
         cb = doPeriodically(POISON_TICK_FREAQUENCY) (CallbackPeriodic cb) ->
-            if poisonInstances.isEmpty()
-                destroy cb
-                destroy this
-            else
-                applyDamage()
+            update()
 
-            
-        
+
+    function update()
+        if poisonInstances.isEmpty()        
+            destroy cb
+            destroy this
+        else
+            applyDamage()
+
     function applyDamage()
         highestDamage = 0
         for each in poisonInstances

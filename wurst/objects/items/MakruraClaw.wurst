@@ -3,31 +3,21 @@ package MakruraClaw
 
 // Standard library imports:
 import AbilityObjEditing
-import HashMap
 import ClosureEvents
 import ObjectIdGenerator
 
 // Local imports:
 import LocalObjectIDs
-import StringBuilder
 import ToolTipsUtils
 import BuffObjEditing
 import BuffIds
 import Abilities
-import OrderIds
 //import PumpUp
-import Icons
-import InstantDummyCaster
 import ClosureTimers
 import UnitExtensions
-import ObjEditingUtils
 import ObjectIds
-import ItemObjEditing
-import Items
 import LocalAssets
 import LocalItemObjEditing
-import GlovesDefinition
-import AxesDefinition
 import ColorUtils
 import ObjectIDManager
 import CustomItemDefinition
@@ -62,7 +52,7 @@ public let MAKRURA_CLAWS_TT = "A Makrura claw, that can be used as one-handed we
         ..setIcon(LocalIcons.bTNMakruraClaws)
         ..setTooltipNormalExtended(1, "You are pinned for {0} seconds, taking damage over time.".format(DURATION_HERO.toToolTipLightBlue()))
 
-public constant ITEM_MAKRURA_CLAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAKRURA_CLAWS_DUMMY_UNIT")
+public constant ITEM_MAKRURA_CLAWS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAKRURA_CLAWS_DUMMY_UNIT")
 public constant ITEM_MAKRURA_CLAWS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAKRURA_CLAWS)
         ..setAbilities(commaList(
             ABILITY_MAKRURA_PIN,

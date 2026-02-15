@@ -2,14 +2,8 @@ package Hypnosis2
 
 import ClosureEvents
 
-import AbilityObjEditing
-import BuffObjEditing
-import ObjectIds
 import LocalObjectIDs
-import Lodash
 import ToolTipsUtils
-import Assets
-import LocalAssets
 import Sleep
 import ColorUtils
 import ChannelAbilityPreset
@@ -42,7 +36,7 @@ constant TOOLTIP_EXTENDED = "" +
 
 IterableMap<unit, HypnosisCooldown> instances = new IterableMap<unit, HypnosisCooldown>() 
 
-constant TARGET_ALLOWED = "enemies,ground,organic"
+constant TARGET_ALLOWED = "enemies,ground,organic,ancient"
 
 @compiletime function createSleepAnimal() returns AbilityDefinitionSleepcreep
     return createSleepAbility(ABILITY_SLEEP_ANIMAL)
@@ -59,7 +53,7 @@ constant TARGET_ALLOWED = "enemies,ground,organic"
 @compiletime function createSleepOutside() returns AbilityDefinitionSleepcreep
     return createSleepAbility(ABILITY_SLEEP_HYPNOSIS)
         ..setNameEnhance("F", "Sleep Outside")
-        ..setStunDuration(1, 2)
+        ..setStunDuration(1, 2) 
         ..setDurationHero(1, DURATION)
         ..setTooltipNormalExtended(1, "The Troll can sleep outside to restore {0} mana but lose {1} health point and {2} heat. This can kill you if any of your stats reach 0."
         .format(MANA_RESTORED_BY_TROLL.toToolTipBlue(), SLEEP_OUTSIDE_HP_PENALTY.toToolTipRed(), SLEEP_OUTSIDE_HEAT_PENALTY.toString().color(COLOR_ORANGE))
@@ -93,12 +87,15 @@ class HypnosisCooldown
         target = _target
         castSleep(caster, target)        
         remainingCooldown=HYPNOSIS_COOLDOWN
+
+
+    function updateCooldown()
         doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
             remainingCooldown-=ANIMATION_PERIOD
             if remainingCooldown<=0
                 destroy cb
                 destroy this
-
+                
     function castSleep(unit caster, unit target)
         let abilId = target.isTroll() ? ABILITY_SLEEP_HYPNOSIS : ABILITY_SLEEP_ANIMAL
         if abilId == ABILITY_SLEEP_ANIMAL

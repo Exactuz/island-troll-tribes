@@ -13,7 +13,6 @@ import ChannelAbilityPreset
 import BuffObjEditing
 import Lodash
 import ToolTipsUtils
-import LocalAssets
 
 let GROW_DURATION = 10.
 let MINIMUM_GROW_DURATION = 1.5

@@ -12,7 +12,6 @@ import Setting
 
 // Local imports:
 import ColorUtils
-import CraftMaster
 import GameStates
 import PingMinimap
 import PlayerExtensions

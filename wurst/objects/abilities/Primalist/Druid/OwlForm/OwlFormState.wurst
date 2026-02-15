@@ -1,0 +1,35 @@
+package OwlFormState
+import ClosureTimers
+
+
+public class OwlFormState
+    bool isActive = false
+    unit caster
+    string stateName
+    construct(unit caster, string stateName)
+        this.caster = caster
+        this.stateName = stateName
+
+    function enter()
+        if isActive
+            Log.debug("Attempting to enter already active state "+stateName)
+            return
+        Log.debug("Activated state "+stateName)
+        isActive = true
+        onEnter()
+
+    function exit()
+        if not isActive
+            Log.debug("Attempting to exit inactive state "+stateName)
+            return
+        Log.debug("Deactivated state "+stateName)
+        isActive = false
+        onExit()
+        doAfter(ANIMATION_PERIOD) ->  
+            destroy this
+
+    function onEnter()
+
+    function onExit()
+
+    function update()

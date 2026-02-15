@@ -11,13 +11,13 @@ import TimerUtils
 import GameState
 import PlayerExtensions
 import Tribe
-import UnitExtensions
 import Objective
 import ReduceHealing
-import UnitIndexer
 import LocalObjectIDs
-import initlater Respawn
+import Respawn
 import initlater GurubashiArenaBorders
+import PhilosophersStone
+import UnitExtensions
 
 public timer GURUBASHI_ARENA_OPEN_TIMER      
 
@@ -64,6 +64,10 @@ function resetTroll(unit troll)
         ..setHeat(gameConfig.getMaxHeat())
         ..resetCooldown()
         ..reduceHealingReduction(9999.)
+        if troll.getTypeId() == UNIT_ALCHEMIST
+            let instance = PhilosophersStone.getInstance(troll)
+            if instance != null
+                instance.setMaximumCharges()
 
 function updateBorderAccessOnGatesOpen()
     for tribe in Tribe.getTribes()

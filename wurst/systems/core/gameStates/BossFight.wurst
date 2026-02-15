@@ -11,7 +11,6 @@ import TimerUtils
 import GameState
 import PlayerExtensions
 import Tribe
-import UnitExtensions
 import Objective
 import ClosureEvents
 import Abilities
@@ -21,16 +20,18 @@ import LocalObjectIDs
 import Preparation
 import BossRewardHandler
 import ReduceHealing
-import UnitIndexer
 import HashList
 import Orders
 import AbilityIds
 import GurubashiArenaBorders
 import GurubashiArena
+import PhilosophersStone
+import UnitExtensions
 
 constant PAUSE_TIME = 3.
 constant MAMMOTH_BASE_HP = 250
-constant MAMMOTH_HP_PER_PLAYER = 1250.
+constant MAMMOTH_HP_PER_PLAYER = 800.
+constant TIMEOUT_PERIOD = 120.
 public unit BOSS_UNIT = null
 unit rewardHandlerUnit = null
 
@@ -58,12 +59,16 @@ function resetState(unit troll)
     troll
     ..pause()
     ..removeBuffs(true, true)
-    ..setPos(vec2(6, -167))
+    //..setPos(vec2(6, -167))
     ..setHP(troll.getMaxHP())
     ..setMana(troll.getMaxMana())
     ..setHeat(gameConfig.getMaxHeat())
     ..resetCooldown()
     ..reduceHealingReduction(9999.)
+    if troll.getTypeId() == UNIT_ALCHEMIST
+        let instance = PhilosophersStone.getInstance(troll)
+        if instance != null
+            instance.setMaximumCharges()
     doAfter(PAUSE_TIME) -> 
         troll.unpause()
 
@@ -131,11 +136,29 @@ function onEnter()
     handleLoserTeams()
     updateBorderAccessOnBossFight()    
     playStompEfx()
+    handleTimeout()
     doAfter(1.5) -> 
         supplyMeat()
     doAfter(3.) -> 
         OBJECTIVE_UNIT.remove()
-        spawnBoss()        
+        spawnBoss()
+
+     
+
+function handleTimeout()
+    let timeoutTimer = getTimer()
+    let timerDialog = timeoutTimer.createTimerDialog()           
+    timerDialog.setTitle("Gurubashi Arena timeout")
+    timerDialog.display(true) 
+    timeoutTimer.doAfter(TIMEOUT_PERIOD) -> 
+        if GameStates.bossFight.active
+            onMammothWin()
+    doPeriodically(1.) (CallbackPeriodic cb) ->
+        if not GameStates.bossFight.active and timerDialog != null
+            timerDialog.display(false)
+            timerDialog.destr()
+            timeoutTimer.destr()
+            destroy cb 
 
 
 function onMammothKilled(unit dyingUnit)
@@ -170,11 +193,18 @@ function getRandomVisiblePos(Tribe tribe) returns vec2
 function onMammothWin()
     print(("Tribe "+winnerTribe.getName()+" has lost the fight against Mammoth!").color(COLOR_RED))
     GameStates.bossFight.exit()
+    let spawn = winnerTribe.spawn
     for each in winnerTribe.getMembers()
         let troll = each.getTroll()
-        revive(troll, 0.)
+        if troll.isAlive()           
+            let pos = spawn.randomPoint()
+            troll.setPos(pos)
+            troll.getOwner().panCameraToTimed(pos, 0.3)
+        else
+            revive(troll, 0.)
         resetState(troll)
         BOSS_UNIT.remove()
+    GameStates.bossFight.exit()      
 
 
 function teleportWinnerTribeBack()
@@ -235,10 +265,13 @@ function spreadUnitsInArch()
 function updateBorderAccessOnBossFight()
     for tribe in Tribe.getTribes()
         let bordersAccess = GurubashiArenaBorders.getInstance(tribe)
+        Log.debug(winnerTribe.getName()+" is the objective winner tribe")
         if tribe == winnerTribe
+            Log.debug("{0} is the objective winner, setting access inside arena to true".format(tribe.getName()))
             bordersAccess.insideGurubashiArena = true
             bordersAccess.outsideGurubashiArena = false
         else
+            Log.debug("{0} is not the objective winner, setting access inside arena to false".format(tribe.getName()))
             bordersAccess.insideGurubashiArena = false
             bordersAccess.outsideGurubashiArena = true
 
@@ -248,13 +281,18 @@ function updateBorderAccessOnBossFightFinish()
         bordersAccess.insideGurubashiArena = false
         bordersAccess.outsideGurubashiArena = true
 
+function onExit()
+    updateBorderAccessOnBossFightFinish()
+    closeGates()
+
 init
     GameStates.bossFight.onEnter() (GameState state) ->
         onEnter()
 
+    GameStates.bossFight.onExit() (GameState state) ->
+        onExit()
+
     EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
         if GameStates.bossFight.active
-            updateBorderAccessOnBossFightFinish()
             onMammothKilled(GetDyingUnit())
             onTrollDeath(GetDyingUnit())
-            closeGates()

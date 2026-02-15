@@ -1,0 +1,19 @@
+package Primalist
+import LocalObjectIDs
+import Troll
+
+public class Primalist extends Troll
+    private static let unitTypeId = UNIT_PRIMALIST
+
+    static function initialize()
+        register(unitTypeId, troll -> new Primalist(troll))
+
+    construct(unit whichUnit)
+        super(whichUnit)
+
+    override function postCreate()
+        super.postCreate()
+
+
+init
+    Primalist.initialize()

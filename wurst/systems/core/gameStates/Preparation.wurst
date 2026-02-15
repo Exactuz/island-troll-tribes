@@ -6,20 +6,15 @@ import ClosureTimers
 // Local imports:
 import ColorUtils
 import GameStates
-import GameConfig
 import TimerUtils
 import GameState
 import PlayerExtensions
 import Tribe
-import UnitExtensions
 import Objective
-import ClosureEvents
 import Abilities
 import Respawn
-import Knockback3
 import LocalObjectIDs
 import SoundUtils
-import Objects
 
 public constant PREPARATION_TIME_SECONDS = 60.
 public constant TELEPORT_ANIMATION_DURATION = 3.

@@ -1,0 +1,201 @@
+package RipAndTear
+
+// Standard library imports:
+import AbilityObjEditing
+import DamageEvent
+import HashMap
+import ClosureTimers
+import ObjectIdGenerator
+import ObjectIds
+
+// Local imports:
+import AbilityObjectCreationUtils
+import LocalObjectIDs
+import Abilities
+import Icons
+import OnUnitEnterLeave
+import Objects
+import Classes
+import InstantDummyCaster
+import Orders
+import MoveCorpses
+import ColorUtils
+import BuffObjEditing
+import BuffIds
+import ToolTipsUtils
+import LocalObjectIDs2
+import UnitExtensions
+
+constant CRITICAL_ABILITY_ID = compiletime(ABIL_ID_GEN.next())
+constant SPELLBOOK_ABILITY_ID = compiletime(createHiddenSpellbookWithAbilities(toRawCode(CRITICAL_ABILITY_ID)))
+constant MS_FACTOR = 0.6
+public constant COOLDOWN = 12.
+public constant COOLDOWN_REFUND_PER_ATTACK = .5
+public constant TOTAL_DAMAGE = 30.
+public constant DAMAGE_PERIOD = 0.25
+public constant DURATION_HERO = 2.5
+public constant DURATION_NORMAL = 6.
+
+public constant RIP_AND_TEAR_BUFF_TT_EXT = "You are inflicted with {0} slow that decays over {1} seconds.".format(
+                                            MS_FACTOR.toToolTipLightBlue(), DURATION_HERO.toToolTipLightBlue())
+
+public constant TT_RIP_AND_TEAR_EXT = "Your next attack will tear out a chunk of flesh from your target, recovering 1 raw meat "+
+                "and applying a bleed effect which does {0} damage and slows target for {1}({2}) seconds.".format(
+                    (TOTAL_DAMAGE).toString().color(COLOR_RED), DURATION_NORMAL.toToolTipLightBlue(), DURATION_HERO.toToolTipLightBlue())+
+                "\nYour auto attacks reduce the cooldown by {0} seconds.".format(    COOLDOWN_REFUND_PER_ATTACK.toString().color(COLOR_LIGHT_BLUE))+
+                "\nHas {0} seconds cooldown.".format(COOLDOWN.toString().color(COLOR_LIGHT_BLUE))
+
+public constant TT_WOLF_FORM_RIP_AND_TEAR_EXT = "Your next attack will tear out a chunk of flesh from your target "+
+                "applying a bleed effect which does {0} damage and slows target for {1}({2}) seconds.".format(
+                    (TOTAL_DAMAGE).toString().color(COLOR_RED), DURATION_NORMAL.toToolTipLightBlue(), DURATION_HERO.toToolTipLightBlue())+
+                "\nHas {0} seconds cooldown.".format(COOLDOWN.toString().color(COLOR_LIGHT_BLUE))+
+                "\nLevel 4:".color(COLOR_GOLD_STR)+
+                "Your auto attacks also lower the cooldown by {0} seconds.".format(COOLDOWN_REFUND_PER_ATTACK.toString().color(COLOR_LIGHT_BLUE))+
+                "\nRip and Tear recovers 1 raw meat on proc."
+
+@compiletime function createRipAndTearAbility()
+    new AbilityDefinitionPulverize(ABILITY_RIP_AND_TEAR)
+    ..setCheckDependencies(false)
+    ..setRequirements("")
+    ..setHeroAbility(true)
+    ..setItemAbility(true)
+    ..setLevels(1)
+    ..setAnimationNames("spell")
+    ..setButtonPositionNormalX(0)
+    ..setButtonPositionNormalY(0)
+    ..setSpecialAttachmentPoint("chest")
+    ..setArtSpecial(Abilities.stampedeMissileDeath)
+    ..setArtCaster("")
+    ..setArtEffect("")
+    ..setArtTarget("")
+    ..setButtonPositionResearchX(0)
+    ..setButtonPositionResearchY(0)
+    ..setIconNormal(Icons.bTNGhoulFrenzy)
+    ..setIconResearch(Icons.bTNGhoulFrenzy)
+    ..setIconTurnOff(Icons.bTNGhoulFrenzy)
+    ..setTooltipNormal(1, "Rip and Tear.")
+    ..setName("Rip and Tear")
+    ..setTooltipLearn("Learn Rip and Tear")
+    ..setTooltipLearnExtended(TT_RIP_AND_TEAR_EXT)
+    ..setTooltipNormalExtended(1, TT_RIP_AND_TEAR_EXT)
+    ..presetTooltipNormalExtended(lvl->TT_RIP_AND_TEAR_EXT)
+    ..presetDamageDealt(lvl -> 0.)
+    ..presetChancetoStomp(lvl -> lvl*100.-100.)
+    ..presetFullDamageRadius(lvl -> 175. + lvl * 25)
+    ..presetHalfDamageRadius(lvl -> 350. + lvl * 50)
+    ..presetTargetsAllowed(lvl -> "ground,enemy,neutral")
+
+    new BuffDefinition(BUFF_RIP_AND_TEAR, BuffIds.shadowStrike)
+        ..setTooltipNormal("Crippled")
+        ..setTooltipNormalExtended(RIP_AND_TEAR_BUFF_TT_EXT)
+        ..setArtTarget(Abilities.stampedeMissileDeath)
+        ..setIcon(Icons.bTNGhoulFrenzy)
+        ..setArtSpecial("")
+        ..setAreaEffect("")      
+
+    new AbilityDefinitionShadowStrikeCreep(ABILITY_RIP_AND_TEAR_DUMMY)
+        ..presetDecayingDamage(lvl->0.)
+        ..presetDurationHero(lvl->DURATION_HERO)
+        ..presetDurationNormal(lvl ->DURATION_NORMAL)
+        ..presetDecayPower(lvl->0.15)
+        ..presetInitialDamage(lvl->0.)
+        ..presetAttackSpeedFactor(lvl->0.)
+        ..presetMovementSpeedFactor(lvl->MS_FACTOR)
+        ..setBuffs(1, toRawCode(BUFF_AXE_THROW))
+        //..presetCastingTime(lvl-> 0.25)
+        ..setMissileArc(0.50)
+        ..setMissileSpeed(9999)
+        ..setArtTarget("")
+        ..setArtCaster("")
+        ..setArtSpecial(Abilities.stampedeMissileDeath)
+        ..setArtEffect(Abilities.stampedeMissileDeath)   
+        ..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt("")        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.neutral,
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.self
+        ))         
+        ..setDummyAbility()
+
+class RipAndTear
+    private unit troll
+    private real baseClock
+    construct(unit troll)
+        this.troll = troll
+        this.baseClock = COOLDOWN
+        doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+            updateTick()
+            
+    function updateTick()
+        //if not troll.hasAbility(ABILITY_RIP_AND_TEAR)
+        //    return
+        this.baseClock += ANIMATION_PERIOD
+
+    function onEnemyAttackDamage(unit target)
+        if not (troll.getTypeId() == UNIT_DIRE_WOLF or troll.getTypeId() == UNIT_SHAPESHIFTER_WOLF)
+            return
+        if target.getTypeId()== UNIT_FISH
+            return
+        if baseClock>=COOLDOWN
+            onSpellEffect(target)
+            troll.setAbilityLevel(ABILITY_RIP_AND_TEAR, 1)
+            this.baseClock = 0
+        else
+            if troll.getTypeId() == UNIT_DIRE_WOLF or troll.getLevel() >=4
+                this.baseClock += COOLDOWN_REFUND_PER_ATTACK
+
+    function onSpellEffect(unit target)
+        InstantDummyCaster.castTarget(troll.getOwner(), ABILITY_RIP_AND_TEAR_DUMMY, 1, OrderIds.shadowstrike, target)
+        let duration = target.isTroll() ? DURATION_HERO : DURATION_NORMAL
+        let dmgPerTick = TOTAL_DAMAGE/duration*DAMAGE_PERIOD
+        doPeriodicallyTimed(duration/DAMAGE_PERIOD, duration) (CallbackCounted cb) ->
+            troll.damageTarget(target, dmgPerTick, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+        //    InstantDummyCaster.castTarget(troll.getOwner(), ABILITY_BEARS_TENACITY, cb.getCount(), OrderIds.slow, target)
+        //    troll.damageTarget(target, 7.5, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_NORMAL, null)
+        //target.removeAbility(ABILITY_BEARS_TENACITY)
+        //target.removeAbility(BUFF_BEARS_TENACITY)
+        if troll.getTypeId() == UNIT_DIRE_WOLF or troll.getLevel() >=4
+            onRipAndTear(troll, target)
+        flashEffect(Objects.humanSmallDeathExplode, target.getPos())
+
+
+
+IterableMap<unit, RipAndTear> instances = new IterableMap<unit, RipAndTear>()
+
+function onUnitEnter(unit u)
+    if not u.getTrollBaseClass() == UNIT_PRIMALIST
+        return
+    doAfter(ANIMATION_PERIOD) ->      
+        if not instances.has(u)
+            instances.put(u, new RipAndTear(u))
+
+function onRipAndTear(unit caster, unit target)
+    let count = counts.get(caster)
+    if count==8
+        //new HealingInstance(caster, caster, MEAT_HEAL, HealingType.ITEM)
+    else 
+        updateCount(caster, 1) 
+
+
+init    
+    DamageEvent.addListener() () ->
+    //EventListener.add(EVENT_UNIT_DAMAGED) ->
+        if DamageEvent.getType() == DamageType.ATTACK
+        //if getDamageType() == DamageType.ATTACK
+            let victim = DamageEvent.getTarget()
+            let attacker = DamageEvent.getSource()
+            if instances.has(attacker) and not victim.isType(UNIT_TYPE_STRUCTURE) and not victim.getOwner().isAllyOf(attacker.getOwner())
+                instances.get(attacker).onEnemyAttackDamage(victim)
+
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))
+

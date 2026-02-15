@@ -1,54 +1,36 @@
 package WeaponsOfChoice
 
 // Standard library imports:
-import Assets
 import BuffObjEditing
 import ChannelAbilityPreset
 import ClosureEvents
 import ClosureTimers
 import HashMap
 import LinkedList
-import ItemObjEditing
-import Items
-import Cosmetics
-import OnUnitEnterLeave
-import Reflection
-
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import ColorUtils
 import LocalObjectIDs
 import LocalAssets
-import Classes
 import IdListConstant
-import InventoryEvent
 import UnitExtensions
-import Orders
-import QuickMake
-import AxesDefinition
-import InstantDummyCaster
-import DamageEvent
 import CustomItemType
 import PlayerExtensions
 import HashList
 import AxeThrow
-import ShieldThrow
-import ShieldCharge
 import EquipmentSlots
 import Transformation
-import WhirlingAxes
+import SingleMindedFury
+import LocalObjectIDs2
 
 
-public HashMap<unit, WeaponsOfChoice> weaponsOfChoiceInstances = new HashMap<unit, WeaponsOfChoice>()
 let TT_WEAPONS_OF_CHOICE = "Gurubashi Warrior gains different abilitites depending on weapons he has equipped:\n"+
                             "\n{0} - Axe Throw".format("One-handed weapon".color(COLOR_GOLD_STR))+
                             "\n{0} - Whirlwind".format("Two-handed weapon".color(COLOR_GOLD_STR))+
                             "\n{0} - Shield Charge, replaces Spiked Net".format("Shield".color(COLOR_GOLD_STR))+
                             "\n{0} - Whirling Axes; replaces Spiked Net".format("Two weapons".color(COLOR_GOLD_STR))
 
-HashList<int> weaponsOfChoiceAbilitites = new HashList<int>()
+public let weaponsOfChoiceAbilitites = new HashList<int>()
     ..add(ABILITY_AXE_THROW)
     ..add(ABILITY_WHIRLWIND)
     ..add(ABILITY_SPIKED_NET)
@@ -56,10 +38,12 @@ HashList<int> weaponsOfChoiceAbilitites = new HashList<int>()
     ..add(ABILITY_AXE_THROW_DW)
     ..add(ABILITY_WHIRLING_AXES)
     ..add(ABILITY_WEAPONS_OF_CHOICE)
+    ..add(ABILITY_SINGLE_MINDED_FURY)
 
 @compiletime function createTitansGripAbility()
-    new AbilityDefinitionMoveSpeedBonus(ABILITY_TITANS_GRIP)
-        ..setMovementSpeedBonus(1, 0)
+    new AbilityDefinitionAttackSpeedIncrease(ABILITY_TITANS_GRIP)
+        //..setMovementSpeedBonus(1, 0)
+        ..setAttackSpeedIncrease(1, 0)
         ..setItemAbility(true)
         ..setName("Titan's Grip")
         ..setEditorSuffix("(Wurst)")
@@ -90,14 +74,38 @@ public class WeaponsOfChoice
     AxeThrow axeThrowInstance
     LinkedList<item> inventory
     IterableMap<int, bool> abilities = new IterableMap<int, bool>()
+    static HashMap<unit, thistype> instances = new HashMap<unit, thistype>()
 
     construct(unit troll)
         this.troll = troll
         axeThrowInstance = new AxeThrow(troll, this)
         axeThrowInstances.put(troll, new AxeThrow(troll, this))
+        instances.put(troll, this)
         nullTimer() ->
             initializeAbilityMap()
             updateAbilities()          
+
+    static function onSub(unit troll)
+        if WeaponsOfChoice.getInstance(troll) != null
+            return
+        new WeaponsOfChoice(troll)
+
+    static function getInstance(unit troll) returns thistype
+        return WeaponsOfChoice.instances.get(troll)
+
+    static function updateItems(unit troll, item itm)
+        if not EQUIPMENT_LIST.has(itm.getTypeId()) and not itm.getTypeId() == ITEM_HUNTER_TROPHY_FANG
+            return
+        let instance = getInstance(troll)
+        if instance == null
+            return
+        instance.updateAbilities()
+
+    static function onRevive(unit troll)
+        let instance = getInstance(troll)
+        if instance == null
+            return
+        instance.updateAbilities()
 
     function initializeAbilityMap()
         for abilId in weaponsOfChoiceAbilitites
@@ -120,39 +128,36 @@ public class WeaponsOfChoice
 
     function updateAbilityMap()
         inventory = troll.getInventory()
+        let singleMindedFuryInstance = SingleMindedFury.instances.get(troll)
         let equippedItems = troll.getOwner().getEquippedItems()
         inventory.addAll(equippedItems)
-        
+        if isSuperSub
+            singleMindedFuryInstance.isEnabled = true
+            abilities.put(ABILITY_SINGLE_MINDED_FURY, true)
         abilities.put(ABILITY_SPIKED_NET, true)        
         if hasAxe()
-           // print("hasAxe")
             abilities.put(ABILITY_SPIKED_NET, true)
             abilities.put(ABILITY_AXE_THROW, true)
 
         if hasTwoHandedWeapon()
-           // print("has 2h")
+            singleMindedFuryInstance.isEnabled = false
+            abilities.put(ABILITY_SINGLE_MINDED_FURY, false)
             abilities.put(ABILITY_WHIRLWIND, true)
             abilities.put(ABILITY_SPIKED_NET, true)
             if not isSuperSub   
                 abilities.put(ABILITY_AXE_THROW, false)
             else
-                //print("supersub")
                 abilities.put(ABILITY_AXE_THROW, true)
 
         if isDualWielding()
-            //print("dualWielding")
             abilities.put(ABILITY_SPIKED_NET, false)
             abilities.put(ABILITY_AXE_THROW, true)
             //abilities.put(ABILITY_AXE_THROW_DW, true)
             abilities.put(ABILITY_WHIRLING_AXES, true)
 
         if hasShield()
-            //print("hasShield")
             abilities.put(ABILITY_SPIKED_NET, false)
             abilities.put(ABILITY_WARRIOR_SHIELD_CHARGE, true)
-
-        //if not isSuperSub
-        //    abilities.put(ABILITY_WEAPONS_OF_CHOICE, true)
 
         int count = 0
         for each in abilities
@@ -192,12 +197,17 @@ public class WeaponsOfChoice
                 return true        
         return false
 
-    function onSuperSub()
-        troll.addAbility(ABILITY_TITANS_GRIP_BUFF)
-        troll.makeAbilityPermanent(ABILITY_TITANS_GRIP_BUFF, true)
-        isSuperSub = true
+    static function onSuperSub(unit troll)
+        let instance = instances.get(troll)
+        if instance == null
+            return
+        if instance.troll.getTypeId() != UNIT_JUGGERNAUT
+            return
+        instance.troll.addAbility(ABILITY_TITANS_GRIP_BUFF)
+        instance.troll.makeAbilityPermanent(ABILITY_TITANS_GRIP_BUFF, true)
+        instance.isSuperSub = true
         nullTimer() -> 
-            updateAbilities()
+            instance.updateAbilities()
 
     function updateDamage()
         var itemsDamageBonus =0
@@ -216,56 +226,27 @@ public class WeaponsOfChoice
         updateDamage()
         return attackDamage
 
-function onSub(unit caster)
-    let instance = weaponsOfChoiceInstances.get(caster)
-    if instance != null
-        return
-    weaponsOfChoiceInstances.put(caster, new WeaponsOfChoice(caster))
-
-function onSuperSub(unit caster)
-    if caster.getTypeId() != UNIT_JUGGERNAUT
-        return
-    let instance = weaponsOfChoiceInstances.get(caster)
-    if instance == null
-        return
-    instance.onSuperSub()
-
-function updateItems(unit troll, item itm)
-    if not EQUIPMENT_LIST.has(itm.getTypeId()) and not itm.getTypeId() == ITEM_HUNTER_TROPHY_FANG
-        return
-    let instance = weaponsOfChoiceInstances.get(troll)
-    if instance == null
-        return
-    instance.updateAbilities()
-
-function onRevive(unit troll)
-    let instance = weaponsOfChoiceInstances.get(troll)
-    if instance == null
-        return
-    instance.updateAbilities()
-
-
 init
     EventListener.onCast(ABILITY_WARRIOR) (unit caster) ->
-        onSub(caster)
+        WeaponsOfChoice.onSub(caster)
 
     EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) -> 
-        updateItems(GetManipulatingUnit(), GetManipulatedItem())
+        WeaponsOfChoice.updateItems(GetManipulatingUnit(), GetManipulatedItem())
 
     EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) ->
-        onRevive(GetTriggerUnit())
+        WeaponsOfChoice.onRevive(GetTriggerUnit())
 
     registerOnEquipEvent(EQUIPMENT_CALLBACK_ANY) (unit troll, item itm) ->                  
-        updateItems(troll, itm) 
+        WeaponsOfChoice.updateItems(troll, itm) 
 
     registerAfterEffect() (unit target, int unitID) ->
-        onSuperSub(target)
+        WeaponsOfChoice.onSuperSub(target)
 
     EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
         let u = GetManipulatingUnit()
         let itm = GetManipulatedItem()
         nullTimer() -> 
-            updateItems(u, itm) 
+            WeaponsOfChoice.updateItems(u, itm) 
 
     registerOnUnequipEvent(EQUIPMENT_CALLBACK_ANY) (unit troll, item itm) ->                  
-        updateItems(troll, itm)        
+        WeaponsOfChoice.updateItems(troll, itm)        

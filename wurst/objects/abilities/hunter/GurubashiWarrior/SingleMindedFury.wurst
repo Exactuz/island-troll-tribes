@@ -1,0 +1,80 @@
+package SingleMindedFury
+
+// Standard library imports:
+import ChannelAbilityPreset
+import ClosureEvents
+import HashMap
+
+// Local imports:
+import LocalObjectIDs
+import LocalAssets
+import DamageEvent
+import ToolTipsUtils
+import LocalObjectIDs2
+import HashList
+
+public let COOLDOWN_REFUND_BASE = 1.
+public let COOLDOWN_REFUND_SMF_BONUS = 1.
+let TT_SINGLE_MINDED_FURY = "Single Minded Fury"
+let TT_SINGLE_MINDED_FURY_EXT = "While weilding two one-handed weapons or a shield, refund additional {0} second from your abilities when you attack".format(
+                                COOLDOWN_REFUND_SMF_BONUS.toToolTipLightBlue())
+
+let CD_REFUNDABLE_ABILITIES = new HashList<int>()
+    ..add(ABILITY_AXE_THROW)
+    ..add(ABILITY_WHIRLWIND)
+    ..add(ABILITY_WARRIOR_SHIELD_CHARGE)
+    ..add(ABILITY_AXE_THROW_DW)
+    ..add(ABILITY_WHIRLING_AXES)
+
+@compiletime function createNightStalkerDummyAbility()
+    new AbilityDefinitionEvasion(ABILITY_SINGLE_MINDED_FURY)
+        ..setChancetoEvade(1, 0.)
+        ..setLevels(1)
+        ..presetButtonPosNormal(1, 3)
+        ..setTooltipNormal(1, TT_SINGLE_MINDED_FURY)
+        ..setIconNormal(LocalIcons.bTNSingleMindedFury)
+        ..setTooltipLearn(TT_SINGLE_MINDED_FURY)
+        ..setTooltipLearnExtended(TT_SINGLE_MINDED_FURY_EXT)
+        ..setTooltipNormalExtended(1, TT_SINGLE_MINDED_FURY_EXT)
+
+
+public class SingleMindedFury
+    unit troll
+    bool isEnabled = false
+    static HashMap<unit, thistype> instances = new HashMap<unit, thistype>
+    construct(unit troll)
+        this.troll = troll
+        instances.put(troll, this)
+
+    static function onAttack()
+        if not DamageEvent.getType() == DamageType.ATTACK
+            return
+        let source = DamageEvent.getSource()
+        let instance = SingleMindedFury.instances.get(source)
+        if instance == null
+            return
+        instance.refundCooldowns()
+
+    static function onSub(unit troll)
+        if SingleMindedFury.instances.get(troll) != null
+            return
+        new SingleMindedFury(troll)
+
+    function refundCooldowns()
+        let refundAmount = COOLDOWN_REFUND_BASE + (isEnabled ? COOLDOWN_REFUND_SMF_BONUS : 0)
+        for abilId in CD_REFUNDABLE_ABILITIES
+            let remainingCd = troll.getAbilityCooldownRemaining(abilId)
+            if remainingCd < refundAmount
+                troll.endAbilityCooldown(abilId)
+            else
+                troll.startAbilityCooldown(abilId, remainingCd-refundAmount)
+
+
+
+init
+    DamageEvent.addListener() () ->
+        SingleMindedFury.onAttack()
+
+    EventListener.onCast(ABILITY_WARRIOR) (unit caster) ->
+        SingleMindedFury.onSub(caster)
+

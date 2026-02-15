@@ -2,14 +2,14 @@
 projectName: Island Troll Tribes
 dependencies:
 - https://github.com/wurstscript/wurstStdlib2
-- https://github.com/crojewsk/wurstExtLibs
+- https://github.com/Exactuz/wurstExtLibs
 - https://github.com/theQuazz/wurst-lodash
 - https://github.com/Frotty/wurst-bonus-handler
+- https://github.com/jlfarris91/WurstMMD:main
 - https://github.com/Frotty/wurst-table-layout
-- https://github.com/jlfarris91/WurstMMD
 buildMapData:
-  name: '|cffffd700Island.Troll.Tribes.v3.30.noLoadScreen'
-  fileName: Island.Troll.Tribes.v3.30.noLoadScreen
+  name: '|cffffd700Island.Troll.Tribes.v3.30'
+  fileName: Island.Troll.Tribes.v3.30
   author: "Quazz, Marsunpaisti, Xan Kriegor"
   scenarioData:
     description: "Island Troll Tribes is a PvP-centric survival map in which multiple\

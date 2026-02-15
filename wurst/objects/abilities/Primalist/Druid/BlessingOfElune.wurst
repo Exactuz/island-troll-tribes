@@ -56,11 +56,7 @@ class BlessingOfElune
             new Starfall(caster, target, 0, true)
         
 
-init
-    //registerAfterEffect() (unit target, int unitID) ->
-    //    if target.getTypeId() == UNIT_DRUID
-    //        BlessingOfElune.registerDruid(target)
-    //doAfter(1.) ->      
+init   
     EventListener.add(EVENT_PLAYER_UNIT_DAMAGED) -> 
         BlessingOfElune.onAttack(DamageEvent.getSource(), DamageEvent.getTarget())
         

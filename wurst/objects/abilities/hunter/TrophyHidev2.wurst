@@ -12,10 +12,6 @@ import ItemObjEditing
 import Items
 import Cosmetics
 import OnUnitEnterLeave
-import Reflection
-
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import ColorUtils
@@ -23,7 +19,6 @@ import LocalObjectIDs
 import LocalAssets
 import Classes
 import IdListConstant
-import InventoryEvent
 import UnitExtensions
 import Orders
 import QuickMake

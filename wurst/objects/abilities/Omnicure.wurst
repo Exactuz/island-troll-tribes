@@ -2,7 +2,6 @@ package Omnicure
 
 // Standard library imports:
 import Orders
-import Assets
 import LocalObjectIDs
 import InstantDummyCaster
 import ChannelAbilityPreset

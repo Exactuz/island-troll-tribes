@@ -1,7 +1,6 @@
 package TrollUpgradeSpell
 
 // Standard library imports:
-import Assets
 import ChannelAbilityPreset
 import LinkedList
 
@@ -163,8 +162,10 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..setUpgradeTarget("Dire Wolf")
         ..presetTooltipNormalExtended(lvl -> TOOLTIP_DIRE_WOLF)
         ..setIconNormal(Icons.bTNDireWolf)
+        ..setButtonPositionNormalX(0)
+        ..setButtonPositionNormalY(0)
         ..setRequiredTrollLevel(6, false)
-        ..presetHotkey("E")
+        ..presetHotkey("Q")
         ..setBaseOrderID(1, "manashieldon")
 
 @compiletime function createUpgradeAbilityDruid() returns ChannelAbilityPreset
@@ -172,6 +173,8 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..setUpgradeTarget("Druid")
         ..presetTooltipNormalExtended(lvl -> TOOLTIP_DRUID)
         ..setIconNormal(LocalIcons.bTNDruid)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(0)
         ..setRequiredTrollLevel(6, false)
         ..presetHotkey("W")
         ..setBaseOrderID(1, "manaflareoff")
@@ -181,8 +184,10 @@ function AbilityDefinition.setRequiredTrollLevel(int level, boolean requiresSub)
         ..setUpgradeTarget("Dire Bear")
         ..presetTooltipNormalExtended(lvl -> TOOLTIP_DIRE_BEAR)
         ..setIconNormal(Icons.bTNGrizzlyBear)
+        ..setButtonPositionNormalX(2)
+        ..setButtonPositionNormalY(0)
         ..setRequiredTrollLevel(6, false)
-        ..presetHotkey("R")
+        ..presetHotkey("E")
         ..setBaseOrderID(1, "manashieldoff")
 /*
 @compiletime function createUpgradeAbilityUltimateForm() returns ChannelAbilityPreset

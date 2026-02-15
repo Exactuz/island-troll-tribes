@@ -1,0 +1,28 @@
+package NaturesBlessing
+
+
+
+import ColorUtils
+import ToolTipsUtils
+import LocalAssets
+import LocalObjectIDs2
+import AbilityObjEditing
+
+public let NATURES_BLESSING_HP_INT_MULTIPLIER = 4.
+public let NATURES_BLESSING_ARMOUR_INT_MULTIPLIER = 0.2
+public let TT_NATURES_BLESSING_NORM = "Nature's Blessing"
+public let TT_NATURES_BLESSING_EXT = "Treant's hp is increased by {0}x {1}.".format(
+                             NATURES_BLESSING_HP_INT_MULTIPLIER.toToolTipGreen(), "Intelligence".color(COLOR_TURQUOISE))+
+                            "\nTreant's armour is increased by {0}x {1}.".format(
+                             (NATURES_BLESSING_ARMOUR_INT_MULTIPLIER).toString().color(COLOR_GOLD_STR), "Intelligence".color(COLOR_TURQUOISE))
+
+@compiletime function createForceOfNature()
+    new AbilityDefinitionEvasion(ABILITY_NATURES_BLESSING)
+        ..setChancetoEvade(1, 0.)
+        ..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNNaturesBlessing)
+        ..setTooltipNormal(1, TT_NATURES_BLESSING_NORM)
+        ..setTooltipLearn(TT_NATURES_BLESSING_NORM)
+        ..setTooltipLearnExtended(TT_NATURES_BLESSING_EXT)
+        ..setTooltipNormalExtended(1, TT_NATURES_BLESSING_EXT)
+

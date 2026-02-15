@@ -12,7 +12,7 @@ import LocalObjectIDs
 // These skins are awards for participating in a previous ITT league. All are
 // intended to be enabled statically and not unlockable in the future.
 let skins = new LinkedList<Skin>()
-    ..add(new Skin(UNIT_BEASTMASTER,   UNIT_BEASTMASTER_1,   "skin-bm-1"     ))
+    ..add(new Skin(UNIT_PRIMALIST,   UNIT_PRIMALIST_1,   "skin-bm-1"     ))
     ..add(new Skin(UNIT_BOOSTER,       UNIT_BOOSTER_1,       "skin-booster-1"))
     ..add(new Skin(UNIT_ELEMENTALIST,  UNIT_ELEMENTALIST_1,  "skin-ele-1"    ))
     ..add(new Skin(UNIT_HUNTER,        UNIT_HUNTER_1,        "skin-hunter-1" ))

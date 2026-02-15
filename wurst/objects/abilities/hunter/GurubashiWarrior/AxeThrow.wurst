@@ -7,36 +7,19 @@ import ChannelAbilityPreset
 import ClosureEvents
 import ClosureTimers
 import HashMap
-import LinkedList
-import ItemObjEditing
-import Items
-import Cosmetics
-import OnUnitEnterLeave
-import Reflection
-
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import ColorUtils
 import LocalObjectIDs
 import LocalAssets
-import Classes
-import IdListConstant
-import InventoryEvent
-import UnitExtensions
 import Orders
-import QuickMake
-import AxesDefinition
-import InstantDummyCaster
 import DamageEvent
-import CustomItemType
-import PlayerExtensions
 import ToolTipsUtils
 import initlater WeaponsOfChoice
+import SingleMindedFury
 
-let CD = 10.
-let CD_DUAL_WIELDING = 10.
+let CD = 15.
+let CD_DUAL_WIELDING = 15.
 let RANGE = 700.
 let PROJECTILE_SPEED = 900
 let CAST_TIME = 0.1
@@ -52,6 +35,7 @@ public let TT_AXE_THROW_DW_NAME = "Empowered Axe Throw"
 public let AXE_THROW_DAMAGE_MULTIPLIER = 0.8
 public let TT_AXE_THROW_NAME_EXT = "Throw your axe to do {0} attack damage.".format((AXE_THROW_DAMAGE_MULTIPLIER.toString()+"x").color(COLOR_RED))+
                                     "\nApplies {0} slow that decays over {1}({2}) seconds.".format(MS_FACTOR.toToolTipLightBlue(), DURATION_NORMAL.toToolTipLightBlue(), DURATION_HERO.toToolTipLightBlue())+
+                                    "\nYour auto attacks reduce the cooldown by {0} seconds.".format(COOLDOWN_REFUND_BASE.toToolTipLightBlue())+
                                     "\nHas {0} seconds cooldown.".format(CD.toToolTipLightBlue())
 
 public let TT_AXE_THROW_NAME_DW_EXT = "Throw your axe to do {0} attack damage.".format((AXE_THROW_DAMAGE_MULTIPLIER.toString()+"x").color(COLOR_RED))+
@@ -215,9 +199,6 @@ public HashMap<unit, AxeThrow> axeThrowInstances = new HashMap<unit, AxeThrow>()
         ..setNormalAbilities(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_AXE_THROW_DUMMY)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
         ..setCollisionSize(0)         
 
-    new AbilityDefinitionChaosGrunt(ABILITY_CHAOS)
-    ..setRequirements("")
-    ..setNewUnitType(1, toRawCode(UNIT_AXE_THROW_DUMMY))
 
 
 public class AxeThrow

@@ -8,7 +8,6 @@ import LinkedList
 
 // Local imports:
 import LocalObjectIDs
-import UnitExtensions
 
 constant HYDRA_ALTAR_SFX = Units.wispExplode
 

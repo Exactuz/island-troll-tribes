@@ -2,17 +2,14 @@ package WolfsStaminaBoots
 
 // Standard library imports:
 import AbilityObjEditing
-import DamageEvent
 import HashMap
 import ClosureEvents
-import ClosureTimers
 import ObjectIdGenerator
 import ObjectIds
 import BuffObjEditing
 
 
 // Local imports:
-import AbilityObjectCreationUtils
 import LocalObjectIDs
 import Panic
 import StringBuilder
@@ -69,12 +66,12 @@ class WolfsStaminaBootsInstance
     construct(unit wearer)
         this.wearer = wearer
         this.baseClock = 0
-        wearer.removeAbility(ABILITY_PANIC)
+        wearer.disableAbility(ABILITY_PANIC, true, true)
         wearer.addPermanentAbility(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)
 
     ondestroy
         wearer.removeAbility(ABILITY_WOLFS_STAMINA_BOOTS_PANIC)
-        wearer.addPermanentAbility(ABILITY_PANIC)
+        wearer.disableAbility(ABILITY_PANIC, false, false)
 
 
 function onPickupBoots(unit u)

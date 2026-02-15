@@ -10,7 +10,7 @@ import LocalAssets
     new AbilityDefinitionCannibalize(LocalAbilityIds.corpseConsume)
         ..setName("Consume Corpse")
         ..setCheckDependencies(false)
-        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalX(0)
         ..setButtonPositionNormalY(2)
         ..setHotkeyNormal("D")
         ..presetHitPointsperSecond(lvl -> 10)

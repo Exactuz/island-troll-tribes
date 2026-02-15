@@ -1,7 +1,6 @@
 package Cure
 
 // Standard library imports:
-import Assets
 import Orders
 import ClosureEvents
 import InstantDummyCaster
@@ -34,7 +33,7 @@ public constant TT_CURE = "This potion is said to be able to cure anything."
         // TODO: Remove this once order IDs can be generated correctly.
         // ..presetBaseOrderID(lvl -> "cripple")
 
-public constant ITEM_CURE_ALL_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_CURE_ALL_DUMMY_UNIT")
+public constant ITEM_CURE_ALL_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_CURE_ALL_DUMMY_UNIT")
 public constant ITEM_CURE_ALL_DEFINITION = compiletime(new CustomItemDefinition(ITEM_CURE_ALL)
         ..setNameEnhance(NAME)
         ..setInterfaceIcon(ICON)

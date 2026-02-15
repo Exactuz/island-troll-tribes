@@ -1,0 +1,312 @@
+package FriendOfTheHive
+
+// Standard library imports:
+import HashMap
+import ClosureEvents
+
+// Local imports:
+import LocalObjectIDs
+import ToolTipsUtils
+import ChannelAbilityPreset
+import ClosureTimers
+import Abilities
+import DamageListeners
+import LocalAssets
+import LinkedList
+import UnitIds
+import PlayerExtensions
+import OnUnitEnterLeave
+
+
+let MAX_BEES_LVL_1 = 3
+let MAX_BEES_LVL_4 = 5
+let BEE_DAMAGE = 1.
+let BEE_AOE = 400.
+let MAX_BEES = 5
+
+let TT_NORM = "Friend of the Hive"
+let TT_EXT = "Dire Bear visits bee hives so often, he is considered part of the hive."+
+             "\nGain a permanent bee protecting you per unique hidden stash scavenged."+
+             "\nBees inflict {0} magic damage per second.".format(BEE_DAMAGE.toToolTipRed())+
+             "\n\nLevel 1: ".color(COLOR_GOLD)+
+             "Maximum bees: {0}".format(MAX_BEES_LVL_1.toString().color(COLOR_GOLD))+
+             "\nLevel 4: ".color(COLOR_GOLD)+
+             "Maximum bees: {0}".format(MAX_BEES_LVL_4.toString().color(COLOR_GOLD))
+
+
+IterableMap<unit, FriendOfTheHive> instances = new IterableMap<unit, FriendOfTheHive>
+
+@compiletime function createAbilityFriendOfTheHiveDummy()
+    new AbilityDefinitionEvasion(ABILITY_FRIEND_OF_THE_HIVE_DUMMY)
+        ..setChancetoEvade(1, 0.)
+        ..setLevels(1)
+        ..setTooltipNormal(1, TT_NORM)
+        ..setIconNormal(LocalIcons.bTNFriendOfTheHive)
+        ..setTooltipLearn(TT_NORM)
+        ..setTooltipLearnExtended(TT_EXT)
+        ..setTooltipNormalExtended(1, TT_EXT)
+
+
+class FriendOfTheHive
+    unit troll 
+    unit dummy
+    LinkedList<unit> collectedHives = new LinkedList<unit>
+    LinkedList<unit> bees = new LinkedList<unit>
+    CallbackPeriodic cb
+    bool pauseSetPos
+    bool pauseSummon
+    real totalDamageDealt 
+
+    construct(unit _troll)
+        troll = _troll
+        dummy = createUnit(troll.getOwner(), UNIT_FRIEND_OF_THE_HIVE_DUMMY, troll.getPos())
+        cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
+            if troll.isAlive() and pauseSetPos == false
+                dummy.setPos(troll.getPos())
+            
+
+    function onScavenge(unit hiddenStash)
+        if collectedHives.has(hiddenStash)
+            return
+        collectedHives.add(hiddenStash)
+        updateAbilityLvl()
+
+    function updateAbilityLvl()
+        pauseSetPos = true
+        pauseSummon = true
+        let maxBees = troll.getLevel() >= 4? collectedHives.size() : min(collectedHives.size(), MAX_BEES_LVL_1)
+        for each in bees
+            each.remove()
+        bees.clear()
+        if dummy.hasAbility(ABILITY_FRIEND_OF_THE_HIVE)
+            dummy.removeAbility(ABILITY_FRIEND_OF_THE_HIVE)
+        doAfter(ANIMATION_PERIOD) ->      
+            dummy.addAbility(ABILITY_FRIEND_OF_THE_HIVE, maxBees)
+            doAfter(ANIMATION_PERIOD) -> 
+                dummy.issueImmediateOrder("locustswarm")              
+                doAfter(ANIMATION_PERIOD*2) ->
+                    pauseSetPos = false
+                    pauseSummon = false
+
+    function onRevive()
+        updateAbilityLvl()
+
+    function updateTooltip()
+        //let TT_NEW = TT_EXT+"\nPost-mitigation damage dealt: "+totalDamageDealt
+        //let abil = troll.getAbility(ABILITY_FRIEND_OF_THE_HIVE_DUMMY)
+        //abil.setField(field, value)
+
+    function onDamage(unit bee)
+        let target = DamageEvent.getTarget()
+        if DamageEvent.getType() == DamageType.ATTACK
+            DamageEvent.setAmount(0.)
+            DamageEvent.setNextDamageFromCode()
+            bee.damageTarget(target, BEE_DAMAGE, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        if DamageEvent.getType() == DamageType.CODE
+            totalDamageDealt+=DamageEvent.getAmount()
+            //print(totalDamageDealt)
+            updateTooltip()
+
+
+    function onDeath()
+        pauseSetPos = true
+        pauseSummon = true        
+        dummy.removeAbility(ABILITY_FRIEND_OF_THE_HIVE)
+
+
+
+@compiletime function createFriendOfTheHiveAbility() returns AbilityDefinitionCryptLordLocustSwarm
+    return new AbilityDefinitionCryptLordLocustSwarm(ABILITY_FRIEND_OF_THE_HIVE) 
+        ..setName("Friend Of The Hive")
+        ..setCheckDependencies(false)
+        ..setLevels(MAX_BEES)
+        ..presetDamageReturnFactor(lvl->0)
+        ..presetNumberofSwarmUnits(lvl->lvl) 
+        ..presetDamageReturnThreshold(lvl->99999)
+        ..presetMaxSwarmUnitsPerTarget(lvl->MAX_BEES)
+        ..presetUnitReleaseIntervalseconds(lvl->0.01)
+        ..presetSwarmUnitType(lvl->UNIT_DIRE_BEAR_BEE.toRawCode())
+        ..setIconNormal(Icons.bTNSkeletonWarrior)
+        ..setEffectSoundLooping("")
+        ..presetTargetsAllowed(lvl -> commaList(
+            TargetsAllowed.air,
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground
+        ))
+        ..setDummyAbility()
+        ..setHeroAbility(false)
+        ..presetManaCost(lvl->0)
+        ..presetDurationHero(lvl->9999.)
+        ..presetDurationNormal(lvl->9999.)
+        ..presetCooldown(lvl->0)
+        ..presetCastingTime(lvl->0)
+        ..presetAreaofEffect(lvl->BEE_AOE)
+        ..setEditorSuffix("(Wurst)")
+
+@compiletime function createUnitSkeletalMinion() returns UnitDefinition
+    return new UnitDefinition(UNIT_DIRE_BEAR_BEE, UnitIds.wareagle1)
+        ..setAttack1RangeMotionBuffer(150.)
+        ..setNormalAbilities("Aloc")
+        ..setAttack1AttackType(AttackType.Magic)
+        ..setAttack1DamageBase(1)
+        ..setAttack1AnimationBackswingPoint(0.01)
+        ..setAttack1AnimationDamagePoint(0.01)
+        ..setTintingColorRed(120)
+        ..setTintingColorGreen(83)
+        ..setTintingColorBlue(140)
+        ..setScalingValue(1)
+        ..setAttack1CooldownTime(0.5)
+        ..setName("Dire bear bee")
+        ..setAttack1DamageNumberofDice(1)
+        ..setAttack1DamageSidesperDie(1)
+        ..setSpeedBase(522)
+        ..setAttack1TargetsAllowed(commaList(
+            TargetsAllowed.debris,
+            TargetsAllowed.ground,
+            TargetsAllowed.item_t,
+            TargetsAllowed.structure,
+            TargetsAllowed.ward
+            ))
+        ..setIconGameInterface(Icons.bTNLocustSwarm)
+        ..setAcquisitionRange(500.)
+        ..setAttack1DamageNumberofDice(1)
+        ..setAttack1DamageBase(1)
+        ..setModelFile(Abilities.sorceressMissile)
+        ..setAttack1ProjectileArt(Abilities.sorceressMissile)
+        ..setSightRadiusNight(0)
+        ..setAttack1Range(150)
+        ..setAttack1DamageSidesperDie(2)
+        ..setSightRadiusDay(0)
+        ..setAttacksEnabled(1)
+        ..setAttack1WeaponType(WeaponType.Instant)
+        ..setAttack1WeaponSound(WeaponSound.AxeMediumChop)
+
+
+
+
+@compiletime function generateObject()
+    new UnitDefinition(UNIT_FRIEND_OF_THE_HIVE_DUMMY, 'ewsp')
+    ..setName("UNIT_CLOAK_OF_FLAMES_DUMMY")
+    ..setManaMaximum(1000000)
+    ..setMovementType(MovementType.Fly)
+    ..setUpgradesUsed("")
+    ..setCollisionSize(0.0)
+    ..setStructuresBuilt("")
+    ..setRace(Race.Commoner)
+    ..setFoodCost(0)
+	..setArmorType(ArmorType.Divine)
+	..setIconGameInterface("ReplaceableTextures\\CommandButtons\\BTNtemp.blp")
+	..setSpeedBase(522)
+	..setModelFile("dummy.mdl")
+	..setAnimationBlendTimeseconds(0.0)
+	..setAnimationCastBackswing(0.0)
+	..setMaximumPitchAngledegrees(0.0)
+	..setMaximumRollAngledegrees(0.0)
+	..setTurnRate(3)
+	..setArtSpecial("")
+	..setProjectileImpactZ(0.0)
+	..setProjectileLaunchZ(0.0)
+	..setNameEditorSuffix("(Basics)")
+	..setSightRadiusDay(1)
+	..setSightRadiusNight(1)
+	..setUnitClassification("_")
+	..setPropulsionWindowdegrees(1.0)
+	..setTooltipBasic("")
+	..setNormalAbilities(commaList(LOCUST_ID)) //(commaList(LOCUST_ID, GHOST_INVIS_ID, ABILITY_CLOAK_FLAMES))
+	..setCollisionSize(0)  
+
+
+function onDeath(unit troll)
+    let instance = instances.get(troll)
+    if instance == null
+        return 
+    instance.onDeath()   
+
+function onBeeDeath(unit bee)
+    let instance = instances.get(bee.getOwner().getTroll())
+    if instance == null
+        return
+    if instance.pauseSummon == true
+        return 
+    instance.pauseSummon = true 
+    doAfter(0.5) ->      
+        instance.updateAbilityLvl()
+        doAfter(0.5) -> 
+            instance.pauseSummon = false          
+
+function onScavenge(unit caster, unit target)
+    if caster.getTypeId() != UNIT_DIRE_BEAR
+        return
+    if target.getTypeId() != UNIT_HIDDEN_STASH
+        return
+    let instance = instances.get(caster)
+    if instance == null
+        return    
+    instance.onScavenge(target)
+
+function onSub(unit caster)
+    let instance = instances.get(caster)
+    if instance != null
+        return
+    instances.put(caster, new FriendOfTheHive(caster))
+
+function onRevive(unit troll)
+    let instance = instances.get(troll)
+    if instance == null
+        return    
+    instance.onRevive()    
+
+function onUnitEnter(unit bee)
+    if bee.getTypeId() != UNIT_DIRE_BEAR_BEE
+        return
+    let instance = instances.get(bee.getOwner().getTroll())
+    if instance == null
+        return
+    instance.bees.add(bee)
+
+
+function onDamage(unit bee)
+    let instance = instances.get(bee.getOwner().getTroll())
+    if instance == null
+        return    
+    instance.onDamage(bee)
+
+function onLevel(unit troll)
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    doAfter(ANIMATION_PERIOD) ->        
+        if troll.getLevel()== 4
+            instance.updateAbilityLvl()     
+
+init
+    EventListener.onCast(ABILITY_DIRE_BEAR) (unit caster) ->
+        onSub(caster)      
+
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) ->
+        if EventData.getDyingUnit().getTypeId() == UNIT_DIRE_BEAR 
+            onDeath(EventData.getDyingUnit())
+
+    EventListener.onTargetCast(ABILITY_SCAVENGE_FOOD) (unit caster, unit target) ->
+        onScavenge(caster, target)
+
+    registerPlayerUnitEvent(EVENT_PLAYER_HERO_REVIVE_FINISH)->
+        if GetTriggerUnit().getTypeId()==UNIT_DIRE_BEAR
+            onRevive(GetTriggerUnit()) 
+
+    EventListener.add(EVENT_PLAYER_UNIT_DEATH) -> 
+        if EventData.getDyingUnit().getTypeId() == UNIT_DIRE_BEAR_BEE 
+            onBeeDeath(EventData.getDyingUnit())    
+
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))            
+        
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        if DamageEvent.getSource().getTypeId() == UNIT_DIRE_BEAR_BEE
+            //and (DamageEvent.getTarget().isTroll() or (DamageEvent.getTarget().isPet()and DamageEvent.getTarget().isEnemyOf(DamageEvent.getTarget().getOwner())))
+            onDamage(DamageEvent.getSource())
+
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) ->
+        if EventData.getLevelingUnit().getTypeId() == UNIT_DIRE_BEAR
+            onLevel(EventData.getLevelingUnit()) 
+            
+

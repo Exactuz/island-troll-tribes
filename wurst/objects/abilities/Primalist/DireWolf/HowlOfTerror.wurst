@@ -1,0 +1,62 @@
+package HowlOfTerror
+
+// Standard lib Imports:
+import ChannelAbilityPreset
+import ClosureEvents
+import SoundUtils
+
+// Local Imports:
+import PlayerExtensions
+import LocalObjectIDs
+import ColorUtils
+import ClosureTimers
+import UpgradeObjEditing
+import LocalAssets
+
+let DEVOUR_SOUND = new SoundDefinition(Sounds.devour, false, true)
+
+let COOLDOWN = 60.
+
+let TT_NORM = "Howl of Terror"
+let TT_EXT = "" +
+    "Dire Wolf unleashes a Howl of Terror, which causes an eclipse that blocks out the sun and creates an artificial night. \nLasts {0} seconds".format("30".color(COLOR_LIGHT_BLUE))+
+    "\nGrants Night Stalker to your allies for the duration."+
+    "\nHas {0} seconds cooldown.".format(COOLDOWN.toString().color(COLOR_LIGHT_BLUE))
+
+@compiletime function createHowlOfTerror() returns AbilityDefinitionItemChangeTOD
+    return new AbilityDefinitionItemChangeTOD(ABILITY_HOWL_OF_TERROR)
+        ..setName(TT_NORM)
+        ..setHotkeyNormal("W")
+        ..setTooltipNormal(1, TT_NORM)
+        ..setTooltipNormalExtended(1, TT_EXT)
+        ..presetCooldown(lvl -> COOLDOWN)   
+        ..presetManaCost(lvl -> 0)
+        ..presetCastRange(lvl -> 128)
+        ..presetButtonPosNormal(0, 3)
+        ..setIconNormal(LocalIcons.btnLoneWolf)
+        ..setAnimationNames("stand")
+        ..setNewTimeofDayHour(1, 1)
+  
+
+@compiletime function createNightStalkerUpgrade() returns UpgradeDefinition
+    return new UpgradeDefinition(UPGD_NIGHT_STALKER)
+
+
+function onCast()
+    PlaySound(Sounds.duskWolf)
+    //let currentTime = 
+    let u = EventData.getSpellAbilityUnit()
+    u.getOwner().setTechResearched(UPGD_NIGHT_STALKER, 1)
+    for each in u.getOwner().getAllies()
+        each.getTroll().addAbility('AIuv') // Ultravision item bonus abilId
+        doAfter(30.) -> 
+            each.getTroll().removeAbility('AIuv')
+            
+    
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH) ->
+        if EventData.getSpellAbilityId() == ABILITY_HOWL_OF_TERROR
+            onCast()
+                 
+        

@@ -8,17 +8,16 @@ import ClosureTimers
 
 // Local imports:
 import ClosuresForItems
-import LocalObjectIDs
 import IdListConstant
-import UnitExtensions
 import HashList
-import ItemRecipeV2
+import ItemRecipeV2 
 import initlater CustomItemType
 import PlayerExtensions
-import initlater EquipmentSlots
+import EquipmentSlots
 import EquipmentSlotFrames
 import GatheringSlot
 import Tribe
+import UnitExtensions
 
 public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
 public let BUILDING_CRAFTING_AOE = 900.

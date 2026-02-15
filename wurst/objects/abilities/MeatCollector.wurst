@@ -1,18 +1,14 @@
 package MeatCollector
 
 // Standard library imports:
-import Assets
-import AbilityObjEditing
 import ClosureTimers
 import ClosureEvents
 import ChannelAbilityPreset
 
 // Local imports:
-import ItemExtensions
 import ClosuresForItems
 import LocalObjectIDs
 import UnitExtensions
-import ObjectIdGenerator
 import StackNSplit
 import ClosureForGroups
 import SimError

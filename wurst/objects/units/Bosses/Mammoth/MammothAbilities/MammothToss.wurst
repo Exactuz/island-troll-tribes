@@ -1,29 +1,15 @@
 package MammothToss
 
-
-// Standard lib Imports:
-import AbilityObjEditing
 import BuffObjEditing
-import ObjectIdGenerator
-import ObjectIds
 import Assets
-
-// Local Imports:
 import LocalObjectIDs
-import LocalAssets
 import ColorUtils
-import ToolTipsUtils
-import DamageEvent
-import DamageListeners
 import LinkedList
 import ClosureTimers
 import Orders
 import ClosureEvents
 import OnUnitEnterLeave
-import MakruraCuirass
-import HashList
 import InstantDummyCaster
-import BossAbilities
 import JumpSystem
 import UnitExtensions
 import ClosureForGroups
@@ -31,6 +17,9 @@ import LocalObjectIDs2
 import ChannelAbilityPreset
 import MammothTrample
 import Objective
+import GameState
+import GameStates
+import PlayerExtensions
 
 constant DURATION = 5.
 constant TOSS_DAZE_MS_FACTOR = 1.0
@@ -159,7 +148,12 @@ public class TossInstance extends JumpInstance
         u.unpauseEx()
         u.removeAbility(AbilityIds.ghostVisible)
         u.removeAbility(BUFF_MAMMOTH_TOSS)
-        doAfter(1.5) ->  
+        if not GameStates.bossFight.active
+            doAfter(0.1) -> 
+                let pos = u.getOwner().getTribe().spawn.randomPoint()
+                u.setPos(pos)
+                u.getOwner().panCameraToTimed(pos, 0.3)
+        doAfter(2) ->  
             MammothTrample.instance.startTrample()
 
 
@@ -261,10 +255,7 @@ function onUnitEnter(unit whichUnit)
         return
     new MammothToss(whichUnit)
 
-function onDeath()
-    let u = GetDyingUnit()
-    if u.getTypeId() != UNIT_MAMMOTH
-        return
+function onExit()
     let instance = MammothToss.instance
     if instance != null 
         destroy instance
@@ -277,6 +268,6 @@ init
 
     onEnter(()->onUnitEnter(getEnterLeaveUnit()))
 
-    EventListener.add(EVENT_PLAYER_UNIT_DEATH) ->
-        onDeath() 
+    GameStates.bossFight.onExit() (GameState state) ->
+        onExit()
                  

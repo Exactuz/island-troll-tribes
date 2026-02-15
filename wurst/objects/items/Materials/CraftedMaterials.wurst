@@ -4,14 +4,12 @@ package CraftedMaterials
 import Assets
 
 // Local Imports
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import CustomItemDefinition
 import ObjectIDManager
 import ObjectIdGenerator
-import CustomItemType
 
 public constant IINGOT_ICON  = LocalIcons.bTNIronIngot
 public constant SINGOT_ICON  = LocalIcons.bTNSteelIngot
@@ -51,7 +49,7 @@ public constant TT_UPOISON = "Just this bit of refined poison is enough to make 
 public constant TT_LESSER_ESSENCE = "A lesser essence made from native herbs. Used in crafting."
 public constant TT_GREATER_ESSENCE = "A greater essence made from exotic herbs from neighbouring islands. Used in crafting."
 
-public constant ITEM_IRON_INGOT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_INGOT_DUMMY_UNIT")
+public constant ITEM_IRON_INGOT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_IRON_INGOT_DUMMY_UNIT")
 public constant ITEM_IRON_INGOT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_INGOT)
         ..setInterfaceIcon(IINGOT_ICON)
         ..setModelUsed(IINGOT_MODEL)
@@ -66,7 +64,7 @@ public constant ITEM_IRON_INGOT_DEFINITION = compiletime(new CustomItemDefinitio
         ..constructItemShopDummyUnit(ITEM_IRON_INGOT_DUMMY_UNIT)
         )
 
-public constant ITEM_STEEL_INGOT_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_INGOT_DUMMY_UNIT")
+public constant ITEM_STEEL_INGOT_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STEEL_INGOT_DUMMY_UNIT")
 public constant ITEM_STEEL_INGOT_DEFINITION = compiletime(
     new CustomItemDefinition(ITEM_STEEL_INGOT)
         ..setInterfaceIcon(SINGOT_ICON)
@@ -82,7 +80,7 @@ public constant ITEM_STEEL_INGOT_DEFINITION = compiletime(
         ..constructItemShopDummyUnit(ITEM_STEEL_INGOT_DUMMY_UNIT)
         )
 
-public constant ITEM_SPIRIT_WIND_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SPIRIT_WIND_DUMMY_UNIT")
+public constant ITEM_SPIRIT_WIND_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SPIRIT_WIND_DUMMY_UNIT")
 public constant ITEM_SPIRIT_WIND_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SPIRIT_WIND)
         ..setInterfaceIcon(SWIND_ICON)
         ..setModelUsed(SWIND_MODEL)
@@ -97,7 +95,7 @@ public constant ITEM_SPIRIT_WIND_DEFINITION = compiletime(new CustomItemDefiniti
         ..constructItemShopDummyUnit(ITEM_SPIRIT_WIND_DUMMY_UNIT)
         )
 
-public constant ITEM_LESSER_ESSENCE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_LESSER_ESSENCE_DUMMY_UNIT")
+public constant ITEM_LESSER_ESSENCE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_LESSER_ESSENCE_DUMMY_UNIT")
 public constant ITEM_LESSER_ESSENCE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_LESSER_ESSENCE)
         ..setInterfaceIcon(LocalIcons.bTNLesserEssence)
         ..setModelUsed(LocalItems.lesserEssence)
@@ -112,7 +110,7 @@ public constant ITEM_LESSER_ESSENCE_DEFINITION = compiletime(new CustomItemDefin
         ..constructItemShopDummyUnit(ITEM_LESSER_ESSENCE_DUMMY_UNIT)
         )
         
-public constant ITEM_GREATER_ESSENCE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_GREATER_ESSENCE_DUMMY_UNIT")
+public constant ITEM_GREATER_ESSENCE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_GREATER_ESSENCE_DUMMY_UNIT")
 public constant ITEM_GREATER_ESSENCE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_GREATER_ESSENCE)
         ..setInterfaceIcon(LocalIcons.bTNGreaterEssence)
         ..setModelUsed(LocalItems.greaterEssence)
@@ -127,7 +125,7 @@ public constant ITEM_GREATER_ESSENCE_DEFINITION = compiletime(new CustomItemDefi
         ..constructItemShopDummyUnit(ITEM_GREATER_ESSENCE_DUMMY_UNIT)
         )
 
-public constant ITEM_SPIRIT_WATER_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SPIRIT_WATER_DUMMY_UNIT")
+public constant ITEM_SPIRIT_WATER_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SPIRIT_WATER_DUMMY_UNIT")
 public constant ITEM_SPIRIT_WATER_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SPIRIT_WATER)
         ..setInterfaceIcon(SWATER_ICON)
         ..setModelUsed(SWATER_MODEL)
@@ -142,7 +140,7 @@ public constant ITEM_SPIRIT_WATER_DEFINITION = compiletime(new CustomItemDefinit
         ..constructItemShopDummyUnit(ITEM_SPIRIT_WATER_DUMMY_UNIT)
         )
 
-public constant ITEM_SPIRIT_DARKNESS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SPIRIT_DARKNESS_DUMMY_UNIT")
+public constant ITEM_SPIRIT_DARKNESS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SPIRIT_DARKNESS_DUMMY_UNIT")
 public constant ITEM_SPIRIT_DARKNESS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_SPIRIT_DARKNESS)
         ..setInterfaceIcon(SDARK_ICON)
         ..setModelUsed(SDARK_MODEL)
@@ -157,7 +155,7 @@ public constant ITEM_SPIRIT_DARKNESS_DEFINITION = compiletime(new CustomItemDefi
         ..constructItemShopDummyUnit(ITEM_SPIRIT_DARKNESS_DUMMY_UNIT)
         )
 
-public constant ITEM_POISON_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POISON_DUMMY_UNIT")
+public constant ITEM_POISON_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_POISON_DUMMY_UNIT")
 public constant ITEM_POISON_DEFINITION = compiletime(new CustomItemDefinition(ITEM_POISON)
         ..setInterfaceIcon(POISON_ICON)
         ..setModelUsed(POISON_MODEL)
@@ -172,7 +170,7 @@ public constant ITEM_POISON_DEFINITION = compiletime(new CustomItemDefinition(IT
         ..constructItemShopDummyUnit(ITEM_POISON_DUMMY_UNIT)
         )
 
-public constant ITEM_ULTRA_POISON_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ULTRA_POISON_DUMMY_UNIT")
+public constant ITEM_ULTRA_POISON_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ULTRA_POISON_DUMMY_UNIT")
 public constant ITEM_ULTRA_POISON_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ULTRA_POISON)
         ..setInterfaceIcon(UPOISON_ICON)
         ..setModelUsed(UPOISON_MODEL)

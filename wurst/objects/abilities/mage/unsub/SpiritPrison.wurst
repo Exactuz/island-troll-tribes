@@ -14,7 +14,6 @@ import TimerUtils
 // Local imports:
 import ToolTipsUtils
 import LocalObjectIDs
-import ColorUtils
 import UnitExtensions
 
 let MISSILE_SPEED = 700.

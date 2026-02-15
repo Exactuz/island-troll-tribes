@@ -13,7 +13,7 @@ import Lodash
 import Transformation
 // Using initlater fixes a bug that causes unintended deaths of units.
 // I don't know why but think it's something related to data corruption.
-import initlater Pets
+//import initlater Pets
 
 // The entity corresponding to each unit.
 let instances = new HashMap<unit, UnitEntity>()
@@ -118,8 +118,8 @@ public abstract class UnitEntity
 
     function postDeath()
         // Preserve the reference for pets in order to revive them.
-        if pets.has(getUnit().getOwner())
-            return
+        //if pets.has(getUnit().getOwner())
+        ///    return
         nullTimer(-> destroy this)
 
     ondestroy

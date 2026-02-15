@@ -1,47 +1,14 @@
 package EarlyDuel
 
-// Standard library imports:
-import HashMap
-import AbilityObjEditing
-import ClosureEvents
-import DamageEvent
-import InstantDummyCaster
-import StandardTextTags
 
-// Local imports:
-import ColorUtils
-import ChatCommands
-import ChatUtils
-import LocalObjectIDs
-import UnitExtensions
-import ToolTipsUtils
-import ObjectIds
-import Sleep
-import ChannelAbilityPreset
 import ClosureTimers
-import Orders
-import HealingSystem
-import BuffObjEditing
-import BuffIds
-import Abilities
-import StupefyField
-import DamageListeners
-import LocalAssets
-import SimError
-import FoodSlots
-import ItemPoolExtensions
 import LinkedList
-import OnUnitEnterLeave
 import GameStates
 import Tribe
-import PlayerExtensions
 import GameConfig
-import UnitIds
 import GameState
 import Objective
 import TimerUtils
-import SoundUtils
-import GurubashiArena
 
 public timer DUEL_TIMER
 

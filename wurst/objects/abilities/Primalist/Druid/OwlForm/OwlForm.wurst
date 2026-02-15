@@ -1,0 +1,66 @@
+package OwlForm
+
+import ColorUtils
+import ChannelAbilityPreset
+import LocalObjectIDs2
+import Units
+import UnitIds
+
+public constant OWLFORM_FINISH_DISTANCE = 64.
+public constant OWLFORM_CAST_RANGE = 300.
+public constant OWLFORM_DURATION = 45.
+public constant OWLFORM_TRAVEL_DURATION = 0.4
+public constant OWLFORM_MANACOST = 20
+public constant OWLFORM_COOLDOWN = 5.
+public constant OWLFORM_DISTANCE_PER_SECOND = OWLFORM_CAST_RANGE/OWLFORM_TRAVEL_DURATION
+public constant OWLFORM_MAXIMUM_EXIT_DISTANCE = 300.
+public constant UPDATE_PERIOD = ANIMATION_PERIOD
+public constant TT_OWLFORM_NORM = "Owl Form"
+public constant TT_OWLFORM_EXT = "Transforms the Druid into a spirit of an owl, becoming untargetable and allowing them fly to a tree, howering over it for a short duration."+
+                                "\nWhile howering, the druid gains vision of the area around the tree."+
+                                "\nIssue a move command to fly to a target location, ending the effect early."+
+                                "\nLasts {0} seconds.".format(OWLFORM_DURATION.toString().color(COLOR_LIGHT_BLUE))
+
+
+@compiletime function createAbility()
+    new AbilityDefinitionSentinel(ABILITY_DRUID_OWLFORM)
+    ..presetCastRange(_-> OWLFORM_CAST_RANGE)
+    ..setIconNormal(Icons.bTNSnowOwl)
+    ..setManaCost(1, OWLFORM_MANACOST)
+    ..setTooltipNormal(1, TT_OWLFORM_NORM)
+    ..setCooldown(1, OWLFORM_COOLDOWN)
+    ..setRequirements("")
+    ..setArtTarget("")
+    ..setArtCaster("")
+    ..setArtSpecial("")
+    ..setArtEffect("")
+    ..setHotkeyNormal("W")
+    ..setHoveringSightRadius(1, 0)
+    ..setDurationHero(1, 0.01)
+    ..setDurationNormal(1, 0.01)
+    ..setNumberofOwls(1, 0)
+    ..setAreaofEffect(1, 0)
+    ..setMissileArt("")
+    ..setEffectSound("")
+    ..setEffects(1, "")
+    ..setTooltipNormalExtended(1, TT_OWLFORM_EXT)
+    ..setCastingTime(1, 0)
+
+    new AbilityDefinitionSentinel(ABILITY_DRUID_SENTINEL_DUMMY)
+    ..setDummyAbility()
+
+    new AbilityDefinitionEatTree(ABILITY_DRUID_EAT_TREE)
+    ..setBuffs(1, "")
+    ..setCastingTime(1, 0.01)
+    ..setHitPointsGained(1, 0.01)
+    ..setDurationHero(1, 0.01)
+    ..setDurationNormal(1, 0.01)
+
+    new UnitDefinition(UNIT_DRUID_OWLFORM_PROJECTILE_DUMMY, UnitIds.owl)
+    ..setModelFile(Units.owl1)
+    ..setNormalAbilities(commaList(AbilityIds.locust))
+    ..setSightRadiusDay(0)
+    ..setSightRadiusNight(0)
+    ..setMovementHeight(100.)
+
+

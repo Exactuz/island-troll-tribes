@@ -1,0 +1,26 @@
+package PantherState
+
+import LocalObjectIDs
+import LocalObjectIDs2
+import ShapeshiftState
+import Panic
+
+
+public class PantherState extends ShapeshiftState
+
+    construct(unit troll)
+        super(troll)
+        targetFormId = UNIT_SHAPESHIFTER_PANTHER
+        //troll.makeAbilityPermanent(ABILITY_PRIMALIST_ROOT_CAST, true)
+        //troll.addPermanentAbility(ABILITY_TRANSFORM_HUMANOID)
+        //troll.disableAbility(abilId, flag, hideUI)
+
+    override function onEnter()
+        if troll.getLevel()>=4
+            troll.addAbility(ABILITY_PANTHER_THRILL)
+            troll.disableAbility(ABILITY_PANTHER_THRILL, false, true)
+        troll.setAbilityManaCost(ABILITY_PANIC, 0, 0)
+
+    override function onExit()
+        troll.removeAbility(ABILITY_PANTHER_THRILL)
+        troll.setAbilityManaCost(ABILITY_PANIC, 0, PANIC_MANACOST)

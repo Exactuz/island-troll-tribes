@@ -1,0 +1,22 @@
+package HumanoidState
+
+import LocalObjectIDs
+import LocalObjectIDs2
+import ShapeshiftState
+import Shapeshift
+
+
+public class HumanoidState extends ShapeshiftState
+
+
+    construct(unit troll)
+        super(troll)
+        targetFormId = UNIT_PRIMALIST
+        troll.makeAbilityPermanent(ABILITY_PRIMALIST_ROOT_CAST, true)
+        troll.addPermanentAbility(ABILITY_TRANSFORM_HUMANOID)
+        troll.disableAbility(ABILITY_TRANSFORM_HUMANOID, false, true)
+        //troll.disableAbility(abilId, flag, hideUI)
+
+    override function onEnter()
+        if troll.getTypeId() != targetFormId
+            onShapeshiftCast(troll, targetFormId)

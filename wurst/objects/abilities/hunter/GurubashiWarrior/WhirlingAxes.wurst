@@ -2,52 +2,32 @@ package WhirlingAxes
 
 // Standard library imports:
 import Assets
-import BuffObjEditing
 import ChannelAbilityPreset
 import ClosureEvents
 import ClosureTimers
-import HashMap
 import LinkedList
-import ItemObjEditing
-import Items
-import Cosmetics
-import OnUnitEnterLeave
-import Reflection
-
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import ColorUtils
 import LocalObjectIDs
 import LocalAssets
-import Classes
 import IdListConstant
-import InventoryEvent
-import UnitExtensions
-import Orders
-import QuickMake
-import AxesDefinition
-import ClosureForGroups
-import DamageEvent
-import Knockback3
-import CustomProjectile
-import InstantDummyCaster
 import initlater WeaponsOfChoice
 import HashList
-import ObjectIDManager
 import ToolTipsUtils
+import SingleMindedFury
+import LocalObjectIDs2
 
-let COOLDOWN = 25.
+let COOLDOWN = 35.
 let MANACOST = 0
 let ATTACK_DAMAGE_MULTIPLIER = 0.2
+let DAMAGE_CD = 0.5
 
 public let TT_WHIRLING_AXES_NAME = "Whirling Axes"
 public let TT_WHIRLING_AXES_EXT = "Warrior throws two axes that spiral around him, dealing {0}x attack damage on impact.".format(ATTACK_DAMAGE_MULTIPLIER.toString().color(COLOR_RED))+
                                     "\nRemoves immobilizing effects on use."+
+                                    "\nYour auto attacks reduce the cooldown by {0} seconds.".format(COOLDOWN_REFUND_BASE.toToolTipLightBlue())+
                                     "\nHas {0} seconds cooldown.".format(COOLDOWN.toToolTipLightBlue())
-public let ABILITY_WHIRLING_AXES = compiletime(ABIL_ID_GEN.next())
-    ..registerObjectID("ABIL_WHIRLING_AXES") 
 
 @compiletime function createShieldCharge()
     new AbilityDefinitionBladeMasterWindWalk(ABILITY_WHIRLING_AXES)
@@ -108,7 +88,7 @@ public class WhirlingAxe
         ..setScale(1.5)
 
     function updateDamage()
-        weaponsOfChoiceInstace = weaponsOfChoiceInstances.get(troll)        
+        weaponsOfChoiceInstace = WeaponsOfChoice.getInstance(troll)       
         attackDamage = weaponsOfChoiceInstace.getAttackDamage()
 
     function updatePos()
@@ -144,7 +124,7 @@ public class WhirlingAxe
                 each.isAlive() 
 
                 damagedUnits.add(each)
-                doAfter(0.5) -> 
+                doAfter(DAMAGE_CD) -> 
                     damagedUnits.remove(each) 
                 dealDamage(each)
                 flashEffect(Abilities.stampedeMissileDeath, each.getPos3Real())

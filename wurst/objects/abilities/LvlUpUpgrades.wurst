@@ -1,17 +1,9 @@
 package LvlUpUpgrades
 
-// Standard library imports:
-import HashMap
-import RegisterEvents
 
 // Local imports:
 import Classes
 import LocalObjectIDs
-import Transformation
-import UnitExtensions
-import LegacyHotkeys
-import TrollUnitTextConstant
-import IdListConstant
 import UpgradeObjEditing
 import ClosureEvents
 import ClosureTimers

@@ -12,7 +12,6 @@ import ManaBurn
 import StringBuilder
 
 // Local Imports:
-import Classes
 import ColorUtils
 import DamageListeners
 import Items
@@ -20,10 +19,10 @@ import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
 import ToolTipsUtils
-import initlater CustomItemDefinition
+import CustomItemDefinition
 import ObjectIDManager
 import LocalObjectIDs2
-import initlater ScrollsDefinition
+import ScrollsDefinition
 
 let ABIL_ABILITY_ATTACK_SPEED_20 = compiletime(ABIL_ID_GEN.next())
 public let ABIL_DMG_STONE  = compiletime(ABIL_ID_GEN.next())
@@ -143,7 +142,7 @@ function createAxe(int axeId) returns ItemDefinition
         ..setCooldownGroup("AIas")
         ..setStockReplenishInterval(120)
 
-public constant ITEM_STONE_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STONE_AXE_DUMMY_UNIT")
+public constant ITEM_STONE_AXE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STONE_AXE_DUMMY_UNIT")
 public constant ITEM_STONE_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STONE_AXE)
         ..setInterfaceIcon(Icons.bTNOrcMeleeUpOne)
         ..setModelUsed(LocalItems.stoneAxe)
@@ -156,7 +155,7 @@ public constant ITEM_STONE_AXE_DEFINITION = compiletime(new CustomItemDefinition
         ..constructItemShopDummyUnit(ITEM_STONE_AXE_DUMMY_UNIT)
         )
 
-public constant ITEM_IRON_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_AXE_DUMMY_UNIT")
+public constant ITEM_IRON_AXE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_IRON_AXE_DUMMY_UNIT")
 public constant ITEM_IRON_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_AXE)
         ..setInterfaceIcon(Icons.bTNOrcMeleeUpTwo)
         ..setModelUsed(LocalItems.ironAxe)
@@ -170,7 +169,7 @@ public constant ITEM_IRON_AXE_DEFINITION = compiletime(new CustomItemDefinition(
         )
 
 
-public constant ITEM_STEEL_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_AXE_DUMMY_UNIT")
+public constant ITEM_STEEL_AXE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STEEL_AXE_DUMMY_UNIT")
 public constant ITEM_STEEL_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_AXE)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerAdeptTraining)
         ..setModelUsed(LocalItems.steelAxe)
@@ -186,7 +185,7 @@ public constant ITEM_STEEL_AXE_DEFINITION = compiletime(new CustomItemDefinition
         ..constructItemShopDummyUnit(ITEM_STEEL_AXE_DUMMY_UNIT)
         )
 
-public constant ITEM_BATTLE_AXE_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_AXE_DUMMY_UNIT")
+public constant ITEM_BATTLE_AXE_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BATTLE_AXE_DUMMY_UNIT")
 public constant ITEM_BATTLE_AXE_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_AXE)
         ..setInterfaceIcon(Icons.bTNOrcMeleeUpThree)
         ..setModelUsed(LocalItems.battleAxe)
@@ -200,7 +199,7 @@ public constant ITEM_BATTLE_AXE_DEFINITION = compiletime(new CustomItemDefinitio
         ..constructItemShopDummyUnit(ITEM_BATTLE_AXE_DUMMY_UNIT)
         )
 
-public constant ITEM_MAGE_MASHER_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGE_MASHER_DUMMY_UNIT")
+public constant ITEM_MAGE_MASHER_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAGE_MASHER_DUMMY_UNIT")
 public constant ITEM_MAGE_MASHER_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAGE_MASHER)
         ..setInterfaceIcon(Icons.bTNSpiritWalkerMasterTraining)
         ..setModelUsed(LocalItems.mageMasher)
@@ -216,7 +215,7 @@ public constant ITEM_MAGE_MASHER_DEFINITION = compiletime(new CustomItemDefiniti
         ..constructItemShopDummyUnit(ITEM_MAGE_MASHER_DUMMY_UNIT)
         )
             
-public constant ITEM_TIDEBRINGER_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_TIDEBRINGER_DUMMY_UNIT")
+public constant ITEM_TIDEBRINGER_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_TIDEBRINGER_DUMMY_UNIT")
 public constant ITEM_TIDEBRINGER_DEFINITION = compiletime(new CustomItemDefinition(ITEM_TIDEBRINGER)
         ..setInterfaceIcon(Icons.bTNNagaWeaponUp2)
         ..setModelUsed(LocalItems.tideBringer)

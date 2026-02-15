@@ -14,7 +14,6 @@ import Toolkit
 import Tribe
 import Boards
 import ColorUtils
-import GameConfig
 import LocalAssets
 import UnitExtensions
 import PlayerExtensions

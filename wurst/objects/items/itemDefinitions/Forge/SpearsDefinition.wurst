@@ -8,7 +8,6 @@ import Orders
 
 // Local imports:
 import Spears
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -134,7 +133,7 @@ function createSpear(int spearId) returns CustomItemDefinition
         ..setCooldownGroup(toRawCode(ABILITY_SPEAR))
         ..setModelUsed(LocalItems.spears)
 
-public constant ITEM_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_SPEAR_DUMMY_UNIT")
+public constant ITEM_SPEAR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_SPEAR_DUMMY_UNIT")
 public constant ITEM_SPEAR_DEFINITION = compiletime(createSpear(ITEM_SPEAR)
         ..setNameEnhance("Stone Spear")
         ..setInterfaceIcon(Icons.bTNSteelRanged)
@@ -146,7 +145,7 @@ public constant ITEM_SPEAR_DEFINITION = compiletime(createSpear(ITEM_SPEAR)
         ..constructItemShopDummyUnit(ITEM_SPEAR_DUMMY_UNIT)
         )
 
-public constant ITEM_IRON_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_SPEAR_DUMMY_UNIT")
+public constant ITEM_IRON_SPEAR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_IRON_SPEAR_DUMMY_UNIT")
 public constant ITEM_IRON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_IRON_SPEAR)
         ..setNameEnhance("Iron Spear")
         ..setInterfaceIcon(Icons.bTNStrengthOfTheMoon)
@@ -161,7 +160,7 @@ public constant ITEM_IRON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_IRON_S
         ..constructItemShopDummyUnit(ITEM_IRON_SPEAR_DUMMY_UNIT)
         )
 
-public constant ITEM_STEEL_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_SPEAR_DUMMY_UNIT")
+public constant ITEM_STEEL_SPEAR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STEEL_SPEAR_DUMMY_UNIT")
 public constant ITEM_STEEL_SPEAR_DEFINITION = compiletime(createSpear(ITEM_STEEL_SPEAR)
         ..setNameEnhance("Steel Spear")
         ..setInterfaceIcon(Icons.bTNThoriumRanged)
@@ -176,7 +175,7 @@ public constant ITEM_STEEL_SPEAR_DEFINITION = compiletime(createSpear(ITEM_STEEL
         ..constructItemShopDummyUnit(ITEM_STEEL_SPEAR_DUMMY_UNIT)
         )
 
-public constant ITEM_DARK_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_DARK_SPEAR_DUMMY_UNIT")
+public constant ITEM_DARK_SPEAR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_DARK_SPEAR_DUMMY_UNIT")
 public constant ITEM_DARK_SPEAR_DEFINITION = compiletime(createSpear(ITEM_DARK_SPEAR)
         ..setNameEnhance("Dark Spear")
         ..setInterfaceIcon(Icons.bTNArcaniteRanged)
@@ -192,7 +191,7 @@ public constant ITEM_DARK_SPEAR_DEFINITION = compiletime(createSpear(ITEM_DARK_S
         )
 
 
-public constant ITEM_POISON_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_POISON_SPEAR_DUMMY_UNIT")
+public constant ITEM_POISON_SPEAR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_POISON_SPEAR_DUMMY_UNIT")
 public constant ITEM_POISON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_POISON_SPEAR)
         ..setNameEnhance("Poison Spear")
         ..setInterfaceIcon(Icons.bTNEnvenomedSpear)
@@ -208,7 +207,7 @@ public constant ITEM_POISON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_POIS
         ..constructItemShopDummyUnit(ITEM_POISON_SPEAR_DUMMY_UNIT)
         )
 
-public constant ITEM_ULTRA_POISON_SPEAR_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ULTRA_POISON_SPEAR_DUMMY_UNIT")
+public constant ITEM_ULTRA_POISON_SPEAR_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ULTRA_POISON_SPEAR_DUMMY_UNIT")
 public constant ITEM_ULTRA_POISON_SPEAR_DEFINITION = compiletime(createSpear(ITEM_ULTRA_POISON_SPEAR)
         ..setNameEnhance("Ultra Poison Spear")
         ..setInterfaceIcon(LocalIcons.bTNUltraPoisonSpear)

@@ -9,7 +9,7 @@ import UpgradeObjEditing
 
 // Local imports:
 import Classes
-import BeastMaster
+import Primalist
 import Hunter
 import LocalObjectIDs
 import PlayerExtensions
@@ -25,7 +25,7 @@ import GameState
 constant creepExp = [3, 25]
 constant heroExp = [0, 100, 120, 160, 220, 300]
 constant expPerLevel = [0, 200]
-constant nsModeStartingLevelCap = 4
+public constant nsModeStartingLevelCap = 4
 public constant expRange = 1200.0
 public constant GOK_MULTIPLIER = 1.5
 public HashMap<Tribe, int> levelCapPerTribe = new HashMap<Tribe, int>()
@@ -95,7 +95,7 @@ function performExperienceGain()
         ? heroExp[deadUnitLevel]
         : creepExp[deadUnitLevel]
     let reduceExpGain = dead.getOwner().getId() == PLAYER_NEUTRAL_AGGRESSIVE
-    let levelCap = levelCapPerTribe.get(killer.getOwner().getTribe())
+    let levelCap = killer.getOwner().getTribe().levelCap
     for hero in heroes
         let multiplier = getMultiplier(hero)
         var experience = (baseExp * multiplier / heroes.size()).floor()
@@ -105,7 +105,7 @@ function performExperienceGain()
         // Increase experience for Gem of Knowledge holders.
         if hero.hasItemById(ITEM_GEM_OF_KNOWLEDGE)
             let entity = UnitEntity.findForUnit(hero)
-            if not (entity instanceof BeastMaster or entity instanceof Hunter)
+            if not (entity instanceof Primalist or entity instanceof Hunter)
                 experience = (experience * GOK_MULTIPLIER).floor()
 
         if level>=levelCap and hero.getTrollClassType() != ClassType.BASE_CLASS and gameConfig.isNoSuperSubs()
@@ -123,7 +123,7 @@ function performExperienceGain()
                     level += 1
                     if hero.getTrollClassType() == null
                         //print("troll class type is not set for unit "+GetObjectName(hero.getTypeId()))
-                    let lvlCap = levelCapPerTribe.get(hero.getOwner().getTribe())
+                    let lvlCap = hero.getOwner().getTribe().levelCap
                     if level>=lvlCap and hero.getTrollClassType() != ClassType.BASE_CLASS and gameConfig.isNoSuperSubs()
                         hero.setXp(heroCurrentXp)
                         performGlobalExperienceGain(hero,lvlCap,experience, dead)
@@ -150,7 +150,8 @@ function performGlobalExperienceGain(unit lvlCapTroll, int levelCap, int exp, un
 
     if heroes.isEmpty()
         let newLvlCap = levelCap+1
-        levelCapPerTribe.put(lvlCapTroll.getOwner().getTribe(), newLvlCap)
+        lvlCapTroll.getOwner().getTribe().levelCap = newLvlCap
+        //levelCapPerTribe.put(lvlCapTroll.getOwner().getTribe(), newLvlCap)
         performGlobalExperienceGain(lvlCapTroll, newLvlCap, exp, killedUnit)
         destroy heroes
         return
@@ -199,7 +200,7 @@ public function unlockResearch(unit target)
 
 function initTribes()
     for each in Tribe.tribes
-        levelCapPerTribe.put(each, nsModeStartingLevelCap)
+        each.levelCap = nsModeStartingLevelCap
 
 
 init

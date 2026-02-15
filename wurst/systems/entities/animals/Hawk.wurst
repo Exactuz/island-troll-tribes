@@ -43,7 +43,7 @@ public class Hawk extends BonyAnimal
 
         // Attempt to find a nearby Beastmaster.
         let bm = findNearestUnit(getPos(), 400) target ->
-            return target.getTrollBaseClass() == UNIT_BEASTMASTER
+            return target.getTrollBaseClass() == UNIT_PRIMALIST
 
         // Drop an additional egg if there is a match.
         if bm != null

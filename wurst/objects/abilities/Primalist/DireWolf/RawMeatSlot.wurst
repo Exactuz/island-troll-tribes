@@ -1,0 +1,213 @@
+package RawMeatSlot
+
+// Standard library imports:
+import HashMap
+import ClosureTimers
+import UnitExtensions
+
+// Local imports:
+import LocalObjectIDs
+import Orders
+import LocalAssets
+import Items
+import LocalItemObjEditing
+import PetReleasing
+import LinkedList
+
+public IterableMap<unit, RawMeatSlot> instances = new IterableMap<unit, RawMeatSlot>()
+
+let TT_EXT = "You can store stashed raw meat or a bone in this slot."
+
+public constant rawMeatSlotItems= asList(ITEM_BONE, ITEM_STASHED_RAW_MEAT)
+
+@compiletime function createDireBeastDummyItem() returns ItemDefinition
+    return createBasicItem(ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM)
+        ..setInterfaceIcon(LocalIcons.dISBTNFeedPet)
+        ..setNameEnhance("Food Slot.")
+        ..setTooltipExtended(TT_EXT)
+        ..setDescription(TT_EXT)
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(0)
+        ..setTintingColor3Blue(128)
+        ..setScalingValue(1.5)
+        ..setCanBeDropped(true)
+        ..setCanBeSoldToMerchants(false)
+
+class RawMeatSlot
+    unit hero = null
+    item dummy = null
+    bool suspendTriggersFlag = false
+
+    construct(unit hero)
+        this.hero = hero
+        dummy = createItem(ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM, hero.getPos())
+        nullTimer() -> 
+            dummy.setVisible(false)
+            doAfter(ANIMATION_PERIOD) ->     
+                updateDummySlot() 
+
+    function updateDummySlot()
+        dummy.setVisible(false)
+        if updateRawMeatSlot()
+            //print("true")
+            return
+        if hero.hasItem(dummy)
+            //print("hero has dummy")
+            return
+        suspendTriggersFlag = true        
+        if hero.isInventoryFull()
+            //print("removed item from slot 4")
+            hero.removeItemFromSlot(4)
+        nullTimer() ->
+            //print("added dummy")
+            hero.addItemHandle(dummy)
+            suspendTriggersFlag = false
+
+    function updateRawMeatSlot() returns bool  
+        var dummyslot = -1
+        dummyslot = hero.getItemSlot(dummy)
+        for each in hero.getInventory()
+            if rawMeatSlotItems.has(each.getTypeId())
+                suspendTriggersFlag = true
+                hero.removeItem(dummy)
+                nullTimer() ->
+                    if dummyslot>=0
+                        hero.removeItem(each)
+                        nullTimer() ->     
+                            hero.addItemHandleToSlot(each, dummyslot) 
+                            suspendTriggersFlag = false
+                    else
+                        suspendTriggersFlag = false
+                    dummy.setVisible(false)   
+                return true           
+        return false
+
+    function onTargetOrder(item itemHandle)
+        suspendTriggersFlag = true
+        let dummyslot = hero.getItemSlot(dummy)    
+        hero.removeItem(dummy)
+        suspendTriggersFlag = false 
+        nullTimer() -> 
+            hero.addItemHandleToSlot(itemHandle, dummyslot)
+            dummy.setVisible(false)
+            nullTimer() ->  
+                updateDummySlot()
+
+
+function onSub(unit troll)
+    if not instances.has(troll)
+        doAfter(ANIMATION_PERIOD) -> 
+            instances.put(troll, new RawMeatSlot(troll))
+            releasePet(troll)
+
+                
+
+function onItemPickup(unit troll, item manipulatedItem)
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    if instance.suspendTriggersFlag == true
+        //print("onItemPickUpFlag "+instance.onItemPickUpFlag.toString())
+        return
+    if not rawMeatSlotItems.has(manipulatedItem.getTypeId())
+        //print("not a stolen item")    
+        return
+    instance.updateDummySlot()
+
+/*
+function onDummyItemDrop(unit troll, item manipulatedItem)
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    if manipulatedItem.getTypeId()!= ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM and manipulatedItem.getTypeId()!= ITEM_STASHED_RAW_MEAT
+        return
+    if instance.suspendTriggersFlag == true
+        //print("onDummyItemDropFlag "+instance.onDummyItemDropFlag.toString())
+        return
+    //print("onDummyItemDrop")
+    if manipulatedItem.getTypeId() == ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM
+        nullTimer() -> 
+            manipulatedItem.setVisible(false)
+
+    nullTimer() -> 
+        instance.updateDummySlot()
+*/
+
+function onItemDropped(unit troll, item manipulatedItem)
+    let orderItm = GetOrderTargetItem()
+    let slotFrom = troll.getItemSlot(orderItm)    
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    //if manipulatedItem.getTypeId()!= ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM and (not stolenItems.has(manipulatedItem))
+       // return
+    if instance.suspendTriggersFlag == true
+        //print("onDummyItemDropFlag "+instance.onDummyItemDropFlag.toString())
+        return
+    //print("onDummyItemDrop")
+    if manipulatedItem.getTypeId() == ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM
+        nullTimer() -> 
+            //manipulatedItem.setVisible(false)
+            
+    nullTimer() -> 
+        instance.updateDummySlot()
+
+
+
+function onTargetOrder()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    let instance = instances.get(u)
+    let target = GetOrderTargetItem()
+    if instance == null
+        return
+    if instance.suspendTriggersFlag == true
+        return
+    if order != Orders.smart or not u.isInventoryFull() or not instances.has(u)
+        return
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and u.hasItemById(ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM)
+        and (target.getTypeId() == ITEM_BONE or target.getTypeId() == ITEM_STASHED_RAW_MEAT))
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            instance.onTargetOrder(target)
+
+
+function onRevive(unit troll)
+    let instance = instances.get(troll)
+    if instance == null
+        return
+    if instance.suspendTriggersFlag == true
+        return
+    instance.updateDummySlot()
+
+
+
+init
+    /*
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH)->
+        if EventData.getSpellAbilityId()== ABILITY_DIRE_WOLF
+            onSub(EventData.getSpellAbilityUnit())
+
+    EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())  
+
+
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        if GetManipulatingUnit().getTypeId() == UNIT_DIRE_WOLF
+            onItemPickup(GetManipulatingUnit(), GetManipulatedItem())
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) ->
+        if GetManipulatingUnit().getTypeId() == UNIT_DIRE_WOLF
+            onItemDropped(GetManipulatingUnit(), GetManipulatedItem())
+
+
+    registerPlayerUnitEvent(EVENT_PLAYER_HERO_REVIVE_FINISH)->
+        if GetTriggerUnit().getTypeId() == UNIT_DIRE_WOLF
+            onRevive(GetTriggerUnit())
+    */                        
+        

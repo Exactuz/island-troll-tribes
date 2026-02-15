@@ -1,0 +1,60 @@
+package OwlFormSpiritState
+import OwlFormState
+import OwlForm
+import UnitExtensions
+import LocalObjectIDs2
+import OwlFormIdle
+import initlater OwlFormStateHandler
+
+
+public class OwlFormSpiritState extends OwlFormState
+    vec2 targetPos
+    destructable targetTree = null
+    effect efx
+    unit efxDummyUnit
+    real angleRadians = 0
+    construct(unit caster, vec2 targetPos) 
+        super(caster, "SpiritState")
+        this.targetPos = targetPos
+
+    construct(unit caster, destructable targetTree) 
+        super(caster, "SpiritState")
+        this.targetTree = targetTree
+        this.targetPos = targetTree.getPos()
+
+    override function onEnter()
+        efxDummyUnit = createUnit(caster.getOwner(), UNIT_DRUID_OWLFORM_PROJECTILE_DUMMY, caster.getPos(), caster.getPos().angleTo(targetPos))
+        if targetTree != null
+            createUnit(caster.getOwner(), UNIT_DRUID_OWLFORM_PROJECTILE_DUMMY, caster.getPos(), caster.getPos().angleTo(targetPos))
+            ..kill()
+    
+    override function onExit()
+        efxDummyUnit.remove()
+        let instance = OwlFormStateHandler.instances.get(caster)
+        if targetTree != null
+            instance.enterState(new OwlFormIdle(caster, targetTree))
+        else
+            instance.finish()
+
+    override function update()
+        if not isActive
+            return
+        if not moveTowardsVec2(targetPos)
+            exit()
+
+    function moveTowardsVec2(vec2 target) returns bool
+        let casterPos = caster.getPos()
+        let distance = casterPos.distanceTo(target)
+        if distance <= OWLFORM_FINISH_DISTANCE
+            return false
+        let newPos = casterPos.moveTowards(target, OWLFORM_DISTANCE_PER_SECOND*ANIMATION_PERIOD)
+        caster.setXY(newPos)
+        efxDummyUnit.setPos(newPos)
+        let angle = casterPos.angleTo(target)
+        angleRadians+=ANIMATION_PERIOD*2
+        efxDummyUnit.setFacing(angle)
+        caster.setFacingEx(angle)
+        return true
+
+        
+        

@@ -4,7 +4,6 @@ import ClosureForGroups
 import DummyCaster
 import Orders
 import ChannelAbilityPreset
-import Assets
 import LocalObjectIDs
 import Lodash
 import ToolTipsUtils

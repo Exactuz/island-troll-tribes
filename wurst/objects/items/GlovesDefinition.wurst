@@ -199,7 +199,7 @@ public let TT_HYDRA_CLAWS = TT_UNFORMAT_HYDRA_CLAWS_STRING.format(
         ..setEditorSuffix("(Wurst)")
 
 
-public constant ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT")
+public constant ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT")
 public constant ITEM_ELK_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ELK_SKIN_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_10
@@ -220,7 +220,7 @@ public constant ITEM_ELK_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDefi
         ..constructItemShopDummyUnit(ITEM_ELK_SKIN_GLOVES_DUMMY_UNIT)
         )
 
-public constant ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT")
+public constant ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT")
 public constant ITEM_WOLF_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLF_SKIN_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_15,
@@ -243,7 +243,7 @@ public constant ITEM_WOLF_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDef
         ..constructItemShopDummyUnit(ITEM_WOLF_SKIN_GLOVES_DUMMY_UNIT)
         )
 
-public constant ITEM_WOLFS_BLOODLUST_CLAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_WOLFS_BLOODLUST_CLAWS_DUMMY_UNIT")
+public constant ITEM_WOLFS_BLOODLUST_CLAWS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_WOLFS_BLOODLUST_CLAWS_DUMMY_UNIT")
 public constant ITEM_WOLFS_BLOODLUST_CLAWS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_WOLFS_BLOODLUST_CLAWS)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_30,
@@ -268,7 +268,7 @@ public constant ITEM_WOLFS_BLOODLUST_CLAWS_DEFINITION = compiletime(new CustomIt
         )
 
 
-public constant ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT")
+public constant ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT")
 public constant ITEM_BEAR_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEAR_SKIN_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_20,
@@ -291,7 +291,7 @@ public constant ITEM_BEAR_SKIN_GLOVES_DEFINITION = compiletime(new CustomItemDef
         ..constructItemShopDummyUnit(ITEM_BEAR_SKIN_GLOVES_DUMMY_UNIT)
         )
         
-public constant ITEM_BEARS_GREED_PAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEARS_GREED_PAWS_DUMMY_UNIT")
+public constant ITEM_BEARS_GREED_PAWS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BEARS_GREED_PAWS_DUMMY_UNIT")
 public constant ITEM_BEARS_GREED_PAWS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEARS_GREED_PAWS)
         ..setAbilities(commaList(
             ABIL_HONEY,            
@@ -320,7 +320,7 @@ public constant ITEM_BEARS_GREED_PAWS_DEFINITION = compiletime(new CustomItemDef
         ..constructItemShopDummyUnit(ITEM_BEARS_GREED_PAWS_DUMMY_UNIT)
         )        
 
-public constant ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT")
+public constant ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT")
 public constant ITEM_BEARS_GREED_PAWS_EMPTY_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BEARS_GREED_PAWS_EMPTY)
         ..setAbilities(commaList(
             ABILITY_BEARS_GREED_PAWS_ACTIVE,            
@@ -349,7 +349,7 @@ public constant ITEM_BEARS_GREED_PAWS_EMPTY_DEFINITION = compiletime(new CustomI
         ..constructItemShopDummyUnit(ITEM_BEARS_GREED_PAWS_EMPTY_DUMMY_UNIT)
         )
 
-public constant ITEM_BONE_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BONE_GLOVES_DUMMY_UNIT")
+public constant ITEM_BONE_GLOVES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BONE_GLOVES_DUMMY_UNIT")
 public constant ITEM_BONE_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BONE_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_20,
@@ -372,7 +372,7 @@ public constant ITEM_BONE_GLOVES_DEFINITION = compiletime(new CustomItemDefiniti
         ..constructItemShopDummyUnit(ITEM_BONE_GLOVES_DUMMY_UNIT)
         )
 
-public constant ITEM_IRON_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_IRON_GLOVES_DUMMY_UNIT")
+public constant ITEM_IRON_GLOVES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_IRON_GLOVES_DUMMY_UNIT")
 public constant ITEM_IRON_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_IRON_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_25,
@@ -395,7 +395,7 @@ public constant ITEM_IRON_GLOVES_DEFINITION = compiletime(new CustomItemDefiniti
         ..constructItemShopDummyUnit(ITEM_IRON_GLOVES_DUMMY_UNIT)
         )
 
-public constant ITEM_STEEL_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_STEEL_GLOVES_DUMMY_UNIT")
+public constant ITEM_STEEL_GLOVES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_STEEL_GLOVES_DUMMY_UNIT")
 public constant ITEM_STEEL_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_STEEL_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_35,
@@ -418,7 +418,7 @@ public constant ITEM_STEEL_GLOVES_DEFINITION = compiletime(new CustomItemDefinit
         ..constructItemShopDummyUnit(ITEM_STEEL_GLOVES_DUMMY_UNIT)
         )
 
-public constant ITEM_BATTLE_GLOVES_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_BATTLE_GLOVES_DUMMY_UNIT")
+public constant ITEM_BATTLE_GLOVES_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_BATTLE_GLOVES_DUMMY_UNIT")
 public constant ITEM_BATTLE_GLOVES_DEFINITION = compiletime(new CustomItemDefinition(ITEM_BATTLE_GLOVES)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_30,
@@ -441,7 +441,7 @@ public constant ITEM_BATTLE_GLOVES_DEFINITION = compiletime(new CustomItemDefini
         ..constructItemShopDummyUnit(ITEM_BATTLE_GLOVES_DUMMY_UNIT)
         )
 
-public constant ITEM_HYDRA_CLAWS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_HYDRA_CLAWS_DUMMY_UNIT")
+public constant ITEM_HYDRA_CLAWS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_HYDRA_CLAWS_DUMMY_UNIT")
 public constant ITEM_HYDRA_CLAWSUNIT_DEFINITION = compiletime(new CustomItemDefinition(ITEM_HYDRA_CLAWS)
         ..setAbilities(commaList(
             ABILITY_TSUNAMI,
@@ -465,7 +465,7 @@ public constant ITEM_HYDRA_CLAWSUNIT_DEFINITION = compiletime(new CustomItemDefi
         ..constructItemShopDummyUnit(ITEM_HYDRA_CLAWS_DUMMY_UNIT)
         )
 
-public constant ITEM_MAGEFIST_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAGEFIST_DUMMY_UNIT")
+public constant ITEM_MAGEFIST_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAGEFIST_DUMMY_UNIT")
 public constant ITEM_MAGEFIST_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAGEFIST)
         ..setAbilities(commaList(
             ABILITY_ATTACK_SPEED_30,

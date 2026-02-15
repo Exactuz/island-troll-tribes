@@ -7,7 +7,6 @@ import BuffObjEditing
 import ObjectIdGenerator
 import ObjectIds
 import Orders
-import RegisterEvents
 
 // Third-party imports:
 import Lodash
@@ -16,14 +15,12 @@ import Lodash
 import ColorUtils
 import LocalObjectIDs
 import ToolTipsUtils
-import ClosureEvents
 import HashMap
 import ClosureTimers
 import HealingSystem
 import Tribe
 import PlayerExtensions
-import UnitExtensions
-import DamageEvent
+import RegisterEvents
 
 let BUFF_SELF_ID = compiletime(BUFF_ID_GEN.next())
 let BUFF_ID = compiletime(BUFF_ID_GEN.next())
@@ -90,14 +87,14 @@ class ReplenishHealth extends AbilityDefinitionAuraRegenerationHealingWard
 
 @compiletime function createReplenishHealthAura()
     new AbilityDefinitionAuraSlow(ABILITY_REPLENISH_HEALTH_DUMMY_AURA)
-		..setName(TOOLTIP_NORM)
-		..setMovementSpeedFactor(1, 0)
-		..setBuffs(1, BUFF_ID.toRawCode())
+        ..setName(TOOLTIP_NORM)
+        ..setMovementSpeedFactor(1, 0)
+        ..setBuffs(1, BUFF_ID.toRawCode())
         ..setAreaofEffect(1, AOE)
-		..presetIcon(Icons.bTNHolyBolt)
-		..setArtTarget("")
-		..setTargetsAllowed(1, TARGET_ALLOWED)
-		..setEditorSuffix("wurst")
+        ..presetIcon(Icons.bTNHolyBolt)
+        ..setArtTarget("")
+        ..setTargetsAllowed(1, TARGET_ALLOWED)
+        ..setEditorSuffix("wurst")
         ..setTooltipNormal(1, makeToolTipNorm("D", "Activate "+TOOLTIP_NORM))
         ..setTooltipNormalExtended(1, TOOLTIP_EXTENDED)
 

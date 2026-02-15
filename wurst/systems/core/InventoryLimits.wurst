@@ -8,7 +8,6 @@ import GameStates
 import LocalObjectIDs
 import PlayerExtensions
 import ClosureTimers
-import Tribe
 import IdListConstant
 
 class Restriction

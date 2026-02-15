@@ -2,7 +2,6 @@ package InventoryUtils
 import UnitExtensions
 import LocalObjectIDs
 import GatheringSlot
-import ClosureTimers
 
 public function transferItems(unit source, unit dest)
     let count = source.inventorySize()

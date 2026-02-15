@@ -2,21 +2,13 @@ package SenseDreams
 
 import ClosureEvents
 import LocalObjectIDs
-import Icons
-import Lodash
 import ToolTipsUtils
 import ChannelAbilityPreset
-import Abilities
-import SimError
 import HashMap
-import LinkedList
 import ClosureTimers
-import HealingSystem
 import Dreamwalking
 import LocalAssets
-import AttachmentPoints
 import DreamEater2
-import ColorUtils
 import ClosureForGroups
 import HashList
 
@@ -62,7 +54,7 @@ class SenseDreams
 @compiletime function createRavenousBeastDummy()
     new AbilityDefinitionEvasion(ABILITY_SENSE_DREAMS_DUMMY)
         ..setChancetoEvade(1, 0.)
-		..setLevels(1)
+        ..setLevels(1)
         ..setIconNormal(LocalIcons.bTNSenseDreams)
         ..setTooltipNormal(1, TT_DREAMWALKING_NORM)
         ..setTooltipLearn(TT_DREAMWALKING_NORM)

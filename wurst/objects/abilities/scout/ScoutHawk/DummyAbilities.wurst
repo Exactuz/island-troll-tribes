@@ -11,6 +11,8 @@ import DreamVision
 import LocalAssets
 import Rescue
 import Cyclone
+import ColorUtils
+import LocalObjectIDs2
 
 let TT_COMMAND_NAME = "Swoop"
 let TT_COMMAND_EXT = "Command your Hawk to swoop at a target. Can be used on various targets for different effects. See tooltips in spellbook to learn more."+
@@ -52,10 +54,19 @@ let TT_DREAM_VISION_EXT = "You can see through the eyes of nearby hawks while dr
                         "\nLvl 2: ".color(COLOR_GOLD_STR)+"{0} radius.".format(DREAM_VISION_RANGE_LVL_1.toToolTipLightBlue())+
                         "\nLvl 4: ".color(COLOR_GOLD_STR)+"{0} radius.".format(DREAM_VISION_RANGE_LVL_2.toToolTipLightBlue())
 
-let TT_RESCUE_NAME = "Rescue"
-let TT_RESCUE_EXT = "Command Greater Hawk to carry you to safety, flying a short distance. Can be used on an ally."+
-                        "\nLvl 2: ".color(COLOR_GOLD_STR)+"can be used on area to order hawk to carry you to that location."+
-                        "\nLvl 4: ".color(COLOR_GOLD_STR)+"can be used on an ally to order hawk to carry them in your direction."+
+let TT_RESCUE_NAME = "Rescue: Self"
+let TT_RESCUE_EXT = "Command Greater Hawk to carry yourself to the target location, flying a short distance."+
+                        //"\nLvl 2: ".color(COLOR_GOLD_STR)+"can be used on area to order hawk to carry you to that location."+
+                        //"\nLvl 4: ".color(COLOR_GOLD_STR)+"can be used on an ally to order hawk to carry them in your direction."+
+                        "\nShares cooldown with "+"Rescue: Self".color(COLOR_LIGHT_BLUE)+
+                        "\nDistance: {0}".format(RESCUE_MAX_RANGE.toToolTipLightBlue())+
+                        "\nHas {0} seconds cooldown.".format(HAWK_RESCUE_COOLDOWN.toToolTipLightBlue())
+
+let TT_RESCUE_ALLY_NAME = "Rescue: Ally"
+let TT_RESCUE_ALLY_EXT = "Command Greater Hawk to carry an ally to your location."+
+                        //"\nLvl 2: ".color(COLOR_GOLD_STR)+"can be used on area to order hawk to carry you to that location."+
+                        //"\nLvl 4: ".color(COLOR_GOLD_STR)+"can be used on an ally to order hawk to carry them in your direction."+
+                        "\nShares cooldown with "+"Rescue: Ally".color(COLOR_LIGHT_BLUE)+
                         "\nDistance: {0}".format(RESCUE_MAX_RANGE.toToolTipLightBlue())+
                         "\nHas {0} seconds cooldown.".format(HAWK_RESCUE_COOLDOWN.toToolTipLightBlue())
 
@@ -153,30 +164,35 @@ let TT_CYCLONE_EXT = "Greater Hawk circles around an ally creating a cyclone, pr
         ..presetTooltipNormal(lvl->TT_COMMAND_NAME)
         ..presetTooltipNormalExtended(lvl-> TT_COMMAND_EXT)
 
-    new ChannelAbilityPreset(ABILITY_HAWK_RESCUE, 2, true)
-        ..setLevels(2)
+    new ChannelAbilityPreset(ABILITY_HAWK_RESCUE, 1, true)
         ..presetCastingTime(lvl ->0.)
         ..presetCastRange(lvl -> 2000.)
         ..setIconNormal(LocalIcons.bTNWing)
         ..presetHotkey("E")
         ..presetButtonPosNormal(0, 2)
         ..presetCooldown(lvl->HAWK_RESCUE_COOLDOWN)
-        ..presetTargetTypes(Targettype.POINTUNIT)
-        ..setTargetsAllowed(1, commaList(TargetsAllowed.self
-        ))
-        ..setTargetsAllowed(2, commaList(
-            TargetsAllowed.ground,
-            TargetsAllowed.neutral,
-            TargetsAllowed.vulnerable,
-            TargetsAllowed.invulnerable,
-            TargetsAllowed.friend
-
-        ))
+        ..presetTargetTypes(Targettype.POINT)
         ..presetTooltipNormal(lvl->TT_RESCUE_NAME)
         ..presetTooltipNormalExtended(lvl-> TT_RESCUE_EXT)
 
-    new AbilityDefinitionCyclone(ABILITY_HAWK_CYCLONE)
-        ..setLevels(1)
+    new ChannelAbilityPreset(ABILITY_HAWK_RESCUE_ALLY, 1, true)
+        ..presetCastingTime(lvl ->0.)
+        ..presetCastRange(lvl -> 2000.)
+        ..setIconNormal(LocalIcons.bTNWing)
+        ..presetHotkey("R")
+        ..presetButtonPosNormal(0, 3)
+        ..presetCooldown(lvl->HAWK_RESCUE_COOLDOWN)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetTooltipNormal(lvl->TT_RESCUE_ALLY_NAME)
+        ..presetTooltipNormalExtended(lvl-> TT_RESCUE_ALLY_EXT)
+        ..presetTargetsAllowed(lvl-> commaList(
+            TargetsAllowed.nonancient,
+            TargetsAllowed.ground,
+            TargetsAllowed.organic,
+            TargetsAllowed.friend
+        ))
+
+    new ChannelAbilityPreset(ABILITY_HAWK_CYCLONE_DUMMY, 1, true) 
         ..presetCastingTime(lvl ->0.)
         ..presetCastRange(lvl -> 1200.)
         ..presetDurationHero(lvl->2.5)
@@ -190,12 +206,13 @@ let TT_CYCLONE_EXT = "Greater Hawk circles around an ally creating a cyclone, pr
         ..setTargetsAllowed(1, commaList(
             TargetsAllowed.self,
             TargetsAllowed.friend,
-            TargetsAllowed.alive
+            TargetsAllowed.organic
         ))
+        ..presetTargetTypes(Targettype.UNIT)
         ..presetTooltipNormal(lvl->TT_CYCLONE_NAME)
         ..presetTooltipNormalExtended(lvl-> TT_CYCLONE_EXT)
 
-    new ChannelAbilityPreset(ABILITY_HAWK_CYCLONE_DUMMY, 1, true)
+    new AbilityDefinitionCyclone(ABILITY_HAWK_CYCLONE)
         ..setLevels(2)
         ..presetCastingTime(lvl ->0.)
         ..presetCastRange(lvl -> 1200.)
@@ -203,13 +220,13 @@ let TT_CYCLONE_EXT = "Greater Hawk circles around an ally creating a cyclone, pr
         ..presetHotkey("W")
 
         ..presetButtonPosNormal(0, 1)
-        ..presetTargetTypes(Targettype.POINTUNIT)
         ..setTargetsAllowed(1, commaList(
             TargetsAllowed.self,
             TargetsAllowed.friend,
             TargetsAllowed.alive
         ))
         ..presetTooltipNormal(lvl->TT_CYCLONE_NAME)
-        ..presetTooltipNormalExtended(lvl-> TT_CYCLONE_EXT)       
+        ..presetTooltipNormalExtended(lvl-> TT_CYCLONE_EXT)
+        ..setDummyAbility()       
 
       

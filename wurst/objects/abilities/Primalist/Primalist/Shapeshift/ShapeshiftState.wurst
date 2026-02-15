@@ -1,0 +1,33 @@
+package ShapeshiftState
+
+
+import ObjectIDManager
+
+public class ShapeshiftState
+    bool isActive = false
+    unit troll
+    int targetFormId
+    construct(unit troll)
+        this.troll = troll
+
+    function enter()
+        if isActive
+            Log.debug("Attempting to enter already active state "+targetFormId.asObjectName())
+            return
+        Log.debug("Activated state "+targetFormId.asObjectName())
+        onEnter()
+        isActive = true
+
+    function exit()
+        if not isActive
+            Log.debug("Attempting to exit inactive state "+targetFormId.asObjectName())
+            return
+        Log.debug("Deactivated state "+targetFormId.asObjectName())
+        onExit()
+        isActive = false
+
+    function onEnter()
+
+    function onExit()
+
+    function update()

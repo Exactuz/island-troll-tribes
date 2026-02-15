@@ -1,0 +1,26 @@
+package BearState
+
+
+import LocalObjectIDs
+import ShapeshiftState
+
+
+public class BearState extends ShapeshiftState
+
+    construct(unit troll)
+        super(troll)
+        targetFormId = UNIT_SHAPESHIFTER_BEAR
+        //troll.makeAbilityPermanent(ABILITY_PRIMALIST_ROOT_CAST, true)
+        //troll.addPermanentAbility(ABILITY_TRANSFORM_HUMANOID)
+        //troll.disableAbility(abilId, flag, hideUI)
+
+    override function onEnter()
+        troll.disableAbility(ABILITY_SLEEP_OUTSIDE, true, true)
+        troll.disableAbility(ABILITY_HIBERNATE_DUMMY, false, false)
+        if troll.getLevel()>=4
+            troll.addAbility(ABILITY_THICK_FUR_ARMOR_BONUS)
+
+    override function onExit()
+        troll.disableAbility(ABILITY_HIBERNATE_DUMMY, true, true)
+        troll.disableAbility(ABILITY_SLEEP_OUTSIDE, false, false)
+        troll.removeAbility(ABILITY_THICK_FUR_ARMOR_BONUS)

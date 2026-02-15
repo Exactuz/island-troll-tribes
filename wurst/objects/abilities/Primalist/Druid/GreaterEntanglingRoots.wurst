@@ -1,0 +1,80 @@
+package GreaterEntanglingRoots
+
+// Standard library imports:
+import ClosureEvents
+import ClosureTimers
+
+// Local imports:
+import LocalObjectIDs
+import IdListConstant
+import ColorUtils
+import BuffIds
+import ChannelAbilityPreset
+import LocalObjectIDs2
+import UnitExtensions
+import ToolTipsUtils
+import BuffObjEditing
+
+constant ROOT_DURATION_HERO_CAP = 2.
+constant ROOT_DURATION_NORMAL = 8.
+constant ROOT_COOLDOWN = 20.
+constant ROOT_CAST_RANGE = 500.
+constant ROOT_DAMAGE_PERIOD = ANIMATION_PERIOD
+constant ROOT_TOTAL_DAMAGE_BASE = 10.
+constant ROOT_ANIMAL_BONUS_DAMAGE = 40.
+constant ROOT_HERO_DURATION_BASE = 2.
+constant ROOT_HERO_DURATION_INT_MULTIPLIER = 0.02
+constant ROOT_TOTAL_DAMAGE_INT_MULTIPLIER = 0.7
+constant ROOT_MANACOST = 20
+constant PRIMALIST_ROOTS_TT_NORMAL = "Greater Entangling Roots"
+constant PRIMALIST_ROOTS_TT_EXT =  "Causes roots to burst from the ground, immobilizing and disarming the target for {0} seconds.".format(
+                                    ROOT_HERO_DURATION_BASE.toToolTipLightBlue())+
+                                    "\nInflicts {0} + {1} {2} damage over time.".format(
+                                    ROOT_TOTAL_DAMAGE_BASE.toToolTipRed(), ROOT_TOTAL_DAMAGE_INT_MULTIPLIER.toToolTipRed(), "Intelligence".color(COLOR_TURQUOISE))+
+                                    "\nLasts for {0} seconds on animals.".format(ROOT_DURATION_NORMAL.toToolTipLightBlue())+
+                                    "\nHas {0} seconds cooldown.".format(ROOT_COOLDOWN.toToolTipLightBlue())
+
+@compiletime function createEntaglingRootAbility()
+    new AbilityDefinitionEntanglingRootscreep(ABILITY_DRUID_ENTANGLING_ROOTS)
+        ..setCooldown(1, ROOT_COOLDOWN)
+        ..setCastRange(1, ROOT_CAST_RANGE)
+        ..setCooldown(1, ROOT_COOLDOWN)
+        ..presetIcon(Icons.bTNEntanglingRoots)
+        ..presetManaCost(lvl->ROOT_MANACOST)
+        ..presetDamageperSecond(lvl->0.01)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("R")
+        ..setBuffs(1, BUFF_GREATER_ENTANGLING_ROOTS.toRawCode())
+        ..setDurationHero(1, ROOT_DURATION_HERO_CAP)
+        ..setDurationNormal(1, ROOT_DURATION_NORMAL)
+        ..setTooltipNormal(1, PRIMALIST_ROOTS_TT_NORMAL)
+        ..setTooltipNormalExtended(1, PRIMALIST_ROOTS_TT_EXT)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.organic
+            ))
+
+
+    new BuffDefinition(BUFF_GREATER_ENTANGLING_ROOTS, BuffIds.entanglingRoots) 
+
+function onRoot(unit caster, unit target)
+    if target.getTypeId() == UNIT_HAWK
+        nullTimer()->
+            caster.endAbilityCooldown(ABILITY_DRUID_ENTANGLING_ROOTS)
+        return
+    let intelligence = caster.getInt(true)
+    let animalBonusDamage = HOSTILE_ANIMALS_LIST.has(target.getTypeId()) ? ROOT_ANIMAL_BONUS_DAMAGE : 0
+    let totalDamage = ROOT_TOTAL_DAMAGE_BASE + ROOT_TOTAL_DAMAGE_INT_MULTIPLIER*intelligence + animalBonusDamage
+    let duration = target.isTroll() ? (ROOT_HERO_DURATION_BASE+ROOT_HERO_DURATION_INT_MULTIPLIER*intelligence) : ROOT_DURATION_NORMAL
+    let dmgPerTick = (totalDamage/duration)*ROOT_DAMAGE_PERIOD
+    doPeriodicallyTimed(ROOT_DAMAGE_PERIOD, duration) (CallbackCounted cb) ->
+        caster.damageTarget(target, dmgPerTick, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        if cb.isLast()
+            target.removeAbility(BUFF_GREATER_ENTANGLING_ROOTS)
+
+
+init
+    EventListener.onTargetCast(ABILITY_DRUID_ENTANGLING_ROOTS, (unit caster, unit target) -> onRoot(caster, target))

@@ -1,34 +1,12 @@
 package ArcaneInterference
 
-import RegisterEvents
 import ClosureTimers
-import Orders
 import AbilityObjEditing
-import BuffObjEditing
-import ClosureForGroups
-import TimerUtils
 import HashMap
-import Lodash
-import OverCharge
-import ToolTipsUtils
-import InstantDummyCaster
-import Assets
-import ObjectIdGenerator
-import ObjectIds
 import LocalObjectIDs
 import ColorUtils
-import DummyCaster
-import UnitExtensions
-import DamageEvent
-import DamageListeners
-import IdListConstant
-import HashList
 import LinkedList
-import SimError
-import PlayerExtensions
-import LastOrder
 import ClosureEvents
-import SpellBookHashMap
 import LocalAssets
 
 let manaCostIncreasePerInt = 2.5
@@ -40,7 +18,7 @@ let TT_ARCANE_INTERFERENCE_EXT  = "The more powerful the spell, the harder it is
 @compiletime function createArcaneInterferenceDummy()
     new AbilityDefinitionEvasion(ABILITY_ARCANE_INTERFERENCE)
         ..setChancetoEvade(1, 0.)
-		..setLevels(1)
+        ..setLevels(1)
         ..setIconNormal(LocalIcons.bTNArcaneInterference)
         ..setTooltipNormal(1, TT_ARCANE_INTERFERENCE_NORM)
         ..setTooltipLearn(TT_ARCANE_INTERFERENCE_NORM)

@@ -1,0 +1,36 @@
+package OwlFormIdle
+import OwlFormState
+import OwlForm
+import initlater OwlFormStateHandler
+import InstantDummyCaster
+import Orders
+import LocalObjectIDs2
+import ClosureTimers
+
+
+
+public class OwlFormIdle extends OwlFormState
+    real remainingDuration = OWLFORM_DURATION
+    destructable targetTree = null
+    construct(unit caster, destructable targetTree) 
+        super(caster, "IdleState")
+        this.targetTree = targetTree
+
+    override function onEnter()
+        InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_DRUID_SENTINEL_DUMMY, 1, OrderId2String(OrderIds.sentinel), targetTree, targetTree.getPos())
+        
+    override function onExit()
+        if targetTree.getLife() > 0
+            targetTree.kill()
+            doAfter(0.1) ->
+                targetTree.restoreLife(120, true)
+                targetTree.setAnimation("stand")
+
+    override function update()
+        if not isActive
+            return
+        remainingDuration -= UPDATE_PERIOD
+        if remainingDuration <= 0 or targetTree.getLife() <= 0
+            exit()
+            let instance = OwlFormStateHandler.instances.get(caster)
+            instance.finish()

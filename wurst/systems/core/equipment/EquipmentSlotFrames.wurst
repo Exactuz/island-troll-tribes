@@ -3,16 +3,11 @@ package EquipmentSlotFrames
 import ClosureTimers
 import TableLayout
 import Icons
-import GameTimer
-import Textures
 import ClosureEvents
 import SoundUtils
-import AxesDefinition
 import FramehandleNames
-import LinkedList
 import UnitExtensions
 import PlayerExtensions
-import ClosureKeyPresses
 import HashMap
 
 public let INVENTORY_BUTTON_AMOUNT = 2

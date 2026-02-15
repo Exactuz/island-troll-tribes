@@ -6,7 +6,6 @@ import ObjectIdGenerator
 // Third-party imports:
 import ObjectIDManager
 
-public let ABILITY_CHAOS                             =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_CHAOS")   
 public let ABILITY_WARRIOR_SHIELD_CHARGE_DUMMY                             =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_WARRIOR_SHIELD_CHARGE_DUMMY")       
 public let ABILITY_WARRIOR_SHIELD_CHARGE                             =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_WARRIOR_SHIELD_CHARGE")     
 public let ABILITY_WHIRLWIND                             =compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_WHIRLWIND")     
@@ -962,8 +961,8 @@ public let UNIT_ATHELAS_BUSH                           = compiletime(UNIT_ID_GEN
 public let UNIT_BEAR_CUB                               = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_BEAR_CUB")
 public let UNIT_BEAR_ADOLESCENT                        = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_BEAR_ADOLESCENT")
 public let UNIT_BEAR_TRAP                              = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_BEAR_TRAP")
-public let UNIT_BEASTMASTER                            = compiletime(HERO_ID_GEN.next())..registerObjectID("UNIT_BEASTMASTER")
-public let UNIT_BEASTMASTER_1                          = compiletime(HERO_ID_GEN.next())..registerObjectID("UNIT_BEASTMASTER_1")
+public let UNIT_PRIMALIST                            = compiletime(HERO_ID_GEN.next())..registerObjectID("UNIT_PRIMALIST")
+public let UNIT_PRIMALIST_1                          = compiletime(HERO_ID_GEN.next())..registerObjectID("UNIT_PRIMALIST_1")
 public let UNIT_BEE                                    = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_BEE")
 public let UNIT_BEE_HIVE                               = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_BEE_HIVE")
 public let UNIT_BLUE_HERB_BUSH                         = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_BLUE_HERB_BUSH")

@@ -1,0 +1,172 @@
+package Starfall
+
+
+// Standard library imports:
+import ClosureEvents
+
+// Local imports:
+import ColorUtils
+import ToolTipsUtils
+import ChannelAbilityPreset
+import ClosureTimers
+import Abilities
+import LocalObjectIDs2
+//import BlessingOfElune
+import AttachmentPoints
+import BuffObjEditing
+import BuffIds
+import IdListConstant
+import LocalObjectIDs
+import InstantDummyCaster
+
+public constant MULTICAST_DELAY = 0.3
+public constant DAMAGE_DELAY = 0.5
+public constant EFX_STARFALL = Abilities.starfallTarget
+public constant EFX_CASTER = Abilities.starfallCaster
+public constant DAMAGE_INT_MULTIPLIER = 0.8
+public constant MULTICAST_RED_OFFSET = 60
+public constant MULTICAST_SIZE_INCREMENT = 0.25
+public constant EFX_CASTER_DURATION = 1.0
+public constant STARFALL_CD = 5.
+public constant STARFALL_CAST_RANGE = 600.
+public constant STARFALL_MANACOST = 10
+public constant STARFALL_MIN_MANA = 30
+public constant STARFALL_DAMAGE_BASE = 15.
+public constant STARFALL_DAMAGE_INT_MULTIPLIER = 0.8
+public constant STARFALL_MULTICAST_DMG_PENALTY = 0.5
+public constant STARFALL_DAZE_DURATION = 3.0
+public constant TT_BUFF_STARFALL_DAZE  = "You are dazed"
+public constant STARFALL_ANIMAL_BONUS_DAMAGE = 10.
+public constant STARFALL_DAZE_MS_FACTOR = 0.8
+public constant STARFAL_TT_NORM = "Starfall"
+public constant STARFALL_TT_EXT = "Call down a star onto your enemy, dealing {0} + {1} {2} damage.".format(
+                                    STARFALL_DAMAGE_BASE.toToolTipRed(), STARFALL_DAMAGE_INT_MULTIPLIER.toToolTipRed(), "Intelligence".color(COLOR_TURQUOISE))+
+                                  "\nDoes additional {0} damage to animals and slows them for {1} seconds.".format(STARFALL_ANIMAL_BONUS_DAMAGE.toToolTipRed(), STARFALL_DAZE_DURATION.toToolTipLightBlue())+
+                                  "\nHas {0} seconds cooldown.".format(STARFALL_CD.toToolTipLightBlue())
+
+
+
+@compiletime function createStarfall()
+    new ChannelAbilityPreset(ABILITY_DRUID_STARFALL, 1, true)
+        ..setCooldown(1, STARFALL_CD)
+        ..setCastRange(1, STARFALL_CAST_RANGE)
+        ..presetIcon(Icons.bTNStarFall)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..presetManaCost(lvl->STARFALL_MANACOST)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("Q")
+        ..setTooltipNormal(1, STARFAL_TT_NORM)
+        ..setTooltipNormalExtended(1, STARFALL_TT_EXT)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.enemies,
+            TargetsAllowed.organic
+        ))
+
+    new BuffDefinition(BUFF_STARFALL_DAZE, BuffIds.shadowStrike)
+        ..setTooltipNormal("Dazed")
+        ..setTooltipNormalExtended(TT_BUFF_STARFALL_DAZE)
+        ..setArtTarget("")
+        ..setIcon(Icons.bTNStarFall)
+        ..setArtSpecial("")
+        ..setAreaEffect("")      
+
+    new AbilityDefinitionShadowStrikeCreep(ABILITY_STARFALL_DAZE_DUMMY)
+        ..presetDecayingDamage(lvl->0.)
+        ..presetDurationHero(lvl->STARFALL_DAZE_DURATION)
+        ..presetDurationNormal(lvl ->STARFALL_DAZE_DURATION)
+        ..presetDecayPower(lvl->0.15)
+        ..presetInitialDamage(lvl->0.)
+        ..presetAttackSpeedFactor(lvl->0.)
+        ..presetMovementSpeedFactor(lvl->STARFALL_DAZE_MS_FACTOR)
+        ..setBuffs(1, toRawCode(BUFF_STARFALL_DAZE))
+        //..presetCastingTime(lvl-> 0.25)
+        ..setMissileArc(0.50)
+        ..setMissileSpeed(9999)
+        ..setArtTarget("")
+        ..setArtCaster("")
+        ..setArtSpecial(Abilities.stampedeMissileDeath)
+        ..setArtEffect(Abilities.stampedeMissileDeath)   
+        ..setAreaEffect("")   
+        ..setAreaofEffect(1, 0.)
+        ..setMissileArt("")        
+        ..setMissileHomingEnabled(true)
+        ..setEditorSuffix("(Wurst)")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic,
+            TargetsAllowed.neutral,
+            TargetsAllowed.air,
+            TargetsAllowed.friend,
+            TargetsAllowed.self
+        ))         
+        ..setDummyAbility()
+
+public class Starfall
+    int multicast_counter = 0
+    bool isProcced = false
+    unit target
+    unit caster
+    effect efxCaster
+
+    construct(unit caster, unit target, int multicast_counter, bool isProcced)
+        this.caster = caster
+        this.target = target
+        this.multicast_counter = multicast_counter
+        this.isProcced = isProcced
+        performStarfall()
+
+    static function assertManaCost(unit caster) returns bool
+        let mana = caster.getMana()
+        if mana >= STARFALL_MIN_MANA
+            caster.setMana(mana-STARFALL_MANACOST*STARFALL_MULTICAST_DMG_PENALTY)
+            return true
+        return false
+
+    function performStarfall()
+        playEfx()
+        doAfter(DAMAGE_DELAY) -> 
+            damageTarget()
+        if GetRandomInt(0, 100) <= 25//BlessingOfElune.rollProc()
+            if not assertManaCost(caster)
+                return
+            doAfter(MULTICAST_DELAY) -> 
+                multicast_counter+=1
+                efxCaster.destr()
+                new Starfall(caster, target, multicast_counter, true)
+        doAfter(EFX_CASTER_DURATION) -> 
+            destroy this
+
+
+    function playEfx()
+        let redOffset = MULTICAST_RED_OFFSET*multicast_counter
+        let scale = 1 + MULTICAST_SIZE_INCREMENT*multicast_counter
+        efxCaster = addEffect(EFX_CASTER, caster, AttachmentPoints.origin)
+        efxCaster.setScale(scale)
+        efxCaster.setColor(redOffset, 0, 0)
+        flashEffect(EFX_STARFALL, target.getPos())    
+
+    function damageTarget()
+        real dmg = caster.getInt(true)*DAMAGE_INT_MULTIPLIER
+        if isProcced 
+            dmg*=(1-STARFALL_MULTICAST_DMG_PENALTY)
+        caster.damageTarget(target, dmg, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_MAGIC, null)
+        if HOSTILE_ANIMALS_LIST.has(target.getTypeId()) or target.getTypeId() == UNIT_FAWN
+            caster.damageTarget(target, STARFALL_ANIMAL_BONUS_DAMAGE, true, false, ATTACK_TYPE_NORMAL , DAMAGE_TYPE_MAGIC, null)
+            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_STARFALL_DAZE_DUMMY, 1, "shadowstrike", target)
+
+    ondestroy
+        if efxCaster != null
+            efxCaster.destr()
+
+function onStarfallCast(unit caster, unit target)
+    new Starfall(caster, target, 0, false)
+
+
+init
+    EventListener.onCast(ABILITY_DRUID_STARFALL) (unit caster) ->
+        onStarfallCast(caster, GetSpellTargetUnit())
+        

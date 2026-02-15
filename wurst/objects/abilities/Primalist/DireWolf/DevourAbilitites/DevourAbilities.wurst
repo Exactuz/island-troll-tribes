@@ -1,0 +1,304 @@
+package DevourAbilities
+
+// Standard lib Imports:
+import ClosureEvents
+import HashMap
+import Assets
+import SoundUtils
+
+// Local Imports:
+import UnitEntity
+import Hostile
+import SimError
+import PlayerExtensions
+import LocalObjectIDs
+import MoveCorpses
+import HashList
+import ClosureTimers
+import DevourAbilitiesDefinitions
+import DummyCorpse
+import RavenousBeast
+import Sleep
+
+public HashMap<unit, DevourAbilities> devourAbilitiesInstances = new HashMap<unit, DevourAbilities>
+HashList<int> devourDummyAbilities = new HashList<int>()
+    ..add(ABILITY_DEVOUR_SNAKE_DUMMY)
+    ..add(ABILITY_DEVOUR_WOLF_DUMMY)
+    ..add(ABILITY_DEVOUR_BEAR_DUMMY)
+    ..add(ABILITY_DEVOUR_PANTHER_DUMMY)
+
+
+class PantherAbility extends DevourAbility
+    real expirationTimer
+    EventListener onAttackEvent
+    CallbackPeriodic cb
+    construct(int _dummySpell, int _devourAbility, int _devourBuff, unit _troll, int _upgradeId)
+        super( _dummySpell,  _devourAbility,  _devourBuff,  _troll,  _upgradeId)
+        troll = _troll
+        registerOnAttackEvent()
+        addAbility()
+
+
+    function registerOnAttackEvent()
+        onAttackEvent = EventListener.add(EVENT_PLAYER_UNIT_ATTACKED) ->
+            if EventData.getAttackerUnit() == troll
+                onAttack() 
+
+    function onAttack()
+        if not troll.hasAbility(ABILITY_DEVOUR_PANTHER)
+            return
+        handleExpirationTimer()
+        
+        
+    function handleExpirationTimer()
+        expirationTimer = PANTHER_MOVEMENT_SPEED_DURATION
+        if cb != null
+            return
+        cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
+            addAbility()
+            expirationTimer-=0.125
+            //print(troll.getMoveSpeed().toString())
+            if expirationTimer<=0
+                removeAbility()
+                destroy cb                
+                this.cb = null
+
+    function addAbility()
+        troll.setMoveSpeed(troll.getDefaultMovespeed()+PANTHER_MOVEMENT_SPEED_BONUS)          
+    
+    function removeAbility()
+        troll.setMoveSpeed(troll.getDefaultMovespeed())
+
+
+class WolfAbility extends DevourAbility
+    RavenousBeast ravenousBeastInstance
+    construct(int _dummySpell, int _devourAbility, int _devourBuff, unit _troll, int _upgradeId)
+        super( _dummySpell,  _devourAbility,  _devourBuff,  _troll,  _upgradeId)
+        troll = _troll
+        doAfter(ANIMATION_PERIOD) ->     
+            ravenousBeastInstance = ravenousBeastInstances.get(troll)
+
+    override function onActivateSpecial()
+        ravenousBeastInstance.isWolfVoracityActive = true
+
+    override function onDeactivateSpecial()
+        ravenousBeastInstance.isWolfVoracityActive = false
+
+class BearAbility extends DevourAbility
+    OnUnitCast onSleep
+    construct(int _dummySpell, int _devourAbility, int _devourBuff, unit _troll, int _upgradeId)
+        super( _dummySpell,  _devourAbility,  _devourBuff,  _troll,  _upgradeId)
+        troll = _troll
+        registerOnSleepEvent()
+
+    function registerOnSleepEvent()
+        onSleep = EventListener.onTargetCast(troll, ABILITY_SLEEP_OUTSIDE) (unit caster, unit target) ->
+            if troll.hasAbility(ABILITY_DEVOUR_BEAR)
+                troll.setHP(troll.getHP()+SLEEP_OUTSIDE_HP_PENALTY)
+                troll.getOwner().addGold(SLEEP_OUTSIDE_HEAT_PENALTY)
+                
+            
+    
+
+class DevourAbility
+    int dummySpell
+    int devourAbility
+    int devourBuff
+    int upgradeId
+    string defaultIcon
+    string activatedIcon
+    bool isDisabled = true
+    bool isActive = false
+    EventListener onDummySpellCast
+    EventListener onRevive
+    unit troll
+    PantherAbility pantherAbil
+
+
+    construct(int _dummySpell, int _devourAbility, int _devourBuff, unit _troll, int _upgradeId)
+        dummySpell = _dummySpell
+        devourAbility = _devourAbility
+        devourBuff = _devourBuff
+        troll = _troll
+        upgradeId = _upgradeId
+        defaultIcon = getAbilityIcon(dummySpell)
+        activatedIcon = defaultIcon.replace("Passive.blp", ".blp")
+       //print("created "+GetObjectName(devourAbility))
+        registerOnCastEvent()
+        registerOnReviveEvent()
+        //doAfter(ANIMATION_PERIOD) -> 
+            //disableDummyAbility()
+       
+
+    
+    function registerOnCastEvent()
+        onDummySpellCast = EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH) ->
+            if GetTriggerUnit() == troll 
+                onCast(GetSpellAbilityId())
+
+    function registerOnReviveEvent()
+        onRevive = EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) ->
+            let hero = GetTriggerUnit()
+            if hero != troll
+                doAfter(ANIMATION_PERIOD) -> 
+                    //onRevive()                              
+                
+    function onCast(int abilId)
+        if not devourDummyAbilities.has(abilId)
+            return
+        //print("instance = "+GetObjectName(dummySpell))
+        //print("onCast "+GetObjectName(abilId))
+        if abilId != dummySpell
+            deactivateAbility()
+        else
+            activateAbility()
+    
+    function activateAbility()
+        isActive = true
+        updateIcon()
+        onActivateSpecial()
+        if not troll.hasAbility(devourAbility)
+            troll.addAbility(devourAbility)
+        if not troll.hasAbility(devourBuff)
+            troll.addAbility(devourBuff)
+
+
+    function deactivateAbility()
+        isActive = false
+        updateIcon()
+        //print("deactivated "+GetObjectName(devourAbility))
+        onDeactivateSpecial()
+        if troll.hasAbility(devourAbility)
+            troll.removeAbility(devourAbility)
+        if troll.hasAbility(devourBuff)
+            troll.removeAbility(devourBuff)
+
+    function disableDummyAbility()
+        troll.getOwner().setTechResearched(upgradeId, 0)
+        //print("disabled "+GetObjectName(devourAbility))
+        isDisabled = true
+    
+    function onDeactivateSpecial()
+
+    function onActivateSpecial()
+
+    function enableDummyAbility()
+        //print("enabled "+GetObjectName(devourAbility))
+        isDisabled = false
+        troll.getOwner().setTechResearched(upgradeId, 1)
+
+    function updateIcon()
+        if not isActive
+            troll.getOwner().setAbilityIcon(dummySpell, defaultIcon)
+        else
+            troll.getOwner().setAbilityIcon(dummySpell, activatedIcon)
+
+
+    function onRevive()
+        if isDisabled
+            disableDummyAbility()
+            return
+        if isActive
+            activateAbility()
+            
+            
+
+    
+class DevourAbilities
+    unit troll
+    HashList<DevourAbility> devourAbilities
+    bool isFirstEnabledAbility = true
+
+    construct(unit _troll)
+        troll = _troll
+        devourAbilities = new HashList<DevourAbility>()
+            ..add(new DevourAbility(ABILITY_DEVOUR_SNAKE_DUMMY, ABILITY_DEVOUR_SNAKE, BUFF_DEVOUR_SNAKE, troll, UPGD_DEVOUR_SNAKE_DUMMY))
+            ..add(new WolfAbility(ABILITY_DEVOUR_WOLF_DUMMY, ABILITY_DEVOUR_WOLF, BUFF_DEVOUR_WOLF, troll, UPGD_DEVOUR_WOLF_DUMMY))
+            ..add(new BearAbility(ABILITY_DEVOUR_BEAR_DUMMY, ABILITY_DEVOUR_BEAR, BUFF_DEVOUR_BEAR, troll, UPGD_DEVOUR_BEAR_DUMMY))
+            ..add(new PantherAbility(ABILITY_DEVOUR_PANTHER_DUMMY, ABILITY_DEVOUR_PANTHER, BUFF_DEVOUR_PANTHER, troll, UPGD_DEVOUR_PANTHER_DUMMY))
+
+    function updateAbility(unit target)    
+        //print("updateAbility")
+        let abilId = targetToAbility.get(target.getTypeId())
+        //troll.disableAbility(abilId, false, false)
+        for each in devourAbilities
+            if each.devourAbility == abilId
+                //print("updateAbility "+GetObjectName(abilId))
+                each.enableDummyAbility()
+                if isFirstEnabledAbility == true
+                    isFirstEnabledAbility= false
+                    doAfter(ANIMATION_PERIOD)->
+                        each.activateAbility()
+                return
+
+    function onDevour(unit target)
+        //print("onDevour")
+        troll.pause()
+        troll.setAnimation(2)
+        troll.unpause()
+
+        let entity = UnitEntity.findForUnit(target)
+        if not entity instanceof Hostile
+            //print("not hostile")
+            return
+
+        if not target.getHP() <=DEVOUR_THRESHOLD and target.getTypeId() != UNIT_ELK
+            simError(troll.getOwner(), "Target has to be below {0} hitpoints.".format(DEVOUR_THRESHOLD.toInt().toString()))
+            troll.issueImmediateOrder("stop")
+            doAfter(ANIMATION_PERIOD) -> 
+                troll.endAbilityCooldown(ABILITY_DIRE_WOLF_DEVOUR)
+            return  
+
+        let hostile = entity castTo Hostile
+            // Disable item & corpses drop
+        hostile.setDropOndeath(false)
+            // Dealing 120 pure damage to kill the target
+        UnitDamageTarget(troll, target, 120., false, false, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_UNIVERSAL, null)
+
+        DEVOUR_SOUND.playForPlayer(troll.getOwner())
+        flashEffect(Abilities.vampiricAuraTarget, troll, "origin")
+        flashEffect(Objects.humanSmallDeathExplode, target.getPos())
+        updateCorpses(hostile.getNumCorpses())
+        updateAbility(target)
+
+    function updateCorpses(int corpseAmount)
+        let count = counts.get(troll)
+        if count+corpseAmount>8
+            updateCount(troll, 8-count)
+            doPeriodicallyCounted(ANIMATION_PERIOD, count+corpseAmount-8) cb ->
+                createCorpse(troll.getPos())
+        else 
+            updateCount(troll, corpseAmount)
+
+    function onLevel()
+        for each in devourAbilities
+            if each.isDisabled
+                each.disableDummyAbility()
+
+function onDevour(unit troll, unit target)
+    let instance = devourAbilitiesInstances.get(troll)
+    if instance == null
+        return
+    instance.onDevour(target)
+
+function onSub(int abilId, unit troll)
+    if abilId != ABILITY_DIRE_WOLF
+        return
+    let instance = devourAbilitiesInstances.get(troll)
+    if instance == null
+        doAfter(ANIMATION_PERIOD) ->   
+            devourAbilitiesInstances.put(troll, new DevourAbilities(troll))
+
+function onLevel(unit troll)
+    let instance = devourAbilitiesInstances.get(troll)
+    if instance == null
+        return
+    doAfter(ANIMATION_PERIOD) ->   
+        instance.onLevel()
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH) -> 
+        onSub(GetSpellAbilityId(), GetTriggerUnit())  
+
+    EventListener.onTargetCast(ABILITY_DIRE_WOLF_DEVOUR, (unit caster, unit target) -> onDevour(caster, target))
+

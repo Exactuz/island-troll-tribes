@@ -1,0 +1,178 @@
+package Hibernate
+
+// Standard library imports:
+import ClosureEvents
+import InstantDummyCaster
+
+// Local imports:
+import ColorUtils
+import LocalObjectIDs
+import ToolTipsUtils
+import Sleep
+import ChannelAbilityPreset
+import ClosureTimers
+import Orders
+import HealingSystem
+import BuffObjEditing
+import BuffIds
+import Abilities
+import DamageListeners
+import LocalAssets
+import ReduceHealing
+import UnitIndexer
+import Omnivore
+
+let MANA_RESTORED = 80.
+let STRENGTH_MULTIPLIER = 2.
+let SLEEP_DURATION = 5.
+let DAMAGE_MITIGATION = 0.35
+let FOOD_REDUCTION_PER_SECOND = 50
+let MISSING_HP_FULL_HEALING_THRESHOLD = 0.25
+let MISSING_HP_MINIMUM_HEALING = 0.333
+let TT_NORM = "Hibernate"
+let TT_EXT = "The Dire Bear can hibernate, restoring {0} mana and {1}x{2} life based on missing life.".format(MANA_RESTORED.toString().color(COLOR_LIGHT_BLUE),
+                                                                                                         STRENGTH_MULTIPLIER.toString().color(COLOR_GREEN),
+                                                                                                         "Strength".color(COLOR_ORANGE))+
+             "Healing reaches maximum effect at {0}".format(MISSING_HP_FULL_HEALING_THRESHOLD.toToolTipGray())+
+             "\nDuring hibernation Dire Bear has {0}% damage reduction and lowers healing reduction by {1} per second.".format(
+                (DAMAGE_MITIGATION*100).toString().color(COLOR_ORANGE),FOOD_REDUCTION_PER_SECOND.toString().color(COLOR_GREEN))+
+             "\nConsuming any food will reduce Hibernate cooldown by {0} second.".format(ON_FOOD_COOLDOWN_REFUND.toToolTipLightBlue())+
+             "\nHibernation can only be interrupted if bear's life drops below what it was at the beginning of Hibernation."
+
+@compiletime function createHibernateDummy() returns ChannelAbilityPreset
+    return new ChannelAbilityPreset(ABILITY_HIBERNATE_DUMMY, 1, true)
+        ..presetTargetTypes(Targettype.UNIT)
+        ..setName(TT_NORM)
+        ..setHotkeyNormal("F")
+        ..setTooltipNormal(1, TT_NORM)
+        ..setTooltipNormalExtended(1, TT_EXT + formatCooldown(ABILITY_HIBERNATE_DUMMY))
+        ..presetCooldown(lvl -> 25.)           
+        ..presetManaCost(lvl -> 0)
+        ..presetCastRange(lvl -> 300.)
+        ..presetButtonPosNormal(3, 2)
+        ..setFollowThroughTime(1, 0)
+        ..setIconNormal(LocalIcons.bTNAbilityHibernation)
+        ..setTargetsAllowed(1, TARGET_ALLOWED)
+        ..setAnimationNames("stand")
+        ..setCooldown(1, 25.)
+        ..setBaseOrderID(1, "curse")
+        ..setTooltipNormal(1, makeToolTipNorm("F", TT_NORM))    
+
+@compiletime function createHibernateAbility() returns AbilityDefinitionSleepcreep
+    return createSleepAbility(ABILITY_HIBERNATE)
+        ..setNameEnhance("F", "Hibernate")
+        ..setTooltipNormalExtended(1, TT_EXT + formatCooldown(ABILITY_SLEEP_OUTSIDE))
+        ..setIconNormal(LocalIcons.bTNAbilityHibernation)
+        ..setDurationHero(1, 1.)
+        ..setDurationNormal(1, 1.)
+        ..setDummyAbility()
+
+let TARGET_ALLOWED_HIBERNATE_EFFECT = commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.neutral,
+            TargetsAllowed.organic,
+            TargetsAllowed.friend,
+            TargetsAllowed.invulnerable,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.self
+            )
+
+let DURATION_ABILITY_HIBERNATE = 5.
+let MANACOST_COOLDOWN_ABILITY_HIBERNATE = 0
+let COOLDOWN_ABILITY_HIBERNATE = 0.
+
+let ANIMATION_NAME = "stand,channel,spell"
+
+@compiletime function createBuff()
+    new BuffDefinition(BUFF_HIBERNATE_EFFECT, BuffIds.barkskin) // BarkSkin
+    ..setTargetAttachmentPoint0(1, "overhead")
+    ..setIcon(LocalIcons.bTNAbilityHibernation)
+    ..setTooltipNormal(1, "Hibernate")
+    ..setTooltipNormalExtended(1, "While hibernating, Dire bear has increased damage reduction and heals over time.")
+    ..setArtTarget(1, Abilities.sleepTarget)
+
+    new AbilityDefinitionMountainKingThunderBolt(ABILITY_HIBERNATE_EFFECT)
+        ..setDummyAbility()
+        ..setArtTarget(Abilities.sleepTarget)
+        ..setArtEffect("")
+        ..setArtSpecial("")
+        ..setArtCaster("")
+        ..setAreaEffect("")
+        ..setMissileArt("")
+        ..setBuffs(1, toRawCode(BUFF_HIBERNATE_EFFECT))
+        ..setCastingTime(1, 0.)
+        ..setEffectSound("")
+        ..setEffects(1, "")
+        ..setDurationHero(1, DURATION_ABILITY_HIBERNATE)
+        ..setDamage(1, 0.)
+        ..setTargetsAllowed(1, TARGET_ALLOWED_HIBERNATE_EFFECT)
+
+
+function onCast(unit caster, unit target)
+    int abilId
+    if target.getTypeId() == UNIT_DIRE_BEAR or target.getTypeId() == UNIT_SHAPESHIFTER_BEAR
+        abilId = ABILITY_HIBERNATE
+        let hp = caster.getHP()-5
+        let str = caster.getStr(true)
+        //doPeriodicallyTimed(ANIMATION_PERIOD, 1.) (CallbackCounted cb) ->
+            //new HealingInstance(caster, caster, str*STRENGTH_MULTIPLIER/SLEEP_DURATION*ANIMATION_PERIOD, HealingType.ABILITY, false)
+
+        
+        let missingHpMultiplier = target.getMissingHP()/(target.getMaxHP()*(1-MISSING_HP_FULL_HEALING_THRESHOLD))
+        let totalHealingMultiplier = min(missingHpMultiplier, 1)*(1-MISSING_HP_MINIMUM_HEALING)+MISSING_HP_MINIMUM_HEALING
+        let healAmount = str*STRENGTH_MULTIPLIER*totalHealingMultiplier
+        new HealingInstance(caster, caster, healAmount, HealingType.ABILITY, true)
+        doAfter(1.) ->
+            let state = states[caster.getIndex()]
+            if state != null
+                state.adjustAmountHealed(-FOOD_REDUCTION_PER_SECOND.toReal())
+            //caster.addAbility(ABILITY_HIBERNATE_EFFECT)
+            //caster.pause()
+            InstantDummyCaster.castTarget(caster.getOwner(), ABILITY_HIBERNATE_EFFECT, 1, OrderIds.thunderbolt, target)  
+            doPeriodicallyTimed(0.125, SLEEP_DURATION+0.125-1.) (CallbackCounted cb) ->
+                state.adjustAmountHealed(-FOOD_REDUCTION_PER_SECOND*0.125)
+                //new HealingInstance(caster, caster, str*STRENGTH_MULTIPLIER/SLEEP_DURATION*ANIMATION_PERIOD, HealingType.ABILITY, false)
+                if caster.getHP()<=hp or cb.isLast()
+                    caster.removeAbility(ABILITY_HIBERNATE_EFFECT)
+                    caster.removeAbility(BUFF_HIBERNATE_EFFECT)
+                    //caster.unpause()
+                    if not cb.isLast()
+                        destroy cb
+    else
+        abilId = ABILITY_SLEEP_OUTSIDE
+    InstantDummyCaster.castTarget(caster.getOwner(), abilId, 1, "Sleep", target)
+
+
+            
+        
+
+function onSub(unit caster)
+    doAfter(ANIMATION_PERIOD)->
+        caster.removeAbility(ABILITY_SLEEP_OUTSIDE)
+        caster.addAbility(ABILITY_HIBERNATE_DUMMY)
+        caster.makeAbilityPermanent(ABILITY_HIBERNATE_DUMMY, true)
+
+    
+function onDamage()
+    if not DamageEvent.getTarget().hasAbility(BUFF_HIBERNATE_EFFECT)
+        return
+
+    // Exit if the damage is used for internal systems.
+    if DamageEvent.getElement().hasTag(FAKE_DAMAGE)
+        return
+
+    // Scale the damage.
+    DamageEvent.setAmount(DamageEvent.getAmount() * (1-DAMAGE_MITIGATION))
+
+init
+    EventListener.onTargetCast(ABILITY_HIBERNATE_DUMMY    , (unit caster, unit target) -> onCast(caster, target))
+
+    EventListener.onCast(ABILITY_DIRE_BEAR) (unit caster) ->
+        onSub(caster)
+
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
+        onDamage()
+        
+        
+

@@ -2,41 +2,22 @@ package ShieldCharge
 
 // Standard library imports:
 import Assets
-import BuffObjEditing
 import ChannelAbilityPreset
 import ClosureEvents
 import ClosureTimers
-import HashMap
-import LinkedList
-import ItemObjEditing
-import Items
-import Cosmetics
-import OnUnitEnterLeave
-import Reflection
-
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import ColorUtils
 import LocalObjectIDs
 import LocalAssets
-import Classes
-import IdListConstant
-import InventoryEvent
-import UnitExtensions
 import Orders
-import QuickMake
-import AxesDefinition
-import ClosureForGroups
-import DamageEvent
-import Knockback3
 import CustomProjectile
 import InstantDummyCaster
 import ToolTipsUtils
 import initlater WeaponsOfChoice
 import TerrainUtils
 import SimError
+import SingleMindedFury
 
 let AOE = 300.
 let STUN_DURATION_HERO = 0.5
@@ -49,6 +30,7 @@ let ICON = LocalIcons.bTNShieldCharge
 public let TT_SHIELD_BASH_NAME = "Shield Charge"
 public let TT_SHIELD_BASH_EXT = "Charge towards enemy stunning them for {0}({1}) seconds on impact.".format(STUN_DURATION_NORMAL.toToolTipLightBlue(), STUN_DURATION_HERO.toString().color(COLOR_LIGHT_BLUE))+
                                 "\nYou are invulnerable and ignore terrain during charge."+
+                                "\nYour auto attacks reduce the cooldown by {0} seconds.".format(COOLDOWN_REFUND_BASE.toToolTipLightBlue())+
                                 "\nHas {0} seconds cooldown.".format(COOLDOWN.toToolTipLightBlue())
 
 

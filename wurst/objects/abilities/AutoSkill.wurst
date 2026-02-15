@@ -11,6 +11,7 @@ import Transformation
 import UnitExtensions
 import LegacyHotkeys
 import TrollUnitTextConstant
+import LocalObjectIDs2
 
 let legacySkillMap = new HashMap<int, int>()
     ..put(ABILITY_MAGE_SPELLBOOK, ABILITY_MAGE_LEGACY_SPELLBOOK)
@@ -41,13 +42,15 @@ let skillMap = new HashMap<int, int>()
     ..put(UNIT_SAGE,                 ABILITY_SAGE_SPELLBOOK)
 
     // Beastmaster
-    ..put(UNIT_SHAPESHIFTER_WOLF,    ABILITY_SHAPESHIFTER_FORM)
-    ..put(UNIT_SHAPESHIFTER_BEAR,    ABILITY_SHAPESHIFTER_FORM)
-    ..put(UNIT_SHAPESHIFTER_PANTHER, ABILITY_SHAPESHIFTER_FORM)
+    ..put(UNIT_PRIMALIST,          ABILITY_SHAPESHIFTER_FORM)
+    ..put(UNIT_SHAPESHIFTER_WOLF,    ABILITY_SHAPESHIFTER_FORM_WOLF)
+    ..put(UNIT_SHAPESHIFTER_BEAR,    ABILITY_SHAPESHIFTER_FORM_BEAR)
+    ..put(UNIT_SHAPESHIFTER_PANTHER, ABILITY_SHAPESHIFTER_FORM_PANTHER)
     ..put(UNIT_SHAPESHIFTER_TIGER,   ABILITY_SHAPESHIFTER_FORM)
     ..put(UNIT_DIRE_WOLF,            ABILITY_DIRE_WOLF_SPELLBOOK)
     ..put(UNIT_DIRE_BEAR,            ABILITY_DIRE_BEAR_SPELLBOOK)
     ..put(UNIT_DRUID,                ABILITY_DRUID_SPELLBOOK)
+    ..put(UNIT_TREEFORM,             ABILITY_TREEFORM_SPELLBOOK)
     ..put(UNIT_JUNGLE_TYRANT,        ABILITY_JUNGLE_TYRANT_EVOLUTION)
 
     // Thief
@@ -115,6 +118,7 @@ public function autoSkill(unit target)
     // TODO: Use ABILITY_IF_REQUIRED_LEVEL once properly configured.
     // TODO: Use ABILITY_IF_LEVEL_SKIP_REQUIREMENT once Blizzard supports it.
     let numLevels = skill.getField(ABILITY_IF_LEVELS)
+
     // Spells with many levels, e.g. Assassinate or Shapeshift, advance faster.
     let levelSkip = (isBase or numLevels > 3) ? 1 : 2
     let baseLevel = numLevels > 3 ? 1 : (isBase ? 2 : 0)

@@ -1,5 +1,5 @@
 package Reveal
-import Icons
+
 import ClosureEvents
 import Orders
 import ToolTipsUtils

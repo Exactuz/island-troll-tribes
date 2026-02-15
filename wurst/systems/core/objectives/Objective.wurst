@@ -2,19 +2,7 @@ package Objective
 
 
 // Standard library imports:
-import HashMap
-import AbilityObjEditing
-import ClosureEvents
-import DamageEvent
-import InstantDummyCaster
-import StandardTextTags
-import LocalAssets
 import UnitIds
-import LocalObjectIDs
-import ObjEditingUtils
-import LinkedList
-import initlater BossAbilities
-import Units
 import LocalObjectIDs2
 import initlater Tribe
 import ClosureForGroups
@@ -23,9 +11,15 @@ import ClosureTimers
 import GameStates
 import GameState
 import initlater GameConfig
-import initlater PlayerExtensions
 import ColorUtils
 import initlater Preparation
+import LinkedList
+import AbilityIds
+import LocalObjectIDs
+import BossAbilities
+import UnitObjEditing
+import Units
+import ObjEditingUtils
 
 public Tribe winnerTribe = null
 public constant OBJECTIVE_POS = vec2(6, -167)

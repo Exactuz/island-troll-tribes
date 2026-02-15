@@ -1,18 +1,11 @@
 package CustomItemDefinition
 
 // Standard Libs Imports:
-import Assets
 import ChannelAbilityPreset
 
 // Local Imports
-import Items
-import LocalAssets
 import LocalItemObjEditing
-import LocalObjectIDs
-import ToolTipsUtils
-import initlater BasicMaterials
-import CustomItemType
-import initlater ItemShopDummyUnit
+import ItemShopDummyUnit
 
         
 public class CustomItemDefinition extends ItemDefinition
@@ -109,10 +102,10 @@ public class CustomItemDefinition extends ItemDefinition
         lumberCost = data
         def.setInt("ilum", data)
     
-    function setTintingColorRGB(int red, int blue, int green)
+    function setTintingColorRGB(int red, int green, int blue)
         this.setTintingColor1Red(red)
-        this.setTintingColor3Blue(blue)
         this.setTintingColor2Green(green)
+        this.setTintingColor3Blue(blue)
 
     override function setScalingValue(real data)
         scalingValue = data

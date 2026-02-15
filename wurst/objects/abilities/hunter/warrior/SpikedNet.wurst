@@ -3,7 +3,6 @@ package SpikedNet
 // Standard library imports:
 import AbilityObjEditing
 import Assets
-import ObjectIds
 import ClosureTimers
 import ClosureEvents
 
@@ -15,7 +14,6 @@ import ColorUtils
 import LocalObjectIDs
 import ToolTipsUtils
 import HunterEnsnare
-import DamageEvent
 import LocalAssets
 
 let COOLDOWN = 10.

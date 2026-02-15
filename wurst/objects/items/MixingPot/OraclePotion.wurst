@@ -77,7 +77,7 @@ let TOOLTIP = "" +
     ..setName("Oracle Potion Cast")
     ..setCooldown(1, COOLDOWN)
 
-public constant ITEM_ORACLE_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ORACLE_POTION_DUMMY_UNIT")
+public constant ITEM_ORACLE_POTION_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ORACLE_POTION_DUMMY_UNIT")
 public constant ITEM_ORACLE_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ORACLE_POTION)
     ..setNameEnhance("Oracle Potion")
     ..setAbilities(toRawCode(ABILITY_DUMMY_ID))

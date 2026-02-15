@@ -10,9 +10,8 @@ import Assets
 import ColorUtils
 import LocalAssets
 import LocalObjectIDs
+import LocalObjectIDs2
 import IdListConstant
-import Reference
-import initlater WhirlingAxes
 
 // Troll Names
 public constant  NAME_HUNTER          = "Wonton,Liche,Taz,Koonta"
@@ -27,10 +26,11 @@ public constant  NAME_PRIEST          = "Mog,Vargas"
 public constant  NAME_BOOSTER         = "Tojo,Baki,Flamefoot"
 public constant  NAME_MASTER_HEALER   = "Mog,Baki,Vargas"
 public constant  NAME_SAGE            = "Meijin"
-public constant  NAME_BEASTMASTER    = "Masterman,Beanbag,Foosh,Maximus,Lil-Ra"
+public constant  NAME_PRIMALIST    = "Masterman,Beanbag,Foosh,Maximus,Lil-Ra"
 public constant  NAME_DRUID           = "Ook'Jin,Big-Ra"
 public constant  NAME_SHAPESHIFTER    = ["Danny The Dog","Bill The Bear","Paul The Panther","Tony The Tiger"]
 public constant  NAME_JUNGLE_TYRANT   = "Rendo"
+public constant  NAME_TREEFORM       = "Stig Brown,Tim Burr,Bark Twain"
 public constant  NAME_THIEF           = "Eugene,Kel,Morgoth"
 public constant  NAME_ESCAPE_ARTIST   = "Mr. Overrated,Never-Steal Joe,Hawat the Sly"
 public constant  NAME_CONTORTIONIST   = "Spookyface,Battyboi,Smokehouse"
@@ -115,15 +115,16 @@ public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new It
     ..put(UNIT_MASTER_HEALER_1, new AttributeGrowth(1., 0.5, 1.75))
     ..put(UNIT_SAGE, new AttributeGrowth(1.5, 1., 3.))
     //beastmaster classes attributesGworth
-    ..put(UNIT_BEASTMASTER, new AttributeGrowth(1.2, 1., 0.5))
-    ..put(UNIT_BEASTMASTER_1, new AttributeGrowth(1.2, 1., 0.5))
-    ..put(UNIT_SHAPESHIFTER_WOLF, new AttributeGrowth(1.5, 1.4, 0.5))
-    ..put(UNIT_SHAPESHIFTER_BEAR, new AttributeGrowth(2.5, 0.3, 0.5))
-    ..put(UNIT_SHAPESHIFTER_PANTHER, new AttributeGrowth(1., 2., 0.5))
-    ..put(UNIT_SHAPESHIFTER_TIGER, new AttributeGrowth(2., 1., 0.5))
+    ..put(UNIT_PRIMALIST, new AttributeGrowth(1.2, 1., 0.5))
+    ..put(UNIT_PRIMALIST_1, new AttributeGrowth(1.2, 1., 0.5))
+    ..put(UNIT_SHAPESHIFTER_WOLF, new AttributeGrowth(1.2, 1.0, 0.5))
+    ..put(UNIT_SHAPESHIFTER_BEAR, new AttributeGrowth(2., 0.3, 0.5))
+    ..put(UNIT_SHAPESHIFTER_PANTHER, new AttributeGrowth(1., 1.2, 0.5))
+    ..put(UNIT_SHAPESHIFTER_TIGER, new AttributeGrowth(1.5, 1., 0.5))
     ..put(UNIT_DIRE_WOLF, new AttributeGrowth(1.5, 1.4, 0.5))
     ..put(UNIT_DIRE_BEAR, new AttributeGrowth(2.5, 0.3, 0.5))
-    ..put(UNIT_DRUID, new AttributeGrowth(1.6, 1.4, 1.6))
+    ..put(UNIT_DRUID, new AttributeGrowth(1.4, 1.4, 1.6))
+    ..put(UNIT_TREEFORM, new AttributeGrowth(1.6, 1.4, 2.25))
     ..put(UNIT_JUNGLE_TYRANT, new AttributeGrowth(2.5, 2.2, 2.))
     //thief classes attributesGworth
     ..put(UNIT_THIEF, new AttributeGrowth(0.75, 1.5, 0.5))
@@ -146,7 +147,7 @@ public constant IterableMap<int, AttributeGrowth> trollAttributeGrowth =  new It
 
 
 // Basic Troll Spells
-public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC,ABILITY_SLEEP_OUTSIDE,ABILITY_BUILDING_CRAFT_SPELLBOOK_ID,LocalAbilityIds.corpseGrab0, LocalAbilityIds.corpseConsume ,ABILITY_HERO_GLOW)
+public constant BASIC_TROLL_SPELLS = commaList(ABILITY_PANIC, ABILITY_SLEEP_OUTSIDE, ABILITY_BUILDING_CRAFT_SPELLBOOK_ID, LocalAbilityIds.corpseGrab0, ABILITY_PASS_MEAT, ABILITY_HERO_GLOW) //LocalAbilityIds.corpseConsume
 
 // Unsub Hero Spells
 public constant HERO_SPELLS_HUNTER       = commaList(ABILITY_TRACK,            ABILITY_WARRIOR,        ABILITY_TRACKER)
@@ -154,7 +155,10 @@ public constant HERO_SPELLS_MAGE         = commaList(ABILITY_MAGE_SPELLBOOK,   A
 public constant HERO_SPELLS_PRIEST       = commaList(ABILITY_PRIEST_SPELLBOOK, ABILITY_BOOSTER,        ABILITY_MASTER_HEALER,ABILITY_SAGE)
 // The first ability is just a placeholder that is stripped during creation of the class menu.
 // TODO: Fix this hack by properly listing out abilities and class selection separately.
-public constant HERO_SPELLS_BEASTMASTER = commaList(ABILITY_SPIRIT_BEAST,     ABILITY_SHAPESHIFTER,   ABILITY_DRUID, ABILITY_DIRE_WOLF, ABILITY_DIRE_BEAR)
+public constant HERO_SPELLS_PRIMALIST_HUMANOID = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_DIRE_WOLF, ABILITY_DRUID, ABILITY_DIRE_BEAR) //ABILITY_SPIRIT_BEAST, 
+public constant HERO_SPELLS_PRIMALIST_WOLF = commaList(ABILITY_SHAPESHIFTER_FORM_WOLF, ABILITY_DRUID, ABILITY_DIRE_WOLF, ABILITY_DIRE_BEAR)
+public constant HERO_SPELLS_PRIMALIST_BEAR = commaList(ABILITY_SHAPESHIFTER_FORM_BEAR, ABILITY_DRUID, ABILITY_DIRE_WOLF, ABILITY_DIRE_BEAR)
+public constant HERO_SPELLS_PRIMALIST_PANTHER = commaList(ABILITY_SHAPESHIFTER_FORM_PANTHER, ABILITY_DRUID, ABILITY_DIRE_WOLF, ABILITY_DIRE_BEAR)    
 public constant HERO_SPELLS_THIEF        = commaList(ABILITY_CLOAK,            ABILITY_ROGUE,  ABILITY_TELETHIEF,   ABILITY_ASSASSIN)
 public constant HERO_SPELLS_SCOUT        = commaList(ABILITY_SCOUT_SPELLBOOK,        ABILITY_OBSERVER,      ABILITY_SPY)
 public constant HERO_SPELLS_GATHERER     = commaList(ABILITY_ITEM_RADAR,       ABILITY_RADAR_GATHERER, ABILITY_HERB_MASTER,  ABILITY_OMNIGATHERER, ABILITY_ALCHEMIST)
@@ -162,7 +166,8 @@ public constant HERO_SPELLS_GATHERER     = commaList(ABILITY_ITEM_RADAR,       A
 public constant  NORMAL_SPELLS_HUNTER       = commaList(ABILITY_HUNTER_WEB)
 public constant  NORMAL_SPELLS_MAGE         = commaList(ABILITY_NEGATIVE_BLAST)
 public constant  NORMAL_SPELLS_PRIEST       = commaList(ABILITY_THE_GLOW)
-public constant  NORMAL_SPELLS_BEASTMASTER  = commaList(ABILITY_PET_SPELLS,ABILITY_SPIRIT_BEAST)
+public constant  NORMAL_SPELLS_PRIMALIST  = commaList(ABILITY_PRIMALIST_ROOT_CAST)
+public constant  NORMAL_SPELLS_PRIMALIST_BEAR  = commaList(ABILITY_PRIMALIST_ROOT_CAST, ABILITY_HIBERNATE_DUMMY)//(ABILITY_PET_SPELLS,ABILITY_SPIRIT_BEAST)
 public constant  NORMAL_SPELLS_THIEF        = commaList(ABILITY_BLINK, ABILITY_THIEF_SPELLBOOK)
 public constant  NORMAL_SPELLS_SCOUT        = commaList(ABILITY_SCOUT_SPELLBOOK, ABILITY_HAWK_SWOOP ) //ABILITY_PING_ENEMY
 public constant  NORMAL_SPELLS_GATHERER     = commaList(ABILITY_SALVE_RECIPE)
@@ -184,7 +189,8 @@ public constant HERO_SPELLS_OBSERVER       = commaList(ABILITY_OBSERVER_WARD_ARE
 public constant HERO_SPELLS_HAWK           = commaList(ABILITY_HAWK_SPELLBOOK, ABILITY_SPY)
 public constant HERO_SPELLS_RADAR_GATHERER = commaList(ABILITY_TELE_RADAR_GATHER,                ABILITY_OMNIGATHERER)
 public constant HERO_SPELLS_HERB_MASTER    = commaList(ABILITY_TELE_HERB_GATHER,                 ABILITY_OMNIGATHERER)
-public constant HERO_SPELLS_DRUID          = commaList(ABILITY_DRUID_SPELLBOOK,            ABILITY_JUNGLE_TYRANT)
+public constant HERO_SPELLS_DRUID          = commaList(ABILITY_DRUID_SPELLBOOK)
+public constant HERO_SPELLS_TREEFORM       = commaList(ABILITY_TREEFORM_SPELLBOOK)
 public constant HERO_SPELLS_ALCHEMIST      = commaList(ABILITY_ALCHEMIST_SPELLBOOK,         ABILITY_OMNIGATHERER)
 public constant HERO_SPELLS_DIRE_WOLF      = commaList(ABILITY_DIRE_WOLF_SPELLBOOK, ABILITY_JUNGLE_TYRANT)
 public constant HERO_SPELLS_DIRE_BEAR      = commaList(ABILITY_DIRE_BEAR_SPELLBOOK, ABILITY_JUNGLE_TYRANT)
@@ -196,7 +202,7 @@ public constant NORMAL_SPELLS_ELEMENTALIST   = commaList(ABILITY_SUB_MAGE_INHERI
 public constant NORMAL_SPELLS_HYPNOTIST      = commaList(ABILITY_SUB_MAGE_INHERITED_SPELLBOOK)
 public constant NORMAL_SPELLS_BOOSTER        = commaList(ABILITY_SUB_PRIEST_SPELLBOOK)
 public constant NORMAL_SPELLS_MASTER_HEALER  = commaList(ABILITY_SUB_PRIEST_SPELLBOOK)
-public constant NORMAL_SPELLS_DRUID          = commaList(ABILITY_PET_SPELLS)    
+public constant NORMAL_SPELLS_DRUID          = commaList(ABILITY_DRUID_ENTANGLING_ROOTS, ABILITY_DRUID_STARFALL)    
 public constant NORMAL_SPELLS_ESCAPE_ARTIST  = commaList(ABILITY_BLINK)
 public constant NORMAL_SPELLS_ROGUE          = commaList(ABILITY_BLINK)
 public constant NORMAL_SPELLS_CONTORTIONIST  = commaList(ABILITY_BLINK)
@@ -207,14 +213,14 @@ public constant NORMAL_SPELLS_HAWK           = commaList(ABILITY_HAWK_SWOOP)
 public constant NORMAL_SPELLS_RADAR_GATHERER = commaList(ABILITY_RADAR_GATHERER_SPELLBOOK)
 public constant NORMAL_SPELLS_HERB_MASTER    = commaList(ABILITY_MIX_HERBS)
 public constant NORMAL_SPELLS_ALCHEMIST      = commaList(ABILITY_CREATE_PHILOSOPHERS_STONE)
-public constant NORMAL_SPELLS_DIRE_WOLF      = commaList(ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME)
+public constant NORMAL_SPELLS_DIRE_WOLF      = commaList("") //ABILITY_WOLF_VORACITY_COAT_CORPSE_CONSUME
 public constant NORMAL_SPELLS_DIRE_BEAR      = commaList(ABILITY_SCAVENGE_FOOD)
 
 // Shapeshifter
-public constant HERO_SPELLS_SHAPESHIFTER_WOLF    = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_JUNGLE_TYRANT)
-public constant HERO_SPELLS_SHAPESHIFTER_BEAR    = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_JUNGLE_TYRANT)
-public constant HERO_SPELLS_SHAPESHIFTER_PANTHER = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_JUNGLE_TYRANT)
-public constant HERO_SPELLS_SHAPESHIFTER_TIGER   = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_JUNGLE_TYRANT)
+public constant HERO_SPELLS_SHAPESHIFTER_WOLF    = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_RIP_AND_TEAR)
+public constant HERO_SPELLS_SHAPESHIFTER_BEAR    = commaList(ABILITY_SHAPESHIFTER_FORM, ABILITY_HIBERNATE)
+public constant HERO_SPELLS_SHAPESHIFTER_PANTHER = commaList(ABILITY_SHAPESHIFTER_FORM)
+public constant HERO_SPELLS_SHAPESHIFTER_TIGER   = commaList(ABILITY_SHAPESHIFTER_FORM)
 
 public constant NORMAL_SPELLS_SHAPESHIFTER_WOLF    = commaList(ABILITY_WOLF_HUNGER)
 public constant NORMAL_SPELLS_SHAPESHIFTER_BEAR    = commaList(ABILITY_BEAR_BULWARK,ABILITY_ARMOR_BONUS_4)
@@ -238,7 +244,7 @@ public constant  NORMAL_SPELLS_DEMENTIA_MASTER = commaList(ABILITY_DEMENTIA_MAST
 public constant  NORMAL_SPELLS_SAGE            = commaList(ABILITY_SAGE_INHERITED_SPELLBOOK)
 public constant  NORMAL_SPELLS_JUNGLE_TYRANT   = commaList(ABILITY_JUNGLE_TYRANT_EVOLUTION, ABILITY_PET_SPELLS, ABILITY_RENDO_DEVOUR)
 public constant  NORMAL_SPELLS_ASSASSIN        = commaList(ABILITY_ASSASSIN_SPELLBOOK)
-public constant  NORMAL_SPELLS_SPY             = commaList(ABILITY_HAWK_INHERITED_SPELLBOOK,ABILITY_HAWK_SWOOP)
+public constant  NORMAL_SPELLS_SPY             = commaList(ABILITY_HAWK_INHERITED_SPELLBOOK, ABILITY_BEAR_TRAP, ABILITY_HAWK_SWOOP)
 public constant  NORMAL_SPELLS_OMNIGATHERER    = commaList(ABILITY_CREATE_PHILOSOPHERS_STONE, ABILITY_OMNIGATHERER_INHERITED_SPELLBOOK)
 
 // Few constant to save space
@@ -272,10 +278,11 @@ public constant  TOOLTIP_PRIEST       = "" +
     "movement rate of nearby allies,and can learn many "+COLOR_ORANGE.toColorString()+"Defensive Spells|r. A good support class. "+
     INVENTORY_5_SLOT+DIFFICULTY_HARD
 
-public constant  TOOLTIP_BEASTMASTER = "" +
-    "Fast and strong,the Beastmaster can tame pet which assist him in battle. His regular skill "+COLOR_ORANGE.toColorString()+"Spirit of the "+
-    "Beast|r gives 5% per level better chance to find babies and attracts wild animals. A good damage class. "+
+public constant  TOOLTIP_PRIMALIST = "" +
+    "Fast and strong, the Primalist has druidic powers allowing him to shapeshift and entangle his enemies."+
     INVENTORY_4_SLOT+DIFFICULTY_EASY
+
+
 
 public constant  TOOLTIP_THIEF        = "" +
     "Weak in battle but good at escaping,the thief has a short ranged "+COLOR_ORANGE.toColorString()+"Blink|r and can learn a short term "+
@@ -335,7 +342,7 @@ public constant  TOOLTIP_SHAPESHIFTER    = "" +
 
 public constant TOOLTIP_DIRE_WOLF       = "" +
     "Permanently transform into a Dire Wolf."+
-    "\nDire Wolf can only consume raw meat and has various abilities related to generating and consuming raw meat."+
+    "\nDire Wolf can consume raw meat and has various abilities related to generating and consuming raw meat."+
     SUBCLASS_WARNING+DIFFICULTY_MEDIUM
 
 public constant TOOLTIP_DIRE_BEAR       = "" +
@@ -344,7 +351,7 @@ public constant TOOLTIP_DIRE_BEAR       = "" +
     SUBCLASS_WARNING+DIFFICULTY_MEDIUM
 
 public constant TOOLTIP_DRUID           = "" +
-    "The Druid is focused on using nature and his pet's to support his team and turn the battle in his favor."+
+    "The Druid is focused on using powers of nature and Elune to support his team and turn the battle in his favor."+
     SUBCLASS_WARNING+DIFFICULTY_MEDIUM
 
 public constant  TOOLTIP_ESCAPE_ARTIST   = "" +
@@ -429,8 +436,9 @@ public constant trollIcons = new HashMap<int,string>()
     ..put(UNIT_TRACKER,              Icons.bTNIceTroll)
     ..put(UNIT_WARRIOR,              LocalIcons.bTNTrollPredator)
     ..put(UNIT_JUGGERNAUT,           LocalIcons.bTNTrollPredator)
-    ..put(UNIT_BEASTMASTER,         Icons.bTNShaman)
-    ..put(UNIT_BEASTMASTER_1,       Icons.bTNShaman)
+    ..put(UNIT_TREEFORM,             Icons.bTNAncientOfLore)
+    ..put(UNIT_PRIMALIST,         Icons.bTNShaman)
+    ..put(UNIT_PRIMALIST_1,       Icons.bTNShaman)
     ..put(UNIT_SHAPESHIFTER_WOLF,    Icons.bTNDireWolf)
     ..put(UNIT_SHAPESHIFTER_BEAR,    Icons.bTNGrizzlyBear)
     ..put(UNIT_SHAPESHIFTER_PANTHER, LocalIcons.bTNPanther)

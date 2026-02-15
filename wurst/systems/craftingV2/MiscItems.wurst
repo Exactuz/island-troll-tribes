@@ -1,54 +1,9 @@
 package MiscItems
 
-// Standard library imports:
-import HashMap
-import AbilityObjEditing
-import ClosureEvents
-import DamageEvent
-import InstantDummyCaster
-import StandardTextTags
-
 // Local imports:
-import ColorUtils
-import ChatCommands
-import ChatUtils
 import LocalObjectIDs
-import UnitExtensions
-import ToolTipsUtils
-import ObjectIds
-import Sleep
-import ChannelAbilityPreset
 import ClosureTimers
-import Orders
-import HealingSystem
-import BuffObjEditing
-import BuffIds
-import Abilities
-import StupefyField
-import DamageListeners
-import LocalAssets
-import SimError
-import FoodSlots
-import ItemPoolExtensions
-import LinkedList
-import OnUnitEnterLeave
-import GameStates
-import Tribe
-import PlayerExtensions
-import GameConfig
-import Transformation
-import UnitIds
-import Items
-import LocalItemObjEditing
-import HashList
-import IdListConstant
-import QuickMake
-import BonusHandler
-import ItemRecipeV2
-import QuickMakeV2
-import initlater MixingPotV2
-import initlater CustomItemDefinition
-import initlater ItemShopDummyUnit
+import CustomItemDefinition
 import CustomItemType
 import CoatDefinition
 import MakruraClaw

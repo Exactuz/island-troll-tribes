@@ -8,7 +8,6 @@ import ObjectIds
 import ObjectIdGenerator
 
 // Local lib Imports:
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import LocalObjectIDs
@@ -48,7 +47,7 @@ public constant TT_ANABOLIC_POTION = ""+
     ..setTargetAttachmentPoint1(1, "")
 
 
-public constant ITEM_ANABOLIC_POTION_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_ANABOLIC_POTION_DUMMY_UNIT")
+public constant ITEM_ANABOLIC_POTION_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_ANABOLIC_POTION_DUMMY_UNIT")
 public constant ITEM_ANABOLIC_POTION_DEFINITION = compiletime(new CustomItemDefinition(ITEM_ANABOLIC_POTION)
         ..setInterfaceIcon(ICON)
         ..setModelUsed(LocalItems.potionRed)

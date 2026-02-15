@@ -1,28 +1,16 @@
 package MammothRightHorn
 
 // Standard library imports:
-import AbilityObjEditing
-import HashMap
 import ClosureEvents
-import ObjectIdGenerator
 
 // Local imports:
 import LocalObjectIDs
-import StringBuilder
 import ToolTipsUtils
-import BuffObjEditing
-import BuffIds
 import Abilities
 import OrderIds
 //import PumpUp
-import Icons
 import InstantDummyCaster
 import ClosureTimers
-import UnitExtensions
-import ObjEditingUtils
-import ObjectIds
-import ItemObjEditing
-import Items
 import LocalAssets
 import LocalItemObjEditing
 import AxesDefinition
@@ -39,6 +27,7 @@ let ABIL_RIGHT_MAMMOTH_HORN = commaList(ABILITY_RIGHT_MAMMOTH_HORN_TOSS, ABIL_DM
 let ABIL_MAKRURA_CLAWS_DMG   = compiletime(ABIL_ID_GEN.next())
 let CAST_RANGE = 175.
 let TOSS_RANGE = 400.
+let GRAVITY = 175.
 let TOSS_DAMAGE_AOE = 300.
 let MAMMOTH_RIGHT_HORN_CD = 25.
 let DURATION_HERO = 2.5
@@ -58,7 +47,7 @@ public let TT_RIGHT_MAMMOTH_HORN = "A two-handed weapon crafted of Mammoth' righ
                                 TOSS_DAZE_MS_FACTOR.toToolTipOrange(), DURATION_HERO.toString().color(ENERGY_COLOR), TOSS_DAMAGE_AOE.toString().color(COLOR_LIGHT_BLUE))+
                               "\n{0} seconds cooldown.".format(MAMMOTH_RIGHT_HORN_CD.toString().color(ENERGY_COLOR))
 
-public constant ITEM_RIGHT_MAMMOTH_HORN_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_RIGHT_MAMMOTH_HORN_DUMMY_UNIT")
+public constant ITEM_RIGHT_MAMMOTH_HORN_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_RIGHT_MAMMOTH_HORN_DUMMY_UNIT")
 public constant ITEM_RIGHT_MAMMOTH_HORN_DEFINITION = compiletime(new CustomItemDefinition(ITEM_RIGHT_MAMMOTH_HORN)
         ..setInterfaceIcon(Icons.bTNHornOfDoom)
         ..setModelUsed(LocalItems.hornOfMammoth)
@@ -130,10 +119,9 @@ public constant ITEM_RIGHT_MAMMOTH_HORN_DEFINITION = compiletime(new CustomItemD
 
 class MammothRightHornToss extends JumpInstance
     unit caster
-    let gravity = 175.
 
     construct(unit caster, unit u, vec2 targetPos)
-        super(u, targetPos, TOSS_DURATION, gravity)
+        super(u, targetPos, TOSS_DURATION, GRAVITY)
         this.caster = caster
         u.addAbility(AbilityIds.ghostVisible)
     

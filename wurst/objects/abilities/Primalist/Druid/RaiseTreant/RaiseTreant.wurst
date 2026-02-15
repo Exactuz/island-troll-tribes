@@ -1,0 +1,107 @@
+package RaiseTreant
+
+
+// Standard library imports:
+import HashMap
+import ClosureEvents
+import InstantDummyCaster
+
+// Local imports:
+import LocalObjectIDs
+import ClosureTimers
+import Orders
+import LocalObjectIDs2
+import GurubashiArenaBorders
+import ClosureForGroups
+import LivingTree
+import NaturesBlessing
+import TreantDefinitions
+import UnitUtils
+import LesserEntangle
+import Classes
+import SimError
+
+let ENTANGLE_CHECK_PERIOD = 0.25
+
+class Treant
+    unit troll
+    unit treant
+    vec2 treantPos = vec2(0, 0)
+    CallbackPeriodic cb 
+    real closestTreeDistance = TREE_SEARCH_RADIUS
+    static HashMap<unit, thistype> instances = new HashMap<unit, thistype>()
+    construct(unit troll)
+        this.troll = troll
+        instances.put(troll, this)
+        cb = doPeriodically(ENTANGLE_CHECK_PERIOD) (CallbackPeriodic cb) ->
+            castEntangle()
+            
+    
+    static function onSub(unit troll)
+        if not instances.has(troll)
+            new Treant(troll)
+
+    static function onCast(unit caster, vec2 pointTarget)
+        let instance = instances.get(caster)
+        if instance == null
+            return
+        if instance.findClosestTreePos(pointTarget) == vec2(0, 0)
+            instance.refundAbility()
+            return
+        instance.spawnTree()
+
+    function refundAbility()
+        troll.issueImmediateOrderById(OrderIds.stop)
+        nullTimer() -> 
+            simError(troll.getOwner(), "No trees found in radius.")
+            troll.setMana(troll.getMana()+RAISE_TREANT_MANACOST)
+            troll.endAbilityCooldown(ABILITY_RAISE_TREANT_SENTRY)
+
+    function castEntangle()
+        if not treant.isAlive()
+            return
+        if treant.getAbilityCooldownRemaining(ABILITY_PRIMALIST_ROOT_CAST) > 0
+            return
+        let target = findNearestUnit(treant.getPos(), ROOT_CAST_RANGE , u->(u.isAlive() and (u.isEnemyOf(treant.getOwner()) or u.getTypeId() == UNIT_ELK)))
+        if target == null
+            return
+        treant.issueTargetOrderById(OrderIds.entangle, target)
+
+    function spawnTree()
+        if treant != null
+            treant.kill()
+        let treantId = troll.getTrollClassType() == ClassType.SUPER_CLASS ? UNIT_TREANT_PROTECTOR : UNIT_TREANT_SENTRY
+        treant = createUnit(troll.getOwner(), treantId, treantPos)
+        treant.setAbilityManaCost(ABILITY_PRIMALIST_ROOT_CAST, 0, 0)
+        nullTimer() -> 
+            InstantDummyCaster.castTarget(treant.getOwner(), ABILITY_TREANT_ROOTED, 1, "ensnare", treant, treant.getPos())
+        if troll.hasAbility(ABILITY_NATURES_BLESSING)
+            let hpBonus = (troll.getInt(true) * NATURES_BLESSING_HP_INT_MULTIPLIER).ceil()
+            let armourBonus = RAISE_TREANT_ARMOUR_BASE + troll.getInt(true) * NATURES_BLESSING_ARMOUR_INT_MULTIPLIER
+            treant.setMaxHP(RAISE_TREANT_HP_BASE + hpBonus)
+            treant.setArmor(RAISE_TREANT_ARMOUR_BASE + armourBonus)
+            treant.setHP(treant.getMaxHP())
+
+    function findClosestTreePos(vec2 pointTarget) returns vec2
+        treantPos = vec2(0,0)
+        if treantPos.distanceTo(pointTarget) <= GURUBASHI_ARENA_BORDER_AOE
+            return pointTarget
+        closestTreeDistance = TREE_SEARCH_RADIUS
+        forDestructablesInRange(pointTarget, TREE_SEARCH_RADIUS) (destructable d) ->
+            if TREE_ID_LIST.has(d.getTypeId())
+                let distance = d.getPos().distanceTo(pointTarget)
+                if distance < closestTreeDistance
+                    closestTreeDistance = distance
+                    treantPos = d.getPos()
+        return treantPos
+
+init
+    EventListener.onPointCast(ABILITY_RAISE_TREANT_SENTRY) (unit caster, vec2 target) ->
+        Treant.onCast(caster, target)
+
+    EventListener.onPointCast(ABILITY_RAISE_TREANT_PROTECTOR) (unit caster, vec2 target) ->
+        Treant.onCast(caster, target)
+
+    EventListener.onCast(ABILITY_DRUID) (unit caster) ->
+        Treant.onSub(caster)
+        

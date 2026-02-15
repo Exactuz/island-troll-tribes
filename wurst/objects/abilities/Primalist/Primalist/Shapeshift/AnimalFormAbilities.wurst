@@ -1,0 +1,87 @@
+package AnimalFormAbilities
+
+// Standard lib Imports:
+import ChannelAbilityPreset
+
+// Local lib Imports:
+import LocalObjectIDs
+import LocalAssets
+import ToolTipsUtils
+import LocalObjectIDs2
+
+public constant SHAPESHIFT_COOLDOWN = 20.
+public constant SHAPESHIFT_DURATION = 10.
+let TT_DURATION_AND_CD = "\n{0} seconds duration.".format(SHAPESHIFT_DURATION.toToolTipLightBlue())+
+                         "\n{0} seconds cooldown".format(SHAPESHIFT_COOLDOWN.toToolTipLightBlue())
+
+let TT_WOLF = "" +
+    "Transform into a wolf, gaining the {0} and {1} abilities.".format(
+    "Rip and Tear".color(COLOR_GOLD_STR), "Ravenous Beast".color(COLOR_GOLD_STR))+
+    TT_DURATION_AND_CD
+
+let TT_BEAR = "" +
+    "Transform into a bear, gaining the {0}, {1} and {2} abilities.".format(
+    "Hibernate".color(COLOR_GOLD_STR), "Thick Fur".color(COLOR_GOLD_STR), "Fell Tree".color(COLOR_GOLD_STR))+
+    TT_DURATION_AND_CD
+
+let TT_PANTHER = "" +
+    "Transform into a panther, gaining the {0} and {1} abilities.".format(
+    "Sniff".color(COLOR_GOLD_STR), "Thrill of the Hunt".color(COLOR_GOLD_STR))+
+    TT_DURATION_AND_CD
+
+let TT_TIGER = "" +
+    "Transform into a tiger, gaining the |cffffcc00Vicious Strikes|r ability to "+
+    "mutilate your enemies."
+
+function createShapeShiftAbility(int abilId) returns ChannelAbilityPreset
+    return new ChannelAbilityPreset(abilId, 1, true)
+        ..presetOption(Option.VISIBLE, true)
+        ..presetCooldown(lvl->SHAPESHIFT_COOLDOWN)
+        ..setHeroAbility(false)
+
+// TODO: ban order Id
+@compiletime function createShapeShiftAbilities()
+    createShapeShiftAbility(ABILITY_TRANSFORM_WOLF)
+    ..setIconNormal(Icons.bTNDireWolf)
+    ..setButtonPositionNormalX(0)
+    ..setBaseOrderID(1, "darkconversion")
+    ..setHotkeyNormal("Q")
+    ..setName("Transform (Wolf)")
+    ..setTooltipNormal(1, makeToolTipNorm("Q", "Shapeshift into Wolf"))
+    ..setTooltipNormalExtended(1, TT_WOLF)
+
+    createShapeShiftAbility(ABILITY_TRANSFORM_BEAR)
+    ..setIconNormal(Icons.bTNGrizzlyBear)
+    ..setButtonPositionNormalX(1)
+    ..setBaseOrderID(1, "darkportal")
+    ..setHotkeyNormal("W")
+    ..setName("Transform (Bear)")
+    ..setTooltipNormal(1, makeToolTipNorm("W", "Shapeshift into Bear"))
+    ..setTooltipNormalExtended(1, TT_BEAR)
+
+    createShapeShiftAbility(ABILITY_TRANSFORM_PANTHER)
+    ..setIconNormal(LocalIcons.bTNPanther)
+    ..setButtonPositionNormalX(3)
+    ..setBaseOrderID(1, "darkritual")
+    ..setHotkeyNormal("R")
+    ..setName("Transform (Panther)")
+    ..setTooltipNormal(1, makeToolTipNorm("E", "Shapeshift into Panther"))
+    ..setTooltipNormalExtended(1, TT_PANTHER)
+
+    createShapeShiftAbility(ABILITY_TRANSFORM_TIGER)
+    ..setIconNormal(LocalIcons.bTNTiger)
+    ..setButtonPositionNormalX(8)
+    ..setBaseOrderID(1, "darksummoning")
+    ..setHotkeyNormal("R")
+    ..setName("Transform (Tiger)")
+    ..setTooltipNormal(1, makeToolTipNorm("R", "Shapeshift into Tiger"))
+    ..setTooltipNormalExtended(1, TT_TIGER)
+    
+    createShapeShiftAbility(ABILITY_TRANSFORM_HUMANOID)
+    ..setIconNormal(Icons.bTNShaman)
+    ..setButtonPositionNormalX(8)
+    ..setBaseOrderID(1, "darksummoning")
+    ..setHotkeyNormal("R")
+    ..setName("Transform (Tiger)")
+    ..setTooltipNormal(1, makeToolTipNorm("R", "Shapeshift into Tiger"))
+    ..setTooltipNormalExtended(1, TT_TIGER)

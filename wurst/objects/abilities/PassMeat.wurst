@@ -2,40 +2,18 @@ package PassMeat
 
 // Standard library imports:
 import HashMap
-import AbilityObjEditing
 import ClosureEvents
-import DamageEvent
-import InstantDummyCaster
-import StandardTextTags
 
 // Local imports:
 import ColorUtils
-import ChatCommands
-import ChatUtils
 import LocalObjectIDs
 import UnitExtensions
-import ToolTipsUtils
-import ObjectIds
-import Sleep
 import ChannelAbilityPreset
 import ClosureTimers
-import Orders
-import HealingSystem
-import BuffObjEditing
-import BuffIds
-import Abilities
-import StupefyField
-import DamageListeners
 import LocalAssets
 import SimError
-import FoodSlots
-import ItemPoolExtensions
 import LinkedList
 import OnUnitEnterLeave
-import GameStates
-import Tribe
-import PlayerExtensions
-import GameConfig
 import Transformation
 
 constant CAST_RANGE = 150.
@@ -61,7 +39,7 @@ class PassMeat
     construct(unit _troll)
         troll = _troll
         //print("created instance for unit "+GetObjectName(troll.getTypeId()))
-        updatePassMeatAbility()
+        //updatePassMeatAbility()
         updateTooltip()
 
     function spendCharges(int amount, unit target)
@@ -200,8 +178,8 @@ function onCast(unit caster, unit target)
     instance.onCast(target)
     
 function onUnitEnter(unit u)
-    if not gameConfig.isPassMeatAbility() == true
-        return
+    //if not gameConfig.isPassMeatAbility() == true
+    //    return
     if not u.isTroll()
         return
     let instance = instances.get(u)
@@ -220,9 +198,4 @@ init
 
     registerAfterEffect() (unit target, int unitID) ->
         onUnitEnter(target)
-
-    GameStates.gameplay.onEnter() state ->
-        for i=0 to GetBJMaxPlayerSlots()-1
-            let troll = players[i].getTroll()
-            //instances.put(troll, new PassMeat(troll))
     

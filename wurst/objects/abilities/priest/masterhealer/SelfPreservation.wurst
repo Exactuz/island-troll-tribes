@@ -4,7 +4,6 @@ import GameConfig
 
 import ClosureEvents
 import ChannelAbilityPreset
-import Assets
 import LocalObjectIDs
 import Lodash
 import ToolTipsUtils

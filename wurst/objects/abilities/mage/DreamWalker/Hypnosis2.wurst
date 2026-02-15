@@ -2,14 +2,8 @@ package Hypnosis2
 
 import ClosureEvents
 
-import AbilityObjEditing
-import BuffObjEditing
-import ObjectIds
 import LocalObjectIDs
-import Lodash
 import ToolTipsUtils
-import Assets
-import LocalAssets
 import Sleep
 import ColorUtils
 import ChannelAbilityPreset
@@ -93,12 +87,15 @@ class HypnosisCooldown
         target = _target
         castSleep(caster, target)        
         remainingCooldown=HYPNOSIS_COOLDOWN
+
+
+    function updateCooldown()
         doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
             remainingCooldown-=ANIMATION_PERIOD
             if remainingCooldown<=0
                 destroy cb
                 destroy this
-
+                
     function castSleep(unit caster, unit target)
         let abilId = target.isTroll() ? ABILITY_SLEEP_HYPNOSIS : ABILITY_SLEEP_ANIMAL
         if abilId == ABILITY_SLEEP_ANIMAL

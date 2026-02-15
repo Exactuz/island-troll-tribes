@@ -1,0 +1,46 @@
+package WolfFormEatRawMeat
+
+
+import HealingItems
+import ColorUtils
+import ChannelAbilityPreset
+import LocalObjectIDs2
+
+constant VORACITY_CHARGES = 1
+
+let TT_ABILITY_NORM = "Ravenous Beast"
+let TT_ABILITY_EXT = "Dire Wolf hungers for the blood of others."+
+                     "\nYou gain {0} charge of Voracity every time you take form of a wolf.".format(
+                        VORACITY_CHARGES.toString().color(COLOR_GOLD_STR))+
+                     "\nUse can spend a charge of Voracity to consume raw meat, recovering {0} health.".format(
+                        MEAT_HEAL.toString().color(COLOR_GREEN))+
+                     "\nLevel 4: ".color(COLOR_GOLD_STR)+
+                     " gain an additional Voracity charge."
+
+
+@compiletime function createWolfFormRavenousBeast()
+    new AbilityDefinitionBladeMasterWindWalk(ABILITY_WOLF_FORM_RAVENOUS_BEAST)
+        ..setTooltipNormal(1, TT_ABILITY_NORM)
+        ..setTooltipLearn(TT_ABILITY_NORM)
+        ..setTooltipLearnExtended(TT_ABILITY_EXT)
+        ..setTooltipNormalExtended(1, TT_ABILITY_EXT)       
+        ..presetCastingTime(lvl ->0.01)
+        ..presetCooldown(lvl -> 0)
+        ..presetManaCost(lvl -> 0)
+        ..presetBackstabDamage(lvl->false)
+        ..presetBackstabDamage1(lvl->0.01)
+        ..presetHotkey("E")
+        ..presetDurationNormal(lvl->0.01)
+        ..presetDurationHero(lvl->0.01)
+        ..setButtonPositionNormalX(3)
+        ..setButtonPositionNormalY(0)
+        ..setIconNormal(Icons.bTNCannibalize)
+        ..setEffectSound("")
+        ..presetTargetsAllowed(lvl ->commaList(
+            TargetsAllowed.ground,
+            TargetsAllowed.enemies,
+            TargetsAllowed.neutral,
+            TargetsAllowed.vulnerable,
+            TargetsAllowed.alive,
+            TargetsAllowed.organic
+        ))

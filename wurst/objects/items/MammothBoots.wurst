@@ -1,31 +1,16 @@
 package MammothBoots
 
 // Standard library imports:
-import AbilityObjEditing
 import HashMap
 import ClosureEvents
-import ObjectIdGenerator
 
 // Local imports:
 import LocalObjectIDs
-import StringBuilder
-import ToolTipsUtils
-import BuffObjEditing
-import BuffIds
 import Abilities
-import OrderIds
 //import PumpUp
-import Icons
-import InstantDummyCaster
 import ClosureTimers
-import UnitExtensions
-import ObjEditingUtils
-import ObjectIds
-import ItemObjEditing
-import Items
 import LocalAssets
 import LocalItemObjEditing
-import AxesDefinition
 import ColorUtils
 import ObjectIDManager
 import CustomItemDefinition
@@ -34,7 +19,6 @@ import ChannelAbilityPreset
 import JumpSystem
 import HashSet
 import Knockback3
-import AttachmentPoints
 import Objects
 import SoundUtils
 import MammothTrample
@@ -58,7 +42,7 @@ let TT_MAMMOTH_BOOTS = "A pair of boots crafted a hide of The Mammoth."+
                               "\n{0} seconds cooldown.".format(COOLDOWN.toString().color(ENERGY_COLOR))
 
 
-public constant ITEM_MAMMOTH_BOOTS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MAMMOTH_BOOTS_DUMMY_UNIT")
+public constant ITEM_MAMMOTH_BOOTS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MAMMOTH_BOOTS_DUMMY_UNIT")
 public constant ITEM_MAMMOTH_BOOTS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MAMMOTH_BOOTS)
         ..setAbilities(ABIL_MAMMOTH_BOOTS)
         ..setInterfaceIcon(LocalIcons.bTNMammothBoots)

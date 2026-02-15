@@ -1,0 +1,67 @@
+package CarnivorousVines
+
+
+import AbilityObjEditing
+import ClosureEvents
+import ClosureTimers
+import BuffIds
+import LocalAssets
+import LocalObjectIDs2
+import ColorUtils
+import AttachmentPoints
+import Abilities
+import LesserEntangle
+import UnitExtensions
+
+let DISTANCE_PULLED_PER_SECOND = 100.
+let PULL_DISTANCE_MIN = 128.
+let CARNIVOROUS_VINES_BONUS_DAMAGE = 20.
+let TT_CARNIVOROUS_VINES_NORM = "Carnivorous Vines"
+let TT_CARNIVOROUS_VINES_EXT = "While "+"Entangled".color(COLOR_LIGHT_BLUE)+
+                               ", the target is steadily dragged toward the caster as the roots burrow and tighten, pulling them closer and inflicting {0} additional damage over time.".format(
+                                CARNIVOROUS_VINES_BONUS_DAMAGE.toString().color(COLOR_RED)
+                               )    
+
+
+@compiletime function createAbility()
+    new AbilityDefinitionEvasion(ABILITY_CARNIVOROUS_VINES)
+        ..setChancetoEvade(1, 0.)
+        ..setLevels(1)
+        ..setIconNormal(LocalIcons.pASBTNEntanglingRoots)
+        ..setTooltipNormal(1, TT_CARNIVOROUS_VINES_NORM)
+        ..setTooltipLearn(TT_CARNIVOROUS_VINES_NORM)
+        ..setTooltipLearnExtended(TT_CARNIVOROUS_VINES_EXT)
+        ..setTooltipNormalExtended(1, TT_CARNIVOROUS_VINES_EXT)
+
+
+function pullTarget(unit caster, unit target)
+    let casterPos = caster.getPos()
+    let targetPos = target.getPos()
+    let distance = casterPos.distanceTo(targetPos)
+    if  distance <= PULL_DISTANCE_MIN
+        return
+    let newPos = targetPos.moveTowards(casterPos, DISTANCE_PULLED_PER_SECOND*ANIMATION_PERIOD)
+    target.setXY(newPos)
+
+function onCast(unit caster, unit target)
+    let casterId = caster.getTypeId()
+    if casterId != UNIT_TREANT_SENTRY and casterId != UNIT_TREANT_PROTECTOR
+        return
+    let duration = target.isTroll() ? ROOT_DURATION_HERO : ROOT_DURATION_NORMAL
+    let dmgPerTick = CARNIVOROUS_VINES_BONUS_DAMAGE/duration*ANIMATION_PERIOD
+    doAfter(ANIMATION_PERIOD) ->
+        let efx = addEffect(Abilities.entanglingRootsTarget, target, AttachmentPoints.origin)
+        doPeriodically(ANIMATION_PERIOD) (CallbackPeriodic cb) ->
+            if not target.hasAbility(BuffIds.entanglingRoots) or not caster.isAlive()
+                efx.destr()    
+                destroy cb
+            else
+                pullTarget(caster, target)
+                caster.damageTarget(target, dmgPerTick, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_MAGIC, null)
+        
+init
+//    nullTimer() ->      
+    EventListener.onTargetCast(ABILITY_PRIMALIST_ROOT_CAST) (caster, target) ->
+        onCast(caster, target)
+                
+                

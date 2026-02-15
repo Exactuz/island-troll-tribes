@@ -2,7 +2,6 @@ package MidBossDefinition
 
 // Standard library imports:
 import Assets
-import UnitObjEditing
 import LinkedList
 
 // Local imports:

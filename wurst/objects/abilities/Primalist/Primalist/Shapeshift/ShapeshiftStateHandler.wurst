@@ -1,0 +1,145 @@
+package ShapeshiftStateHandler
+
+
+// Standard library imports:
+import HashMap
+import ClosureEvents
+
+// Local imports:
+import Transformation
+import LocalObjectIDs
+import ClosureTimers
+import HashList
+import LocalObjectIDs2
+import GameState
+import GameStates
+import AnimalFormAbilities
+import ShapeshiftState
+import HumanoidState
+import WolfState
+import BearState
+import PantherState
+import Shapeshift
+import Classes
+import TrollGroup
+import AutoSkill
+
+
+public constant UPDATE_PERIOD = 0.5
+
+class ShapeshiftStateHandler
+    unit troll
+    real remainingDuration = SHAPESHIFT_DURATION
+    CallbackPeriodic update
+    ShapeshiftState defaultState
+    ShapeshiftState currentState
+    IterableMap<int, real> spellCooldowns = new IterableMap<int, real>()
+    HashList<ShapeshiftState> states = new HashList<ShapeshiftState>()
+    static HashMap<unit, thistype> instances = new HashMap<unit, thistype>
+
+    construct(unit troll)
+        this.troll = troll
+        initialize()
+
+    function initialize()
+        autoSkill(troll)
+        instances.put(troll, this)
+        defaultState = new HumanoidState(troll)
+        states.add(defaultState, new WolfState(troll), new BearState(troll), new PantherState(troll))
+        for each in TRANSFORMATIONS
+            spellCooldowns.put(each, 0)
+        spellCooldowns.put(ABILITY_PRIMALIST_ROOT_CAST, 0)
+        currentState = defaultState
+        enterState(currentState)
+        update = doPeriodically(UPDATE_PERIOD) (CallbackPeriodic cb) ->
+            update()
+
+    static function onAfterEffect(unit caster)
+        let instance = instances.get(caster)
+        if instance == null
+            return
+        if instance.isSubbed()
+            destroy instance
+            return
+        instance.queueNextState(caster.getTypeId())
+
+    static function onPriorEffect(unit caster)
+        let instance = instances.get(caster)
+        if instance == null
+            return
+        instance.recordCooldowns()
+
+    static function onEntangleCast(unit caster)
+        let instance = instances.get(caster)
+        if instance == null
+            return
+        instance.enterState(instance.defaultState)
+
+    function isSubbed() returns bool
+        if troll.getTrollClassType() == ClassType.BASE_CLASS
+            return false
+        return true
+
+    function recordCooldowns()
+        for each in spellCooldowns
+            let cd = troll.getAbilityCooldownRemaining(each)
+            spellCooldowns.put(each, cd)
+
+    function restoreCooldowns()
+        for each in spellCooldowns
+            troll.startAbilityCooldown(each, spellCooldowns.get(each))
+            spellCooldowns.put(each, 0)
+            if currentState.targetFormId == TRANSFORMATIONS.get(each)
+                troll.startAbilityCooldown(each, SHAPESHIFT_COOLDOWN)
+
+    function update()
+        if currentState == defaultState
+            return
+        remainingDuration-=UPDATE_PERIOD
+        if remainingDuration <= 0 
+            enterState(defaultState)
+
+    function queueNextState(int targetFormId)
+        for each in states
+            if each.targetFormId == targetFormId
+                enterState(each)
+                return
+
+    function enterState(ShapeshiftState nextState)
+        remainingDuration = SHAPESHIFT_DURATION
+        currentState.exit()
+        nextState.enter()
+        currentState = nextState
+        nullTimer() -> 
+            restoreCooldowns()
+
+    ondestroy
+        troll.removeAbility(ABILITY_PRIMALIST_ROOT_CAST)
+        destroy update
+        destroy spellCooldowns
+        for each in states
+            destroy each
+        destroy states
+        instances.remove(troll)
+
+function initialize()
+    for troll in getTrolls()
+        if troll.getTypeId() == UNIT_PRIMALIST
+            new ShapeshiftStateHandler(troll)
+
+    
+init    
+    GameStates.gameplay.onEnter() (GameState state) ->
+        initialize()
+
+    registerAfterEffect() (unit target, int unitID) ->
+        ShapeshiftStateHandler.onAfterEffect(target)
+
+    registerPriorEffect() (unit target, int unitID) ->
+        ShapeshiftStateHandler.onPriorEffect(target)
+        
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_FINISH) ->
+        if EventData.getSpellAbilityId() == ABILITY_PRIMALIST_ROOT_CAST
+            ShapeshiftStateHandler.onEntangleCast(EventData.getSpellAbilityUnit())
+        
+        

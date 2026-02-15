@@ -1,0 +1,123 @@
+package TreantDefinitions
+
+
+import ChannelAbilityPreset
+import BuffObjEditing
+import BuffIds
+import LocalObjectIDs2
+import UnitIds
+import Buildings
+import ColorUtils
+
+public let RAISE_TREANT_CAST_RANGE = 400.
+public let RAISE_TREANT_CD = 60.
+public let RAISE_TREANT_MANACOST = 60
+public let RAISE_TREANT_HP_BASE = 150
+public let RAISE_TREANT_ARMOUR_BASE = 2
+public let TT_RAISE_TREANT_GURUBASHI_ARENA_BYPASS = "\nThis ability doesn't require a tree target when cast inside Gurubashi Arena.".color(COLOR_GOLD_STR)
+public let TT_RAISE_TREANT_NATURES_BLESSING_BONUS = "\nTreant's power can be further increased by the Druid's {0} passive skill.".format("Nature's Blessing".color(COLOR_LIGHT_BLUE))
+public let TT_RAISE_TREANT_SENTRY_NORM = "Raise Treant Sentry"
+public let TT_RAISE_TREANT_PROTECTOR_NORM = "Raise Treant Protector"
+public let TT_RAISE_TREANT_SENTRY_EXT = "Transform a tree into a Treant Sentry, a stationary unit that attacks nearby enemies and can root targets with its special ability."+
+                                "\nTreant Sentry has {0} HP and {1} armor.".format(RAISE_TREANT_HP_BASE.toString().color(COLOR_GREEN), RAISE_TREANT_ARMOUR_BASE.toString().color(COLOR_GOLD_STR))+
+                                TT_RAISE_TREANT_NATURES_BLESSING_BONUS+
+                                "\nHas {0} seconds cooldown.".format(RAISE_TREANT_CD.toString().color(COLOR_LIGHT_BLUE))+
+                                TT_RAISE_TREANT_GURUBASHI_ARENA_BYPASS
+public let TT_RAISE_TREANT_PROTECTOR_EXT = "Transform a tree into a Treant Protector, a stationary unit that attacks nearby enemies and can root targets with its special ability."+
+                                "\nTreant Protector has {0} HP and {1} armor.".format((RAISE_TREANT_HP_BASE*2).toString().color(COLOR_GREEN), (RAISE_TREANT_ARMOUR_BASE*2).toString().color(COLOR_GOLD_STR))+
+                                TT_RAISE_TREANT_NATURES_BLESSING_BONUS+
+                                "\nHas {0} seconds cooldown.".format(RAISE_TREANT_CD.toString().color(COLOR_LIGHT_BLUE))+
+                                TT_RAISE_TREANT_GURUBASHI_ARENA_BYPASS
+public let TREE_SEARCH_RADIUS = 256.
+public let TT_TREANT_SELF_ROOTED_NORM = "Treant"
+public let TT_TREANT_SELF_ROOTED_EXT = "Treant is a living tree and cannot move."
+public let RAISE_TREANT_PROTECTOR_RANGE = 600.
+
+@compiletime function createTreantDefinitions()
+    new ChannelAbilityPreset(ABILITY_RAISE_TREANT_SENTRY, 1, true)
+        ..setCooldown(1, RAISE_TREANT_CD)
+        ..setCastRange(1, RAISE_TREANT_CAST_RANGE)
+        ..presetIcon(Icons.bTNEnt)
+        ..presetTargetTypes(Targettype.POINT)
+        ..presetManaCost(lvl->RAISE_TREANT_MANACOST)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("Q")
+        ..setTooltipNormal(1, TT_RAISE_TREANT_SENTRY_NORM)
+        ..setTooltipNormalExtended(1, TT_RAISE_TREANT_SENTRY_EXT)
+        
+    new ChannelAbilityPreset(ABILITY_RAISE_TREANT_PROTECTOR, 1, true)
+        ..setCooldown(1, RAISE_TREANT_CD)
+        ..setCastRange(1, RAISE_TREANT_CAST_RANGE)
+        ..presetIcon(Icons.bTNTreant)
+        ..presetTargetTypes(Targettype.POINT)
+        ..presetManaCost(lvl->RAISE_TREANT_MANACOST)
+        ..setButtonPositionNormalX(1)
+        ..setButtonPositionNormalY(1)
+        ..setHotkeyNormal("Q")
+        ..setTooltipNormal(1, TT_RAISE_TREANT_PROTECTOR_NORM)
+        ..setTooltipNormalExtended(1, TT_RAISE_TREANT_PROTECTOR_EXT)
+    
+    new UnitDefinition(UNIT_TREANT_SENTRY, UnitIds.forceofnature)
+        ..setMovementType(MovementType.None)
+        ..setHitPointsMaximumBase(RAISE_TREANT_HP_BASE)
+        ..setDefenseBase(RAISE_TREANT_ARMOUR_BASE)
+        ..setLevel(7)
+        ..setScalingValue(1.1)
+        ..setAttack1CooldownTime(1.55)
+        ..setAttack1Range(128)
+        //..setUnitClassification("ward")
+        //..setSpeedBase(0)
+        ..setAttacksEnabled(3)
+        ..setTurnRate(3.0)
+        ..setNormalAbilities(commaList(ABILITY_PRIMALIST_ROOT_CAST, ABILITY_CARNIVOROUS_VINES, ABILITY_TREANT_INVISIBILITY))
+    
+    new UnitDefinition(UNIT_TREANT_PROTECTOR, UnitIds.ancientprotector)
+        ..setMovementType(MovementType.None)
+        ..setHitPointsMaximumBase(RAISE_TREANT_HP_BASE*2)
+        ..setDefenseBase(RAISE_TREANT_ARMOUR_BASE*2)
+        ..setLevel(9)
+        ..setModelFile(Buildings.ancientProtector1)
+        ..setCollisionSize(32.)
+        ..setIsaBuilding(false)
+        ..setTargetedAs("ground")
+        ..setAcquisitionRange(RAISE_TREANT_PROTECTOR_RANGE)
+        ..setAttack2AttackType(AttackType.Hero)
+        ..setArmorType(ArmorType.Hero)
+        ..setAttack2CooldownTime(1.50)
+        ..setAttack2DamageBase(22)
+        //..setpro
+        ..setAttack2Range(RAISE_TREANT_PROTECTOR_RANGE.toInt())
+        //..setUnitClassification("ward")
+        //..setSpeedBase(0)
+        ..setAttacksEnabled(2)
+        ..setTurnRate(3.0)
+        ..setNormalAbilities(commaList(ABILITY_PRIMALIST_ROOT_CAST, ABILITY_CARNIVOROUS_VINES, ABILITY_TREANT_INVISIBILITY))
+
+
+    new BuffDefinition(BUFF_TREANT_ROOTED, BuffIds.ensnareGround)
+        ..setArtSpecial("")
+        ..setArtTarget("")
+        ..setName(TT_TREANT_SELF_ROOTED_NORM)
+        ..setTooltipNormal(TT_TREANT_SELF_ROOTED_NORM)
+        ..setTooltipNormalExtended(TT_TREANT_SELF_ROOTED_EXT)
+        ..setIcon(Icons.bTNEnt)
+
+    new AbilityDefinitionEnsnareCreep(ABILITY_TREANT_ROOTED)
+        ..setDummyAbility()
+        ..setBuffs(1, commaList(BUFF_TREANT_ROOTED, BUFF_TREANT_ROOTED))
+        ..setMissileArt("")
+        ..setDurationHero(1, 9999.)
+        ..setDurationNormal(1, 9999.)
+        ..setTargetsAllowed(1, commaList(
+            TargetsAllowed.friend,
+            TargetsAllowed.ground,
+            TargetsAllowed.neutral,
+            TargetsAllowed.organic
+            ))
+        ..setName("Treant Self Root")
+        ..setEditorSuffix("(Wurst)")
+            
+    new AbilityDefinitionPermanentInvisibility(ABILITY_TREANT_INVISIBILITY)
+
+            

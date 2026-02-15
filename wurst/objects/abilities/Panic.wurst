@@ -14,6 +14,7 @@ import ToolTipsUtils
 
 public let MS_FACTOR = 0.3
 public let AS_FACTOR = 0.2
+public let PANIC_MANACOST = 20
 public let DAMAGE_FACTOR = 0.1
 public let DURATION = 15.
 public let COOLDOWN = 15.
@@ -39,7 +40,7 @@ public let TT = new StringBuilder()
     return new AbilityDefinitionBerserk(ABILITY_PANIC)
         ..setButtonPositionNormalX(2)
         ..setCooldown(1, COOLDOWN)
-        ..setManaCost(1, 20)
+        ..setManaCost(1, PANIC_MANACOST)
         ..setMovementSpeedIncrease(1, MS_FACTOR)
         ..setAttackSpeedIncrease(1, AS_FACTOR)
         // Use a damage listener to handle this.

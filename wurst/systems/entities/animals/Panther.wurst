@@ -6,14 +6,12 @@ import LinkedList
 
 public class Panther extends Hostile
     private static let unitTypeId = UNIT_PANTHER
-    unit whichUnit
     static function initialize()
         register(unitTypeId, panther -> new Panther(panther))
         register(UNIT_ELDER_PANTHER, target -> new Panther(target))
 
     construct(unit whichUnit)
         super(whichUnit)
-        this.whichUnit = whichUnit
 
     override function postCreate()
         super.postCreate()

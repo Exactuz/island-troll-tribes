@@ -1,0 +1,201 @@
+package HideMeat
+
+// Standard lib Imports:
+import ChannelAbilityPreset
+import ClosureEvents
+import HashMap
+
+// Local Imports:
+import SimError
+import LocalObjectIDs
+import ColorUtils
+import MoveCorpses
+import LocalAssets
+import LocalItemObjEditing
+import Items
+import ClosureTimers
+import QuickMake
+import DummyCorpse
+import UnitExtensions
+import RawMeatSlot
+
+let hiddenRawMeatCorpsesAmount = 8
+let COOLDOWN_HIDE = 120.
+let MANACOST = 60
+let TT_HIDE_NORM = "Stash Meat."
+let TT_HIDE_EXT = "Create a stash of {0} raw meat which can be retrieved later.".format(hiddenRawMeatCorpsesAmount.toString().color(COLOR_GOLD))+
+                  "\nHas {0} seconds cooldown.".format(COOLDOWN_HIDE.toString().color(COLOR_LIGHT_BLUE))
+let TT_RETRIEVE_NORM = "Retrieve Meat."
+let TT_RETRIEVE_EXT = "Retrieve meat from your stash, instantly recovering 8 raw meat."
+let TT_STASHED_RAW_MEAT  = "Dire Wolf can recover 8 raw meat from this stash."+
+                            "\nAny excess meat will be dropped on the ground.".color(COLOR_GOLD)
+
+
+
+
+
+IterableMap<item, bool> triggerFlags = new IterableMap<item, bool>()
+//HashMap<item, unit> instances = new HashMap<item, unit>()
+
+@compiletime function createHideMeatAbility() returns ChannelAbilityPreset
+    return new ChannelAbilityPreset(ABILITY_HIDE_MEAT, 1, true)
+        //..presetTargetTypes(Targettype.UNIT)
+        ..setName(TT_HIDE_NORM)
+        ..setHotkeyNormal("E")
+        ..setTooltipNormal(1, TT_HIDE_NORM)
+        ..setTooltipNormalExtended(1, TT_HIDE_EXT)
+        ..presetCooldown(lvl -> COOLDOWN_HIDE)
+        ..presetManaCost(lvl -> MANACOST)
+        ..presetCastRange(lvl -> 150.)
+        ..presetButtonPosNormal(0, 3)
+        ..setFollowThroughTime(1, 0)
+        ..setIconNormal(LocalIcons.bTNFeedPet)
+        //..setTargetsAllowed(1, TARGET_ALLOWED)
+        ..setAnimationNames("stand")
+        ..setBaseOrderID(1, "curse")
+
+@compiletime function createHiddenRawMeatItem() returns ItemDefinition
+    return createUsableItem(ITEM_STASHED_RAW_MEAT)
+        ..setInterfaceIcon(LocalIcons.bTNFeedPet)
+        ..setNameEnhance("Stashed raw meat")
+        ..setTooltipExtended(TT_STASHED_RAW_MEAT)
+        ..setDescription(TT_STASHED_RAW_MEAT)
+        ..setModelUsed(LocalItems.ham)
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(0)
+        ..setTintingColor3Blue(128)
+        ..setScalingValue(1.2)
+        ..setCanBeDropped(true)
+        ..setAbilities(commaList(ABILITY_CONSUME_STASHED_RAW_MEAT))
+        ..setCooldownGroup(commaList(ABILITY_CONSUME_STASHED_RAW_MEAT))
+        ..setCanBeSoldToMerchants(false)
+
+@compiletime function createConsumeRawMeatAbility()
+    createItemBerserkCast(ABILITY_CONSUME_STASHED_RAW_MEAT)
+        ..setName("Scavenged Mushroom")
+        ..setCooldown(1, 0)
+
+function onHideMeatCast(unit caster, unit target, int abilId)
+    let instance = instances.get(caster)
+    if instance == null
+        return
+    if caster.hasItemById(ITEM_STASHED_RAW_MEAT)
+        simError(caster.getOwner(), "You can carry only one stashed raw meat")
+        caster.setMana(caster.getMana()+MANACOST)
+        IssueImmediateOrder(caster, "stop")
+        return    
+    let meatCount = counts.get(caster)
+    if not meatCount == 8
+        nullTimer() -> 
+            caster.endAbilityCooldown(abilId)
+            caster.setMana(caster.getMana()+MANACOST)
+        simError(caster.getOwner(), "You need 8 raw meat to use this ability.")
+        return
+    instance.suspendTriggersFlag = true    
+    let dummySlotItems = rawMeatSlotItems.copy()
+        ..add(ITEM_DIRE_WOLF_RAW_MEAT_DUMMY_ITEM)      
+    if caster.freeSlots()<1
+        item foundItem = null
+        for each in caster.getInventory()
+            if dummySlotItems.has(each.getTypeId())
+                foundItem = each
+                caster.removeItem(each)
+                break
+        if foundItem == null
+            simError(caster.getOwner(), "Target doesn't have a free inventory slot")
+            caster.setMana(caster.getMana()+MANACOST)
+            IssueImmediateOrder(caster, "stop")
+            instance.suspendTriggersFlag = false
+            instance.updateDummySlot()
+            return
+    
+    updateCount(caster, -8)
+    let itemHandle = createItem(ITEM_STASHED_RAW_MEAT, target.getPos())
+    nullTimer() -> 
+        target.addItemHandle(itemHandle)
+        nullTimer() -> 
+            instance.suspendTriggersFlag = false
+            instance.updateDummySlot()    
+
+function onDrop(unit caster, item itm)
+    if not itm.getTypeId() == ITEM_STASHED_RAW_MEAT
+        return
+    if triggerFlags.get(itm) == false
+        return
+    doAfter(ANIMATION_PERIOD)->
+        caster.addItemHandle(itm)
+
+function onQuickMakePriorEffect(unit caster)
+    let itm = caster.getItemById(ITEM_STASHED_RAW_MEAT)
+    if itm == null
+        return
+    triggerFlags.put(itm, false)
+
+function onQuickMakeAfterEffect(unit caster)
+    let itm = caster.getItemById(ITEM_STASHED_RAW_MEAT)
+    if itm == null
+        return
+    triggerFlags.put(itm, true)
+
+function onPickUp(unit caster, item itm)
+    if itm.getTypeId()!=ITEM_STASHED_RAW_MEAT
+        return
+    if not caster.isTroll()
+        return
+    if caster.getTypeId() == UNIT_DIRE_WOLF
+        return
+    itm.remove()
+    for i =1 to hiddenRawMeatCorpsesAmount
+        createCorpse(caster.getPos())   
+
+function onItemUse(unit troll, item manipulatedItem)
+    if manipulatedItem.getTypeId() != ITEM_STASHED_RAW_MEAT
+        return
+    if troll.getTypeId()!= UNIT_DIRE_WOLF
+        manipulatedItem.remove()
+        for i = 1 to 8
+            createCorpse(troll.getPos())
+        return
+    let meatCount = counts.get(troll)
+    if meatCount != 0
+        for i =1 to meatCount
+            createCorpse(troll.getPos())
+    nullTimer() -> 
+        updateCount(troll, 8-meatCount)
+    manipulatedItem.remove()
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM) -> 
+        onDrop(GetTriggerUnit(), GetManipulatedItem())
+        
+    registerQuickMakePriorEffect() (unit target, int unitID) ->
+        onQuickMakePriorEffect(target)
+
+    registerQuickMakeAfterEffect() (unit target, int unitID) ->
+        onQuickMakeAfterEffect(target)
+
+    EventListener.onTargetCast(ABILITY_HIDE_MEAT) (unit caster, unit target) ->
+        onHideMeatCast(caster, target, EventData.getSpellAbilityId())
+
+    EventListener.onTargetCast(ABILITY_RETRIEVE_MEAT) (unit caster, unit target) ->
+        //onRetrieveMeatCast(caster, target, EventData.getSpellAbilityId()) 
+
+    EventListener.onTargetCast(ABILITY_UNLOAD_ITEMS) (unit caster, unit target) ->
+        onQuickMakePriorEffect(target)
+        doAfter(ANIMATION_PERIOD*3) -> 
+            onQuickMakeAfterEffect(target)
+    
+    EventListener.add(EVENT_PLAYER_UNIT_USE_ITEM) ->
+        onItemUse(GetManipulatingUnit(), GetManipulatedItem()) 
+        
+
+    EventListener.add(EVENT_PLAYER_UNIT_PICKUP_ITEM) ->
+        onPickUp(GetTriggerUnit(), GetManipulatedItem()) 
+
+    EventListener.add(EVENT_PLAYER_UNIT_DROP_ITEM)->
+        //onItemDrop(GetTriggerUnit(), GetManipulatedItem())       
+        
+
+                       
+               

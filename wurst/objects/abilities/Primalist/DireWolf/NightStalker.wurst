@@ -1,0 +1,38 @@
+package NightStalker
+
+// Standard lib Imports:
+import ChannelAbilityPreset
+
+// Local Imports:
+import LocalObjectIDs
+import LocalAssets
+
+let COOLDOWN = 60.
+
+let TT_NORM = "Night Stalker.\n"
+let TT_EXT = "" +
+    "Dire Wolf is as effective at stalking prey at night as during the day." +
+    "\nYour night vision is equal to your day vision."
+
+
+@compiletime function createNightStalkerDummyAbility()
+    new AbilityDefinitionEvasion(ABILITY_NIGHT_STALKER_DUMMY)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setTooltipNormal(1, TT_NORM)
+        ..setIconNormal(LocalIcons.pASBTNUnitWolf)
+        ..setTooltipLearn(TT_NORM)
+        ..setTooltipLearnExtended(TT_EXT)
+        ..setTooltipNormalExtended(1, TT_EXT)
+
+//not currently working
+@compiletime function createNightStalkerAbility() returns AbilityDefinitionUltraVisionGlyph
+    return new AbilityDefinitionUltraVisionGlyph(ABILITY_NIGHT_STALKER)
+    ..setTooltipNormal(1, TT_NORM)
+    ..setName(TT_NORM)
+    ..setIconNormal(Icons.bTNSpiritWolf)
+    ..setTooltipLearn(TT_NORM)
+    ..setRequirements(commaList(UPGD_NIGHT_STALKER))
+    ..setTooltipLearnExtended(TT_EXT)
+    ..setTooltipNormalExtended(1, TT_EXT)
+

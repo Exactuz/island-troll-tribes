@@ -1,0 +1,92 @@
+package ScavengedMushroom
+
+import LocalObjectIDs
+import HashMap
+import Items
+import LocalAssets
+import ChannelAbilityPreset
+import Orders
+import ClosureEvents
+import ClosureTimers
+import ItemObjEditing
+import ColorUtils
+import InstantDummyCaster
+import BlowgunDefinition
+import Omnivore
+import Doodads
+import HealingSystem
+import Abilities
+import FoodSlots
+
+public let SCAVENGED_MUSHROOM_HEAL_AMOUNT = 35.
+let TT_MUSHROOM = "Scavenged Mushroom"
+let TT_MUSHROOM_EXT ="Restores {0} life to whoever has stomach strong enough to eat this thing.".format(SCAVENGED_MUSHROOM_HEAL_AMOUNT.toString().color(COLOR_GREEN))+
+                     "\nPoisonous for a regular troll.".color(COLOR_RED)
+@compiletime function createMushroomAbility()
+    createItemBerserkCast(ABILITY_SCAVENGED_MUSHROOM)
+        ..setName("Scavenged Mushroom")
+        ..setCooldown(1, 0)
+        ..setArtCaster(Abilities.healTarget)
+
+@compiletime function createMushroom() returns ItemDefinition
+    return createPerishableItem(ITEM_SCAVENGED_MUSHROOM)
+        ..setInterfaceIcon(LocalIcons.bTNMushroom)
+        ..setModelUsed(Doodads.shroomsBlue)
+        ..setName(TT_MUSHROOM)
+        ..setTooltipExtended(TT_MUSHROOM_EXT)
+        ..setDescription(TT_MUSHROOM_EXT)
+        ..setLumberCost(2)
+        ..setTintingColor1Red(255)
+        ..setTintingColor2Green(255)
+        ..setTintingColor3Blue(255)
+        ..setScalingValue(0.50)
+        ..setAbilities(ABILITY_SCAVENGED_MUSHROOM.toRawCode())
+        ..setCooldownGroup(ABILITY_SCAVENGED_MUSHROOM.toRawCode())
+        ..setNumberofCharges(1)
+        ..setClassification("Purchasable")
+
+function onCast(unit troll)
+    if troll.getTypeId() != UNIT_DIRE_BEAR  
+        InstantDummyCaster.castTarget(DUMMY_PLAYER, POISON_THISTLE_HERO_ABILITY_ID, 1, Orders.shadowstrike, troll, troll.getPos())
+        return
+    let instance =instances.get(troll)
+    if instance == null
+        return
+    new HealingInstance(troll, SCAVENGED_MUSHROOM_HEAL_AMOUNT, HealingType.ITEM)
+
+
+function onTargetOrder()
+    let order = GetIssuedOrderId()
+    let u = GetOrderedUnit()
+    let instance = bearFoodSlotInstances.get(u)
+    if instance == null
+        return
+    if instance.pauseTriggers == true
+        return
+    if order != Orders.smart or not bearFoodSlotInstances.has(u)
+        return
+    let target = GetOrderTargetItem()
+
+    // Smart pickup system -> simulate picking up meat like an item if full inventory, like in Bannars StackNSplit system
+    // Used to pick up ammo even if inventory's full
+    // TODO: Currently only work when troll is in pick up range, make it so the troll move toward ammo even if inventory is full
+    if (target != null
+        and target.isPickupable()
+        and bearFoodSlotInstances.has(u)
+        and u.hasItemById(ITEM_SCAVENGED_MUSHROOM)) and u.getItemById(ITEM_SCAVENGED_MUSHROOM).getCharges()<10
+        let collisionSize = u.getCollisionSize()
+        let rangeSq = (150.0 + collisionSize).pow(2)
+        if u.getPos().distanceToSq(target.getPos()) <= rangeSq
+            nullTimer() ->
+                target.remove()
+                u.getItemById(ITEM_SCAVENGED_MUSHROOM).setCharges(u.getItemById(ITEM_SCAVENGED_MUSHROOM).getCharges()+1)
+
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_USE_ITEM) ->
+        if EventData.getManipulatedItem().getTypeId() == ITEM_SCAVENGED_MUSHROOM
+            onCast(GetManipulatingUnit())
+
+    //EventListener.add(EVENT_PLAYER_UNIT_ISSUED_TARGET_ORDER, () -> onTargetOrder())         
+                 
+        

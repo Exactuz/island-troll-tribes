@@ -10,7 +10,6 @@ import RegisterEvents
 import Lodash
 
 // Local imports:
-import ColorUtils
 import GameConfig
 import GameStates
 import LocalObjectIDs
@@ -108,7 +107,7 @@ public class ClassSelector
             angle(0)
         )
             ..addUnitToStock(UNIT_HUNTER, 1, 1)
-            ..addUnitToStock(UNIT_BEASTMASTER, 1, 1)
+            ..addUnitToStock(UNIT_PRIMALIST, 1, 1)
             ..addUnitToStock(UNIT_MAGE, 1, 1)
             ..addUnitToStock(UNIT_PRIEST, 1, 1)
             ..addUnitToStock(UNIT_THIEF, 1, 1)
@@ -128,7 +127,7 @@ public class ClassSelector
             pool
             ..add(UNIT_HUNTER)
             ..add(UNIT_MAGE)
-            ..add(UNIT_BEASTMASTER)
+            ..add(UNIT_PRIMALIST)
             ..add(UNIT_PRIEST)
             ..add(UNIT_THIEF)
             ..add(UNIT_SCOUT)

@@ -150,7 +150,7 @@ let dummies = new HashMap<unit, unit>()
         ..setAreaofEffect(1, SIGHT_RADIUS.toReal())
 
 
-public constant ITEM_LIVING_CLAY_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_LIVING_CLAY_DUMMY_UNIT")
+public constant ITEM_LIVING_CLAY_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_LIVING_CLAY_DUMMY_UNIT")
 public constant ITEM_LIVING_CLAY_DEFINITION = compiletime(new CustomItemDefinition(ITEM_LIVING_CLAY, ItemIds.sentryWards)
         ..setAbilities(commaList(PLACE_ABIL_ID))
         ..setInterfaceIcon(LocalIcons.bTNGreenSentryWard)

@@ -5,35 +5,13 @@ import Assets
 import BuffObjEditing
 import ChannelAbilityPreset
 import ClosureEvents
-import ClosureTimers
-import HashMap
-import LinkedList
-import ItemObjEditing
-import Items
-import Cosmetics
-import OnUnitEnterLeave
-import Reflection
-
-// Third-party imports:
-import Lodash
 
 // Local imports:
-import ColorUtils
 import LocalObjectIDs
-import LocalAssets
-import Classes
-import IdListConstant
-import InventoryEvent
-import UnitExtensions
 import Orders
-import QuickMake
-import AxesDefinition
-import ClosureForGroups
-import DamageEvent
-import Knockback3
 import CustomProjectile
 import InstantDummyCaster
-import initlater WeaponsOfChoice
+import WeaponsOfChoice
 
 public let TT_SHIELD_BASH_NAME = "Shield Charge"
 public let TT_SHIELD_BASH_EXT = "Perform shield bash, dealing attack damage and pushing enemies away in a cone."
@@ -139,7 +117,7 @@ public class ShieldThrow extends CustomProjectile
 
     construct(unit caster, unit target, real groundSpeed, real gravity, string effectPath, real scale, bool dealDamage)
         super(caster.getPos().withTerrainZ(100.), target, groundSpeed, gravity, effectPath)
-        this.weaponsOfChoice = weaponsOfChoiceInstances.get(caster)
+        this.weaponsOfChoice = WeaponsOfChoice.getInstance(caster)
         this.caster = caster
         this.dealDamage = dealDamage
         //this.startPos = caster.getPos().withTerrainZ(-30.)

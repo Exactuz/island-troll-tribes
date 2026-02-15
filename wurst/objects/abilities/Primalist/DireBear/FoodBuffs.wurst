@@ -1,0 +1,75 @@
+package FoodBuffs
+
+
+import ColorUtils
+import LocalObjectIDs
+import ChannelAbilityPreset
+import BuffObjEditing
+import LocalAssets
+
+public let HEALING_BONUS = 0.1
+public let STRENGTH_BONUS = 2
+let TT_NORMAL = "Food dietary bonus.".color(COLOR_GREEN)
+let TT_EXT = "+{0} Strength.".format(STRENGTH_BONUS.toString().color(COLOR_GREEN))+
+             "\n+{0}% increased healing received from food.".format((HEALING_BONUS*100).toString().color(COLOR_GREEN))+
+             "\nYou will lose all food buffs if you consume the same food twice in a row.".color(COLOR_RED)
+
+public let BUFF_DIRE_BEAR_MEAT_BONUS = compiletime(
+    createDummyBuffObject(TT_NORMAL, TT_EXT, Icons.bTNMonsterLure).abilId
+)
+public let BUFF_DIRE_BEAR_BANANA_BONUS = compiletime(
+    createDummyBuffObject(TT_NORMAL, TT_EXT, LocalIcons.bTNBanana).abilId
+)
+public let BUFF_DIRE_BEAR_COCONUT_BONUS = compiletime(
+    createDummyBuffObject(TT_NORMAL, TT_EXT, LocalIcons.bTNCoconut).abilId
+)
+public let BUFF_DIRE_BEAR_MUSHROOM_BONUS = compiletime(
+    createDummyBuffObject(TT_NORMAL, TT_EXT, LocalIcons.bTNMushroom).abilId
+)
+public let BUFF_DIRE_BEAR_HONEYCOMB_BONUS = compiletime(
+    createDummyBuffObject(TT_NORMAL, TT_EXT, LocalIcons.bTNHoneycomb).abilId
+)
+@compiletime function createFoodAbilities()
+    new AbilityDefinitionAllPlus1(ABILITY_DIRE_BEAR_MEAT_BONUS)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, STRENGTH_BONUS)
+        ..setAgilityBonus(1, 0)
+        ..setBuffs(1, toRawCode(BUFF_DIRE_BEAR_MEAT_BONUS))
+        ..setName("Strenght + 2")
+        ..setEditorSuffix("(Wurst)")
+
+
+    new AbilityDefinitionAllPlus1(ABILITY_DIRE_BEAR_BANANA_BONUS)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, STRENGTH_BONUS)
+        ..setAgilityBonus(1, 0)
+        ..setBuffs(1, toRawCode(BUFF_DIRE_BEAR_BANANA_BONUS))
+        ..setName("Strenght + 2")
+        ..setEditorSuffix("(Wurst)")   
+
+
+    new AbilityDefinitionAllPlus1(ABILITY_DIRE_BEAR_COCONUT_BONUS)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, STRENGTH_BONUS)
+        ..setAgilityBonus(1, 0)
+        ..setBuffs(1, toRawCode(BUFF_DIRE_BEAR_COCONUT_BONUS))
+        ..setName("Strenght + 2")
+        ..setEditorSuffix("(Wurst)")   
+
+
+    new AbilityDefinitionAllPlus1(ABILITY_DIRE_BEAR_MUSHROOM_BONUS)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, STRENGTH_BONUS)
+        ..setAgilityBonus(1, 0)
+        ..setBuffs(1, toRawCode(BUFF_DIRE_BEAR_MUSHROOM_BONUS))
+        ..setName("Strenght + 2")
+        ..setEditorSuffix("(Wurst)")   
+
+
+    new AbilityDefinitionAllPlus1(ABILITY_DIRE_BEAR_HONEYCOMB_BONUS)
+        ..setIntelligenceBonus(1, 0)
+        ..setStrengthBonus(1, STRENGTH_BONUS)
+        ..setAgilityBonus(1, 0)
+        ..setBuffs(1, toRawCode(BUFF_DIRE_BEAR_HONEYCOMB_BONUS))
+        ..setName("Strenght + 2")
+        ..setEditorSuffix("(Wurst)")            

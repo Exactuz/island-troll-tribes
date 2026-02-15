@@ -62,7 +62,7 @@ init
         //GameMode.find("fd").enable()
         //GameMode.find("el").enable()
         GameMode.find("ns").enable()
-        GameMode.find("pma").enable()
+        //GameMode.find("pma").enable()
         GameMode.find("rs").enable()
 
 
@@ -152,12 +152,12 @@ init
         mode.deregister()
         mode.message("Subbed trolls cannot level up beyond level {0}. Global experience at lvl {1}.".format("4".color(COLOR_GOLD_STR),"4".color(COLOR_GOLD_STR)))
         gameConfig.setNoSuperSubs(true)
-
+/*
     new GameMode("pass-meat-ability", "pma", "General", "Eat raw meat is replaced with a pass meat ability") (mode, args) ->
         mode.deregister()
         mode.message("Eat raw meat is replaced with a pass meat ability")
         gameConfig.setPassMeatAbility(true)
-
+*/
     new GameMode("start-with-one-fire", "so", "General", "Each tribe starts with a fire kit") (mode, args) ->
         mode.deregister()
         mode.message("Each tribe will start with a " + "fire kit".color(ENERGY_COLOR))

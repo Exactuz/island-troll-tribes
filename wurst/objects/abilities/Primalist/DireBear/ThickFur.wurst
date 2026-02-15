@@ -1,0 +1,48 @@
+package ThickFur
+
+// Standard library imports:
+import AbilityObjEditing
+import ClosureEvents
+
+// Local imports:
+import LocalObjectIDs
+import ColorUtils
+import LocalAssets
+import HashList
+
+let ARMOR_BONUS = 3
+let TT_NORM = "Thick Fur"
+let TT_EXT = "Dire Bear's thick fur provides protection from cold, removing heat and health cost for sleeping outside."+
+             "\nAt lvl {0} provides +{1} armor".format("4".color(COLOR_GOLD_STR), ARMOR_BONUS.toString().color(COLOR_GREEN))
+
+HashList<unit> instances = new HashList<unit>()
+
+@compiletime function createNightStalkerDummyAbility()
+    new AbilityDefinitionEvasion(ABILITY_THICK_FUR)
+        ..setChancetoEvade(1, 0.)
+		..setLevels(1)
+        ..setTooltipNormal(1, TT_NORM)
+        ..setIconNormal(LocalIcons.bTNMistPeltBear01)
+        ..setTooltipLearn(TT_NORM)
+        ..setTooltipLearnExtended(TT_EXT)
+        ..setTooltipNormalExtended(1, TT_EXT)
+
+@compiletime function createAbilityArmor()           
+    new AbilityDefinitionDefenseBonusPlus1(ABILITY_THICK_FUR_ARMOR_BONUS)
+        ..setDefenseBonus(1, ARMOR_BONUS)
+        ..setName("Armor Bonus + "+ ARMOR_BONUS.toString())
+        ..setEditorSuffix("(Wurst)")            
+
+function onLvl(unit troll)
+    if troll.getTypeId() == UNIT_DIRE_BEAR and troll.getLevel() >=4
+        if troll.hasAbility(ABILITY_THICK_FUR_ARMOR_BONUS)
+            return
+        troll.addAbility(ABILITY_THICK_FUR_ARMOR_BONUS)
+
+init
+    EventListener.add(EVENT_PLAYER_HERO_LEVEL) ->
+        onLvl(EventData.getTriggerUnit())
+        
+        
+
+

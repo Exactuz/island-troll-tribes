@@ -1,47 +1,31 @@
 package Whirlwind
 
 // Standard library imports:
-import Assets
-import BuffObjEditing
 import ChannelAbilityPreset
 import ClosureEvents
 import ClosureTimers
-import HashMap
-import LinkedList
-import ItemObjEditing
-import Items
-import Cosmetics
-import OnUnitEnterLeave
-import Reflection
 
-// Third-party imports:
-import Lodash
 
 // Local imports:
 import ColorUtils
 import LocalObjectIDs
 import LocalAssets
-import Classes
-import IdListConstant
-import InventoryEvent
-import UnitExtensions
-import Orders
-import QuickMake
-import AxesDefinition
 import ClosureForGroups
 import WeaponsOfChoice
 import ToolTipsUtils
+import SingleMindedFury
 
-let CD = 45.
+let CD = 60.
 let AOE = 350.
 let DAMAGE_INTERVAL = 0.125
-let DURATION = 3.
+let DURATION = 3.   
 let DAMAGE_PER_SECOND_MULTIPLIER = 0.8
 let MANACOST = 35
 public let TT_WHIRLWIND_NAME = "Whirlwind"
 public let TT_WHIRLWIND_EXT = "Deal {0} attack damage per second to enemies in {1} radius.".format((DAMAGE_PER_SECOND_MULTIPLIER.toString()+"x").color(COLOR_RED), AOE.toToolTipLightBlue())+
                               " Lasts for {0} seconds".format(DURATION.toToolTipLightBlue())+
                               "\nYou are immune to spells during effect."+
+                              "\nYour auto attacks reduce the cooldown by {0} seconds.".format(COOLDOWN_REFUND_BASE.toToolTipLightBlue())+
                               "\nHas {0} seconds cooldown.".format(CD.toToolTipLightBlue())
 
 
@@ -81,7 +65,7 @@ function onCast(unit caster)
         efx.setZ(newPos.withTerrainZ().z)
         if cb.isLast()
             efx.setPos(vec2(-9999., -9999.))       
-    let instance = weaponsOfChoiceInstances.get(caster)
+    let instance = WeaponsOfChoice.getInstance(caster)
     let attackDamage = instance.getAttackDamage()
     let damagePerTick = attackDamage*DAMAGE_INTERVAL*DAMAGE_PER_SECOND_MULTIPLIER
     doPeriodicallyTimed(DAMAGE_INTERVAL, DURATION) (CallbackCounted cb) ->    

@@ -1,7 +1,6 @@
 package MixSpells
 
 // Standard lib imports:
-import Assets
 import ClosureEvents
 import ChannelAbilityPreset
 import LinkedList

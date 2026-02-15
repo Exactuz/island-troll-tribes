@@ -5,7 +5,6 @@ import Assets
 import ChannelAbilityPreset
 import ItemObjEditing
 import RegisterEvents
-import UpgradeObjEditing
 
 // Third Party imports:
 import SimError
@@ -15,13 +14,15 @@ import Classes
 import ColorUtils
 import Items
 import LocalObjectIDs
-import PlayerExtensions
 import LinkedList
 import TrollUpgrade
 import HashMap
 import ClosureTimers
 import ObjectIDManager
 import CustomItemDefinition
+import LocalObjectIDs2
+import PlayerExtensions
+import Experience
 
 // The description for the item.
 let DESCRIPTION = "" +
@@ -30,19 +31,23 @@ let DESCRIPTION = "" +
     "Hunter, Gatherer, Scout, and Thief subclasses can use this to upgrade directly into the final form.|n".color(COLOR_GOLD) +
     "Other subclasses can use this to upgrade to level 8.".color(COLOR_GOLD)
 
-let CLASSES_ALLOWED = asList(UNIT_HUNTER, UNIT_GATHERER, UNIT_THIEF, UNIT_SCOUT)
+let CLASSES_ALLOWED = asList(UNIT_WARRIOR, UNIT_TRACKER, UNIT_RADAR_GATHERER, UNIT_HERB_MASTER, UNIT_TELETHIEF, UNIT_ROGUE, UNIT_HAWK, UNIT_DRUID)
 
 IterableMap<int, int> trollUpgradeMap = new IterableMap<int, int>
-    ..put(UNIT_HUNTER, UNIT_JUGGERNAUT)
-    ..put(UNIT_GATHERER, UNIT_OMNIGATHERER)
-    ..put(UNIT_SCOUT, UNIT_SPY)
-    ..put(UNIT_THIEF, UNIT_ASSASSIN)
+    ..put(UNIT_WARRIOR, UNIT_JUGGERNAUT)
+    ..put(UNIT_TRACKER, UNIT_JUGGERNAUT)
+    ..put(UNIT_RADAR_GATHERER, UNIT_OMNIGATHERER)
+    ..put(UNIT_HERB_MASTER, UNIT_OMNIGATHERER)
+    ..put(UNIT_TELETHIEF, UNIT_ASSASSIN)
+    ..put(UNIT_ROGUE, UNIT_ASSASSIN)
+    ..put(UNIT_HAWK, UNIT_SPY)
+    ..put(UNIT_DRUID, UNIT_TREEFORM)
 
 @compiletime function createMedallionAbility()
     createItemBerserkCast(ABILITY_SUPERSUB_COURAGE_NSS)
 
 
-public constant ITEM_MEDALLION_COURAGE_NSS_DUMMY_UNIT = UNIT_ID_GEN.next()..registerObjectID("ITEM_MEDALLION_COURAGE_NSS_DUMMY_UNIT")
+public constant ITEM_MEDALLION_COURAGE_NSS_DUMMY_UNIT =compiletime(UNIT_ID_GEN.next())..registerObjectID("ITEM_MEDALLION_COURAGE_NSS_DUMMY_UNIT")
 public constant ITEM_MEDALLION_COURAGE_NSS_DEFINITION = compiletime(new CustomItemDefinition(ITEM_MEDALLION_COURAGE_NSS)
         ..setAbilities(commaList(ABILITY_SUPERSUB_COURAGE))
         ..setName("Medallion of Courage")
@@ -74,7 +79,7 @@ function onUse(unit caster, item target)
         return    
 
     // Block certain classes from using the medallion.
-    if not CLASSES_ALLOWED.has(unitId.getTrollBaseClass())
+    if not CLASSES_ALLOWED.has(unitId)
         caster.setLevel(8, true)
         target.remove()
         return
@@ -83,9 +88,10 @@ function onUse(unit caster, item target)
     // Consume the item manually, having verified it can be used.
     target.remove()
 
-    upgradeUnit(caster, trollUpgradeMap.get(caster.getTrollBaseClass()))
+    upgradeUnit(caster, trollUpgradeMap.get(caster.getTypeId()))
     doAfter(ANIMATION_PERIOD) ->
-        caster.setLevel(4, true)
+        let newLevel = max(caster.getOwner().getTribe().levelCap-1, nsModeStartingLevelCap)
+        caster.setLevel(newLevel, true)
 
 
 init

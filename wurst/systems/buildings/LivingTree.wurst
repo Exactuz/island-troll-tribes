@@ -2,7 +2,9 @@ package LivingTree
 import RegisterEvents
 import LocalObjectIDs
 import ObjEditingNatives
+import LinkedList
 
+public let TREE_ID_LIST =asList('B00B', 'B00A','B00D','B00E','B00F')
 
 @compiletime function create_w3b_B006()
 	let def = createObjectDefinition("w3b", DEST_NORMAL_TREE, 'ZTtw')

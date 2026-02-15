@@ -10,15 +10,10 @@ import LinkedList
 // Local imports:
 import LocalObjectIDs
 import ToolTipsUtils
-import UnitExtensions
 import Lodash
 import DrunkPotion
 import InstantDummyCaster
 import SimError
-import BuffObjEditing
-import BuffIds
-import Abilities
-import ClosureTimers
 import PhilosophersStone
 
 //constant NAME =""

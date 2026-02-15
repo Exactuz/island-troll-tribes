@@ -1,35 +1,19 @@
 package Cyclone
 
-import Icons
 import ClosureEvents
-import Orders
-import ToolTipsUtils
 import LocalObjectIDs
-import ChannelAbilityPreset
-import Lodash
 import InstantDummyCaster
 import ClosureForGroups
-import ErrorHandling
 import HashMap
 import ClosureTimers
-import Classes
 import LinkedList
-import ClosuresForItems
-import GameStates
-import PlayerExtensions
-import Radars
-import PingHerbs
-import UnitIds
-import initlater ScoutHawk
+import ScoutHawk
 import StateMachine
 import UnitExtensions
 import Idle
-import Returning
-import BuffObjEditing
 import BuffIds
 import Abilities
-import LocalAssets
-import Attack
+import LocalObjectIDs2
 
 public let CYCLONE_IMPACT_DAMAGE = 40.
 public let CYCLONE_DURATION = 3.
@@ -37,6 +21,7 @@ public let CYCLONE_HAWK_SPEED = 50.
 public let CYCLONE_AOE = 400.
 public let HAWK_CYCLONE_COOLDOWN = 20.
 public let HAWK_CYCLONE_CIRCLING_RADIUS = 150.
+public let IMMOBILIZE_BUFFS = asList(BuffIds.entanglingRoots, BuffIds.ensnareGeneral, BuffIds.ensnareGround, BUFF_GREATER_ENTANGLING_ROOTS)
 
 public class Cyclone extends HawkState
     unit target
@@ -53,7 +38,7 @@ public class Cyclone extends HawkState
     construct(HawkStates state, unit _target, ScoutHawk _scoutHawkInstance)
         super(state)
         target = _target
-        scoutHawkInstance = _scoutHawkInstance  
+        scoutHawkInstance = _scoutHawkInstance
     
         
     override function updateState()
@@ -79,8 +64,11 @@ public class Cyclone extends HawkState
         currentPos.x +=(CYCLONE_AOE+radiusOffset)/2*radians.cos()
         currentPos.y +=(CYCLONE_AOE+radiusOffset)/2*radians.sin()
         currentPos.z=zOffset
-        hawk.setPosFly(currentPos)
-        hawk.setFacing(angle(radians+Deg2Rad(-100.))) 
+        //hawk.setPosFly(currentPos)
+        //hawk.setFacing(angle(radians+Deg2Rad(-100.)))
+        hawk.setXYZ(currentPos)  
+        //hawk.setPosFly(newPos3)
+        hawk.setFacingEx(angle(radians+Deg2Rad(-100.))) 
         ////print("x = "+pos.x.toString()+" y = "+pos.y.toString()+" radians = "+radians.toString()) 
 
 
@@ -97,11 +85,11 @@ public class Cyclone extends HawkState
 
 
     function applySpell()
-        //scoutHawkInstance.troll.startAbilityCooldown(ABILITY_HAWK_CYCLONE, HAWK_CYCLONE_COOLDOWN)
-        //hawk.issueTargetOrderById(OrderIds.attack, target)
-        //playEfx()   
-        //if InstantDummyCaster.castTarget(hawk.getOwner(), ABILITY_SCOUT_HAWK_BLIND, 1, OrderIds.curse, target, target.getPos())
-            //print("applied blind")
+        for each in IMMOBILIZE_BUFFS
+            if target.hasAbility(each)
+                target.removeAbility(each)
+        doAfter(ANIMATION_PERIOD) ->  
+            InstantDummyCaster.castTarget(hawk.getOwner(), ABILITY_HAWK_CYCLONE, 1, "cyclone", target, currentPos)
 
     override function exitState() 
         playEfx()
@@ -121,6 +109,5 @@ function onTargetCast(unit caster, unit target)
     instance.stateMachine.onCycloneCast(target, instance) 
 
 init
-    EventListener.onTargetCast(ABILITY_HAWK_CYCLONE) (unit caster, unit target) ->
+    EventListener.onTargetCast(ABILITY_HAWK_CYCLONE_DUMMY) (unit caster, unit target) ->
         onTargetCast(caster, target)
-        

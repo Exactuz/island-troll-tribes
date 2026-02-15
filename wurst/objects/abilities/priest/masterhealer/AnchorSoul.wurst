@@ -1,7 +1,6 @@
 package AnchorSoul
 
 // Standard lib imports:
-import DamageEvent
 import ChannelAbilityPreset
 import Assets
 import BuffObjEditing
@@ -11,7 +10,6 @@ import StringBuilder
 
 // Local imports:
 import DamageListeners
-import LocalAssets
 import LocalObjectIDs
 import ToolTipsUtils
 

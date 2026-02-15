@@ -5,6 +5,7 @@ import LocalObjectIDs
 import ColorUtils
 import ChannelAbilityPreset
 import LocalObjectIDs2
+import LocalAssets
 
 constant PANTHER_SNIFF_CD = 20.
 constant PANTHER_SNIFF_MANACOST = 0
@@ -20,7 +21,7 @@ constant PANTHER_SNIFF_TT_EXT = "Sniff around to find a trace of an elk."
         ..setAnimationNames("spell")
         //..setButtonPositionNormalX(btnPositionX)
         //..setButtonPositionNormalY(btnPositionY)
-        ..setIconNormal(Icons.bTNtemp)
+        ..setIconNormal(LocalIcons.bTNTracking)
         //..setHeroAbility(false)
         //..setItemAbility(false)
         ..setHotkeyNormal("E")

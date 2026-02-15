@@ -262,7 +262,7 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
     set u = BlzCreateUnitWithSkin( p, 'd001', -2112.0, -4544.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd102', 1856.0, 0.0, 270.000, 'd102' )
     set u = BlzCreateUnitWithSkin( p, 'd100', 1280.0, -2240.0, 270.000, 'd100' )
-    set u = BlzCreateUnitWithSkin( p, 'd001', -2496.0, 1152.0, 270.000, 'd001' )
+    set u = BlzCreateUnitWithSkin( p, 'd001', -2496.0, 1216.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd001', -8640.0, -6592.0, 270.000, 'd001' )
     set u = BlzCreateUnitWithSkin( p, 'd100', 4928.0, 3456.0, 270.000, 'd100' )
     set u = BlzCreateUnitWithSkin( p, 'd001', 320.0, 5952.0, 270.000, 'd001' )

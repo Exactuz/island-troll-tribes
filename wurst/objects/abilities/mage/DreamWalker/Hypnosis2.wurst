@@ -36,7 +36,7 @@ constant TOOLTIP_EXTENDED = "" +
 
 IterableMap<unit, HypnosisCooldown> instances = new IterableMap<unit, HypnosisCooldown>() 
 
-constant TARGET_ALLOWED = "enemies,ground,organic"
+constant TARGET_ALLOWED = "enemies,ground,organic,ancient"
 
 @compiletime function createSleepAnimal() returns AbilityDefinitionSleepcreep
     return createSleepAbility(ABILITY_SLEEP_ANIMAL)
@@ -53,7 +53,7 @@ constant TARGET_ALLOWED = "enemies,ground,organic"
 @compiletime function createSleepOutside() returns AbilityDefinitionSleepcreep
     return createSleepAbility(ABILITY_SLEEP_HYPNOSIS)
         ..setNameEnhance("F", "Sleep Outside")
-        ..setStunDuration(1, 2)
+        ..setStunDuration(1, 2) 
         ..setDurationHero(1, DURATION)
         ..setTooltipNormalExtended(1, "The Troll can sleep outside to restore {0} mana but lose {1} health point and {2} heat. This can kill you if any of your stats reach 0."
         .format(MANA_RESTORED_BY_TROLL.toToolTipBlue(), SLEEP_OUTSIDE_HP_PENALTY.toToolTipRed(), SLEEP_OUTSIDE_HEAT_PENALTY.toString().color(COLOR_ORANGE))

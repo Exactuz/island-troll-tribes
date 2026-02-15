@@ -8,6 +8,7 @@ import LocalObjectIDs2
 import UnitIds
 import Buildings
 import ColorUtils
+import LocalObjectIDs
 
 public let RAISE_TREANT_CAST_RANGE = 400.
 public let RAISE_TREANT_CD = 60.
@@ -70,7 +71,7 @@ public let RAISE_TREANT_PROTECTOR_RANGE = 600.
         //..setSpeedBase(0)
         ..setAttacksEnabled(3)
         ..setTurnRate(3.0)
-        ..setNormalAbilities(commaList(ABILITY_PRIMALIST_ROOT_CAST, ABILITY_CARNIVOROUS_VINES, ABILITY_TREANT_INVISIBILITY))
+        ..setNormalAbilities(commaList(ABILITY_PRIMALIST_ROOT_CAST, ABILITY_CARNIVOROUS_VINES, ABILITY_TREANT_INVISIBILITY, ABILITY_SPELL_DMG_REDUCTION))
     
     new UnitDefinition(UNIT_TREANT_PROTECTOR, UnitIds.ancientprotector)
         ..setMovementType(MovementType.None)
@@ -92,7 +93,7 @@ public let RAISE_TREANT_PROTECTOR_RANGE = 600.
         //..setSpeedBase(0)
         ..setAttacksEnabled(2)
         ..setTurnRate(3.0)
-        ..setNormalAbilities(commaList(ABILITY_PRIMALIST_ROOT_CAST, ABILITY_CARNIVOROUS_VINES, ABILITY_TREANT_INVISIBILITY))
+        ..setNormalAbilities(commaList(ABILITY_PRIMALIST_ROOT_CAST, ABILITY_CARNIVOROUS_VINES, ABILITY_TREANT_INVISIBILITY, ABILITY_SPELL_DMG_REDUCTION))
 
 
     new BuffDefinition(BUFF_TREANT_ROOTED, BuffIds.ensnareGround)

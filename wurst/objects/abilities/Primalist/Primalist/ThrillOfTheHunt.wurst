@@ -3,11 +3,12 @@ package ThrillOfTheHunt
 import LocalObjectIDs2
 import LocalAssets
 import AbilityObjEditing
+import ColorUtils
 
 constant MS_BONUS = 100
 constant TT_ABILITY_NORM = "Thrill of the Hunt"
-constant TT_ABILITY_EXT = "Panic mana cost is removed while in panther form."+
-                          "Level 4: ".color(COLOR_GOLD_STR)+
+constant TT_ABILITY_EXT = "{0} mana cost is removed while in panther form.".format("Panic".color(COLOR_LIGHT_BLUE))+
+                          "\nLevel 4: ".color(COLOR_GOLD_STR)+
                           "+{0} movement speed while in panther form. ".format(MS_BONUS.toString().color(COLOR_GOLD_STR))
 
 @compiletime function createRavenousBeastDummy()

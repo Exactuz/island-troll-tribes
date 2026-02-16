@@ -19,7 +19,8 @@ public constant TT_OWLFORM_NORM = "Owl Form"
 public constant TT_OWLFORM_EXT = "Transforms the Druid into a spirit of an owl, becoming untargetable and allowing them fly to a tree, howering over it for a short duration."+
                                 "\nWhile howering, the druid gains vision of the area around the tree."+
                                 "\nIssue a move command to fly to a target location, ending the effect early."+
-                                "\nLasts {0} seconds.".format(OWLFORM_DURATION.toString().color(COLOR_LIGHT_BLUE))
+                                "\nLasts {0} seconds.".format(OWLFORM_DURATION.toString().color(COLOR_LIGHT_BLUE))+
+                                "\nHas {0} seconds cooldown.".format(OWLFORM_COOLDOWN.toString().color(COLOR_LIGHT_BLUE))
 
 
 @compiletime function createAbility()

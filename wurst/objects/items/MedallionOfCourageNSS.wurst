@@ -28,7 +28,7 @@ import Experience
 let DESCRIPTION = "" +
     "Unique|n".color(COLOR_PURPLE) +
     "A strange medallion that installs courage in its bearer.|n" +
-    "Hunter, Gatherer, Scout, and Thief subclasses can use this to upgrade directly into the final form.|n".color(COLOR_GOLD) +
+    "Hunter, Gatherer, Scout, and Thief subclasses as well as Druid can use this to upgrade directly into the final form.|n".color(COLOR_GOLD) +
     "Other subclasses can use this to upgrade to level 8.".color(COLOR_GOLD)
 
 let CLASSES_ALLOWED = asList(UNIT_WARRIOR, UNIT_TRACKER, UNIT_RADAR_GATHERER, UNIT_HERB_MASTER, UNIT_TELETHIEF, UNIT_ROGUE, UNIT_HAWK, UNIT_DRUID)
@@ -38,9 +38,10 @@ IterableMap<int, int> trollUpgradeMap = new IterableMap<int, int>
     ..put(UNIT_TRACKER, UNIT_JUGGERNAUT)
     ..put(UNIT_RADAR_GATHERER, UNIT_OMNIGATHERER)
     ..put(UNIT_HERB_MASTER, UNIT_OMNIGATHERER)
+    ..put(UNIT_ALCHEMIST, UNIT_OMNIGATHERER)
     ..put(UNIT_TELETHIEF, UNIT_ASSASSIN)
     ..put(UNIT_ROGUE, UNIT_ASSASSIN)
-    ..put(UNIT_HAWK, UNIT_SPY)
+    ..put(UNIT_OBSERVER, UNIT_SPY)
     ..put(UNIT_DRUID, UNIT_TREEFORM)
 
 @compiletime function createMedallionAbility()
@@ -80,6 +81,7 @@ function onUse(unit caster, item target)
 
     // Block certain classes from using the medallion.
     if not CLASSES_ALLOWED.has(unitId)
+        print(unitId.asObjectName())
         caster.setLevel(8, true)
         target.remove()
         return

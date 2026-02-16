@@ -141,7 +141,7 @@ let TT_CYCLONE_EXT = "Greater Hawk circles around an ally creating a cyclone, pr
         ..presetTargetTypes(Targettype.UNIT)
         ..setIconNormal(LocalIcons.bTNHawkSwoop)
         ..presetHotkey("R")
-        ..presetButtonPosNormal(2, 1)
+        ..presetButtonPosNormal(3, 1)
         ..presetTargetTypes(Targettype.POINTUNIT)
         ..setTargetsAllowed(1, commaList(
             TargetsAllowed.enemies,

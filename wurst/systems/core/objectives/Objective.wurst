@@ -20,6 +20,7 @@ import BossAbilities
 import UnitObjEditing
 import Units
 import ObjEditingUtils
+import Sounds
 
 public Tribe winnerTribe = null
 public constant OBJECTIVE_POS = vec2(6, -167)
@@ -102,4 +103,7 @@ init
             printObjectiveSelectedMessage()
             doAfter(1.) ->    
                 shareObjectiveVision()
+
+    GameStates.objective.onExit() (GameState state) ->
+        PlaySound(Sounds.clanInvitation)                
     initializeGurubashiGates()

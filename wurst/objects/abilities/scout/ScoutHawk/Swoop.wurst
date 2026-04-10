@@ -19,6 +19,7 @@ import PinHawk
 import EagleSight
 import Rescue
 import UnitExtensions
+import ObjectIDManager
 
 public let SWOOP_RANGE = 1200.
 public let SWOOP_CD = 20.
@@ -78,17 +79,17 @@ public class Swoop extends HawkState
     vec3 currentPos
     ScoutHawk scoutHawkInstance
 
-    construct(HawkStates state, unit _target, item _targetItem, ScoutHawk _scoutHawkInstance)
+    construct(HawkStates state, unit _target, ScoutHawk _scoutHawkInstance)
         super(state)
         target = _target
-        targetItem = _targetItem
         scoutHawkInstance = _scoutHawkInstance
         troll = scoutHawkInstance.troll
 
-    construct(HawkStates state, unit _target, vec2 _targetPointPos, ScoutHawk _scoutHawkInstance)
+    construct(HawkStates state, unit _target, vec2 _targetPointPos, item _targetItem, ScoutHawk _scoutHawkInstance)
         super(state)
         target = _target
         targetPointPos = _targetPointPos
+        targetItem = _targetItem
         scoutHawkInstance = _scoutHawkInstance
         troll = scoutHawkInstance.troll
 
@@ -227,16 +228,16 @@ function onSwoopCast(unit troll, unit target, item targetItem)
     let instance = scoutHawkInstances.get(troll)
     if instance == null
         return
-    if target == null and targetItem == null
+    if target == null
         return 
-    instance.stateMachine.onSwoopTargetCast(target, targetItem, instance)
+    instance.stateMachine.onSwoopTargetCast(target, instance)
 
 function onSwoopPointCast(unit troll, item targetItem, vec2 targetPos)
     let instance = scoutHawkInstances.get(troll)
     if instance == null
         return
     if GetSpellTargetUnit()!= null
-        return       
+        return             
     instance.stateMachine.onSwoopPointCast(targetPos, targetItem, instance)
 
 

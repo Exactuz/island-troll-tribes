@@ -36,7 +36,7 @@ constant TOOLTIP_EXTENDED = "" +
 
 IterableMap<unit, HypnosisCooldown> instances = new IterableMap<unit, HypnosisCooldown>() 
 
-constant TARGET_ALLOWED = "enemies,ground,organic,ancient"
+constant TARGET_ALLOWED = "enemies,ground,organic,ancient,nonancient"
 
 @compiletime function createSleepAnimal() returns AbilityDefinitionSleepcreep
     return createSleepAbility(ABILITY_SLEEP_ANIMAL)
@@ -121,7 +121,5 @@ function onCast()
     instances.put(target, new HypnosisCooldown(caster, target))
 
 init
- 
-
     EventListener.onTargetCast(ABILITY_HYPNOSIS_DUMMY) (unit caster, unit target) ->
         onCast()

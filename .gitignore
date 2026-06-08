@@ -31,7 +31,6 @@ __pycache__
 venv/
 
 # Files generated during builds.
-imports/LoadingScreen.tga
 wurst/objects/abilities/scout/HawkPet.wurst
 wurst/objects/abilities/gatherer/Alchemist/DummySpells.wurst
 wurst.build

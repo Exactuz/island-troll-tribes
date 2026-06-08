@@ -12,15 +12,17 @@ import GameStates
 import GameState
 import PlayerExtensions
 import LocalObjectIDs2
+import ObjectiveNotifications
 
 public constant POINTS_AOE_MIN = 1000.
 public constant POINTS_AOE_MAX = 250.
 constant POINTS_MIN_MULTIPLIER = 0.25
-constant POINTS_MAXIMUM = 200.
+constant POINTS_MAXIMUM = 100.
 constant SCORE_DISPLAY_RANGE = 400
 constant SCORE_UPDATE_FREAQUENCY = 1.
 constant POINTS_PER_SECOND_PER_TEAM = 1
 constant EFX = Abilities.warStompCaster
+constant NOTIFICATION_TEXT = " is claiming to be the king of the hill! Contest their claim quickly or you will lose opportunity to challenge the Mammoth!"
 
 class KingOfTheHill
     real array[12] tribePoints
@@ -80,7 +82,6 @@ class KingOfTheHill
         scoreTextPos.y+=100
         for each in tribes
             let score = tribePoints[index]
-            //print(-1/2*offset+offset*index)
             scoreTextPos.x +=SCORE_DISPLAY_RANGE*(offset*index).cos() //-1/2*offset+
             scoreTextPos.y +=SCORE_DISPLAY_RANGE*(offset*index).sin()    //-1/2*offset+
             textTags[index] = standardTextTag(scoreTextPos, score.toString().substring(0,4))
@@ -95,22 +96,28 @@ class KingOfTheHill
         if index > tribeCount
             return
         for tribe in tribes
+            real scoreDifference = 0
             let pointsPerTick = POINTS_PER_SECOND_PER_TEAM*SCORE_UPDATE_FREAQUENCY/tribe.getMembers().size()         
             for p in tribe.getMembers()
                 let troll = p.getTroll()
                 if troll.isAlive() and troll.getPos().distanceTo(OBJECTIVE_POS)< POINTS_AOE_MIN
-                    addPoints(p.getTroll(), index, pointsPerTick)
+                    scoreDifference += addPoints(p.getTroll(), index, pointsPerTick)
             index+=1
+            for notifiedTribe in tribes 
+                if notifiedTribe != tribe and scoreDifference != 0
+                    let text = tribe.getName() + NOTIFICATION_TEXT
+                    displayObjectiveNotification(text, notifiedTribe)
 
-    function addPoints(unit troll, int index, real pointsPerTick)
+    function addPoints(unit troll, int index, real pointsPerTick) returns real
         let distance = troll.getPos().distanceTo(kingOfTheHillUnit.getPos())
         if distance >POINTS_AOE_MIN
-            return
+            return 0
         let distanceMultiplier =  1 - max((distance-POINTS_AOE_MAX), 0) / (POINTS_AOE_MIN-POINTS_AOE_MAX)
         let totalPointsMultiplier = POINTS_MIN_MULTIPLIER+(1-POINTS_MIN_MULTIPLIER)*distanceMultiplier
         let currentPoints = tribePoints[index]
         let newPoints = currentPoints+totalPointsMultiplier*pointsPerTick
         tribePoints[index] = newPoints
+        return newPoints-currentPoints
 
     function updateScores()
         int index = 0

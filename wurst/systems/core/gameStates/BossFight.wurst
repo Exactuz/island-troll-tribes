@@ -212,7 +212,7 @@ function teleportWinnerTribeBack()
     for each in winnerTribe.getMembers()
         let pos = spawn.randomPoint()
         each.getTroll().setPos(pos)
-        each.panCamToTimed(each.getTroll(), 0.1)  
+        each.panCamToTimed(each.getTroll(), 0.1)
 
 function onTrollDeath(unit dyingUnit)
     if not dyingUnit.isTroll()

@@ -1,0 +1,26 @@
+package ObjectiveNotifications
+
+import Tribe
+import ClosureTimers
+import LinkedList
+import Objective
+import PlayerExtensions
+
+public constant NOTIFICATION_DURATION = 5.
+public constant NOTIFICANTION_COOLDOWN = 10.
+public constant OBJECTIVE_NOTIFICATION_TROLL_SEARCH_RADIUS = 2000
+
+public function displayObjectiveNotification(string text, Tribe tribe)
+    if tribe.isObjectiveNotificationPaused
+        return
+    tribe.isObjectiveNotificationPaused = true
+    doAfter(NOTIFICANTION_COOLDOWN) -> 
+        tribe.isObjectiveNotificationPaused = false
+    for each in tribe.getMembers()
+        each.print(text, NOTIFICATION_DURATION)
+        let troll = each.getTroll()
+        if OBJECTIVE_POS.distanceTo(troll.getPos()) > OBJECTIVE_NOTIFICATION_TROLL_SEARCH_RADIUS
+            let playerForce = CreateForce()
+            ..addPlayer(each)
+            PingMinimapForForceEx(playerForce, OBJECTIVE_POS.x, OBJECTIVE_POS.y, NOTIFICATION_DURATION, bj_MINIMAPPINGSTYLE_SIMPLE, 255, 0, 0)
+

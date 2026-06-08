@@ -15,11 +15,14 @@ import Abilities
 import Respawn
 import LocalObjectIDs
 import SoundUtils
+import GatheringSlot
 
-public constant PREPARATION_TIME_SECONDS = 60.
+public constant PREPARATION_TIME_SECONDS = 90.
 public constant TELEPORT_ANIMATION_DURATION = 3.
 public constant DUEL_WARNING = new SoundDefinition(Sounds.arrangedTeamInvitation)
 constant DUEL_MEAT_STACK_AMOUNT = 2
+
+public constant DUEL_PREPARE_TEXT = "You have {0} seconds to prepare for the final duel. Each troll will be teleported to the arena and receive {1} stacks of meat for the upcoming fight.".format(PREPARATION_TIME_SECONDS.toString(), DUEL_MEAT_STACK_AMOUNT.toString()).color(COLOR_RED)
 
 function displayTimer()
     let msg = "Gurubashi Arena will begin in {0} seconds|r".format(PREPARATION_TIME_SECONDS.toInt().toString()).color(COLOR_RED)
@@ -46,27 +49,34 @@ function supplyMeat()
             let troll = each.getTroll()
             for i = 0 to 5
                 let itm = troll.itemInSlot(i)
-                if itm.getTypeId() == ITEM_COOKED_MEAT
+                let itmId = itm.getTypeId()
+                if itmId == ITEM_COOKED_MEAT or (BACKPACK_ITEM_LIST.has(itmId) and itmId!= ITEM_MEDALLION_COURAGE_NSS)
                     itm.remove()
                     flashEffect(Abilities.blinkTarget, troll.getPos())
-            let meat = createItem(ITEM_COOKED_MEAT, tribe.spawn.getCenter())
-            for i = 1 to DUEL_MEAT_STACK_AMOUNT 
-                flashEffect(Abilities.blinkCaster, spiritTotem.getPos())
+            let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
+            for i = 0 to DUEL_MEAT_STACK_AMOUNT 
+                //flashEffect(Abilities.blinkCaster, spiritTotem.getPos())
                 nullTimer() -> 
                     meat.setCharges(10)
-                    nullTimer() -> 
-                        spiritTotem.addItemHandle(meat)
+                    nullTimer() ->
+                        troll.addItemHandle(meat)
+                        doAfter(5.) -> 
+                            if not meat.isOwned()
+                                meat.remove()
 
 
 function onEnter()
     reviveTrolls()
-    supplyMeat()
     displayTimer()
+    print(DUEL_PREPARE_TEXT)
     DUEL_WARNING.play()
     doAfter(PREPARATION_TIME_SECONDS) ->
         GameStates.preparation.exit() 
     doAfter(PREPARATION_TIME_SECONDS-TELEPORT_ANIMATION_DURATION) -> 
         playTeleportEfx()
+
+function onExit()
+    supplyMeat()
 
 function playTeleportEfx()
     for tribe in Tribe.getTribes()
@@ -87,3 +97,5 @@ function playTeleportEfx()
 init
     GameStates.preparation.onEnter() (GameState state) ->
         onEnter()
+    GameStates.preparation.onExit() (GameState state) ->
+        onExit()

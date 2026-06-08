@@ -45,8 +45,9 @@ public class Tribe
     static let hasNoAliveMembers = Predicate.owned<Tribe>(tribe -> tribe.getMembers().every(memberIsDead))
 
     int tribeId
-    rect spawn
     int levelCap = 4
+    bool isObjectiveNotificationPaused = false
+    rect spawn
     unit spiritTotem = null
     GurubashiArenaBorders bordersAccess = null
     let tribePlayers = new OwnedLinkedList<player>()

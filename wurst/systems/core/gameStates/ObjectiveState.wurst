@@ -9,7 +9,7 @@ function onEnter()
     let rnd = GetRandomInt(Objective.KingOfTheHill castTo int, Objective.EarlyDuel castTo int)
     Log.debug("Selecting an Objective")
     Objective objective = gameConfig.getObjective()
-    if objective == null
+    if objective == Objective.NONE
         Log.debug("Selecting Random objective")
         switch rnd
             case Objective.KingOfTheHill castTo int
@@ -18,12 +18,14 @@ function onEnter()
             case Objective.TugOfWar castTo int
                 objective = Objective.TugOfWar
                 Log.debug("Selecting Tug of War objective")
+                print("randomed tug of war")
             case Objective.EarlyDuel castTo int
                 // a hack to effectively reduce the chance of Early Duel
                 if GetRandomInt(0, 1) == 1
                     onEnter()
                     return
                 objective = Objective.EarlyDuel
+                print("randomed early duel")
                 Log.debug("Selecting Early Duel objective")
             default
                 Log.debug("Failed to random an objective, selecting default option.")

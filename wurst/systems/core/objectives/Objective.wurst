@@ -27,6 +27,7 @@ public constant OBJECTIVE_POS = vec2(6, -167)
 public constant GURUBASHI_ARENA_VISION = Rect(OBJECTIVE_POS.x-1200, OBJECTIVE_POS.y-1200, OBJECTIVE_POS.x+1200, OBJECTIVE_POS.y+1200)
 public constant GURUBASHI_ARENA_ENTRANCE_LEFT = gg_rct_GurubashiArenaEntranceLeft
 public constant GURUBASHI_ARENA_ENTRANCE_RIGHT = gg_rct_GurubashiArenaEntranceRight
+public constant GURUBASHI_ARENA_OPEN_NOTIFACTION_TEXT = "The gates to Gurubashi Arena are now open! Enter the arena to contest the objective and challenge the Mammoth!".color(COLOR_LIGHT_BLUE)   
 public unit OBJECTIVE_UNIT = null
 public let gurubashiArenaGates = new HashList<destructable>()
 public let gurubashiArenaGateIds = new HashList<int>()
@@ -35,6 +36,7 @@ public let gurubashiArenaGateIds = new HashList<int>()
 constant OBJECTIVE_MSG_INTRO = "The Gods' challange is..".color(COLOR_LIGHT_BLUE)
 
 public enum Objective
+    NONE
     KingOfTheHill
     TugOfWar
     EarlyDuel
@@ -57,7 +59,8 @@ function initializeGurubashiGates()
             gurubashiArenaGates.add(d)
 
 public function openGurubashiGates()
-    print("Gurubashi Arena gates are now open!".color(COLOR_LIGHT_BLUE))
+    print(GURUBASHI_ARENA_OPEN_NOTIFACTION_TEXT)
+    PlaySound(Sounds.clanInvitation) 
     for each in gurubashiArenaGates
         // Open the gate.
         each.kill()

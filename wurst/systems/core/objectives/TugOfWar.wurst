@@ -11,12 +11,14 @@ import GameConfig
 import GameState
 import Objective
 import LocalObjectIDs2
+import ObjectiveNotifications
 
 constant SCORE_DISPLAY_RANGE = 400
 constant SCORE_UPDATE_FREAQUENCY = 0.2
 public constant OBJECTIVE_ARMOUR = 6.
 public constant OBJECTIVE_HP_PER_PLAYER = 700
 public constant OBJECTIVE_HP_BASE = 500
+constant NOTIFICATION_TEXT = " is attacking the objective! Join the fight quickly or you will lose opportunity to challenge the Mammoth!"
 
 class TugOfWar
     real array[12] tribePoints
@@ -82,6 +84,8 @@ class TugOfWar
         if tribe == null
             return
         let damage = DamageEvent.getAmount()
+        
+        notifyTribes(tribe)
 
         if target.getHP()-damage <=0
             DamageEvent.setAmount(0.)
@@ -99,6 +103,14 @@ class TugOfWar
             if newHp >= target.getMaxHP()
                 updateWinningTeam(tribe)
             target.setHP(newHp)
+
+
+
+    function notifyTribes(Tribe damagingTribe)
+        for tribe in tribes
+            if tribe != damagingTribe
+                let text = tribe.getName() + NOTIFICATION_TEXT
+                displayObjectiveNotification(text, tribe)
 
     function updateWinningTeam(Tribe whichTribe)
         winningTeam = whichTribe

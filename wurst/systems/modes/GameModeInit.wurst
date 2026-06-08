@@ -17,7 +17,7 @@ import GameStates
 import ErrorHandling
 import Objective
 
-init
+init/*
     new GameMode("players-per-tribe", "ppt", "General", "Set the number of players in each tribe, eg: \"-ppt 6\"") (mode, args) ->
         if args.size() < 2
             mode.error("Must supply # of tribes to \"ppt\"")
@@ -48,19 +48,20 @@ init
     new GameMode("free-for-all", "ffa", "General", "Each player is on their own") (mode, args) ->
         gameConfig.setNumPlayersPerTribe(1)
         mode.message("Free for all".color(ENERGY_COLOR) + " enabled")
-
-    new GameMode("standard-1v1", "1v1", "Pro", "Enables all standard modes for 1v1 (-sf, -rs, -fd 35)") (mode, args) ->
+    */
+    new GameMode("standard-1v1", "1v1", "Pro", "Enables all standard modes for 1v1 (-sf, -rs, -ga 35)") (mode, args) ->
         mode.message("1v1".color(ENERGY_COLOR) +" enabled")
         gameConfig.setNumPlayersPerTribe(1)
-        GameMode.find("fd").enable(asList("35"))
+        GameMode.find("ga").enable(asList("35"))
         GameMode.find("rs").enable()
         GameMode.find("sf").enable()
 
-    new GameMode("tournament", "to", "Pro", "Tournament Modes (-sf, -el, -fd, -tg, -tb, -rs)") (mode, args) ->
+    new GameMode("tournament", "to", "Pro", "Tournament Modes (-sf, -el, -ga 960, -tg, -tb, -rs)") (mode, args) ->
         mode.message("Tournament mode".color(HIGHLIGHT_COLOR) + " enabled:")
         GameMode.find("sf").enable()
-        //GameMode.find("fd").enable()
+        //GameMode.find("ga").enable()
         //GameMode.find("el").enable()
+        gameConfig.setGurubashiArena(960)
         GameMode.find("ns").enable()
         //GameMode.find("pma").enable()
         GameMode.find("rs").enable()
@@ -196,7 +197,7 @@ init
         if (args.size() > 1)
             amount = args.get(1).toInt()
         if (not gameConfig.setGracePeriodDuration(amount))
-            mode.error("Grace period must end before forced duel")
+            mode.error("Grace period must end before Gurubashi Arena gates open")
         else
             mode.message("Grace period duration ".color(ENERGY_COLOR) + amount.toString() + " seconds")
 
@@ -218,14 +219,14 @@ init
         GameMode.find("gp").enable(asList("0"))
         mode.message("Respawn system".color(ENERGY_COLOR) + " enabled")
 
-    new GameMode("forced-duel", "fd", "Pro", "Set a forced duel after a time limit, defaults to 1 h, eg: \"-fd 60\"") (mode, args) ->
+    new GameMode("gurubashi-arena", "ga", "Pro", "Set the amount of time before Gurubashi Arena gates open, defaults to 20 minutes, eg: \"-ga 900\"") (mode, args) ->
         var amount = 900
         if (args.size() > 1)
             amount = args.get(1).toInt()
         if (not gameConfig.setGurubashiArena(amount))
-            mode.error("Force duel must be after end of the grace period")
+            mode.error("Gurubashi Arena gates must open after end of the grace period")
         else
-            mode.message("Forced duel".color(ENERGY_COLOR) + " after " + amount.toString() + " seconds.")
+            mode.message("Gurubashi Arena gates".color(ENERGY_COLOR) + " will open after " + amount.toString() + " seconds.")
 
     new GameMode("shrinking-map", "sm", "Fun", "Forest fire shrinks map after a default of 60 minutes to a default of 4000 units from center, eg: \"-sm 60 4000\"") (mode, args) ->
         var amount = 3600
@@ -333,7 +334,7 @@ init
             else
                 gameConfig.setStartingLevel(lvl)
                 mode.message("Troll Starting Level".color(ENERGY_COLOR) + " set to " + lvl.toString())
-
+/*
     new GameMode("mammoth-gate", "mg", "Fun", "Change when the gate to the Mammoth is unlocked.", true) (mode, args) ->
         // Default to opening the gate when grace period ends.
         gameConfig.setMammothGateDuration(
@@ -356,7 +357,7 @@ init
                     )
             )
         )
-
+*/
     new GameMode("ban", "b", "General", "ban 1 class, retype class name to unban (Hunter, Mage, Priest, Beastmaster, Scout, Thief, Gatherer)", true) (mode, args) ->
         if args.size() < 2
             mode.error("Must specify the class name to ban")

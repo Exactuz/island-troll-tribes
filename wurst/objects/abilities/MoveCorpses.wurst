@@ -444,8 +444,8 @@ init
     onKeyPress(OSKEY_Z, OSKEY_META.CTRL) ->
         onKey(GetTriggerPlayer())
     // Create the trigger to allow for psuedo-hotkey functionality.
-    onKeyPress(OSKEY_Z, OSKEY_META.SHIFT) ->
-        onShiftKey(GetTriggerPlayer())
+    //onKeyPress(OSKEY_Z, OSKEY_META.SHIFT) ->
+    //    onShiftKey(GetTriggerPlayer())
 
           
                     

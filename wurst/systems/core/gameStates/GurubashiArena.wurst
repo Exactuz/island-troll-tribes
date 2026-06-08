@@ -18,8 +18,7 @@ import Respawn
 import initlater GurubashiArenaBorders
 import PhilosophersStone
 import UnitExtensions
-
-public timer GURUBASHI_ARENA_OPEN_TIMER      
+public timer GURUBASHI_ARENA_OPEN_TIMER   
 
 function onEnter()
     let tribes = Tribe.getTribes()
@@ -88,6 +87,6 @@ init
     GameStates.gameplay.onEnter() (GameState state) -> 
         if gameConfig.getObjective() != Objective.EarlyDuel
             let time = gameConfig.getGurubashiArenaAfter()
-            GURUBASHI_ARENA_OPEN_TIMER = getTimer()..doAfter(time.toReal()) ->
+            GURUBASHI_ARENA_OPEN_TIMER = getTimer()..doAfter(time.toReal()) -> 
                 openGurubashiGates()
                 updateBorderAccessOnGatesOpen()

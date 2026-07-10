@@ -1,0 +1,35 @@
+package CentreIslandRegion
+
+
+
+// Standard library imports:
+import Assets
+import HashMap
+import LinkedList
+import ObjectIdGenerator
+import ObjectIds
+import StringUtils
+import UnitObjEditing
+import ShopObjects
+import LocalObjectIDs2
+import Tribe
+import GameStates
+import GameState
+import HashList
+import Region
+
+
+public constant CENTRE_ISLAND_REGION = CreateRegion()
+..addRect(gg_rct_centre_island_1)
+..addRect(gg_rct_centre_island_2)
+..addRect(gg_rct_centre_island_3)
+..addRect(gg_rct_centre_island_4)
+..addRect(gg_rct_centre_island_5)
+..addRect(gg_rct_centre_island_6)
+..addRect(gg_rct_centre_island_7)
+..addRect(gg_rct_centre_island_8)
+..addRect(gg_rct_centre_island_9)
+..addRect(gg_rct_centre_island_10)
+..addRect(gg_rct_centre_island_11)
+..addRect(gg_rct_centre_island_12)
+

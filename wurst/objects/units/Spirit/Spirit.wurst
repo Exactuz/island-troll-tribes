@@ -1,0 +1,40 @@
+package Spirit
+
+
+// Standard library imports:
+import Assets
+import HashMap
+import LinkedList
+import ObjectIdGenerator
+import ObjectIds
+import StringUtils
+import UnitObjEditing
+import ShopObjects
+import LocalObjectIDs2
+import Tribe
+import GameStates
+import GameState
+import HashList
+
+public constant SPIRIT_LIST_NW_TRIBE = asList(gg_rct_spirit_NW_main_base, gg_rct_spirit_NW_alt_base)
+public constant SPIRIT_LIST_SE_TRIBE = asList(gg_rct_spirit_SE_main_base, gg_rct_spirit_SE_alt_base)
+public constant SPIRIT_SPAWN_LIST = asList(gg_rct_spirit_NW_main_base, gg_rct_spirit_NW_alt_base,
+                                            gg_rct_spirit_SE_main_base, gg_rct_spirit_SE_alt_base)
+public constant SPIRITS_PER_TRIBE = 2
+public HashList<unit> SPIRIT_LIST = new HashList<unit>()
+
+
+
+function createSpirits()
+    let tribes = Tribe.getTribes()
+    for tribe in tribes
+        for i = 0 to SPIRITS_PER_TRIBE - 1
+            let pos = SPIRIT_SPAWN_LIST.dequeue().getCenter()
+            let spirit = createUnit(tribe.getNonMember(), UNIT_SPIRIT_OF_FIRE, pos)
+            SPIRIT_LIST.add(spirit)
+
+
+init
+    GameStates.gameplay.onEnter() (GameState state) ->
+        createSpirits()
+

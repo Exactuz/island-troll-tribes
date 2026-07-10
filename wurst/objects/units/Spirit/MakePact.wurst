@@ -1,0 +1,49 @@
+package MakePact
+
+// Standard library imports:
+import Assets
+import HashMap
+import LinkedList
+import ObjectIds
+import StringUtils
+import UnitObjEditing
+import LocalObjectIDs2
+import AbilityObjEditing
+import ClosureEvents
+import PlayerExtensions
+import Spirit
+
+
+
+public constant MAKE_PACT_TT_NORM = "Make a Pact"
+public constant MAKE_PACT_FIRE_TT_EXT = "Make a pact with the Spirit of Fire to gain its favour and protection."+
+                                        "\nThe spirit will ressurect fallen trolls and will protect the territory of your tribe from enemies."+
+                                        "\nIn return you pledge to protect the spirit and help it aquire the Mojo of Power."
+
+
+
+@compiletime function createMakePactAbility()
+    new AbilityDefinitionWindWalk(ABILITY_MAKE_PACT)
+    ..setName(MAKE_PACT_TT_NORM)
+    ..presetTooltipNormalExtended(lvl->MAKE_PACT_FIRE_TT_EXT)   
+    ..presetTooltipNormal(lvl->MAKE_PACT_TT_NORM)
+    ..setIconNormal(Icons.bTNSnazzyScrollPurple)
+    ..presetManaCost(lvl->0)
+    ..setHotkeyNormal("F")
+    //..setButtonPositionNormalX(3)
+    //..setButtonPositionNormalY(1)
+         
+
+
+function onCast()
+    if GetSpellAbilityId() != ABILITY_MAKE_PACT
+        return
+    let caster = GetSpellAbilityUnit()
+    caster.getOwner().getTribe().spirit = caster
+    for each in SPIRIT_LIST
+        if each.getOwner().getTribe() == caster.getOwner().getTribe() and each != caster
+            each.remove()
+
+init
+    EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) ->
+        onCast()

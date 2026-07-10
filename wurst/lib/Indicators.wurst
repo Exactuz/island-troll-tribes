@@ -7,6 +7,7 @@ import LinkedList
 
 // Local imports:
 import LocalObjectIDs
+import LocalObjectIDs2
 
 public interface Callback
     function run(unit target)

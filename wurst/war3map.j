@@ -132,6 +132,22 @@ globals
     rect                    gg_rct_GurubashiArenaEntranceLeft = null
     rect                    gg_rct_GurubashiArenaEntranceRight = null
     rect                    gg_rct_spawn_area_4_4      = null
+    rect                    gg_rct_spirit_SE_main_base = null
+    rect                    gg_rct_spirit_SE_alt_base  = null
+    rect                    gg_rct_spirit_NW_alt_base  = null
+    rect                    gg_rct_spirit_NW_main_base = null
+    rect                    gg_rct_centre_island_1     = null
+    rect                    gg_rct_centre_island_2     = null
+    rect                    gg_rct_centre_island_3     = null
+    rect                    gg_rct_centre_island_4     = null
+    rect                    gg_rct_centre_island_5     = null
+    rect                    gg_rct_centre_island_6     = null
+    rect                    gg_rct_centre_island_7     = null
+    rect                    gg_rct_centre_island_8     = null
+    rect                    gg_rct_centre_island_9     = null
+    rect                    gg_rct_centre_island_10    = null
+    rect                    gg_rct_centre_island_11    = null
+    rect                    gg_rct_centre_island_12    = null
 endglobals
 
 function InitGlobals takes nothing returns nothing
@@ -435,6 +451,22 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_GurubashiArenaEntranceLeft = Rect( -1440.0, 192.0, -1408.0, 224.0 )
     set gg_rct_GurubashiArenaEntranceRight = Rect( 1408.0, -512.0, 1440.0, -480.0 )
     set gg_rct_spawn_area_4_4 = Rect( -1888.0, -5888.0, 32.0, -1504.0 )
+    set gg_rct_spirit_SE_main_base = Rect( 4448.0, -1312.0, 4480.0, -1280.0 )
+    set gg_rct_spirit_SE_alt_base = Rect( 1408.0, -4064.0, 1440.0, -4032.0 )
+    set gg_rct_spirit_NW_alt_base = Rect( -4480.0, -288.0, -4448.0, -256.0 )
+    set gg_rct_spirit_NW_main_base = Rect( -2624.0, 2688.0, -2592.0, 2720.0 )
+    set gg_rct_centre_island_1 = Rect( -3264.0, -896.0, 3296.0, 1184.0 )
+    set gg_rct_centre_island_2 = Rect( -2656.0, 1152.0, 3232.0, 1568.0 )
+    set gg_rct_centre_island_3 = Rect( -1408.0, 1536.0, 2592.0, 1984.0 )
+    set gg_rct_centre_island_4 = Rect( -896.0, 1952.0, 2208.0, 2176.0 )
+    set gg_rct_centre_island_5 = Rect( -480.0, 2144.0, 1824.0, 2368.0 )
+    set gg_rct_centre_island_6 = Rect( -192.0, 2336.0, 928.0, 2784.0 )
+    set gg_rct_centre_island_7 = Rect( -2752.0, -1280.0, 3104.0, -864.0 )
+    set gg_rct_centre_island_8 = Rect( -2624.0, -1536.0, 2944.0, -1248.0 )
+    set gg_rct_centre_island_9 = Rect( -2016.0, -2080.0, 2720.0, -1504.0 )
+    set gg_rct_centre_island_10 = Rect( -1504.0, -2592.0, 1632.0, -2048.0 )
+    set gg_rct_centre_island_11 = Rect( -1312.0, -3136.0, 576.0, -2560.0 )
+    set gg_rct_centre_island_12 = Rect( -1152.0, -3392.0, -288.0, -3104.0 )
 endfunction
 
 //***************************************************************************

@@ -140,7 +140,7 @@ function onWardBuilt(unit whichUnit)
     if whichUnit.getTypeId() != UNIT_SPIRIT_WARD
         return
     let tribe = whichUnit.getOwner().getTribe()
-    tribe.spiritTotem = whichUnit
+    tribe.spirit = whichUnit
     let pos = whichUnit.getPos()
     let newSpawn = Rect(pos.x-250, pos.y-250, pos.x+250, pos.y+250)
     tribe.setSpawn(newSpawn)

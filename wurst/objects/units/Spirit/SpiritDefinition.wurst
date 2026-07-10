@@ -1,0 +1,31 @@
+package SpiritDefinition
+
+
+// Standard library imports:
+import Assets
+import HashMap
+import LinkedList
+import ObjectIds
+import StringUtils
+import UnitObjEditing
+import LocalObjectIDs2
+import LocalObjectIDs
+
+
+public constant SPIRIT_MAX_HP = 1000
+public constant SPIRIT_ABILITIES_LIST = asList(ABILITY_MAKE_PACT)
+
+
+@compiletime function createTotemSpirit() returns UnitDefinition
+    return new UnitDefinition(UNIT_SPIRIT_OF_FIRE, UnitIds.firelord)
+    ..setModelFile(Units.voidWalker)
+    ..setScalingValue(1.0)
+    ..setArmorType(ArmorType.Hero)  
+    ..setSightRadiusDay(1200)
+    ..setSightRadiusNight(1200)
+    ..setName("")
+    ..setTargetedAs("ground")
+    ..setPropulsionWindowdegrees(0)
+    //..setAnimationBlendTimeseconds(9999.)
+    ..setNormalAbilities(commaList(SPIRIT_ABILITIES_LIST))
+    ..setDefenseBase(0)

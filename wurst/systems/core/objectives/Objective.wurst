@@ -21,13 +21,23 @@ import UnitObjEditing
 import Units
 import ObjEditingUtils
 import Sounds
+import AbilityObjEditing
+import Icons
+import ItemShopDummyUnit
+import LocalAssets
 
 public Tribe winnerTribe = null
 public constant OBJECTIVE_POS = vec2(6, -167)
 public constant GURUBASHI_ARENA_VISION = Rect(OBJECTIVE_POS.x-1200, OBJECTIVE_POS.y-1200, OBJECTIVE_POS.x+1200, OBJECTIVE_POS.y+1200)
 public constant GURUBASHI_ARENA_ENTRANCE_LEFT = gg_rct_GurubashiArenaEntranceLeft
 public constant GURUBASHI_ARENA_ENTRANCE_RIGHT = gg_rct_GurubashiArenaEntranceRight
-public constant GURUBASHI_ARENA_OPEN_NOTIFACTION_TEXT = "The gates to Gurubashi Arena are now open! Enter the arena to contest the objective and challenge the Mammoth!".color(COLOR_LIGHT_BLUE)   
+public constant GURUBASHI_ARENA_OPEN_NOTIFACTION_TEXT = "The gates to Gurubashi Arena are now open! Enter the arena to contest the objective and challenge the Mammoth!".color(COLOR_LIGHT_BLUE)
+public constant OBJECTIVE_CHALLENGE_RANGE = 300.
+public constant OBJECTIVE_OUT_OF_RANGE_TEXT = "You need to be within {0} range of the objective to challenge the Mammoth.".format(OBJECTIVE_CHALLENGE_RANGE.toInt().toString().color(COLOR_LIGHT_BLUE))
+constant CHALLENGE_MAMMOTH_TT_NORM = "Challenge the Mammoth"
+constant CHALLENGE_MAMMOTH_TT_EXT = "Challenge the Mammoth to win {0} as well as other spoils.".format("Mojo of Power".color(COLOR_PINK))+
+                                    "\nYour team will be teleported to the arena and each troll will be provided {0} for the fight.".format("10 Gladiator Rations".color(COLOR_LIGHT_BLUE))+
+                                    "\nYou must be within {0} range to challenge the Mammoth.".format(OBJECTIVE_CHALLENGE_RANGE.toInt().toString().color(COLOR_LIGHT_BLUE))
 public unit OBJECTIVE_UNIT = null
 public let gurubashiArenaGates = new HashList<destructable>()
 public let gurubashiArenaGateIds = new HashList<int>()
@@ -49,6 +59,11 @@ public constant OBJECTIVE_ABILITIES_LIST = asList(
     ABILITY_SPELL_DMG_REDUCTION_DUMMY_BUFF
 )
 
+public constant OBJECTIVE_CHALLENGE_ABILITIES_LIST = asList(
+    ABILITY_CHALLENGE_MAMMOTH,
+    AbilityIds.sellUnitDynamic,
+    LocalAbilityIds.selectUnit
+)
 
 function initializeGurubashiGates()
     let boundRect = Rect(OBJECTIVE_POS.x-2000, OBJECTIVE_POS.y-2000, OBJECTIVE_POS.x+2000, OBJECTIVE_POS.y+2000)
@@ -80,6 +95,37 @@ public function openGurubashiGates()
     ..setAnimationBlendTimeseconds(9999.)
     ..setNormalAbilities(commaList(OBJECTIVE_ABILITIES_LIST))
     ..setDefenseBase(0)
+
+
+    new UnitDefinition(UNIT_OBJECTIVE_CHALLENGE, UnitIds.wisp)
+    ..setModelFile(Units.mammothBlack1)
+    ..setScalingValue(1.0)
+    ..setArmorType(ArmorType.Hero)
+    ..setSightRadiusDay(1200)
+    ..setSightRadiusNight(1200)
+    ..setName("")
+    ..setTargetedAs("ground")
+    ..setAnimationBlendTimeseconds(9999.)
+    ..setNormalAbilities(commaList(OBJECTIVE_CHALLENGE_ABILITIES_LIST))
+    ..setDefenseBase(0)
+    ..setPropulsionWindowdegrees(0)  
+
+    new ItemShopDummyUnitDefinition(UNIT_CHALLENGE_MAMMOTH_DUMMY, 0, 1, 999, CHALLENGE_MAMMOTH_TT_NORM, CHALLENGE_MAMMOTH_TT_EXT, Icons.bTNGnollCommandAura)
+
+    new AbilityDefinitionWindWalk(ABILITY_CHALLENGE_MAMMOTH)
+    ..setName(CHALLENGE_MAMMOTH_TT_NORM)
+    ..presetTooltipNormalExtended(lvl->CHALLENGE_MAMMOTH_TT_EXT)   
+    ..presetTooltipNormal(lvl->CHALLENGE_MAMMOTH_TT_NORM)
+    ..setIconNormal(Icons.bTNGnollCommandAura)
+    ..presetManaCost(lvl->0)
+    ..setEffectSound("")
+    ..setEffectSoundLooping("")
+    ..presetEffects(lvl->"")
+    ..setArtCaster("")
+    ..setHotkeyNormal("F")
+    //..setButtonPositionNormalX(3)
+    //..setButtonPositionNormalY(1)
+
 
 function shareObjectiveVision()
     for i = 0 to 23

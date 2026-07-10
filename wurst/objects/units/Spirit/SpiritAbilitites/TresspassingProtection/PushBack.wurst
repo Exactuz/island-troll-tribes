@@ -1,0 +1,72 @@
+package PushBack
+
+
+
+// Standard library imports:
+import Assets
+import HashMap
+import LinkedList
+import ObjectIdGenerator
+import ObjectIds
+import StringUtils
+import UnitObjEditing
+import ShopObjects
+import LocalObjectIDs2
+import Tribe
+import GameStates
+import GameState
+import HashList
+import ClosureEvents
+import UnitExtensions
+import CentreIslandRegion
+import Objective
+import Knockback3
+import ClosureTimers
+
+constant let PUSHBACK_PERIOD = 0.125
+
+HashList<unit> unitsInRegion = new HashList<unit>()
+
+function pushBack(unit troll)
+    
+    let angle = OBJECTIVE_POS.angleTo(troll.getPos())
+    let velocity = troll.getMoveSpeed() * PUSHBACK_PERIOD
+    Knockback3.add(troll, velocity, angle, 80..asAngleDegrees())
+    /*
+    doAfter(0.8) ->
+        let pos = target.getPos()
+        if not pos.isTerrainWalkable()
+            let newPos = getClosestWalkablePosTo(pos, OBJECTIVE_POS, 3000.)
+            target.setPos(newPos)
+    */
+
+function addUnitToRegion()
+    let enteringUnit = GetEnteringUnit()
+    if not enteringUnit.isTroll()
+        return
+    unitsInRegion.add(enteringUnit)
+    print("added unit")
+
+function removeUnitFromRegion()
+    let leavingUnit = GetLeavingUnit()
+    if not leavingUnit.isTroll()
+        return
+    unitsInRegion.remove(leavingUnit)
+    print("removed unit")
+ /*
+init
+   
+    doPeriodically(PUSHBACK_PERIOD) cb ->
+        for each in unitsInRegion
+            if each == null
+                return
+            pushBack(each)
+    
+    CreateTrigger()
+    ..registerEnterRegion(CENTRE_ISLAND_REGION, null) 
+    ..addCondition(Condition(function addUnitToRegion))
+    
+    CreateTrigger()
+    ..registerEnterRegion(CENTRE_ISLAND_REGION, null) 
+    ..addCondition(Condition(function removeUnitFromRegion))    
+    */

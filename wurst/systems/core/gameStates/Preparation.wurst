@@ -44,7 +44,7 @@ function reviveTrolls()
 
 function supplyMeat()
     for tribe in Tribe.getTribes()
-        let spiritTotem = tribe.spiritTotem
+        let spirit = tribe.spirit
         for each in tribe.getMembers()
             let troll = each.getTroll()
             for i = 0 to 5
@@ -55,7 +55,7 @@ function supplyMeat()
                     flashEffect(Abilities.blinkTarget, troll.getPos())
             let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
             for i = 0 to DUEL_MEAT_STACK_AMOUNT 
-                //flashEffect(Abilities.blinkCaster, spiritTotem.getPos())
+                //flashEffect(Abilities.blinkCaster, spirit.getPos())
                 nullTimer() -> 
                     meat.setCharges(10)
                     nullTimer() ->

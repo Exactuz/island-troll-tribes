@@ -27,12 +27,14 @@ import GurubashiArenaBorders
 import GurubashiArena
 import PhilosophersStone
 import UnitExtensions
+import DamageEvent
 
 constant PAUSE_TIME = 3.
 constant MAMMOTH_BASE_HP = 250
 constant MAMMOTH_HP_PER_PLAYER = 800.
 constant TIMEOUT_PERIOD = 120.
 public unit BOSS_UNIT = null
+public Tribe bossFightLoserTribe = null
 unit rewardHandlerUnit = null
 
 function handleLoserTeams()
@@ -69,6 +71,7 @@ function resetState(unit troll)
         let instance = PhilosophersStone.getInstance(troll)
         if instance != null
             instance.setMaximumCharges()
+    flashEffect(Abilities.aImaTarget, troll.getPos())
     doAfter(PAUSE_TIME) -> 
         troll.unpause()
 
@@ -79,9 +82,9 @@ function supplyMeat()
         for i = 0 to 5
             let itm = troll.itemInSlot(i)
             if itm.getTypeId() == ITEM_COOKED_MEAT
-                itm.setPos(winnerTribe.spiritTotem.getPos())
+                itm.setPos(winnerTribe.spirit.getPos())
                 nullTimer() -> 
-                    winnerTribe.spiritTotem.addItemHandle(itm)
+                    winnerTribe.spirit.addItemHandle(itm)
         let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
         flashEffect(Abilities.blinkCaster, troll.getPos())
         nullTimer() -> 
@@ -133,7 +136,8 @@ function spawnBoss()
 
 function onEnter()
     handleWinnerTeam()
-    handleLoserTeams()
+    if bossFightLoserTribe == null
+        handleLoserTeams()
     updateBorderAccessOnBossFight()    
     playStompEfx()
     handleTimeout()
@@ -204,6 +208,7 @@ function onMammothWin()
             revive(troll, 0.)
         resetState(troll)
         BOSS_UNIT.remove()
+    bossFightLoserTribe = winnerTribe
     GameStates.bossFight.exit()      
 
 
@@ -285,6 +290,28 @@ function onExit()
     updateBorderAccessOnBossFightFinish()
     closeGates()
 
+function onDamage()
+    if not GameStates.bossFight.active
+        return
+    let victim = DamageEvent.getTarget()
+    if not victim.isTroll()
+        return
+    if victim.getOwner().getTribe() != winnerTribe
+        return
+    let damage = DamageEvent.getAmount()
+    if damage < victim.getHP()
+        return
+    pauseTroll(victim)
+
+function pauseTroll(unit troll)
+    troll.pause()
+    troll.setAnimation("death")
+    troll.setInvulnerable(true)
+    for each in troll.getOwner().getTribe().getMembers()
+        if not each.getTroll().isPaused()
+            return
+    onMammothWin()
+
 init
     GameStates.bossFight.onEnter() (GameState state) ->
         onEnter()
@@ -296,3 +323,6 @@ init
         if GameStates.bossFight.active
             onMammothKilled(GetDyingUnit())
             onTrollDeath(GetDyingUnit())
+
+    DamageEvent.addListener() () ->
+        onDamage()

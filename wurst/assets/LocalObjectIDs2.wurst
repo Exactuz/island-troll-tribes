@@ -11,6 +11,10 @@ import ObjectIDManager
 
 
 
+public let UNIT_CHALLENGE_MAMMOTH_DUMMY                     = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_CHALLENGE_MAMMOTH_DUMMY")
+public let ABILITY_CHALLENGE_MAMMOTH                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_CHALLENGE_MAMMOTH")
+public let ABILITY_MAKE_PACT                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_MAKE_PACT")
+public let UNIT_SPIRIT_OF_FIRE        =compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_SPIRIT_OF_FIRE")
 public let UNIT_REWARD_SELECTOR        =compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_REWARD_SELECTOR")
 public let ABILITY_NEGATIVE_ATTACK_SPEED_20                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_NEGATIVE_ATTACK_SPEED_20")
 public let ABILITY_COOK_AND_COLLECT_MEAT                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_COOK_AND_COLLECT_MEAT")
@@ -18,7 +22,8 @@ public let ABILITY_BOSS_REWARD_HANDLRER                     = compiletime(ABIL_I
 public let ITEM_TIDEBRINGER  = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_TIDEBRINGER")  
 public let ITEM_RIGHT_MAMMOTH_HORN  = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_RIGHT_MAMMOTH_HORN")  
 public let ITEM_MAMMOTH_BOOTS  = compiletime(ITEM_ID_GEN.next())..registerObjectID("ITEM_MAMMOTH_BOOTS")  
-public let UNIT_OBJECTIVE                           = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_OBJECTIVE")  
+public let UNIT_OBJECTIVE                           = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_OBJECTIVE") 
+public let UNIT_OBJECTIVE_CHALLENGE                           = compiletime(UNIT_ID_GEN.next())..registerObjectID("UNIT_OBJECTIVE_CHALLENGE")  
 public let ABILITY_MAMMOTH_TOSS_DAZE                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_MAMMOTH_TOSS_DAZE")
 public let ABILITY_MAMMOTH_TRAMPLE                   = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_MAMMOTH_TRAMPLE")
 public let ABILITY_MAMMOTH_TOSS                     = compiletime(ABIL_ID_GEN.next())..registerObjectID("ABIL_MAMMOTH_TOSS")

@@ -21,15 +21,29 @@ import BossFight
 import LocalObjectIDs2
 import ClosureEvents
 import SimError
+import UnitExtensions
+import GameConfig
+import ReduceHealing
+import PhilosophersStone
+import Knockback3
+import CentreIslandRegion
+import Region
 
 unit OBJECTIVE_CHALLENGE_UNIT = null
+public Tribe challengerTribe = null
+public constant TELEPORT_ANIMATION_DURATION = 3.
 
 
 function onEnter()
     if bossFightLoserTribe == null
+        handleObjectiveWinnerTeam()
+        handleLoserTeams()
         GameStates.preBossFight.exit()
         GameStates.bossFight.enter()
         return
+    else 
+        respawnObjective()
+
 
 function respawnObjective()
     OBJECTIVE_CHALLENGE_UNIT = createUnit(players[PLAYER_NEUTRAL_PASSIVE], UNIT_OBJECTIVE_CHALLENGE, OBJECTIVE_POS)
@@ -40,12 +54,17 @@ function onChallenge()
     let sellingUnit = GetSellingUnit()
     let soldUnit = GetSoldUnit()
     if soldUnit.getTypeId() != UNIT_OBJECTIVE_CHALLENGE
-        soldUnit.remove()
         return
     let p = soldUnit.getOwner()
     if not assertMaxDistance(p)
         soldUnit.remove()
         return
+    winnerTribe = p.getTribe()
+    handleChallengerTeam()
+    handleLoserTeams()
+    GameStates.preBossFight.exit()
+    GameStates.bossFight.enter()
+
 
 
 function assertMaxDistance(player p) returns bool
@@ -54,6 +73,75 @@ function assertMaxDistance(player p) returns bool
         return false
     return true
 
+
+function handleLoserTeams()
+    for tribe in Tribe.getTribes()
+        if tribe != winnerTribe 
+            let pos = tribe.spawn.randomPoint()
+            for each in tribe.getMembers()
+                let troll = each.getTroll()
+                if troll.isInRegion(CENTRE_ISLAND_REGION)
+                    troll.setPos(pos)
+                    each.panCamToTimed(each.getTroll(), 0.1)
+
+function handleChallengerTeam()
+    for member in winnerTribe.getMembers()
+        let troll = member.getTroll()
+        troll.setPos(vec2(OBJECTIVE_POS.x+GetRandomInt(-100, 100), OBJECTIVE_POS.y+GetRandomInt(-100, 100)))
+        resetState(troll)
+        member.panCamToTimed(troll, 0.1)
+        performKnockBack(troll)
+
+
+function handleObjectiveWinnerTeam()
+    for member in winnerTribe.getMembers()
+        let troll = member.getTroll()
+        if not troll.isAlive()
+            revive(troll, 0)
+            nullTimer() -> 
+                troll.setPos(vec2(OBJECTIVE_POS.x+GetRandomInt(-100, 100), OBJECTIVE_POS.y+GetRandomInt(-100, 100)))
+                resetState(troll)
+        resetState(troll)
+        member.panCamToTimed(troll, 0.1)
+        performKnockBack(troll)
+
+
+public function playTeleportEfx()
+    for each in winnerTribe.getMembers()
+        let troll = each.getTroll()
+        let efxCastingTroll = addEffect(Abilities.massTeleportTo, troll.getPos())
+        let efxGroundTroll = addEffect(Abilities.massTeleportCaster, troll.getPos())
+        let efxCastingSpiritTotem = addEffect(Abilities.massTeleportTo, winnerTribe.spawn.getCenter())
+        doPeriodicallyTimed(ANIMATION_PERIOD, TELEPORT_ANIMATION_DURATION) (CallbackCounted cb) ->
+            let pos = troll.getPos()
+            efxCastingTroll.setPos(pos)
+            efxGroundTroll.setPos(pos)
+            if cb.isLast()
+                efxCastingTroll.destr()
+                efxGroundTroll.destr()
+                efxCastingSpiritTotem.destr()
+                flashEffect(Abilities.massTeleportTarget, troll.getPos())
+
+function performKnockBack(unit troll)
+    Knockback3.add(troll, 1500., OBJECTIVE_POS.angleTo(troll.getPos()), 80..asAngleDegrees())
+
+public function resetState(unit troll)
+    troll
+    ..pause()
+    ..removeBuffs(true, true)
+    //..setPos(vec2(6, -167))
+    ..setHP(troll.getMaxHP())
+    ..setMana(troll.getMaxMana())
+    ..setHeat(gameConfig.getMaxHeat())
+    ..resetCooldown()
+    ..reduceHealingReduction(9999.)
+    if troll.getTypeId() == UNIT_ALCHEMIST
+        let instance = PhilosophersStone.getInstance(troll)
+        if instance != null
+            instance.setMaximumCharges()
+    flashEffect(Abilities.aImaTarget, troll.getPos())
+    doAfter(PAUSE_TIME) -> 
+        troll.unpause()
 
 function onExit()
 

@@ -26,7 +26,7 @@ public class GameStates
     static let gameplay = new LinearGameState()
 
     // This is intermediate state for when team that won the objectie loses the bossfight. Automatically skipped the first time its entered.
-    static let preBossFight = new LinearGameState()
+    static let preBossFight = new GameState()
     
     // This state handles the boss fight.
     static let bossFight = new GameState()

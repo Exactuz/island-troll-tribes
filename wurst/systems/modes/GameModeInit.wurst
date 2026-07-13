@@ -322,6 +322,9 @@ init/*
         GameMode.find("qp").enable()
         GameMode.find("tm").enable()
         GameMode.find("st").enable()
+        GameMode.find("obj").enable(asList("tow"))
+        GameMode.find("gp").enable(asList("0"))
+        GameMode.find("ga").enable(asList("3"))
         GameMode.find("debug").enable()
 
     new GameMode("start-level", "sl", "Fun", "Set Starting level, eg -sl 6", true) (mode, args) ->

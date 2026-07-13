@@ -33,8 +33,9 @@ function createSpirits()
             let spirit = createUnit(tribe.getNonMember(), UNIT_SPIRIT_OF_FIRE, pos)
             SPIRIT_LIST.add(spirit)
 
-
+/*
 init
     GameStates.gameplay.onEnter() (GameState state) ->
         createSpirits()
+        */
 

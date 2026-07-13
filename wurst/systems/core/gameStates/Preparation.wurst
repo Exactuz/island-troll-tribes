@@ -16,9 +16,9 @@ import Respawn
 import LocalObjectIDs
 import SoundUtils
 import GatheringSlot
+import PreBossFight
 
 public constant PREPARATION_TIME_SECONDS = 90.
-public constant TELEPORT_ANIMATION_DURATION = 3.
 public constant DUEL_WARNING = new SoundDefinition(Sounds.arrangedTeamInvitation)
 constant DUEL_MEAT_STACK_AMOUNT = 2
 
@@ -73,7 +73,7 @@ function onEnter()
     doAfter(PREPARATION_TIME_SECONDS) ->
         GameStates.preparation.exit() 
     doAfter(PREPARATION_TIME_SECONDS-TELEPORT_ANIMATION_DURATION) -> 
-        playTeleportEfx()
+        //playTeleportEfx()
 
 function onExit()
     supplyMeat()

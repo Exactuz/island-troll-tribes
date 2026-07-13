@@ -1,72 +1,91 @@
 package PushBack
 
-
-
-// Standard library imports:
-import Assets
 import HashMap
 import LinkedList
-import ObjectIdGenerator
-import ObjectIds
-import StringUtils
-import UnitObjEditing
-import ShopObjects
-import LocalObjectIDs2
 import Tribe
 import GameStates
 import GameState
 import HashList
-import ClosureEvents
 import UnitExtensions
-import CentreIslandRegion
 import Objective
-import Knockback3
 import ClosureTimers
+import PlayerExtensions
 
-constant let PUSHBACK_PERIOD = 0.125
+constant let PUSHBACK_PERIOD = ANIMATION_PERIOD*2
 
 HashList<unit> unitsInRegion = new HashList<unit>()
 
-function pushBack(unit troll)
-    
-    let angle = OBJECTIVE_POS.angleTo(troll.getPos())
-    let velocity = troll.getMoveSpeed() * PUSHBACK_PERIOD
-    Knockback3.add(troll, velocity, angle, 80..asAngleDegrees())
-    /*
-    doAfter(0.8) ->
-        let pos = target.getPos()
-        if not pos.isTerrainWalkable()
-            let newPos = getClosestWalkablePosTo(pos, OBJECTIVE_POS, 3000.)
-            target.setPos(newPos)
-    */
+class PushBack
+    vec2 lastPos = vec2(0, 0)
+    vec2 pushAwayFrom = vec2(0, 0)
+    real lastDistance = 9999.
+    unit whichUnit
+    bool isPaused = true
+    CallbackPeriodic cb = null
+    static HashMap<unit, PushBack> instances = new HashMap<unit, PushBack>()
+    construct(unit whichUnit, vec2 pushAwayFrom)
+        this.whichUnit = whichUnit
+        this.pushAwayFrom = pushAwayFrom
+        instances.put(whichUnit, this)
+        cb = doPeriodically(PUSHBACK_PERIOD) (CallbackPeriodic cb) ->
+            setXY()
+            
+    static function initializeInstances()
+        for tribe in Tribe.getTribes()
+            for each in tribe.getMembers()
+                doAfter(ANIMATION_PERIOD) -> 
+                    new PushBack(each.getTroll(), OBJECTIVE_POS)
+
+    static function onEnter(unit whichUnit, vec2 pushAwayFrom)
+        let instance = instances.get(whichUnit)
+        if instance == null
+            Log.debug("instance for unit "+GetObjectName(whichUnit.getTypeId()) + " does not exist")
+            return
+        instance.pushAwayFrom = pushAwayFrom
+        instance.lastPos = whichUnit.getPos()
+        instance.lastDistance = instance.lastPos.distanceTo(pushAwayFrom)
+        instance.isPaused = false
+
+    static function onLeave(unit whichUnit)
+        let instance = instances.get(whichUnit)
+        if instance == null
+            Log.debug("instance for unit "+GetObjectName(whichUnit.getTypeId()) + " does not exist")
+            return
+        instance.isPaused = true
+
+    function setXY()           
+        if isPaused
+            return
+        let currentPos = whichUnit.getPos()
+        let currentDistance = currentPos.distanceTo(pushAwayFrom)
+        if currentDistance>lastDistance
+            lastPos = currentPos
+            lastDistance = currentDistance
+            return
+        whichUnit.setXY(lastPos)
 
 function addUnitToRegion()
     let enteringUnit = GetEnteringUnit()
     if not enteringUnit.isTroll()
         return
-    unitsInRegion.add(enteringUnit)
-    print("added unit")
+    PushBack.onEnter(enteringUnit, OBJECTIVE_POS)
 
 function removeUnitFromRegion()
     let leavingUnit = GetLeavingUnit()
     if not leavingUnit.isTroll()
         return
-    unitsInRegion.remove(leavingUnit)
-    print("removed unit")
- /*
+    PushBack.onLeave(leavingUnit)
+
 init
-   
-    doPeriodically(PUSHBACK_PERIOD) cb ->
-        for each in unitsInRegion
-            if each == null
-                return
-            pushBack(each)
-    
+    GameStates.gameplay.onEnter() (GameState state) ->
+        PushBack.initializeInstances()
+/*
     CreateTrigger()
     ..registerEnterRegion(CENTRE_ISLAND_REGION, null) 
     ..addCondition(Condition(function addUnitToRegion))
     
     CreateTrigger()
-    ..registerEnterRegion(CENTRE_ISLAND_REGION, null) 
+    ..registerLeaveRegion(CENTRE_ISLAND_REGION, null) 
     ..addCondition(Condition(function removeUnitFromRegion))    
-    */
+
+*/

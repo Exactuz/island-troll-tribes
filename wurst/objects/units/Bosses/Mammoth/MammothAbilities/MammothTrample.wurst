@@ -142,6 +142,7 @@ function onUnitEnter(unit whichUnit)
     new MammothTrample(whichUnit)
 
 init
+    Knockback3.destroyDestructableSpeedThreshold = 999999999
     //EventListener.onTargetCast(ABILITY_MAMMOTH_TRAMPLE) (unit caster, unit target) ->
     //    onCast(caster, target)
 

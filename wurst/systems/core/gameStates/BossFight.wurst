@@ -6,7 +6,6 @@ import ClosureTimers
 // Local imports:
 import ColorUtils
 import GameStates
-import GameConfig
 import TimerUtils
 import GameState
 import PlayerExtensions
@@ -14,67 +13,26 @@ import Tribe
 import Objective
 import ClosureEvents
 import Abilities
-import Respawn
-import Knockback3
 import LocalObjectIDs
-import Preparation
 import BossRewardHandler
-import ReduceHealing
 import HashList
 import Orders
 import AbilityIds
 import GurubashiArenaBorders
 import GurubashiArena
-import PhilosophersStone
 import UnitExtensions
 import DamageEvent
+import initlater PreBossFight
+import HashMap
 
-constant PAUSE_TIME = 3.
+IterableMap<unit, real> pausedTrolls = new IterableMap<unit, real>()
+public constant PAUSE_TIME = 3.
 constant MAMMOTH_BASE_HP = 250
 constant MAMMOTH_HP_PER_PLAYER = 800.
 constant TIMEOUT_PERIOD = 120.
 public unit BOSS_UNIT = null
 public Tribe bossFightLoserTribe = null
 unit rewardHandlerUnit = null
-
-function handleLoserTeams()
-    for tribe in Tribe.getTribes()
-        if tribe != winnerTribe 
-            let pos = tribe.spawn.randomPoint()
-            for each in tribe.getMembers()
-                each.getTroll().setPos(pos)
-                each.panCamToTimed(each.getTroll(), 0.1)
-
-function handleWinnerTeam()
-    for member in winnerTribe.getMembers()
-        let troll = member.getTroll()
-        if not troll.isAlive()
-            revive(troll, 0)
-            nullTimer() -> 
-                troll.setPos(vec2(OBJECTIVE_POS.x+GetRandomInt(-100, 100), OBJECTIVE_POS.y+GetRandomInt(-100, 100)))
-                resetState(troll)
-        resetState(troll)
-        member.panCamToTimed(troll, 0.1)
-        performKnockBack(troll)
-
-function resetState(unit troll)
-    troll
-    ..pause()
-    ..removeBuffs(true, true)
-    //..setPos(vec2(6, -167))
-    ..setHP(troll.getMaxHP())
-    ..setMana(troll.getMaxMana())
-    ..setHeat(gameConfig.getMaxHeat())
-    ..resetCooldown()
-    ..reduceHealingReduction(9999.)
-    if troll.getTypeId() == UNIT_ALCHEMIST
-        let instance = PhilosophersStone.getInstance(troll)
-        if instance != null
-            instance.setMaximumCharges()
-    flashEffect(Abilities.aImaTarget, troll.getPos())
-    doAfter(PAUSE_TIME) -> 
-        troll.unpause()
-
 
 function supplyMeat()
     for each in winnerTribe.getMembers()
@@ -93,25 +51,7 @@ function supplyMeat()
                 troll.addItemHandle(meat)
 
 
-function playTeleportEfx()
-    for each in winnerTribe.getMembers()
-        let troll = each.getTroll()
-        let efxCastingTroll = addEffect(Abilities.massTeleportTo, troll.getPos())
-        let efxGroundTroll = addEffect(Abilities.massTeleportCaster, troll.getPos())
-        let efxCastingSpiritTotem = addEffect(Abilities.massTeleportTo, winnerTribe.spawn.getCenter())
-        doPeriodicallyTimed(ANIMATION_PERIOD, TELEPORT_ANIMATION_DURATION) (CallbackCounted cb) ->
-            let pos = troll.getPos()
-            efxCastingTroll.setPos(pos)
-            efxGroundTroll.setPos(pos)
-            if cb.isLast()
-                efxCastingTroll.destr()
-                efxGroundTroll.destr()
-                efxCastingSpiritTotem.destr()
-                let efxFinish = addEffect(Abilities.massTeleportTarget, troll.getPos())
-                ..destr()
 
-function performKnockBack(unit troll)
-    Knockback3.add(troll, 1500., OBJECTIVE_POS.angleTo(troll.getPos()), 80..asAngleDegrees())
     
 function playStompEfx()
     let count = 3
@@ -135,9 +75,6 @@ function spawnBoss()
     BOSS_UNIT.setHP(newHp)
 
 function onEnter()
-    handleWinnerTeam()
-    if bossFightLoserTribe == null
-        handleLoserTeams()
     updateBorderAccessOnBossFight()    
     playStompEfx()
     handleTimeout()
@@ -146,6 +83,12 @@ function onEnter()
     doAfter(3.) -> 
         OBJECTIVE_UNIT.remove()
         spawnBoss()
+    doPeriodically(0.125) (CallbackPeriodic cb) ->
+        for each in pausedTrolls
+            each.setHP(pausedTrolls.get(each))
+        GameStates.bossFight.onExit() (GameState state) ->
+            print("destroyed cb")
+            destroy cb
 
      
 
@@ -174,6 +117,7 @@ function onMammothKilled(unit dyingUnit)
         //spreadUnitsInArch()     
         teleportWinnerTribeBack()
         GameStates.bossFight.exit()
+        GameStates.powerAssimilation.enter()
 
 function teleportBossRewardHandler()
     let instances = BossRewardHandler.instances
@@ -196,7 +140,6 @@ function getRandomVisiblePos(Tribe tribe) returns vec2
 
 function onMammothWin()
     print(("Tribe "+winnerTribe.getName()+" has lost the fight against Mammoth!").color(COLOR_RED))
-    GameStates.bossFight.exit()
     let spawn = winnerTribe.spawn
     for each in winnerTribe.getMembers()
         let troll = each.getTroll()
@@ -204,13 +147,23 @@ function onMammothWin()
             let pos = spawn.randomPoint()
             troll.setPos(pos)
             troll.getOwner().panCameraToTimed(pos, 0.3)
-        else
-            revive(troll, 0.)
-        resetState(troll)
+        //else
+        //    revive(troll, 0.)
+        //resetState(troll)
         BOSS_UNIT.remove()
+    unpauseTrolls()    
     bossFightLoserTribe = winnerTribe
-    GameStates.bossFight.exit()      
+    GameStates.bossFight.exit()
+    GameStates.preBossFight.enter()      
 
+
+function unpauseTrolls()
+    for each in pausedTrolls
+        each.unpause()
+        each.setAnimation("death")
+        each.setInvulnerable(false)
+        each.setHP(each.getMaxHP()*0.2)
+        pausedTrolls.remove(each)
 
 function teleportWinnerTribeBack()
     let spawn = winnerTribe.spawn
@@ -307,10 +260,18 @@ function pauseTroll(unit troll)
     troll.pause()
     troll.setAnimation("death")
     troll.setInvulnerable(true)
+    pausedTrolls.put(troll, troll.getHP())
     for each in troll.getOwner().getTribe().getMembers()
         if not each.getTroll().isPaused()
             return
     onMammothWin()
+
+function onRevive()
+    let revivedUnit = EventData.getRevivingUnit()
+    for each in winnerTribe.getMembers()
+        if each.getTroll() == revivedUnit
+            revivedUnit.setPos(vec2(OBJECTIVE_POS.x+GetRandomInt(-100, 100), OBJECTIVE_POS.y+GetRandomInt(-100, 100)))
+            return
 
 init
     GameStates.bossFight.onEnter() (GameState state) ->
@@ -323,6 +284,9 @@ init
         if GameStates.bossFight.active
             onMammothKilled(GetDyingUnit())
             onTrollDeath(GetDyingUnit())
+
+    EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) -> 
+        onRevive()
 
     DamageEvent.addListener() () ->
         onDamage()

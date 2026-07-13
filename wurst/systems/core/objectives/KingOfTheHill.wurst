@@ -58,7 +58,8 @@ class KingOfTheHill
     function onWin()
         //playEfx()
         winnerTribe = winner
-        GameStates.gameplay.exit()
+        //GameStates.gameplay.exit()
+        GameStates.preBossFight.enter()
         GameStates.objective.exit()
 
     function onExit()

@@ -13,14 +13,12 @@ import Tribe
 import Objective
 import Abilities
 import Respawn
-import LocalObjectIDs
 import SoundUtils
-import GatheringSlot
+import GurubashiArena
 
-public constant PREPARATION_TIME_SECONDS = 90.
+public constant PREPARATION_TIME_SECONDS = 120.
 public constant TELEPORT_ANIMATION_DURATION = 3.
 public constant DUEL_WARNING = new SoundDefinition(Sounds.arrangedTeamInvitation)
-constant DUEL_MEAT_STACK_AMOUNT = 2
 
 public constant DUEL_PREPARE_TEXT = "You have {0} seconds to prepare for the final duel. Each troll will be teleported to the arena and receive {1} stacks of meat for the upcoming fight.".format(PREPARATION_TIME_SECONDS.toString(), DUEL_MEAT_STACK_AMOUNT.toString()).color(COLOR_RED)
 
@@ -42,27 +40,10 @@ function reviveTrolls()
         doAfter(ANIMATION_PERIOD) ->
             troll.resetCooldown()            
 
-function supplyMeat()
-    for tribe in Tribe.getTribes()
-        let spiritTotem = tribe.spiritTotem
-        for each in tribe.getMembers()
-            let troll = each.getTroll()
-            for i = 0 to 5
-                let itm = troll.itemInSlot(i)
-                let itmId = itm.getTypeId()
-                if itmId == ITEM_COOKED_MEAT or (BACKPACK_ITEM_LIST.has(itmId) and itmId!= ITEM_MEDALLION_COURAGE_NSS)
-                    itm.remove()
-                    flashEffect(Abilities.blinkTarget, troll.getPos())
-            let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
-            for i = 0 to DUEL_MEAT_STACK_AMOUNT 
-                //flashEffect(Abilities.blinkCaster, spiritTotem.getPos())
-                nullTimer() -> 
-                    meat.setCharges(10)
-                    nullTimer() ->
-                        troll.addItemHandle(meat)
-                        doAfter(5.) -> 
-                            if not meat.isOwned()
-                                meat.remove()
+
+                        //doAfter(10.) -> 
+                         //   if not meat.isOwned()
+                           //     meat.remove()
 
 
 function onEnter()
@@ -76,7 +57,6 @@ function onEnter()
         playTeleportEfx()
 
 function onExit()
-    supplyMeat()
 
 function playTeleportEfx()
     for tribe in Tribe.getTribes()

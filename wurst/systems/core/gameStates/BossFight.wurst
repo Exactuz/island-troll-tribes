@@ -132,6 +132,7 @@ function spawnBoss()
     BOSS_UNIT.setHP(newHp)
 
 function onEnter()
+    closeGates()
     handleWinnerTeam()
     handleLoserTeams()
     updateBorderAccessOnBossFight()    

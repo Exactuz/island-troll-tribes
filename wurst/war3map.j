@@ -432,8 +432,8 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_Thief_Bush_NW_A_In_Copy = Rect( -8320.0, 2816.0, -8128.0, 3040.0 )
     set gg_rct_Thief_Bush_NW_A_Out_Copy = Rect( -8544.0, 3008.0, -8416.0, 3136.0 )
     set gg_rct_ship_B_1 = Rect( 192.0, -8704.0, 288.0, -8576.0 )
-    set gg_rct_GurubashiArenaEntranceLeft = Rect( -1440.0, 192.0, -1408.0, 224.0 )
-    set gg_rct_GurubashiArenaEntranceRight = Rect( 1408.0, -512.0, 1440.0, -480.0 )
+    set gg_rct_GurubashiArenaEntranceLeft = Rect( -1216.0, 0.0, -1184.0, 32.0 )
+    set gg_rct_GurubashiArenaEntranceRight = Rect( 1248.0, -512.0, 1280.0, -480.0 )
     set gg_rct_spawn_area_4_4 = Rect( -1888.0, -5888.0, 32.0, -1504.0 )
 endfunction
 

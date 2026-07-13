@@ -18,34 +18,63 @@ import Respawn
 import initlater GurubashiArenaBorders
 import PhilosophersStone
 import UnitExtensions
+import GatheringSlot
+import Abilities
 public timer GURUBASHI_ARENA_OPEN_TIMER   
+
+public constant DUEL_MEAT_STACK_AMOUNT = 2
 
 function onEnter()
     let tribes = Tribe.getTribes()
     print("Gurubashi Arena has begun!".color(GENERAL_COLOR))
     createUnit(players[PLAYER_NEUTRAL_PASSIVE], UNIT_BONFIRE, OBJECTIVE_POS)
     updateBorderAccessOnDuel()
-
     for tribe in tribes
-        let index = tribes.indexOf(tribe)
-        vec2 pos
-        if index == 0
-            pos = GURUBASHI_ARENA_ENTRANCE_LEFT.randomPoint()
-        else 
-            pos = GURUBASHI_ARENA_ENTRANCE_RIGHT.randomPoint()
-        for member in tribe.getMembers()
-            let troll = member.getTroll()
-            if not troll.isAlive()
-                revive(troll, 0.)
-            doAfter(ANIMATION_PERIOD) ->
-                resetTroll(troll)
-                troll.pause()
-                troll.setPos(pos)
-                member.panCamToTimed(troll, 0.1)
-                doAfter(1.) -> 
-                    closeGates()
-                doAfter(3.0) -> 
-                    troll.unpause() 
+        teleportToArena(tribe)
+        doAfter(0.5) -> 
+            supplyMeat(tribe)
+    doAfter(1.) -> 
+        closeGates()
+
+
+function teleportToArena(Tribe tribe)
+    let index = Tribe.getTribes().indexOf(tribe)
+    vec2 pos
+    if index == 0
+        pos = GURUBASHI_ARENA_ENTRANCE_LEFT.randomPoint()
+    else 
+        pos = GURUBASHI_ARENA_ENTRANCE_RIGHT.randomPoint()
+    for member in tribe.getMembers()
+        let troll = member.getTroll()
+        if not troll.isAlive()
+            revive(troll, 0.)
+        doAfter(ANIMATION_PERIOD) ->
+            resetTroll(troll)
+            troll.pause()
+            troll.setPos(pos)
+            member.panCamToTimed(troll, 0.1)
+            doAfter(3.0) -> 
+                troll.unpause() 
+
+function supplyMeat(Tribe tribe)
+    for each in tribe.getMembers()
+        let troll = each.getTroll()
+        for i = 0 to 5
+            let itm = troll.itemInSlot(i)
+            let itmId = itm.getTypeId()
+            if itmId == ITEM_COOKED_MEAT or (BACKPACK_ITEM_LIST.has(itmId) and itmId!= ITEM_MEDALLION_COURAGE_NSS)
+                itm.remove()
+                flashEffect(Abilities.blinkTarget, troll.getPos())
+        for i = 1 to DUEL_MEAT_STACK_AMOUNT 
+            let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
+               //flashEffect(Abilities.blinkCaster, spiritTotem.getPos())
+            nullTimer() -> 
+                meat.setCharges(10)
+                nullTimer() ->
+                    troll.addItemHandle(meat)
+
+
+
 
 public function closeGates()
     for each in gurubashiArenaGates

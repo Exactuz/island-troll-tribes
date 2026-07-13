@@ -87,7 +87,7 @@ public class MammothToss
         ENUM_GROUP.clear()
 
     function getLandingPos(unit target) returns vec2
-        let distance = GetRandomReal(0.5, 1.)*TOSS_DISTANCE
+        let distance = GetRandomReal(0.7, 1.)*TOSS_DISTANCE
         let angleAsRad = mammoth.getPos().angleTo(target.getPos()).radians()
         let newPos = OBJECTIVE_POS.polarOffset(GetRandomDirectionDeg().asAngleDegrees(), distance) //mammoth.getPos().add(distance*Cos(angleAsRad), distance*Sin(angleAsRad))
         let validPos = getJumpPos(mammoth.getPos(), newPos, distance)

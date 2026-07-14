@@ -22,7 +22,7 @@ import UnitObjEditing
 @compiletime function createMagicTreeDestructable()
     new DestructableDefinition(DEST_MAGIC_TREE, 'ATtr')
     ..setName("Magic Tree")
-    ..setModel("Models\\PalmTree.mdl")
+    ..setModel("Models\\PalmTree.mdx")
 
 
 
@@ -43,7 +43,7 @@ class MagicTree
     construct(unit treeBuilder)
         pos = treeBuilder.getPos()
         treeBuilder.remove()
-        tree = createDestructable('B001', pos, angle(0), 1.35, 0)
+        tree = createDestructable(DEST_MAGIC_TREE, pos, angle(0), 1.35, 0)
         tree.setOccluderHeight(0.)
         tree.setLife(360.)
         cb = doPeriodically(60) (CallbackPeriodic cb) ->
@@ -74,4 +74,3 @@ init
 
 
    
-

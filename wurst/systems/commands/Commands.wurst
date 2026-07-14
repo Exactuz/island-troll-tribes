@@ -181,6 +181,4 @@ init
                 let tribe = triggerPlayer.getTribe()
                 if tribe != null
                     printTimed("Debug end triggered by " + triggerPlayer.getNameColored(), 5)
-                    registerMatchVictory(tribe)
-                    startMatchMetadataEncoding()
-                    tribe.wasVictorious()
+                    concludeMatch(tribe, "DEBUG_EG")

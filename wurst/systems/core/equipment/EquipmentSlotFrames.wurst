@@ -1,7 +1,7 @@
 package EquipmentSlotFrames
 
 import ClosureTimers
-import TableLayout
+import TableUi
 import Icons
 import ClosureEvents
 import SoundUtils
@@ -292,4 +292,4 @@ init
 
     onKeyPress(OSKEY_6, OSKEY_META.SHIFT) ->
         onHotkey(GetTriggerPlayer(), 6)
-*/    
+*/

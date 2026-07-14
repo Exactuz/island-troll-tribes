@@ -1,0 +1,15 @@
+package CraftTelemetry
+
+import LinkedList
+
+public interface CraftEventListener
+    function onCraftEvent(player whichPlayer, int itemId, string status)
+
+let craftEventListeners = new LinkedList<CraftEventListener>()
+
+public function registerCraftEventListener(CraftEventListener listener)
+    craftEventListeners.add(listener)
+
+public function emitCraftEvent(player whichPlayer, int itemId, string status)
+    for listener in craftEventListeners
+        listener.onCraftEvent(whichPlayer, itemId, status)

@@ -1,10 +1,15 @@
 package MatchMetadataEncoder
 
 // Standard library imports:
+import HashMap
 import HashSet
 import LinkedList
 import RegisterEvents
 import StringBuilder
+import ClosureTimers
+
+// Third-party imports:
+import MMD
 
 // Local imports:
 import Game
@@ -13,6 +18,9 @@ import MatchMetadataConfig
 import PlayerExtensions
 import PlayerScore
 import Tribe
+import EquipmentSlotFrames
+import UnitExtensions
+import CraftTelemetry
 
 constant int MATCH_CHECKSUM_MOD = 1000000007
 
@@ -22,6 +30,63 @@ public interface MetadataEncoderStrategy
 
 // Registry of encoder strategies
 let encoderStrategies = new LinkedList<MetadataEncoderStrategy>()
+
+// Position data structure for player tracking
+public class PositionData
+    int timeSeconds  // Game time in seconds
+    int x            // X coordinate (rounded to integer)
+    int y            // Y coordinate (rounded to integer)
+
+    construct(int timeSeconds, int x, int y)
+        this.timeSeconds = timeSeconds
+        this.x = x
+        this.y = y
+
+// Building event data structure
+public class BuildingEvent
+    int team          // Team ID (tribe ID)
+    int playerSlot    // Owner player slot
+    int timeSeconds   // Game time in seconds
+    int buildingTypeId // Unit type ID of the building
+    string status     // Status: START, FINISH, CANCEL, DESTROY
+    int x
+    int y
+
+    construct(int team, int playerSlot, int timeSeconds, int buildingTypeId, string status, int x, int y)
+        this.team = team
+        this.playerSlot = playerSlot
+        this.timeSeconds = timeSeconds
+        this.buildingTypeId = buildingTypeId
+        this.status = status
+        this.x = x
+        this.y = y
+
+// Craft event data structure
+public class CraftEvent
+    int team          // Team ID (tribe ID)
+    int timeSeconds   // Game time in seconds
+    int itemId        // Item type ID of the crafted item
+    string status     // Status: SUCCESS, FAIL
+
+    construct(int team, int timeSeconds, int itemId, string status)
+        this.team = team
+        this.timeSeconds = timeSeconds
+        this.itemId = itemId
+        this.status = status
+
+public class ShopItemEvent
+    int team
+    int playerSlot
+    int timeSeconds
+    int itemId
+    string status
+
+    construct(int team, int playerSlot, int timeSeconds, int itemId, string status)
+        this.team = team
+        this.playerSlot = playerSlot
+        this.timeSeconds = timeSeconds
+        this.itemId = itemId
+        this.status = status
 
 public class MatchPlayerMetadata
     int slotIndex
@@ -42,6 +107,8 @@ public class MatchPlayerMetadata
     int killsWolf = 0
     int killsBear = 0
     int killsPanther = 0
+    LinkedList<int> items = new LinkedList<int>()
+    LinkedList<int> itemCharges = new LinkedList<int>()
 
     construct(int slotIndex, string name, string raceCode, string trollClass, int team, string result)
         this.slotIndex = slotIndex
@@ -74,6 +141,8 @@ public class MatchMetadata
     int durationSeconds = 0
     int playerCount = 0
     int checksum = 0
+    string outcome = "UNKNOWN"
+    string reason = ""
     LinkedList<MatchPlayerMetadata> players
 
     construct()
@@ -83,22 +152,43 @@ public class MatchMetadata
 let playersWhoLeft = new HashSet<player>()
 let winningTribes = new HashSet<Tribe>()
 bool encoderStarted = false
+bool matchConcluded = false
 string currentMatchId = ""
 int matchStartTimeSeconds = 0
+string matchOutcome = "UNKNOWN"
+string matchReason = ""
+
+// Position tracking state
+let positionData = new IterableMap<int, LinkedList<PositionData>>()
+var positionTrackingActive = false
+constant real POSITION_TRACKING_INTERVAL = 10.
+constant int POSITION_MOVEMENT_THRESHOLD = 256
+constant int POSITION_HEARTBEAT_SECONDS = 30
+constant int POSITION_SAMPLE_LIMIT = 360
+
+// Building event tracking state
+let buildingEvents = new LinkedList<BuildingEvent>()
+
+// Craft event tracking state
+let craftEvents = new LinkedList<CraftEvent>()
+
+// Shop transactions only include item purchases and pawn sales.
+let shopItemEvents = new LinkedList<ShopItemEvent>()
 
 /** Register a new encoder strategy. Call this during init. */
 public function registerEncoderStrategy(MetadataEncoderStrategy strategy)
     encoderStrategies.add(strategy)
 
-public function registerMatchVictory(Tribe tribe)
+function registerMatchVictory(Tribe tribe)
     if tribe != null
         winningTribes.add(tribe)
 
-public function startMatchMetadataEncoding()
+function startMatchMetadataEncoding()
     if encoderStarted
         return
 
-    encoderStarted = true
+    // Encode position data first (before main metadata)
+    encodePositionDataToMMD()
 
     let metadata = buildMatchMetadata()
     let payload = serializeMatchMetadata(metadata)
@@ -109,6 +199,30 @@ public function startMatchMetadataEncoding()
     // Call all registered encoder strategies
     for strategy in encoderStrategies
         strategy.encode(payload)
+
+    // Only mark as started after successful encoding
+    encoderStarted = true
+
+/** Record terminal match metadata once without changing the game-state flow. */
+public function concludeMatch(Tribe winner, string reason) returns bool
+    if matchConcluded or not GameStates.gameplay.active
+        return false
+
+    matchConcluded = true
+    if winner != null
+        registerMatchVictory(winner)
+        matchOutcome = "WIN"
+    else
+        matchOutcome = "ABORT"
+    matchReason = sanitizeValue(reason)
+
+    // Emit before changing game states so every terminal path records replay data.
+    startMatchMetadataEncoding()
+
+    if winner != null
+        winner.wasVictorious()
+
+    return true
 
 function buildMatchMetadata() returns MatchMetadata
     let meta = new MatchMetadata()
@@ -121,10 +235,12 @@ function buildMatchMetadata() returns MatchMetadata
     meta.durationSeconds = meta.endTimeGame - meta.startTimeGame
     if meta.durationSeconds < 0
         meta.durationSeconds = 0
+    meta.outcome = matchOutcome
+    meta.reason = matchReason
 
     for tribe in Tribe.getTribes()
         for member in tribe.getMembers()
-            if member != null and not member.isObserver()
+            if member != null
                 let entry = new MatchPlayerMetadata(
                     member.getId(),
                     sanitizeValue(member.getName()),
@@ -133,6 +249,34 @@ function buildMatchMetadata() returns MatchMetadata
                     tribe.getId(),
                     determineResult(member, tribe)
                 )
+                // Load items from standard inventory (slots 0-5)
+                let troll = member.getTroll()
+                for i = 0 to 5
+                    let itemHandle = troll != null ? troll.itemInSlot(i) : null
+                    if itemHandle != null
+                        entry.items.add(itemHandle.getTypeId())
+                        entry.itemCharges.add(itemHandle.getCharges())
+                    else
+                        entry.items.add(0)
+                        entry.itemCharges.add(0)
+
+                // Load items from equipment slots
+                let equipmentSlots = member.getEquipmentSlots()
+                if equipmentSlots != null
+                    for i = 0 to INVENTORY_BUTTON_AMOUNT - 1
+                        let equippedItem = equipmentSlots.currentItems.get(i)
+                        if equippedItem != null
+                            entry.items.add(equippedItem.getTypeId())
+                            entry.itemCharges.add(equippedItem.getCharges())
+                        else
+                            entry.items.add(0)
+                            entry.itemCharges.add(0)
+                else
+                    // Player doesn't have equipment slots initialized, add empty slots
+                    for i = 0 to INVENTORY_BUTTON_AMOUNT - 1
+                        entry.items.add(0)
+                        entry.itemCharges.add(0)
+
                 // Load player stats if available
                 if playerScores.has(member)
                     entry.loadStats(playerScores.get(member))
@@ -153,6 +297,8 @@ public function serializeMatchMetadata(MatchMetadata meta) returns string
     payload += "endTime:" + meta.endTimeGame.toString() + "\n"
     payload += "duration:" + meta.durationSeconds.toString() + "\n"
     payload += "playerCount:" + meta.playerCount.toString() + "\n"
+    payload += "outcome:" + meta.outcome + "\n"
+    payload += "reason:" + meta.reason + "\n"
 
     for playerMeta in meta.players
         // Format v3: player:slot|name|race|class|team|result|dmg|selfHeal|allyHeal|gold|meat|elk|hawk|snake|wolf|bear|panther
@@ -175,6 +321,41 @@ public function serializeMatchMetadata(MatchMetadata meta) returns string
             playerMeta.killsBear.toString(),
             playerMeta.killsPanther.toString()
         )
+
+        // Append items with charges (format: itemId:charges or itemId if charges <= 1)
+        payload = payload.substring(0, payload.length() - 1) + "|"
+        let itemIter = playerMeta.items.iterator()
+        let chargeIter = playerMeta.itemCharges.iterator()
+        var isFirstItem = true
+        while itemIter.hasNext()
+            let itemId = itemIter.next()
+            let charges = chargeIter.next()
+
+            if not isFirstItem
+                payload += ","
+
+            // Encode as itemId:charges if charges > 1, otherwise just itemId (backward compatible)
+            if charges > 1
+                payload += itemId.toString() + ":" + charges.toString()
+            else
+                payload += itemId.toString()
+
+            isFirstItem = false
+        itemIter.close()
+        chargeIter.close()
+        payload += "\n"
+
+    // Schema v9: team|owner slot|time|type|status|x|y
+    for buildingEvent in buildingEvents
+        payload += "build:" + buildingEvent.team.toString() + "|" + buildingEvent.playerSlot.toString() + "|" + buildingEvent.timeSeconds.toString() + "|" + buildingEvent.buildingTypeId.toString() + "|" + buildingEvent.status + "|" + buildingEvent.x.toString() + "|" + buildingEvent.y.toString() + "\n"
+
+    // Append craft events (schema version 8+)
+    for craftEvent in craftEvents
+        payload += "craft:" + craftEvent.team.toString() + "|" + craftEvent.timeSeconds.toString() + "|" + craftEvent.itemId.toString() + "|" + craftEvent.status + "\n"
+
+    // Schema v9: team|player slot|time|item type|BUY_ITEM or SELL_ITEM
+    for shopItemEvent in shopItemEvents
+        payload += "shop:" + shopItemEvent.team.toString() + "|" + shopItemEvent.playerSlot.toString() + "|" + shopItemEvent.timeSeconds.toString() + "|" + shopItemEvent.itemId.toString() + "|" + shopItemEvent.status + "\n"
 
     meta.checksum = computeChecksum(payload)
     payload += "checksum:" + meta.checksum.toString() + "\n"
@@ -255,12 +436,273 @@ function generateMatchId() returns string
     let randomPart = GetRandomInt(100000, 999999)
     return elapsedMs.toString() + randomPart.toString()
 
+/** Returns whether a position should be retained by the bounded position stream. */
+public function shouldStorePosition(PositionData last, int timeSeconds, int x, int y) returns bool
+    if last == null
+        return true
+
+    if timeSeconds - last.timeSeconds >= POSITION_HEARTBEAT_SECONDS
+        return true
+
+    let deltaX = x - last.x
+    let deltaY = y - last.y
+    return deltaX * deltaX + deltaY * deltaY >= POSITION_MOVEMENT_THRESHOLD * POSITION_MOVEMENT_THRESHOLD
+
+/** Start tracking player positions */
+function startPositionTracking()
+    if positionTrackingActive
+        return
+
+    positionTrackingActive = true
+
+    // Check every 10 seconds. Samples are retained only on movement or heartbeat.
+    doPeriodically(POSITION_TRACKING_INTERVAL) (CallbackPeriodic cb) ->
+        if GameStates.gameplay.active
+            let currentTime = GAME_TIMER.getElapsed().toInt()
+
+            // Track positions for all players in tribes
+            for tribe in Tribe.getTribes()
+                for member in tribe.getMembers()
+                    if member != null
+                        let troll = member.getTroll()
+                        if troll != null and troll.isAlive()
+                            let pos = troll.getPos()
+                            let slotIndex = member.getId()
+
+                            // Get or create the bounded position list for this player.
+                            if not positionData.has(slotIndex)
+                                positionData.put(slotIndex, new LinkedList<PositionData>())
+
+                            let positions = positionData.get(slotIndex)
+                            let x = pos.x.toInt()
+                            let y = pos.y.toInt()
+                            let last = positions.size() > 0 ? positions.getLast() : null
+                            if positions.size() < POSITION_SAMPLE_LIMIT and shouldStorePosition(last, currentTime, x, y)
+                                positions.add(new PositionData(currentTime, x, y))
+
+/** Encode position data to MMD */
+function encodePositionDataToMMD()
+    if positionData.size() == 0
+        return
+
+    // Encode each player's position data by iterating over all tribes and players
+    for tribe in Tribe.getTribes()
+        for member in tribe.getMembers()
+            if member != null
+                let slotIndex = member.getId()
+                if positionData.has(slotIndex)
+                    let positions = positionData.get(slotIndex)
+                    if positions.size() > 0
+                        // Serialize positions: "time|x|y,time|x|y,..."
+                        var positionString = ""
+                        var isFirst = true
+                        for pos in positions
+                            if not isFirst
+                                positionString += ","
+                            positionString += pos.timeSeconds.toString() + "|" + pos.x.toString() + "|" + pos.y.toString()
+                            isFirst = false
+
+                        // Chunk the position data (MMD has message size limits)
+                        let chunks = chunkPositionData(positionString, 200)
+                        var chunkIndex = 0
+                        for chunk in chunks
+                            MMD.logCustom("itt_pos_p" + slotIndex.toString() + "_" + chunkIndex.toString(), chunk)
+                            chunkIndex++
+
+                        // The manifest lets replay consumers validate each independent stream.
+                        let manifest = currentMatchId + "|" + MATCH_METADATA_SCHEMA_VERSION.toString() + "|" + positions.size().toString() + "|" + chunkIndex.toString() + "|" + computeChecksum(positionString).toString()
+                        MMD.logCustom("itt_pos_p" + slotIndex.toString() + "_manifest", manifest)
+
+                        destroy chunks
+
+/** Record a building event */
+function recordBuildingEvent(unit structure, string status)
+    if not GameStates.gameplay.active or structure == null
+        return
+
+    // Only track structures, not units
+    if not structure.isStructure()
+        return
+
+    let owner = structure.getOwner()
+    if owner == null
+        return
+
+    // Skip neutral/gaia constructions
+    if owner == players[PLAYER_NEUTRAL_PASSIVE] or owner == players[PLAYER_NEUTRAL_AGGRESSIVE]
+        return
+
+    let tribe = Tribe.ofPlayer(owner)
+    if tribe == null
+        return
+
+    let teamId = tribe.getId()
+    let timeSeconds = GAME_TIMER.getElapsed().toInt()
+    let buildingTypeId = structure.getTypeId()
+    let pos = structure.getPos()
+
+    buildingEvents.add(new BuildingEvent(teamId, owner.getId(), timeSeconds, buildingTypeId, status, pos.x.toInt(), pos.y.toInt()))
+
+/** Record a craft event */
+public function logCraftEvent(player whichPlayer, int itemId, string status)
+    if not GameStates.gameplay.active or whichPlayer == null
+        return
+
+    // Skip neutral/gaia players
+    if whichPlayer == players[PLAYER_NEUTRAL_PASSIVE] or whichPlayer == players[PLAYER_NEUTRAL_AGGRESSIVE]
+        return
+
+    let tribe = Tribe.ofPlayer(whichPlayer)
+    if tribe == null
+        return
+
+    let teamId = tribe.getId()
+    let timeSeconds = GAME_TIMER.getElapsed().toInt()
+
+    craftEvents.add(new CraftEvent(teamId, timeSeconds, itemId, status))
+
+function recordShopItemEvent(unit buyer, item soldItem, string status)
+    if buyer == null or soldItem == null
+        return
+
+    logShopItemEvent(buyer.getOwner(), soldItem.getTypeId(), status)
+
+/** Record an item transaction completed by a custom shop implementation. */
+public function logShopItemEvent(player owner, int itemId, string status)
+    if not GameStates.gameplay.active or owner == null or itemId == 0
+        return
+
+    if owner == null or owner == players[PLAYER_NEUTRAL_PASSIVE] or owner == players[PLAYER_NEUTRAL_AGGRESSIVE]
+        return
+
+    let tribe = Tribe.ofPlayer(owner)
+    if tribe != null
+        shopItemEvents.add(new ShopItemEvent(tribe.getId(), owner.getId(), GAME_TIMER.getElapsed().toInt(), itemId, status))
+
+function clearPositionData()
+    for slotIndex in positionData
+        let positions = positionData.get(slotIndex)
+        for position in positions
+            destroy position
+        destroy positions
+    positionData.flush()
+
+function clearMatchEvents()
+    for buildingEvent in buildingEvents
+        destroy buildingEvent
+    buildingEvents.clear()
+
+    for craftEvent in craftEvents
+        destroy craftEvent
+    craftEvents.clear()
+
+    for shopItemEvent in shopItemEvents
+        destroy shopItemEvent
+    shopItemEvents.clear()
+
+function abortIfAllPlayersLeft()
+    if not GameStates.gameplay.active
+        return
+
+    var hasPlayers = false
+    var allPlayersLeft = true
+    for tribe in Tribe.getTribes()
+        for member in tribe.getMembers()
+            if member != null
+                hasPlayers = true
+                if not playersWhoLeft.has(member) and member.getSlotState() != PLAYER_SLOT_STATE_LEFT
+                    allPlayersLeft = false
+
+    if hasPlayers and allPlayersLeft
+        concludeMatch(null, "ALL_PLAYERS_LEFT")
+
+/** Craft telemetry listener implementation */
+class CraftEventLogger implements CraftEventListener
+    override function onCraftEvent(player whichPlayer, int itemId, string status)
+        logCraftEvent(whichPlayer, itemId, status)
+
+/** Chunk position data string into smaller pieces */
+public function chunkPositionData(string data, int maxSize) returns LinkedList<string>
+    let chunks = new LinkedList<string>()
+    var position = 0
+    let dataLength = data.length()
+
+    // Try to split at comma boundaries to keep position entries intact
+    while position < dataLength
+        let remaining = dataLength - position
+        if remaining <= maxSize
+            // Last chunk or fits in one chunk
+            chunks.add(data.substring(position, dataLength))
+            break
+
+        // Find the last comma before maxSize to keep entries intact
+        var splitPos = position + maxSize
+        while splitPos > position
+            if data.charAt(splitPos) == ","
+                splitPos++
+                break
+            splitPos--
+
+        // If no comma found, just split at maxSize (might break an entry, but that's okay)
+        if splitPos == position
+            splitPos = position + maxSize
+
+        chunks.add(data.substring(position, splitPos))
+        position = splitPos
+
+    return chunks
+
 init
+    registerCraftEventListener(new CraftEventLogger())
+
     registerPlayerEvent(EVENT_PLAYER_LEAVE) ->
-        let leaver = GetTriggerPlayer()
-        if leaver != null
+        let leaver = EventData.getTriggerPlayer()
+        if GameStates.gameplay.active and leaver != null
             playersWhoLeft.add(leaver)
+            abortIfAllPlayersLeft()
+
+    // Register building event listeners
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_START) ->
+        recordBuildingEvent(EventData.getTriggerUnit(), "START")
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_FINISH) ->
+        recordBuildingEvent(EventData.getConstructedStructure(), "FINISH")
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_CONSTRUCT_CANCEL) ->
+        recordBuildingEvent(EventData.getCancelledStructure(), "CANCEL")
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH) ->
+        let dyingUnit = EventData.getDyingUnit()
+        if dyingUnit != null and dyingUnit.isStructure()
+            recordBuildingEvent(dyingUnit, "DESTROY")
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SELL_ITEM) ->
+        recordShopItemEvent(EventData.getBuyingUnit(), EventData.getSoldItem(), "BUY_ITEM")
+
+    registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PAWN_ITEM) ->
+        recordShopItemEvent(EventData.getTriggerUnit(), EventData.getManipulatedItem(), "SELL_ITEM")
 
     GameStates.gameplay.onEnter() state ->
+        playersWhoLeft.clear()
+        winningTribes.clear()
+        clearMatchEvents()
+        clearPositionData()
+        encoderStarted = false
+        matchConcluded = false
+        matchOutcome = "UNKNOWN"
+        matchReason = ""
         matchStartTimeSeconds = GAME_TIMER.getElapsed().toInt()
         currentMatchId = generateMatchId()
+        startPositionTracking()
+
+    GameStates.postgame.onEnter() state ->
+        if matchConcluded
+            startMatchMetadataEncoding()
+
+@Test public function positionSamplesRespectMovementAndHeartbeatThresholds()
+    let initial = new PositionData(10, 100, 100)
+    true.assertEquals(shouldStorePosition(null, 10, 100, 100))
+    false.assertEquals(shouldStorePosition(initial, 20, 200, 100))
+    true.assertEquals(shouldStorePosition(initial, 20, 356, 100))
+    true.assertEquals(shouldStorePosition(initial, 40, 100, 100))
+    destroy initial

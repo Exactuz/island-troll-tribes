@@ -150,3 +150,4 @@ init
             let OBJECTIVE_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_OBJECTIVE, OBJECTIVE_POS, angle(PI))
             nullTimer() -> 
                 new KingOfTheHill(OBJECTIVE_UNIT)
+

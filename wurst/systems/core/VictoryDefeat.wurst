@@ -16,7 +16,7 @@ function isGurubashiArena() returns bool
 
 init
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH) ->
-        if not gameOver and GetDyingUnit().isTroll() and isGurubashiArena()
+        if not gameOver and EventData.getDyingUnit().isTroll() and isGurubashiArena()
             Tribe.getTribes()
                 .lodashFilter(Tribe.isNotDefeated)
                 .lodashFilter(Tribe.hasNoAliveMembers)
@@ -24,10 +24,8 @@ init
 
             let aliveTribes = Tribe.getTribes().lodashFilter(Tribe.isNotDefeated)
             if aliveTribes.size() == 1
-                gameOver = true
                 let winner = aliveTribes.getFirst()
-                registerMatchVictory(winner)
-                startMatchMetadataEncoding()
-                winner.wasVictorious()
+                if concludeMatch(winner, "ARENA_VICTORY")
+                    gameOver = true
 
             destroy aliveTribes

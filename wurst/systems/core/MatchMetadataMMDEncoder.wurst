@@ -14,12 +14,14 @@ import MMD
 // Local imports:
 import MatchMetadataEncoder
 import MatchMetadataConfig
+import Tribe
 
 class MMDEncoderStrategy implements MetadataEncoderStrategy
     override function encode(string payload)
         startMMDEncoding(payload)
 
 function startMMDEncoding(string payload)
+    // Position data encoding is handled in MatchMetadataEncoder.startMatchMetadataEncoding()
     // Log map info using MMD custom data
     MMD.logCustom("itt_version", MAP_VERSION_STRING)
     MMD.logCustom("itt_schema", MATCH_METADATA_SCHEMA_VERSION.toString())

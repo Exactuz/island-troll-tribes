@@ -13,6 +13,7 @@ import GameState
 import PlayerExtensions
 import LocalObjectIDs2
 import ObjectiveNotifications
+import MatchMetadataEncoder
 
 public constant POINTS_AOE_MIN = 1000.
 public constant POINTS_AOE_MAX = 250.
@@ -58,8 +59,7 @@ class KingOfTheHill
     function onWin()
         //playEfx()
         winnerTribe = winner
-        GameStates.gameplay.exit()
-        GameStates.objective.exit()
+        concludeMatch(winner, "KING_OF_THE_HILL")
 
     function onExit()
         Log.debug(winner.getName()+" won the King of the Hill challenge")
@@ -150,4 +150,3 @@ init
             let OBJECTIVE_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_OBJECTIVE, OBJECTIVE_POS, angle(PI))
             nullTimer() -> 
                 new KingOfTheHill(OBJECTIVE_UNIT)
-

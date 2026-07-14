@@ -182,15 +182,3 @@ init
                 if tribe != null
                     printTimed("Debug end triggered by " + triggerPlayer.getNameColored(), 5)
                     concludeMatch(tribe, "DEBUG_EG")
-
-        registerCommandAll("eg1") (triggerPlayer, args) ->
-            if triggerPlayer == players[0] and GameStates.gameplay.active
-                let tribe = triggerPlayer.getTribe()
-                if tribe != null
-                    printTimed("Debug victory end triggered by " + triggerPlayer.getNameColored(), 5)
-                    concludeMatch(tribe, "DEBUG_EG1_WIN")
-
-        registerCommandAll("eg2") (triggerPlayer, args) ->
-            if triggerPlayer == players[0] and GameStates.gameplay.active
-                printTimed("Debug abort end triggered by " + triggerPlayer.getNameColored(), 5)
-                concludeMatch(null, "DEBUG_EG2_ABORT")

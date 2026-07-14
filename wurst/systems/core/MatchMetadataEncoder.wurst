@@ -203,7 +203,7 @@ function startMatchMetadataEncoding()
     // Only mark as started after successful encoding
     encoderStarted = true
 
-/** Conclude the active gameplay match once and emit metadata through postgame. */
+/** Record terminal match metadata once without changing the game-state flow. */
 public function concludeMatch(Tribe winner, string reason) returns bool
     if matchConcluded or not GameStates.gameplay.active
         return false
@@ -219,14 +219,6 @@ public function concludeMatch(Tribe winner, string reason) returns bool
     // Emit before changing game states so every terminal path records replay data.
     startMatchMetadataEncoding()
 
-    if GameStates.gameplay.active
-        GameStates.gameplay.exit()
-    if GameStates.objective.active
-        GameStates.objective.exit()
-    if GameStates.gurubashiArena.active
-        GameStates.gurubashiArena.exit()
-    if not GameStates.postgame.active
-        GameStates.postgame.enter()
     if winner != null
         winner.wasVictorious()
 

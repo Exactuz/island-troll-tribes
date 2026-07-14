@@ -12,7 +12,6 @@ import GameState
 import Objective
 import LocalObjectIDs2
 import ObjectiveNotifications
-import MatchMetadataEncoder
 
 constant SCORE_DISPLAY_RANGE = 400
 constant SCORE_UPDATE_FREAQUENCY = 0.2
@@ -64,7 +63,8 @@ class TugOfWar
 
     function onDeath()
         winnerTribe = winningTeam
-        concludeMatch(winningTeam, "TUG_OF_WAR")
+        GameStates.gameplay.exit()
+        GameStates.objective.exit()
 
     function initializeObjective()
         let hp = OBJECTIVE_HP_BASE+OBJECTIVE_HP_PER_PLAYER*teamSize

@@ -13,7 +13,6 @@ import GameState
 import PlayerExtensions
 import LocalObjectIDs2
 import ObjectiveNotifications
-import MatchMetadataEncoder
 
 public constant POINTS_AOE_MIN = 1000.
 public constant POINTS_AOE_MAX = 250.
@@ -59,7 +58,8 @@ class KingOfTheHill
     function onWin()
         //playEfx()
         winnerTribe = winner
-        concludeMatch(winner, "KING_OF_THE_HILL")
+        GameStates.gameplay.exit()
+        GameStates.objective.exit()
 
     function onExit()
         Log.debug(winner.getName()+" won the King of the Hill challenge")

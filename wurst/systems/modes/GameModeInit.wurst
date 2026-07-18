@@ -321,11 +321,11 @@ init/*
     new GameMode("dev", "d", "Testing", "Development mode (-qp, -tm, -st)", false) (mode, args) ->
         GameMode.find("qp").enable()
         GameMode.find("tm").enable()
-        GameMode.find("st").enable()
-        GameMode.find("obj").enable(asList("tow"))
-        GameMode.find("gp").enable(asList("0"))
-        GameMode.find("ga").enable(asList("3"))
+        //GameMode.find("obj").enable(asList(" tow"))
+        //GameMode.find("gp").enable(asList(" 0"))
+        //GameMode.find("ga").enable(asList(" 3"))
         GameMode.find("debug").enable()
+        GameMode.find("st").enable()
 
     new GameMode("start-level", "sl", "Fun", "Set Starting level, eg -sl 6", true) (mode, args) ->
         if args.size() < 2

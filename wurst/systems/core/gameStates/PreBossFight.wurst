@@ -35,6 +35,7 @@ public constant TELEPORT_ANIMATION_DURATION = 3.
 
 
 function onEnter()
+    print("entered preBossFight")
     if bossFightLoserTribe == null
         handleObjectiveWinnerTeam()
         handleLoserTeams()
@@ -42,6 +43,7 @@ function onEnter()
         GameStates.bossFight.enter()
         return
     else 
+        print("respawning objective")
         respawnObjective()
 
 
@@ -144,6 +146,7 @@ public function resetState(unit troll)
         troll.unpause()
 
 function onExit()
+    print("exited prebossfight")
 
 init
     GameStates.preBossFight.onEnter() (GameState state) ->

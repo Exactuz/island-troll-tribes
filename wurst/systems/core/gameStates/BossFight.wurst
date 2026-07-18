@@ -24,6 +24,7 @@ import UnitExtensions
 import DamageEvent
 import initlater PreBossFight
 import HashMap
+import DamageListeners
 
 IterableMap<unit, real> pausedTrolls = new IterableMap<unit, real>()
 public constant PAUSE_TIME = 3.
@@ -83,12 +84,15 @@ function onEnter()
     doAfter(3.) -> 
         OBJECTIVE_UNIT.remove()
         spawnBoss()
-    doPeriodically(0.125) (CallbackPeriodic cb) ->
+    let cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
+        if cb == null
+            return
         for each in pausedTrolls
             each.setHP(pausedTrolls.get(each))
-        GameStates.bossFight.onExit() (GameState state) ->
-            print("destroyed cb")
-            destroy cb
+    GameStates.bossFight.onExit() (GameState state) ->
+        print("destroyed cb")
+        destroy cb
+    
 
      
 
@@ -254,9 +258,11 @@ function onDamage()
     let damage = DamageEvent.getAmount()
     if damage < victim.getHP()
         return
+    DamageEvent.setAmount(0)
     pauseTroll(victim)
 
 function pauseTroll(unit troll)
+    print("pausing "+GetObjectName(troll.getTypeId()))
     troll.pause()
     troll.setAnimation("death")
     troll.setInvulnerable(true)
@@ -288,5 +294,5 @@ init
     EventListener.add(EVENT_PLAYER_HERO_REVIVE_FINISH) -> 
         onRevive()
 
-    DamageEvent.addListener() () ->
+    DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
         onDamage()

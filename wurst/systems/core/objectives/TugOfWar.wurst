@@ -63,7 +63,7 @@ class TugOfWar
 
     function onDeath()
         winnerTribe = winningTeam
-        GameStates.gameplay.exit()
+        GameStates.preBossFight.enter()
         GameStates.objective.exit()
 
     function initializeObjective()

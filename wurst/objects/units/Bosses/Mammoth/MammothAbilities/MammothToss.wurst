@@ -141,7 +141,7 @@ public class TossInstance extends JumpInstance
 
     function onFailure()
         doAfter(ANIMATION_PERIOD) -> 
-            InstantDummyCaster.castTarget(mammoth.getOwner(), ABILITY_MAMMOTH_TOSS_DAZE, 0, OrderIds.shadowstrike, u, u.getPos())
+            //InstantDummyCaster.castTarget(mammoth.getOwner(), ABILITY_MAMMOTH_TOSS_DAZE, 0, OrderIds.shadowstrike, u, u.getPos())
 
     override function onFinish()
         onLanding()

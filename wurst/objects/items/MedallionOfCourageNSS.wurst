@@ -31,7 +31,7 @@ let DESCRIPTION = "" +
     "Hunter, Gatherer, Scout, and Thief subclasses as well as Druid can use this to upgrade directly into the final form.|n".color(COLOR_GOLD) +
     "Other subclasses can use this to upgrade to level 8.".color(COLOR_GOLD)
 
-let CLASSES_ALLOWED = asList(UNIT_WARRIOR, UNIT_TRACKER, UNIT_RADAR_GATHERER, UNIT_HERB_MASTER, UNIT_TELETHIEF, UNIT_ROGUE, UNIT_HAWK, UNIT_DRUID)
+let CLASSES_ALLOWED = asList(UNIT_WARRIOR, UNIT_TRACKER, UNIT_RADAR_GATHERER, UNIT_HERB_MASTER, UNIT_ALCHEMIST, UNIT_TELETHIEF, UNIT_ROGUE, UNIT_HAWK, UNIT_DRUID)
 
 IterableMap<int, int> trollUpgradeMap = new IterableMap<int, int>
     ..put(UNIT_WARRIOR, UNIT_JUGGERNAUT)

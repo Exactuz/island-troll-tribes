@@ -679,8 +679,9 @@ init
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_SELL_ITEM) ->
         recordShopItemEvent(EventData.getBuyingUnit(), EventData.getSoldItem(), "BUY_ITEM")
 
+    // PAWN_ITEM uses GetSoldItem (same as SELL_ITEM), not GetManipulatedItem.
     registerPlayerUnitEvent(EVENT_PLAYER_UNIT_PAWN_ITEM) ->
-        recordShopItemEvent(EventData.getTriggerUnit(), EventData.getManipulatedItem(), "SELL_ITEM")
+        recordShopItemEvent(EventData.getTriggerUnit(), EventData.getSoldItem(), "SELL_ITEM")
 
     GameStates.gameplay.onEnter() state ->
         playersWhoLeft.clear()

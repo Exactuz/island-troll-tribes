@@ -60,7 +60,6 @@ public constant OBJECTIVE_ABILITIES_LIST = asList(
 )
 
 public constant OBJECTIVE_CHALLENGE_ABILITIES_LIST = asList(
-    ABILITY_CHALLENGE_MAMMOTH,
     AbilityIds.sellUnitDynamic,
     LocalAbilityIds.selectUnit
 )

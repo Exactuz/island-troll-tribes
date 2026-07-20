@@ -60,6 +60,7 @@ function onChallenge()
     let p = soldUnit.getOwner()
     if not assertMaxDistance(p)
         soldUnit.remove()
+        sellingUnit.addUnitToStock(soldUnit.getTypeId(), 1, 1)
         return
     winnerTribe = p.getTribe()
     handleChallengerTeam()
@@ -156,3 +157,5 @@ init
     EventListener.add(EVENT_PLAYER_UNIT_SELL)->
         onChallenge()
     
+function int.addUnitToStock()
+    skip

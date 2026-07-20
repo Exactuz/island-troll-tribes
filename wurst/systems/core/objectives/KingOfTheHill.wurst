@@ -17,7 +17,7 @@ import ObjectiveNotifications
 public constant POINTS_AOE_MIN = 1000.
 public constant POINTS_AOE_MAX = 250.
 constant POINTS_MIN_MULTIPLIER = 0.25
-constant POINTS_MAXIMUM = 100.
+constant POINTS_MAXIMUM = 5.
 constant SCORE_DISPLAY_RANGE = 400
 constant SCORE_UPDATE_FREAQUENCY = 1.
 constant POINTS_PER_SECOND_PER_TEAM = 1
@@ -25,13 +25,12 @@ constant EFX = Abilities.warStompCaster
 constant NOTIFICATION_TEXT = " is claiming to be the king of the hill! Contest their claim quickly or you will lose opportunity to challenge the Mammoth!"
 
 class KingOfTheHill
-    real array[12] tribePoints
-    texttag array[12] textTags
+    real array[2] tribePoints
+    texttag array[2] textTags
     int tribeCount
     unit kingOfTheHillUnit
     Tribe winner = null
     CallbackPeriodic cb 
-    CallbackPeriodic freezeAnimation
     LinkedList<Tribe> tribes
 
     construct(unit kingOfTheHillUnit)
@@ -64,16 +63,14 @@ class KingOfTheHill
 
     function onExit()
         Log.debug(winner.getName()+" won the King of the Hill challenge")
-        doAfter(3.) -> 
-            destroy freezeAnimation   
         int index = 0
         for each in tribes
             textTags[index].destr()
             index+=1
 
     function freezeAnimation()
-        freezeAnimation = doPeriodically(ANIMATION_PERIOD*2) (CallbackPeriodic cb) ->
-            kingOfTheHillUnit.setAnimation("Stand")
+        kingOfTheHillUnit.setAnimation("Stand")
+        kingOfTheHillUnit.setTimeScale(0)
 
     function initializeTextTags()
         let offset = PI2/tribeCount
@@ -94,20 +91,28 @@ class KingOfTheHill
 
     function enumerateTrolls()
         int index = 0
+        real scoreDifference = 0
         if index > tribeCount
             return
         for tribe in tribes
-            real scoreDifference = 0
             let pointsPerTick = POINTS_PER_SECOND_PER_TEAM*SCORE_UPDATE_FREAQUENCY/tribe.getMembers().size()         
             for p in tribe.getMembers()
                 let troll = p.getTroll()
                 if troll.isAlive() and troll.getPos().distanceTo(OBJECTIVE_POS)< POINTS_AOE_MIN
-                    scoreDifference += addPoints(p.getTroll(), index, pointsPerTick)
+                    if index == 0
+                        scoreDifference += addPoints(p.getTroll(), index, pointsPerTick)
+                    else 
+                        scoreDifference -= addPoints(p.getTroll(), index, pointsPerTick)
             index+=1
             for notifiedTribe in tribes 
                 if notifiedTribe != tribe and scoreDifference != 0
                     let text = tribe.getName() + NOTIFICATION_TEXT
                     displayObjectiveNotification(text, notifiedTribe)
+
+        if scoreDifference > 0
+            tribePoints[0] += scoreDifference
+        else 
+            tribePoints[1] -= scoreDifference
 
     function addPoints(unit troll, int index, real pointsPerTick) returns real
         let distance = troll.getPos().distanceTo(kingOfTheHillUnit.getPos())
@@ -115,11 +120,13 @@ class KingOfTheHill
             return 0
         let distanceMultiplier =  1 - max((distance-POINTS_AOE_MAX), 0) / (POINTS_AOE_MIN-POINTS_AOE_MAX)
         let totalPointsMultiplier = POINTS_MIN_MULTIPLIER+(1-POINTS_MIN_MULTIPLIER)*distanceMultiplier
+        return totalPointsMultiplier*pointsPerTick
+        /*
         let currentPoints = tribePoints[index]
         let newPoints = currentPoints+totalPointsMultiplier*pointsPerTick
         tribePoints[index] = newPoints
         return newPoints-currentPoints
-
+        */
     function updateScores()
         int index = 0
         int winners = 0

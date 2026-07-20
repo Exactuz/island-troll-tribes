@@ -160,7 +160,7 @@ public let STONE_AXE_RECIPE   = "a Stone Axe. Increase damage by 6, allows tree 
 public let IRON_AXE_RECIPE    = "an Iron Axe. Increase damage by 9, allows tree to be cut :\n\n1x "                                    +STICK+"/"+BONE+" + 2x "+IRON
 public let STEEL_AXE_RECIPE   = "a Steel Axe. Increase damage by 12, allows tree to be cut :\n\n1x "                                   +STICK+"/"+BONE+" + 2x "+STEEL
 public let MAGE_MASHER_RECIPE = "a Mage Masher. " + TT_MM + "\n\n1x "+STICK+"/"+BONE+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
-public let CHAMELEON_HATCHET_RECIPE = "a Chameleon Hatchet. " + TT_CHAMELEON_HATCHET_STR + "\n\n1x "+"Iron Axe".color(COLOR_ORANGE)+" + 1x "+IRON+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
+public let CHAMELEON_HATCHET_RECIPE = "a Chameleon Hatchet. " + TT_CHAMELEON_HATCHET_STR + "\n\n1x "+"Iron Axe".color(COLOR_ORANGE)+" + 1x "+WIND+" + 1x "+WATER+" + 1x "+MC
 
 public let SPEAR_RECIPE       = "a Spear. Deals 40 damage on target, has 60% chance of being recoverable :\n\n1x "                             +STICK+"/"+BONE+" + 1x "+STONE
 public let IRON_SPEAR_RECIPE  = "a Iron Spear. Deals 70 damage on target, has 60% chance of being recoverable :\n\n1x "                        +STICK+"/"+BONE+" + 1x "+IRON

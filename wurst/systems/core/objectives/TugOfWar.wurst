@@ -71,8 +71,8 @@ class TugOfWar
         tugOfWarUnit.setMaxHP(hp, true)
         tugOfWarUnit.setArmor(OBJECTIVE_ARMOUR)
         tugOfWarUnit.setVertexColor(170, 170, 170, 255)
-        freezeAnimation = doPeriodically(ANIMATION_PERIOD*2) (CallbackPeriodic cb) ->
-            tugOfWarUnit.setAnimation("Stand")
+        tugOfWarUnit.setAnimation("Stand")
+        tugOfWarUnit.setTimeScale(0)
             
 
     function onDamage()

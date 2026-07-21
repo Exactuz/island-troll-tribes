@@ -7,6 +7,7 @@ import LinkedList
 import RegisterEvents
 import StringBuilder
 import ClosureTimers
+import Execute
 
 // Third-party imports:
 import MMD
@@ -21,8 +22,13 @@ import Tribe
 import EquipmentSlotFrames
 import UnitExtensions
 import CraftTelemetry
+import LocalObjectIDs
+import Packing
 
 constant int MATCH_CHECKSUM_MOD = 1000000007
+constant real MMD_EMIT_INTERVAL = 0.03
+public constant int TELEMETRY_RECORDING_LIMIT_SECONDS = 2700
+public constant int TELEMETRY_EVENT_LIMIT = 512
 
 // Callback type for encoder strategies
 public interface MetadataEncoderStrategy
@@ -88,6 +94,32 @@ public class ShopItemEvent
         this.itemId = itemId
         this.status = status
 
+class QueuedMMDMessage
+    string identifier
+    string data
+
+    construct(string identifier, string data)
+        this.identifier = identifier
+        this.data = data
+
+class ChecksumState
+    string payload
+    int position = 0
+    int result = 0
+
+    construct(string payload)
+        this.payload = payload
+
+    function hasNext() returns bool
+        return position < payload.length()
+
+    function addNext()
+        let char = payload.charAt(position)
+        let idx = charToSymbolIndex(char)
+        let contribution = idx >= 0 ? idx + 1 : char.getHash()
+        result = (result + contribution) mod MATCH_CHECKSUM_MOD
+        position++
+
 public class MatchPlayerMetadata
     int slotIndex
     string name
@@ -139,6 +171,8 @@ public class MatchMetadata
     int startTimeGame = 0
     int endTimeGame = 0
     int durationSeconds = 0
+    int telemetryEndTimeSeconds = 0
+    bool telemetryTruncated = false
     int playerCount = 0
     int checksum = 0
     string outcome = "UNKNOWN"
@@ -151,20 +185,27 @@ public class MatchMetadata
 // State tracking
 let playersWhoLeft = new HashSet<player>()
 let winningTribes = new HashSet<Tribe>()
+let symbolIndices = new HashMap<string, int>()
 bool encoderStarted = false
 bool matchConcluded = false
+bool matchActive = false
+bool telemetryRecordingActive = false
 string currentMatchId = ""
 int matchStartTimeSeconds = 0
+int telemetryEndTimeSeconds = 0
+bool telemetryTruncated = false
+int recordedTelemetryEvents = 0
 string matchOutcome = "UNKNOWN"
 string matchReason = ""
 
 // Position tracking state
 let positionData = new IterableMap<int, LinkedList<PositionData>>()
 var positionTrackingActive = false
+CallbackPeriodic positionTrackingCallback = null
 constant real POSITION_TRACKING_INTERVAL = 10.
 constant int POSITION_MOVEMENT_THRESHOLD = 256
 constant int POSITION_HEARTBEAT_SECONDS = 30
-constant int POSITION_SAMPLE_LIMIT = 360
+constant int POSITION_SAMPLE_LIMIT = 270
 
 // Building event tracking state
 let buildingEvents = new LinkedList<BuildingEvent>()
@@ -175,40 +216,72 @@ let craftEvents = new LinkedList<CraftEvent>()
 // Shop transactions only include item purchases and pawn sales.
 let shopItemEvents = new LinkedList<ShopItemEvent>()
 
+let pendingMMDMessages = new LinkedList<QueuedMMDMessage>()
+CallbackPeriodic mmdEmitCallback = null
+
 /** Register a new encoder strategy. Call this during init. */
 public function registerEncoderStrategy(MetadataEncoderStrategy strategy)
     encoderStrategies.add(strategy)
+
+/** Queue custom MMD data so synchronized writes are spread across ticks. */
+public function queueMMDMessage(string identifier, string data)
+    pendingMMDMessages.add(new QueuedMMDMessage(identifier, data))
+    if mmdEmitCallback == null
+        mmdEmitCallback = doPeriodically(MMD_EMIT_INTERVAL) (CallbackPeriodic cb) ->
+            let message = pendingMMDMessages.dequeue()
+            if message != null
+                MMD.logCustom(message.identifier, message.data)
+                destroy message
+
+            if pendingMMDMessages.isEmpty()
+                mmdEmitCallback = null
+                destroy cb
+
+function clearMMDQueue()
+    if mmdEmitCallback != null
+        destroy mmdEmitCallback
+        mmdEmitCallback = null
+
+    for message in pendingMMDMessages
+        destroy message
+    pendingMMDMessages.clear()
+
+public function isMatchActive() returns bool
+    return matchActive
 
 function registerMatchVictory(Tribe tribe)
     if tribe != null
         winningTribes.add(tribe)
 
-function startMatchMetadataEncoding()
-    if encoderStarted
-        return
-
-    // Encode position data first (before main metadata)
-    encodePositionDataToMMD()
-
+function encodeMainMatchMetadata()
     let metadata = buildMatchMetadata()
     let payload = serializeMatchMetadata(metadata)
 
     if payload.length() == 0
         return
 
-    // Call all registered encoder strategies
     for strategy in encoderStrategies
         strategy.encode(payload)
 
-    // Only mark as started after successful encoding
+function startMatchMetadataEncoding()
+    if encoderStarted
+        return
+
     encoderStarted = true
+
+    // Encode position data first (before main metadata)
+    encodePositionDataToMMD()
+    execute() ->
+        encodeMainMatchMetadata()
 
 /** Record terminal match metadata once without changing the game-state flow. */
 public function concludeMatch(Tribe winner, string reason) returns bool
-    if matchConcluded or not GameStates.gameplay.active
+    if matchConcluded or not matchActive
         return false
 
+    matchActive = false
     matchConcluded = true
+    finishTelemetryRecording(false)
     if winner != null
         registerMatchVictory(winner)
         matchOutcome = "WIN"
@@ -216,11 +289,10 @@ public function concludeMatch(Tribe winner, string reason) returns bool
         matchOutcome = "ABORT"
     matchReason = sanitizeValue(reason)
 
-    // Emit before changing game states so every terminal path records replay data.
-    startMatchMetadataEncoding()
-
     if winner != null
         winner.wasVictorious()
+
+    startMatchMetadataEncoding()
 
     return true
 
@@ -235,6 +307,8 @@ function buildMatchMetadata() returns MatchMetadata
     meta.durationSeconds = meta.endTimeGame - meta.startTimeGame
     if meta.durationSeconds < 0
         meta.durationSeconds = 0
+    meta.telemetryEndTimeSeconds = telemetryEndTimeSeconds
+    meta.telemetryTruncated = telemetryTruncated
     meta.outcome = matchOutcome
     meta.reason = matchReason
 
@@ -296,6 +370,8 @@ public function serializeMatchMetadata(MatchMetadata meta) returns string
     payload += "startTime:" + meta.startTimeGame.toString() + "\n"
     payload += "endTime:" + meta.endTimeGame.toString() + "\n"
     payload += "duration:" + meta.durationSeconds.toString() + "\n"
+    payload += "telemetryEndTime:" + meta.telemetryEndTimeSeconds.toString() + "\n"
+    payload += "telemetryTruncated:" + (meta.telemetryTruncated ? "1" : "0") + "\n"
     payload += "playerCount:" + meta.playerCount.toString() + "\n"
     payload += "outcome:" + meta.outcome + "\n"
     payload += "reason:" + meta.reason + "\n"
@@ -383,18 +459,14 @@ public function sanitizeValue(string value) returns string
     return builder.build("")
 
 public function computeChecksum(string payload) returns int
-    var result = 0
-
-    for i = 0 to payload.length() - 1
-        let char = payload.charAt(i)
-        let idx = charToSymbolIndex(char)
-        let contribution = idx >= 0 ? idx + 1 : char.getHash()
-        result = (result + contribution) mod MATCH_CHECKSUM_MOD
-
+    let state = new ChecksumState(payload)
+    executeWhile(128, () -> state.hasNext(), () -> state.addNext())
+    let result = state.result
+    destroy state
     return result
 
 public function charToSymbolIndex(string char) returns int
-    return ENCODE_CHARS.indexOf(char)
+    return symbolIndices.has(char) ? symbolIndices.get(char) : -1
 
 public function symbolIndexToChar(int idx) returns string
     if idx < 0 or idx >= SYMBOL_COUNT
@@ -448,6 +520,65 @@ public function shouldStorePosition(PositionData last, int timeSeconds, int x, i
     let deltaY = y - last.y
     return deltaX * deltaX + deltaY * deltaY >= POSITION_MOVEMENT_THRESHOLD * POSITION_MOVEMENT_THRESHOLD
 
+public function hasReachedTelemetryLimit(int startTime, int currentTime) returns bool
+    return currentTime - startTime >= TELEMETRY_RECORDING_LIMIT_SECONDS
+
+function capturePlayerPositions(int currentTime, bool forceSample)
+    for tribe in Tribe.getTribes()
+        for member in tribe.getMembers()
+            if member != null
+                let troll = member.getTroll()
+                if troll != null and (forceSample or troll.isAlive())
+                    let pos = troll.getPos()
+                    let slotIndex = member.getId()
+
+                    if not positionData.has(slotIndex)
+                        positionData.put(slotIndex, new LinkedList<PositionData>())
+
+                    let positions = positionData.get(slotIndex)
+                    let x = pos.x.toInt()
+                    let y = pos.y.toInt()
+                    let last = positions.size() > 0 ? positions.getLast() : null
+                    let alreadyStored = last != null and last.timeSeconds == currentTime
+                    if forceSample and alreadyStored
+                        let removed = positions.pop()
+                        destroy removed
+                        positions.add(new PositionData(currentTime, x, y))
+                    else if forceSample or shouldStorePosition(last, currentTime, x, y)
+                        if positions.size() >= POSITION_SAMPLE_LIMIT
+                            let removed = positions.pop()
+                            destroy removed
+                        positions.add(new PositionData(currentTime, x, y))
+
+function stopPositionTracking()
+    if positionTrackingCallback != null
+        destroy positionTrackingCallback
+        positionTrackingCallback = null
+    positionTrackingActive = false
+
+function finishTelemetryRecording(bool truncated)
+    if not telemetryRecordingActive
+        return
+
+    let currentTime = GAME_TIMER.getElapsed().toInt()
+    capturePlayerPositions(currentTime, true)
+    telemetryEndTimeSeconds = currentTime
+    telemetryTruncated = truncated
+    telemetryRecordingActive = false
+    stopPositionTracking()
+
+public function isWithinTelemetryEventLimit(int eventCount) returns bool
+    return eventCount < TELEMETRY_EVENT_LIMIT
+
+function reserveTelemetryEvent() returns bool
+    if not telemetryRecordingActive
+        return false
+    if not isWithinTelemetryEventLimit(recordedTelemetryEvents)
+        finishTelemetryRecording(true)
+        return false
+    recordedTelemetryEvents++
+    return true
+
 /** Start tracking player positions */
 function startPositionTracking()
     if positionTrackingActive
@@ -456,72 +587,69 @@ function startPositionTracking()
     positionTrackingActive = true
 
     // Check every 10 seconds. Samples are retained only on movement or heartbeat.
-    doPeriodically(POSITION_TRACKING_INTERVAL) (CallbackPeriodic cb) ->
-        if GameStates.gameplay.active
-            let currentTime = GAME_TIMER.getElapsed().toInt()
+    positionTrackingCallback = doPeriodically(POSITION_TRACKING_INTERVAL) (CallbackPeriodic _cb) ->
+        if not telemetryRecordingActive
+            stopPositionTracking()
+            return
 
-            // Track positions for all players in tribes
-            for tribe in Tribe.getTribes()
-                for member in tribe.getMembers()
-                    if member != null
-                        let troll = member.getTroll()
-                        if troll != null and troll.isAlive()
-                            let pos = troll.getPos()
-                            let slotIndex = member.getId()
+        let currentTime = GAME_TIMER.getElapsed().toInt()
+        if hasReachedTelemetryLimit(matchStartTimeSeconds, currentTime)
+            finishTelemetryRecording(true)
+            return
 
-                            // Get or create the bounded position list for this player.
-                            if not positionData.has(slotIndex)
-                                positionData.put(slotIndex, new LinkedList<PositionData>())
+        capturePlayerPositions(currentTime, false)
 
-                            let positions = positionData.get(slotIndex)
-                            let x = pos.x.toInt()
-                            let y = pos.y.toInt()
-                            let last = positions.size() > 0 ? positions.getLast() : null
-                            if positions.size() < POSITION_SAMPLE_LIMIT and shouldStorePosition(last, currentTime, x, y)
-                                positions.add(new PositionData(currentTime, x, y))
+function encodePlayerPositionData(player member)
+    let slotIndex = member.getId()
+    if not positionData.has(slotIndex)
+        return
 
-/** Encode position data to MMD */
+    let positions = positionData.get(slotIndex)
+    if positions.size() == 0
+        return
+
+    // Serialize positions: "time|x|y,time|x|y,..."
+    var positionString = ""
+    var isFirst = true
+    for pos in positions
+        if not isFirst
+            positionString += ","
+        positionString += pos.timeSeconds.toString() + "|" + pos.x.toString() + "|" + pos.y.toString()
+        isFirst = false
+
+    let chunks = chunkPositionData(positionString, 200)
+    var chunkIndex = 0
+    for chunk in chunks
+        queueMMDMessage("itt_pos_p" + slotIndex.toString() + "_" + chunkIndex.toString(), chunk)
+        chunkIndex++
+
+    // The manifest lets replay consumers validate each independent stream.
+    let manifest = currentMatchId + "|" + MATCH_METADATA_SCHEMA_VERSION.toString() + "|" + positions.size().toString() + "|" + chunkIndex.toString() + "|" + computeChecksum(positionString).toString() + "|" + telemetryEndTimeSeconds.toString() + "|" + (telemetryTruncated ? "1" : "0")
+    queueMMDMessage("itt_pos_p" + slotIndex.toString() + "_manifest", manifest)
+    destroy chunks
+
+/** Encode each position stream in a fresh Jass thread. */
 function encodePositionDataToMMD()
     if positionData.size() == 0
         return
 
-    // Encode each player's position data by iterating over all tribes and players
     for tribe in Tribe.getTribes()
         for member in tribe.getMembers()
             if member != null
-                let slotIndex = member.getId()
-                if positionData.has(slotIndex)
-                    let positions = positionData.get(slotIndex)
-                    if positions.size() > 0
-                        // Serialize positions: "time|x|y,time|x|y,..."
-                        var positionString = ""
-                        var isFirst = true
-                        for pos in positions
-                            if not isFirst
-                                positionString += ","
-                            positionString += pos.timeSeconds.toString() + "|" + pos.x.toString() + "|" + pos.y.toString()
-                            isFirst = false
-
-                        // Chunk the position data (MMD has message size limits)
-                        let chunks = chunkPositionData(positionString, 200)
-                        var chunkIndex = 0
-                        for chunk in chunks
-                            MMD.logCustom("itt_pos_p" + slotIndex.toString() + "_" + chunkIndex.toString(), chunk)
-                            chunkIndex++
-
-                        // The manifest lets replay consumers validate each independent stream.
-                        let manifest = currentMatchId + "|" + MATCH_METADATA_SCHEMA_VERSION.toString() + "|" + positions.size().toString() + "|" + chunkIndex.toString() + "|" + computeChecksum(positionString).toString()
-                        MMD.logCustom("itt_pos_p" + slotIndex.toString() + "_manifest", manifest)
-
-                        destroy chunks
+                execute() ->
+                    encodePlayerPositionData(member)
 
 /** Record a building event */
 function recordBuildingEvent(unit structure, string status)
-    if not GameStates.gameplay.active or structure == null
+    if not telemetryRecordingActive or structure == null
         return
 
     // Only track structures, not units
     if not structure.isStructure()
+        return
+
+    let buildingTypeId = structure.getTypeId()
+    if isPackableStructureType(buildingTypeId)
         return
 
     let owner = structure.getOwner()
@@ -538,14 +666,14 @@ function recordBuildingEvent(unit structure, string status)
 
     let teamId = tribe.getId()
     let timeSeconds = GAME_TIMER.getElapsed().toInt()
-    let buildingTypeId = structure.getTypeId()
     let pos = structure.getPos()
 
-    buildingEvents.add(new BuildingEvent(teamId, owner.getId(), timeSeconds, buildingTypeId, status, pos.x.toInt(), pos.y.toInt()))
+    if reserveTelemetryEvent()
+        buildingEvents.add(new BuildingEvent(teamId, owner.getId(), timeSeconds, buildingTypeId, status, pos.x.toInt(), pos.y.toInt()))
 
 /** Record a craft event */
 public function logCraftEvent(player whichPlayer, int itemId, string status)
-    if not GameStates.gameplay.active or whichPlayer == null
+    if not telemetryRecordingActive or whichPlayer == null
         return
 
     // Skip neutral/gaia players
@@ -559,7 +687,8 @@ public function logCraftEvent(player whichPlayer, int itemId, string status)
     let teamId = tribe.getId()
     let timeSeconds = GAME_TIMER.getElapsed().toInt()
 
-    craftEvents.add(new CraftEvent(teamId, timeSeconds, itemId, status))
+    if reserveTelemetryEvent()
+        craftEvents.add(new CraftEvent(teamId, timeSeconds, itemId, status))
 
 function recordShopItemEvent(unit buyer, item soldItem, string status)
     if buyer == null or soldItem == null
@@ -567,16 +696,19 @@ function recordShopItemEvent(unit buyer, item soldItem, string status)
 
     logShopItemEvent(buyer.getOwner(), soldItem.getTypeId(), status)
 
+public function shouldTrackShopItem(int itemId) returns bool
+    return itemId != 0 and itemId != ITEM_HYDRA_HINT
+
 /** Record an item transaction completed by a custom shop implementation. */
 public function logShopItemEvent(player owner, int itemId, string status)
-    if not GameStates.gameplay.active or owner == null or itemId == 0
+    if not telemetryRecordingActive or owner == null or not shouldTrackShopItem(itemId)
         return
 
-    if owner == null or owner == players[PLAYER_NEUTRAL_PASSIVE] or owner == players[PLAYER_NEUTRAL_AGGRESSIVE]
+    if owner == players[PLAYER_NEUTRAL_PASSIVE] or owner == players[PLAYER_NEUTRAL_AGGRESSIVE]
         return
 
     let tribe = Tribe.ofPlayer(owner)
-    if tribe != null
+    if tribe != null and reserveTelemetryEvent()
         shopItemEvents.add(new ShopItemEvent(tribe.getId(), owner.getId(), GAME_TIMER.getElapsed().toInt(), itemId, status))
 
 function clearPositionData()
@@ -601,7 +733,7 @@ function clearMatchEvents()
     shopItemEvents.clear()
 
 function abortIfAllPlayersLeft()
-    if not GameStates.gameplay.active
+    if not matchActive
         return
 
     var hasPlayers = false
@@ -636,7 +768,7 @@ public function chunkPositionData(string data, int maxSize) returns LinkedList<s
             break
 
         // Find the last comma before maxSize to keep entries intact
-        var splitPos = position + maxSize
+        var splitPos = position + maxSize - 1
         while splitPos > position
             if data.charAt(splitPos) == ","
                 splitPos++
@@ -653,11 +785,14 @@ public function chunkPositionData(string data, int maxSize) returns LinkedList<s
     return chunks
 
 init
+    for i = 0 to ENCODE_CHARS.length() - 1
+        symbolIndices.put(ENCODE_CHARS.charAt(i), i)
+
     registerCraftEventListener(new CraftEventLogger())
 
     registerPlayerEvent(EVENT_PLAYER_LEAVE) ->
         let leaver = EventData.getTriggerPlayer()
-        if GameStates.gameplay.active and leaver != null
+        if matchActive and leaver != null
             playersWhoLeft.add(leaver)
             abortIfAllPlayersLeft()
 
@@ -684,12 +819,19 @@ init
         recordShopItemEvent(EventData.getTriggerUnit(), EventData.getSoldItem(), "SELL_ITEM")
 
     GameStates.gameplay.onEnter() state ->
+        stopPositionTracking()
+        clearMMDQueue()
         playersWhoLeft.clear()
         winningTribes.clear()
         clearMatchEvents()
         clearPositionData()
         encoderStarted = false
         matchConcluded = false
+        matchActive = true
+        telemetryRecordingActive = true
+        telemetryEndTimeSeconds = 0
+        telemetryTruncated = false
+        recordedTelemetryEvents = 0
         matchOutcome = "UNKNOWN"
         matchReason = ""
         matchStartTimeSeconds = GAME_TIMER.getElapsed().toInt()
@@ -707,3 +849,24 @@ init
     true.assertEquals(shouldStorePosition(initial, 20, 356, 100))
     true.assertEquals(shouldStorePosition(initial, 40, 100, 100))
     destroy initial
+
+@Test public function telemetryLimitStartsAtFortyFiveMinutes()
+    false.assertEquals(hasReachedTelemetryLimit(0, TELEMETRY_RECORDING_LIMIT_SECONDS - 1))
+    true.assertEquals(hasReachedTelemetryLimit(0, TELEMETRY_RECORDING_LIMIT_SECONDS))
+
+@Test public function telemetryEventsHaveABoundedLimit()
+    true.assertEquals(isWithinTelemetryEventLimit(TELEMETRY_EVENT_LIMIT - 1))
+    false.assertEquals(isWithinTelemetryEventLimit(TELEMETRY_EVENT_LIMIT))
+
+@Test public function positionChunksRespectMaximumSize()
+    let chunks = chunkPositionData("1234,56789", 5)
+    var reconstructed = ""
+    for chunk in chunks
+        true.assertEquals(chunk.length() <= 5)
+        reconstructed += chunk
+    "1234,56789".assertEquals(reconstructed)
+    destroy chunks
+
+@Test public function hydraActivationIsNotAShopPurchase()
+    false.assertEquals(shouldTrackShopItem(ITEM_HYDRA_HINT))
+    true.assertEquals(shouldTrackShopItem(ITEM_COOKED_MEAT))

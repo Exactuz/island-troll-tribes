@@ -177,7 +177,7 @@ init
             printTimedToPlayer(msg, 30, triggerPlayer)
 
         registerCommandAll("eg") (triggerPlayer, args) ->
-            if triggerPlayer == players[0] and GameStates.gameplay.active
+            if triggerPlayer == players[0] and isMatchActive()
                 let tribe = triggerPlayer.getTribe()
                 if tribe != null
                     printTimed("Debug end triggered by " + triggerPlayer.getNameColored(), 5)

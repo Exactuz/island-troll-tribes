@@ -38,6 +38,7 @@ public class BossRewardHandler extends ItemShopDummyHandler
         if not unitHasEnoughFavour(soldUnit)
             refund(soldUnit, "Not enough favour")
             return
+        // Boss rewards spend favour, not player gold, so they are not shop telemetry.
         nullTimer() -> 
             for each in rewardList
                 if each.dummyUnitId == soldUnit.getTypeId()

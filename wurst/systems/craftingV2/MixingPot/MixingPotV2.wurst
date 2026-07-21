@@ -13,6 +13,7 @@ import ClosuresForItems
 import ItemRecipeV2
 import QuickMakeV2
 import CustomItemType
+import CraftTelemetry
 
 
 HashMap<unit, MixingPot> mixingPotInstances = new HashMap<unit, MixingPot>
@@ -57,10 +58,16 @@ public class MixingPot
         let currentMana = mixingPot.getMana()
         if currentMana<manaCost
             printToPlayers("Not enough mana to craft "+(GetObjectName(itemId)))
+            let potOwner = mixingPot.getOwner()
+            if potOwner != null
+                emitCraftEvent(potOwner, itemId, "FAIL")
             return null
         mixingPot.subMana(manaCost.toReal())
         craftedPotion = createItem(itemId, mixingPot.getPos())
-        mixingPot.addItemHandle(craftedPotion)   
+        mixingPot.addItemHandle(craftedPotion)
+        let owner = mixingPot.getOwner()
+        if owner != null
+            emitCraftEvent(owner, itemId, "SUCCESS")
         return craftedPotion
 
     function printToPlayers(string msg)
@@ -152,6 +159,5 @@ init
 
     EventListener.add(EVENT_PLAYER_UNIT_SPELL_CAST) ->
         onCast(GetSpellAbilityId(), GetTriggerUnit()) 
-        
         
         

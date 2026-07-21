@@ -12,6 +12,7 @@ import UnitUtils
 import SimError
 import SharedGold
 import UnitObjEditing
+import MatchMetadataEncoder
 
 public constant BUYING_RANGE = 1200.
 
@@ -79,8 +80,10 @@ public class ItemShopDummyHandler
         nullTimer() ->
             for each in rewardList
                 if each.dummyUnitId == soldUnit.getTypeId()
+                    let buyer = soldUnit.getOwner()
                     let itm = createItem(each.itemId, target.getPos())
                     soldUnit.remove()
+                    logShopItemEvent(buyer, each.itemId, "BUY_ITEM")
                     nullTimer() -> 
                         target.triggerSmoothPickup(itm)
                         target.addItemHandle(itm)

@@ -274,7 +274,23 @@ function startMatchMetadataEncoding()
     execute() ->
         encodeMainMatchMetadata()
 
-/** Record terminal match metadata once without changing the game-state flow. */
+function enterPostgame()
+    if GameStates.objective.active
+        GameStates.objective.exit()
+    if GameStates.gameplay.active
+        GameStates.gameplay.exitWithoutNext()
+    if GameStates.bossFight.active
+        GameStates.bossFight.exitWithoutNext()
+    if GameStates.preparation.active
+        GameStates.preparation.exitWithoutNext()
+    if GameStates.gurubashiArena.active
+        GameStates.gurubashiArena.exitWithoutNext()
+    for tribe in Tribe.getTribes()
+        tribe.makePlayersObservers()
+    if not GameStates.postgame.active
+        GameStates.postgame.enter()
+
+/** Record the terminal result once and transition active match states to postgame. */
 public function concludeMatch(Tribe winner, string reason) returns bool
     if matchConcluded or not matchActive
         return false
@@ -293,6 +309,7 @@ public function concludeMatch(Tribe winner, string reason) returns bool
         winner.wasVictorious()
 
     startMatchMetadataEncoding()
+    enterPostgame()
 
     return true
 

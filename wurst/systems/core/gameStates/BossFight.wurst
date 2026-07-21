@@ -34,8 +34,16 @@ constant MAMMOTH_BASE_HP = 250
 constant MAMMOTH_HP_PER_PLAYER = 800.
 constant TIMEOUT_PERIOD = 120.
 public unit BOSS_UNIT = null
-public Tribe bossFightLoserTribe = null
 unit rewardHandlerUnit = null
+bool bossFightResolving = false
+CallbackSingle bossTimeoutCallback = null
+timerdialog bossTimeoutDialog = null
+
+function beginBossFightResolution() returns bool
+    if bossFightResolving
+        return false
+    bossFightResolving = true
+    return true
 
 function handleLoserTeams()
     for tribe in Tribe.getTribes()
@@ -67,6 +75,8 @@ function resetState(unit troll)
     ..setHeat(gameConfig.getMaxHeat())
     ..resetCooldown()
     ..reduceHealingReduction(9999.)
+    ..setInvulnerable(false)
+    ..setAnimation("stand")
     if troll.getTypeId() == UNIT_ALCHEMIST
         let instance = PhilosophersStone.getInstance(troll)
         if instance != null
@@ -118,6 +128,9 @@ function playStompEfx()
     flashEffect(Abilities.warStompCaster, OBJECTIVE_POS)
     OBJECTIVE_UNIT.setScale(1.5)   
     doPeriodicallyCounted(1., count) (CallbackCounted cb) ->
+        if not GameStates.bossFight.active or OBJECTIVE_UNIT == null
+            destroy cb
+            return
         let ratio = cb.progress()
         let scaleMultiplier = 1/2*count*ratio
         let scale = 1.5+scaleMultiplier
@@ -128,51 +141,53 @@ function playStompEfx()
             efx.destr()
 
 
-function spawnBoss()
-    BOSS_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_MAMMOTH, OBJECTIVE_POS, OBJECTIVE_UNIT.getFacingAngle())
+function spawnBoss(angle facing)
+    BOSS_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_MAMMOTH, OBJECTIVE_POS, facing)
     let newHp = MAMMOTH_BASE_HP + MAMMOTH_HP_PER_PLAYER * winnerTribe.getMembers().size()
     BOSS_UNIT.setMaxHP(newHp.toInt())
     BOSS_UNIT.setHP(newHp)
 
 function onEnter()
+    bossFightResolving = false
     handleWinnerTeam()
-    if bossFightLoserTribe == null
-        handleLoserTeams()
+    handleLoserTeams()
     updateBorderAccessOnBossFight()    
     playStompEfx()
     handleTimeout()
-    doAfter(1.5) -> 
-        supplyMeat()
-    doAfter(3.) -> 
-        OBJECTIVE_UNIT.remove()
-        spawnBoss()
+    doAfter(1.5) ->
+        if GameStates.bossFight.active and not bossFightResolving
+            supplyMeat()
+    doAfter(3.) ->
+        if GameStates.bossFight.active and not bossFightResolving
+            let facing = OBJECTIVE_UNIT.getFacingAngle()
+            OBJECTIVE_UNIT.remove()
+            OBJECTIVE_UNIT = null
+            spawnBoss(facing)
 
      
 
 function handleTimeout()
     let timeoutTimer = getTimer()
-    let timerDialog = timeoutTimer.createTimerDialog()           
-    timerDialog.setTitle("Gurubashi Arena timeout")
-    timerDialog.display(true) 
-    timeoutTimer.doAfter(TIMEOUT_PERIOD) -> 
+    bossTimeoutDialog = timeoutTimer.createTimerDialog()
+    bossTimeoutDialog.setTitle("Gurubashi Arena timeout")
+    bossTimeoutDialog.display(true)
+    bossTimeoutCallback = timeoutTimer.doAfter(TIMEOUT_PERIOD) ->
+        bossTimeoutCallback = null
         if GameStates.bossFight.active
             onMammothWin()
-    doPeriodically(1.) (CallbackPeriodic cb) ->
-        if not GameStates.bossFight.active and timerDialog != null
-            timerDialog.display(false)
-            timerDialog.destr()
-            timeoutTimer.destr()
-            destroy cb 
 
 
 function onMammothKilled(unit dyingUnit)
-    if dyingUnit.getTypeId() != UNIT_MAMMOTH
+    if dyingUnit.getTypeId() != UNIT_MAMMOTH or not beginBossFightResolution()
         return
     playTeleportEfx()
     doAfter(TELEPORT_ANIMATION_DURATION) ->
+        if not GameStates.bossFight.active
+            return
         teleportBossRewardHandler()
         //spreadUnitsInArch()     
         teleportWinnerTribeBack()
+        BOSS_UNIT = null
         GameStates.bossFight.exit()
 
 function teleportBossRewardHandler()
@@ -195,8 +210,9 @@ function getRandomVisiblePos(Tribe tribe) returns vec2
 
 
 function onMammothWin()
+    if not beginBossFightResolution()
+        return
     print(("Tribe "+winnerTribe.getName()+" has lost the fight against Mammoth!").color(COLOR_RED))
-    GameStates.bossFight.exit()
     let spawn = winnerTribe.spawn
     for each in winnerTribe.getMembers()
         let troll = each.getTroll()
@@ -207,17 +223,20 @@ function onMammothWin()
         else
             revive(troll, 0.)
         resetState(troll)
+    if BOSS_UNIT != null
         BOSS_UNIT.remove()
-    bossFightLoserTribe = winnerTribe
-    GameStates.bossFight.exit()      
+        BOSS_UNIT = null
+    GameStates.bossFight.exit()
 
 
 function teleportWinnerTribeBack()
     let spawn = winnerTribe.spawn
     for each in winnerTribe.getMembers()
         let pos = spawn.randomPoint()
-        each.getTroll().setPos(pos)
-        each.panCamToTimed(each.getTroll(), 0.1)
+        let troll = each.getTroll()
+        troll.setPos(pos)
+        resetState(troll)
+        each.panCamToTimed(troll, 0.1)
 
 function onTrollDeath(unit dyingUnit)
     if not dyingUnit.isTroll()
@@ -287,6 +306,19 @@ function updateBorderAccessOnBossFightFinish()
         bordersAccess.outsideGurubashiArena = true
 
 function onExit()
+    if bossTimeoutCallback != null
+        destroy bossTimeoutCallback
+        bossTimeoutCallback = null
+    if bossTimeoutDialog != null
+        bossTimeoutDialog.display(false)
+        bossTimeoutDialog.destr()
+        bossTimeoutDialog = null
+    if BOSS_UNIT != null
+        BOSS_UNIT.remove()
+        BOSS_UNIT = null
+    if OBJECTIVE_UNIT != null
+        OBJECTIVE_UNIT.remove()
+        OBJECTIVE_UNIT = null
     updateBorderAccessOnBossFightFinish()
     closeGates()
 
@@ -301,9 +333,12 @@ function onDamage()
     let damage = DamageEvent.getAmount()
     if damage < victim.getHP()
         return
+    DamageEvent.setAmount(0.)
     pauseTroll(victim)
 
 function pauseTroll(unit troll)
+    if bossFightResolving
+        return
     troll.pause()
     troll.setAnimation("death")
     troll.setInvulnerable(true)
@@ -326,3 +361,9 @@ init
 
     DamageEvent.addListener() () ->
         onDamage()
+
+@Test public function matchFlowBossFightResolutionIsIdempotent()
+    bossFightResolving = false
+    true.assertEquals(beginBossFightResolution())
+    false.assertEquals(beginBossFightResolution())
+    bossFightResolving = false

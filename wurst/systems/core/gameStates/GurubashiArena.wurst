@@ -87,6 +87,7 @@ init
     GameStates.gameplay.onEnter() (GameState state) -> 
         if gameConfig.getObjective() != Objective.EarlyDuel
             let time = gameConfig.getGurubashiArenaAfter()
-            GURUBASHI_ARENA_OPEN_TIMER = getTimer()..doAfter(time.toReal()) -> 
-                openGurubashiGates()
-                updateBorderAccessOnGatesOpen()
+            GURUBASHI_ARENA_OPEN_TIMER = getTimer()..doAfter(time.toReal()) ->
+                if GameStates.gameplay.active
+                    openGurubashiGates()
+                    updateBorderAccessOnGatesOpen()

@@ -39,8 +39,9 @@ class TugOfWar
         tribes = Tribe.getTribes()
         teamSize = tribes.getFirst().getMembers().size()
         initializeTextTag()
-        doAfter(ANIMATION_PERIOD) -> 
-            initializeObjective() 
+        doAfter(ANIMATION_PERIOD) ->
+            if GameStates.objective.active
+                initializeObjective()
         Log.debug("Initializing Tug of War objective.")
         DamageEvent.addListener(DamageListenerPriorities.PANTHER_INSTINCT castTo int) ->
             onDamage()
@@ -56,9 +57,12 @@ class TugOfWar
 
     function onExit()
         destroy update
-        doAfter(3.) -> 
-            destroy freezeAnimation
-        Log.debug(winningTeam.getName()+" won the Tug of War challenge")
+        doAfter(3.) ->
+            if freezeAnimation != null
+                destroy freezeAnimation
+                freezeAnimation = null
+        if winningTeam != null
+            Log.debug(winningTeam.getName()+" won the Tug of War challenge")
         textTag.destr()
 
     function onDeath()
@@ -87,13 +91,6 @@ class TugOfWar
         
         notifyTribes(tribe)
 
-        if target.getHP()-damage <=0
-            DamageEvent.setAmount(0.)
-            target.setHP(99999.)
-            target.setInvulnerable(true)
-            onDeath()
-            return
-
         if winningTeam == null
             updateWinningTeam(tribe)
 
@@ -103,6 +100,14 @@ class TugOfWar
             if newHp >= target.getMaxHP()
                 updateWinningTeam(tribe)
             target.setHP(newHp)
+            return
+
+        if target.getHP()-damage <=0
+            DamageEvent.setAmount(0.)
+            target.setHP(99999.)
+            target.setInvulnerable(true)
+            onDeath()
+            return
 
 
 

@@ -71,9 +71,11 @@ function onEnter()
     print(DUEL_PREPARE_TEXT)
     DUEL_WARNING.play()
     doAfter(PREPARATION_TIME_SECONDS) ->
-        GameStates.preparation.exit() 
+        if GameStates.preparation.active
+            GameStates.preparation.exit()
     doAfter(PREPARATION_TIME_SECONDS-TELEPORT_ANIMATION_DURATION) -> 
-        playTeleportEfx()
+        if GameStates.preparation.active
+            playTeleportEfx()
 
 function onExit()
     supplyMeat()

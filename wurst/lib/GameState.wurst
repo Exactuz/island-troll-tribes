@@ -53,6 +53,10 @@ public class GameState
 public class LinearGameState extends GameState
     use LinkedListModule
 
+    /** Exit this state without entering the next linear state. */
+    function exitWithoutNext()
+        super.exit()
+
     override function exit()
         // Execute the standard functionality.
         super.exit()
@@ -60,3 +64,14 @@ public class LinearGameState extends GameState
         // Proceed to the next state, as necessary.
         if next != null
             next.enter()
+
+@Test public function matchFlowLinearStateSupportsTerminalExit()
+    let first = new LinearGameState()
+    let second = new LinearGameState()
+    first.enter()
+    first.exit()
+    true.assertEquals(second.active)
+    second.exitWithoutNext()
+    false.assertEquals(second.active)
+    destroy first
+    destroy second

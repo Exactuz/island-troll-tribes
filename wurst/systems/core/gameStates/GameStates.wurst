@@ -25,24 +25,14 @@ public class GameStates
     // This state handles the actual gameplay.
     static let gameplay = new LinearGameState()
 
-    // This is intermediate state for when team that won the objectie loses the bossfight. Automatically skipped the first time its entered.
-    static let preBossFight = new LinearGameState()
-    
     // This state handles the boss fight.
-    static let bossFight = new GameState()
-
-
-    // This state handles the preparation before the siege.
-    static let powerAssimilation = new LinearGameState()
-
-    // This state handles the siege.
-    static let siege = new LinearGameState()
+    static let bossFight = new LinearGameState()
 
     // This state handles the preparation before duel.
-    static let preparation = new GameState()
+    static let preparation = new LinearGameState()
 
     // This state handles the Gurubashi arena.
-    static let gurubashiArena = new GameState()
+    static let gurubashiArena = new LinearGameState()
 
     // This state handles the postgame display.
     static let postgame = new LinearGameState()

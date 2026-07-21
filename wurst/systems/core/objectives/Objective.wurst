@@ -25,6 +25,7 @@ import AbilityObjEditing
 import Icons
 import ItemShopDummyUnit
 import LocalAssets
+import initlater UnitExtensions
 
 public Tribe winnerTribe = null
 public constant OBJECTIVE_POS = vec2(6, -167)
@@ -154,5 +155,8 @@ init
                 shareObjectiveVision()
 
     GameStates.objective.onExit() (GameState state) ->
+        if not GameStates.bossFight.active and OBJECTIVE_UNIT != null
+            OBJECTIVE_UNIT.remove()
+            OBJECTIVE_UNIT = null
         PlaySound(Sounds.clanInvitation)                
     initializeGurubashiGates()

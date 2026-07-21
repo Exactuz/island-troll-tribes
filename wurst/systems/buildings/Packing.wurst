@@ -27,6 +27,10 @@ let cancelAndDeathMap = new HashMap<int, int>()
 ..put(UNIT_MAGE_FIRE, ITEM_MAGE_FIRE_KIT)
 ..put(UNIT_MAGE_FIRE_SUMMONED, 0)
 
+/** Reusable structures are omitted from building telemetry. */
+public function isPackableStructureType(int structureId) returns bool
+    return cancelAndDeathMap.has(structureId)
+
 function replaceBuildingWithKit(int structureId, vec2 pos)
     if cancelAndDeathMap.has(structureId)
         let kit = cancelAndDeathMap.get(structureId)
@@ -51,3 +55,9 @@ init
         if cancelOnlyMap.has(structureId)
             let kit = cancelOnlyMap.get(structureId)
             createItem(kit, structure.getPos())
+
+@Test public function reusableStructuresAreIdentifiedForTelemetry()
+    true.assertEquals(isPackableStructureType(UNIT_TENT))
+    true.assertEquals(isPackableStructureType(UNIT_FIRE))
+    true.assertEquals(isPackableStructureType(UNIT_MAGE_FIRE))
+    false.assertEquals(isPackableStructureType(UNIT_ARMORY))

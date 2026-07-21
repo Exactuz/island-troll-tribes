@@ -8,16 +8,18 @@ import ClosureTimers
 
 // Local imports:
 import ClosuresForItems
+import LocalObjectIDs
 import IdListConstant
+import UnitExtensions
 import HashList
-import ItemRecipeV2 
+import ItemRecipeV2
 import initlater CustomItemType
 import PlayerExtensions
-import EquipmentSlots
+import initlater EquipmentSlots
 import EquipmentSlotFrames
 import GatheringSlot
 import Tribe
-import UnitExtensions
+import CraftTelemetry
 
 public HashMap<int, QuickMakeV2> quickMakes  = new HashMap<int, QuickMakeV2>()
 public let BUILDING_CRAFTING_AOE = 900.
@@ -26,7 +28,6 @@ let QM_SUCCESS_CD = 5.
 let MESSAGE_MISSING_UNIT_REQUIRED = "Missing required building: "
 let MESSAGE_DURATION = 10.
 public HashList<int> baseItems  = new HashList<int>()
-
 
 public class QuickMakeV2
     static item baseItem
@@ -336,12 +337,16 @@ public class QuickMakeV2
                 doAfter(ANIMATION_PERIOD) -> 
                     caster.startAbilityCooldown(abilId, QM_SUCCESS_CD)
             printToTeam("Successfuly crafted "+GetObjectName(craftedItem.getTypeId()))
+            if craftedItem != null and caster != null and caster.getOwner() != null
+                emitCraftEvent(caster.getOwner(), craftedItem.getTypeId(), "SUCCESS")
         removeConsumedItems()
         if this!= null
             destroy this    
 
     function onFailure()
         //print("failed to craft "+GetObjectName(itemId))
+        if parentInstance == null and caster != null
+            emitCraftEvent(caster.getOwner(), itemId, "FAIL")
         for each in foundItems
             let quickmake = foundItems.get(each)
             if quickmake != null
@@ -376,4 +381,3 @@ init
     doAfter(1.) ->
         initializeBaseItems()
         
-

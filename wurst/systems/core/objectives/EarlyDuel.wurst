@@ -19,10 +19,11 @@ class EarlyDuel
     int randomTime
     construct()
         gameConfig.gurubashiArenaEnabled = false
-        randomTime = GetRandomInt(0, 10)*30  
+        randomTime = GetRandomInt(0, 10)*30
         //DUEL_TIMER = getTimer()..doAfter(10.)->
         DUEL_TIMER = getTimer()..doAfter(gameConfig.getGurubashiArenaAfter().toReal()-randomTime)->
-            GameStates.gurubashiArena.enter()   
+            if GameStates.gameplay.active
+                GameStates.gurubashiArena.enter()
 
             
 
@@ -33,5 +34,5 @@ init
     GameStates.objective.onEnter() (GameState state) ->
         if gameConfig.getObjective() == Objective.EarlyDuel
             //let earlyDuel = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_OMINOUS_ALTAR, KING_OF_THE_HILL_POS)
-            nullTimer() -> 
-                new EarlyDuel()            
+            nullTimer() ->
+                new EarlyDuel()

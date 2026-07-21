@@ -7,50 +7,100 @@ package MatchMetadataMMDEncoder
 
 // Standard library imports:
 import LinkedList
-
-// Third-party imports:
-import MMD
+import Execute
 
 // Local imports:
 import MatchMetadataEncoder
 import MatchMetadataConfig
+
+constant int MMD_MAX_KEY_LENGTH = 255
+constant int PREFERRED_CHUNK_SIZE = 200
+
+class PayloadChunkingState
+    string payload
+    string identifierPrefix
+    int maxSize
+    int position = 0
+    int chunkIndex = 0
+    LinkedList<string> chunks = new LinkedList<string>()
+
+    construct(string payload, string identifierPrefix, int maxSize)
+        this.payload = payload
+        this.identifierPrefix = identifierPrefix
+        this.maxSize = maxSize
+
+    function hasNext() returns bool
+        return position < payload.length()
+
+    function addNext()
+        let identifier = identifierPrefix + chunkIndex.toString()
+        var splitPos = position
+        var packedDataLength = 0
+
+        while splitPos < payload.length() and splitPos - position < maxSize
+            let char = payload.charAt(splitPos)
+            let charLength = char == " " or char == "\\" ? 2 : 1
+            if 8 + identifier.length() + packedDataLength + charLength >= MMD_MAX_KEY_LENGTH
+                break
+            packedDataLength += charLength
+            splitPos++
+
+        chunks.add(payload.substring(position, splitPos))
+        position = splitPos
+        chunkIndex++
 
 class MMDEncoderStrategy implements MetadataEncoderStrategy
     override function encode(string payload)
         startMMDEncoding(payload)
 
 function startMMDEncoding(string payload)
+    // Position data encoding is handled in MatchMetadataEncoder.startMatchMetadataEncoding()
     // Log map info using MMD custom data
-    MMD.logCustom("itt_version", MAP_VERSION_STRING)
-    MMD.logCustom("itt_schema", MATCH_METADATA_SCHEMA_VERSION.toString())
+    queueMMDMessage("itt_version", MAP_VERSION_STRING)
+    queueMMDMessage("itt_schema", MATCH_METADATA_SCHEMA_VERSION.toString())
     
-    // Log the full payload in chunks (MMD has message size limits)
-    let chunks = chunkPayload(payload, 200)
+    // Leave room for the MMD protocol and escaping inside the 255-character key limit.
+    let chunks = chunkPayload(payload, "itt_data_", PREFERRED_CHUNK_SIZE)
     var chunkIndex = 0
     for chunk in chunks
-        MMD.logCustom("itt_data_" + chunkIndex.toString(), chunk)
+        queueMMDMessage("itt_data_" + chunkIndex.toString(), chunk)
         chunkIndex++
     
-    MMD.logCustom("itt_chunks", chunkIndex.toString())
+    queueMMDMessage("itt_chunks", chunkIndex.toString())
     
     destroy chunks
 
-/** Chunk payload into smaller pieces for MMD */
-function chunkPayload(string payload, int maxSize) returns LinkedList<string>
-    let chunks = new LinkedList<string>()
-    var position = 0
-    let payloadLength = payload.length()
+public function packedMMDMessageLength(string identifier, string data) returns int
+    var result = 8 + identifier.length() + data.length()
+    for i = 0 to data.length() - 1
+        let char = data.charAt(i)
+        if char == " " or char == "\\"
+            result++
+    return result
 
-    while position < payloadLength
-        let remaining = payloadLength - position
-        let chunkSize = remaining < maxSize ? remaining : maxSize
-        let chunk = payload.substring(position, position + chunkSize)
-        chunks.add(chunk)
-        position += chunkSize
-
+/** Chunk payload by raw and final packed MMD message size. */
+function chunkPayload(string payload, string identifierPrefix, int maxSize) returns LinkedList<string>
+    let state = new PayloadChunkingState(payload, identifierPrefix, maxSize)
+    executeWhile(1, () -> state.hasNext(), () -> state.addNext())
+    let chunks = state.chunks
+    destroy state
     return chunks
 
 init
     // Register this encoder strategy
     registerEncoderStrategy(new MMDEncoderStrategy())
 
+@Test public function payloadChunksFitMMDKeys()
+    var payload = ""
+    for i = 1 to 300
+        payload += " "
+
+    let chunks = chunkPayload(payload, "itt_data_", PREFERRED_CHUNK_SIZE)
+    var reconstructed = ""
+    var chunkIndex = 0
+    for chunk in chunks
+        true.assertEquals(packedMMDMessageLength("itt_data_" + chunkIndex.toString(), chunk) < MMD_MAX_KEY_LENGTH)
+        reconstructed += chunk
+        chunkIndex++
+    payload.assertEquals(reconstructed)
+    destroy chunks

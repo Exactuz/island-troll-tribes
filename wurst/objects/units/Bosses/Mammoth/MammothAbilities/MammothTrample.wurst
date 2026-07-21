@@ -16,6 +16,8 @@ import SoundUtils
 import TerrainUtils
 import MammothPush
 import Objective
+import GameStates
+import GameState
 
 constant TRAMPLE_PUSH_DISTANCE = 300.
 constant TRAMPLE_PUSH_AOE = 300.
@@ -30,6 +32,7 @@ class MammothTrample
     real angleRadians
     real totalDistance 
     bool onCooldown = false
+    bool active = true
     vec2 targetPos
     CallbackCounted update
     HashSet<unit> damagedUnits = new HashSet<unit>()
@@ -54,9 +57,12 @@ class MammothTrample
         return farthestUnit
 
     function startTrample()
-        if onCooldown
+        if not active or onCooldown or not GameStates.bossFight.active
             return
-        this.targetPos = findFarthestUnitInRange().getPos()
+        let target = findFarthestUnitInRange()
+        if target == null
+            return
+        this.targetPos = target.getPos()
         totalDistance = mammoth.getPos().distanceTo(targetPos)
         mammoth.addAbility(AbilityIds.ghostVisible)
         mammoth.disableAttack(true, false)
@@ -68,16 +74,20 @@ class MammothTrample
         let callAmount = (totalDistance/TRAMPLE_CHARGE_MOVEMENT_SPEED/ANIMATION_PERIOD).ceil()
         update = doPeriodicallyCounted(ANIMATION_PERIOD, callAmount) (CallbackCounted cb) ->
             update()
+            if not active
+                return
             if cb.isLast()
                 mammoth.addAbility(AbilityIds.ghostVisible)
                 mammoth.disableAttack(false, false)
                 mammoth.setMoveSpeed(MAMMOTH_MOVEMENT_SPEED.toReal())
-                damagedUnits.clear()        
+                damagedUnits.clear()
+                update = null
     
     function startCooldown()
         onCooldown = true
-        doAfter(COOLDOWN) -> 
-            onCooldown = false
+        doAfter(COOLDOWN) ->
+            if instance == this
+                onCooldown = false
 
     function update()
         //let distance = totalDistance*ANIMATION_PERIOD/(totalDistance/TRAMPLE_CHARGE_MOVEMENT_SPEED)
@@ -89,15 +99,20 @@ class MammothTrample
             
 
     function damageAndPushUnit(unit target)
+        if not active
+            return
         if damagedUnits.has(target)
             return
         if target.isAllyOf(mammoth)
             return
         damagedUnits.add(target)
-        doAfter(0.5) -> 
-            damagedUnits.remove(target)
+        doAfter(0.5) ->
+            if instance == this
+                damagedUnits.remove(target)
         flashEffect(Abilities.warStompCaster, target.getPos())
         mammoth.damageTarget(target, mammothDamage, false, false, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_POISON, null)
+        if not active
+            return
         let angle = mammoth.getPos().angleTo(target.getPos())
         Knockback3.add(target, 1500., angle, 80..asAngleDegrees())
         doAfter(0.8) ->
@@ -105,6 +120,18 @@ class MammothTrample
             if not pos.isTerrainWalkable()
                 let newPos = getClosestWalkablePosTo(pos, OBJECTIVE_POS, 3000.)
                 target.setPos(newPos)
+
+    function stop()
+        active = false
+        if instance == this
+            instance = null
+
+    ondestroy
+        stop()
+        if update != null
+            destroy update
+            update = null
+        destroy damagedUnits
 
 
 @compiletime function createDummyAbility()
@@ -139,10 +166,22 @@ public function onTrample(unit caster, unit target)
 function onUnitEnter(unit whichUnit)
     if whichUnit.getTypeId() != UNIT_MAMMOTH
         return
+    if MammothTrample.instance != null
+        stopMammothTrample()
     new MammothTrample(whichUnit)
+
+function stopMammothTrample()
+    if MammothTrample.instance != null
+        let activeInstance = MammothTrample.instance
+        activeInstance.stop()
+        doAfter(0.) ->
+            destroy activeInstance
 
 init
     //EventListener.onTargetCast(ABILITY_MAMMOTH_TRAMPLE) (unit caster, unit target) ->
     //    onCast(caster, target)
 
-    onEnter(()->onUnitEnter(getEnterLeaveUnit()))  
+    onEnter(()->onUnitEnter(getEnterLeaveUnit()))
+
+    GameStates.bossFight.onExit() (GameState state) ->
+        stopMammothTrample()

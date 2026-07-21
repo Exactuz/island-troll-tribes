@@ -45,24 +45,27 @@ public class MammothToss
     construct(unit mammoth)
         instance = this
         this.mammoth = mammoth
-        doAfter(5.) -> 
-            registerSpellUsage()
+        doAfter(5.) ->
+            if GameStates.bossFight.active and instance == this
+                registerSpellUsage()
     
     function startToss(unit target)
         //performTossAnimation()
         //mammoth.setFacing(mammoth.getPos().angleTo(target.getPos()))
-        doAfter(ANIMATION_TIME-0.25) -> 
-            let landingPos = getLandingPos(target)
-            new TossInstance(mammoth, target, landingPos, DURATION)
-            printWarningMessage()
+        doAfter(ANIMATION_TIME-0.25) ->
+            if GameStates.bossFight.active and instance == this
+                let landingPos = getLandingPos(target)
+                new TossInstance(mammoth, target, landingPos, DURATION)
+                printWarningMessage()
 
     function performTossAnimation()
         mammoth.disableAttack(true, false)
         mammoth.setAnimation("spell")
         mammoth.setTimeScale(DEFAULT_ANIMATION_TIME/ANIMATION_TIME)
         doAfter(ANIMATION_TIME) ->
-            mammoth.disableAttack(false, false)
-            mammoth.setTimeScale(1.0)
+            if instance == this
+                mammoth.disableAttack(false, false)
+                mammoth.setTimeScale(1.0)
 
     function printWarningMessage()
         for each in winnerTribe.getMembers()
@@ -95,8 +98,9 @@ public class MammothToss
 
     function startCooldown()
         onCooldown = true
-        doAfter(COOLDOWN) -> 
-            onCooldown = false
+        doAfter(COOLDOWN) ->
+            if instance == this
+                onCooldown = false
             
     ondestroy
         if spellUsage != null
@@ -140,21 +144,26 @@ public class TossInstance extends JumpInstance
         new JumpInstance(u, newPos, 0.6, 350.) 
 
     function onFailure()
-        doAfter(ANIMATION_PERIOD) -> 
-            InstantDummyCaster.castTarget(mammoth.getOwner(), ABILITY_MAMMOTH_TOSS_DAZE, 0, OrderIds.shadowstrike, u, u.getPos())
+        let mammothOwner = mammoth.getOwner()
+        let target = u
+        doAfter(ANIMATION_PERIOD) ->
+            if GameStates.bossFight.active
+                InstantDummyCaster.castTarget(mammothOwner, ABILITY_MAMMOTH_TOSS_DAZE, 0, OrderIds.shadowstrike, target, target.getPos())
 
     override function onFinish()
         onLanding()
         u.unpauseEx()
         u.removeAbility(AbilityIds.ghostVisible)
         u.removeAbility(BUFF_MAMMOTH_TOSS)
+        let tossedUnit = u
         if not GameStates.bossFight.active
-            doAfter(0.1) -> 
-                let pos = u.getOwner().getTribe().spawn.randomPoint()
-                u.setPos(pos)
-                u.getOwner().panCameraToTimed(pos, 0.3)
-        doAfter(2) ->  
-            MammothTrample.instance.startTrample()
+            doAfter(0.1) ->
+                let pos = tossedUnit.getOwner().getTribe().spawn.randomPoint()
+                tossedUnit.setPos(pos)
+                tossedUnit.getOwner().panCameraToTimed(pos, 0.3)
+        doAfter(2) ->
+            if GameStates.bossFight.active and MammothTrample.instance != null
+                MammothTrample.instance.startTrample()
 
 
 @compiletime function createTossSpell()
@@ -247,8 +256,9 @@ function onCast()
     let instance = MammothToss.instance
     if instance == null
         return
-    doAfter(0.15) ->      
-        instance.startToss(target)
+    doAfter(0.15) ->
+        if GameStates.bossFight.active and MammothToss.instance == instance
+            instance.startToss(target)
 
 function onUnitEnter(unit whichUnit)
     if whichUnit.getTypeId() != UNIT_MAMMOTH

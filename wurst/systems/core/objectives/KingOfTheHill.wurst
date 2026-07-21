@@ -53,7 +53,6 @@ class KingOfTheHill
         updateScores()
         if winner != null
             onWin()
-            destroy cb
 
     function onWin()
         //playEfx()
@@ -62,9 +61,15 @@ class KingOfTheHill
         GameStates.objective.exit()
 
     function onExit()
-        Log.debug(winner.getName()+" won the King of the Hill challenge")
-        doAfter(3.) -> 
-            destroy freezeAnimation   
+        if cb != null
+            destroy cb
+            cb = null
+        if winner != null
+            Log.debug(winner.getName()+" won the King of the Hill challenge")
+        doAfter(3.) ->
+            if freezeAnimation != null
+                destroy freezeAnimation
+                freezeAnimation = null
         int index = 0
         for each in tribes
             textTags[index].destr()
@@ -150,4 +155,3 @@ init
             let OBJECTIVE_UNIT = createUnit(players[PLAYER_NEUTRAL_AGGRESSIVE], UNIT_OBJECTIVE, OBJECTIVE_POS, angle(PI))
             nullTimer() -> 
                 new KingOfTheHill(OBJECTIVE_UNIT)
-

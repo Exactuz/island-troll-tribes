@@ -15,8 +15,6 @@ import Objective
 import Abilities
 import Respawn
 import LocalObjectIDs
-import SoundUtils
-import GatheringSlot
 import BossFight
 import LocalObjectIDs2
 import ClosureEvents
@@ -27,11 +25,12 @@ import ReduceHealing
 import PhilosophersStone
 import Knockback3
 import CentreIslandRegion
-import Region
 
 unit OBJECTIVE_CHALLENGE_UNIT = null
 public Tribe challengerTribe = null
 public constant TELEPORT_ANIMATION_DURATION = 3.
+constant EFX_STOMP_PERIOD = 1.
+constant EFX_STOMP_COUNT = 3
 
 
 function onEnter()
@@ -39,23 +38,52 @@ function onEnter()
     if bossFightLoserTribe == null
         handleObjectiveWinnerTeam()
         handleLoserTeams()
-        GameStates.preBossFight.exit()
-        GameStates.bossFight.enter()
+        prepareForBossFight()
         return
     else 
         print("respawning objective")
         respawnObjective()
 
 
+function prepareForBossFight()
+    playStompEfx()    
+    doAfter(EFX_STOMP_PERIOD * EFX_STOMP_COUNT * 1/2) -> 
+        supplyMeat()
+    doAfter(EFX_STOMP_PERIOD * EFX_STOMP_COUNT) ->   
+        OBJECTIVE_UNIT.remove()   
+        GameStates.preBossFight.exit()
+        GameStates.bossFight.enter()
+
+
+function supplyMeat()
+    for each in winnerTribe.getMembers()
+        let troll = each.getTroll()
+        for i = 0 to 5
+            let itm = troll.itemInSlot(i)
+            if itm.getTypeId() == ITEM_COOKED_MEAT
+                itm.setPos(winnerTribe.spirit.getPos())
+                nullTimer() -> 
+                    winnerTribe.spirit.addItemHandle(itm)
+        let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
+        flashEffect(Abilities.blinkCaster, troll.getPos())
+        nullTimer() -> 
+            meat.setCharges(10)
+            nullTimer() -> 
+                troll.addItemHandle(meat)
+
 function respawnObjective()
+    print("respawnObjective")
     OBJECTIVE_CHALLENGE_UNIT = createUnit(players[PLAYER_NEUTRAL_PASSIVE], UNIT_OBJECTIVE_CHALLENGE, OBJECTIVE_POS)
     ..setInvulnerable(true)
     ..addUnitToStock(UNIT_CHALLENGE_MAMMOTH_DUMMY, 1, 1)
 
 function onChallenge()
+    if not GameStates.preBossFight.active
+        return
     let sellingUnit = GetSellingUnit()
     let soldUnit = GetSoldUnit()
-    if soldUnit.getTypeId() != UNIT_OBJECTIVE_CHALLENGE
+    if soldUnit.getTypeId() != UNIT_CHALLENGE_MAMMOTH_DUMMY
+        print("wrong unit sold")
         return
     let p = soldUnit.getOwner()
     if not assertMaxDistance(p)
@@ -65,10 +93,25 @@ function onChallenge()
     winnerTribe = p.getTribe()
     handleChallengerTeam()
     handleLoserTeams()
-    GameStates.preBossFight.exit()
-    GameStates.bossFight.enter()
+    prepareForBossFight()
+    print("bossFightEnter")
 
 
+
+    
+function playStompEfx()
+    flashEffect(Abilities.warStompCaster, OBJECTIVE_POS)
+    let efx_unit = OBJECTIVE_UNIT.isAlive() ? OBJECTIVE_UNIT : OBJECTIVE_CHALLENGE_UNIT
+    efx_unit.setScale(1.5)   
+    doPeriodicallyCounted(EFX_STOMP_PERIOD, EFX_STOMP_COUNT) (CallbackCounted cb) ->
+        let ratio = cb.progress()
+        let scaleMultiplier = 1/2*EFX_STOMP_COUNT*ratio
+        let scale = 1.5+scaleMultiplier
+        efx_unit.setScale(scale)
+        let efx = addEffect(Abilities.warStompCaster, OBJECTIVE_POS)
+            ..setScale(1+scaleMultiplier/2)
+        doAfter(EFX_STOMP_PERIOD) -> 
+            efx.destr()
 
 function assertMaxDistance(player p) returns bool
     if p.getTroll().getPos().distanceTo(OBJECTIVE_CHALLENGE_UNIT.getPos()) > OBJECTIVE_CHALLENGE_RANGE
@@ -85,6 +128,7 @@ function handleLoserTeams()
                 let troll = each.getTroll()
                 if troll.isInRegion(CENTRE_ISLAND_REGION)
                     troll.setPos(pos)
+                    troll.setHP(troll.getMaxHP()*.2)
                     each.panCamToTimed(each.getTroll(), 0.1)
 
 function handleChallengerTeam()
@@ -147,7 +191,7 @@ public function resetState(unit troll)
         troll.unpause()
 
 function onExit()
-    print("exited prebossfight")
+    OBJECTIVE_CHALLENGE_UNIT.remove()
 
 init
     GameStates.preBossFight.onEnter() (GameState state) ->

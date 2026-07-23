@@ -31,42 +31,15 @@ public constant PAUSE_TIME = 3.
 constant MAMMOTH_BASE_HP = 250
 constant MAMMOTH_HP_PER_PLAYER = 800.
 constant TIMEOUT_PERIOD = 120.
+bool mammothWon = false
 public unit BOSS_UNIT = null
 public Tribe bossFightLoserTribe = null
 unit rewardHandlerUnit = null
 
-function supplyMeat()
-    for each in winnerTribe.getMembers()
-        let troll = each.getTroll()
-        for i = 0 to 5
-            let itm = troll.itemInSlot(i)
-            if itm.getTypeId() == ITEM_COOKED_MEAT
-                itm.setPos(winnerTribe.spirit.getPos())
-                nullTimer() -> 
-                    winnerTribe.spirit.addItemHandle(itm)
-        let meat = createItem(ITEM_COOKED_MEAT, troll.getPos())
-        flashEffect(Abilities.blinkCaster, troll.getPos())
-        nullTimer() -> 
-            meat.setCharges(10)
-            nullTimer() -> 
-                troll.addItemHandle(meat)
 
 
 
-    
-function playStompEfx()
-    let count = 3
-    flashEffect(Abilities.warStompCaster, OBJECTIVE_POS)
-    OBJECTIVE_UNIT.setScale(1.5)   
-    doPeriodicallyCounted(1., count) (CallbackCounted cb) ->
-        let ratio = cb.progress()
-        let scaleMultiplier = 1/2*count*ratio
-        let scale = 1.5+scaleMultiplier
-        OBJECTIVE_UNIT.setScale(scale)
-        let efx = addEffect(Abilities.warStompCaster, OBJECTIVE_POS)
-            ..setScale(1+scaleMultiplier/2)
-        doAfter(1.) -> 
-            efx.destr()
+
 
 
 function spawnBoss()
@@ -76,22 +49,23 @@ function spawnBoss()
     BOSS_UNIT.setHP(newHp)
 
 function onEnter()
-    updateBorderAccessOnBossFight()    
-    playStompEfx()
+    updateBorderAccessOnBossFight()
     handleTimeout()
-    doAfter(1.5) -> 
-        supplyMeat()
-    doAfter(3.) -> 
-        OBJECTIVE_UNIT.remove()
-        spawnBoss()
+    spawnBoss()
     let cb = doPeriodically(0.125) (CallbackPeriodic cb) ->
         if cb == null
             return
+        if not GameStates.bossFight.active
+            destroy cb
+            return
         for each in pausedTrolls
             each.setHP(pausedTrolls.get(each))
+            /*
     GameStates.bossFight.onExit() (GameState state) ->
-        print("destroyed cb")
-        destroy cb
+        if cb != null
+            print("destroyed cb")
+            destroy cb
+            */
     
 
      
@@ -143,6 +117,7 @@ function getRandomVisiblePos(Tribe tribe) returns vec2
 
 
 function onMammothWin()
+    mammothWon = true
     print(("Tribe "+winnerTribe.getName()+" has lost the fight against Mammoth!").color(COLOR_RED))
     let spawn = winnerTribe.spawn
     for each in winnerTribe.getMembers()
@@ -243,9 +218,20 @@ function updateBorderAccessOnBossFightFinish()
         bordersAccess.insideGurubashiArena = false
         bordersAccess.outsideGurubashiArena = true
 
-function onExit()
-    updateBorderAccessOnBossFightFinish()
-    closeGates()
+function updateBorderAccessOnTeamLoss()
+    for tribe in Tribe.getTribes()
+        let bordersAccess = GurubashiArenaBorders.getInstance(tribe)
+        bordersAccess.insideGurubashiArena = true
+        bordersAccess.outsideGurubashiArena = true
+
+
+function onExit()    
+    if mammothWon
+        updateBorderAccessOnTeamLoss()
+        mammothWon = false
+    else
+        updateBorderAccessOnBossFightFinish()
+        closeGates()
 
 function onDamage()
     if not GameStates.bossFight.active

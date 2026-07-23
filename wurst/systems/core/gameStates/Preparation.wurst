@@ -17,11 +17,10 @@ import LocalObjectIDs
 import SoundUtils
 import GatheringSlot
 import PreBossFight
+import GurubashiArena
 
 public constant PREPARATION_TIME_SECONDS = 90.
 public constant DUEL_WARNING = new SoundDefinition(Sounds.arrangedTeamInvitation)
-constant DUEL_MEAT_STACK_AMOUNT = 2
-
 public constant DUEL_PREPARE_TEXT = "You have {0} seconds to prepare for the final duel. Each troll will be teleported to the arena and receive {1} stacks of meat for the upcoming fight.".format(PREPARATION_TIME_SECONDS.toString(), DUEL_MEAT_STACK_AMOUNT.toString()).color(COLOR_RED)
 
 function displayTimer()
@@ -41,7 +40,7 @@ function reviveTrolls()
         revive(troll, 0.)
         doAfter(ANIMATION_PERIOD) ->
             troll.resetCooldown()            
-
+/*
 function supplyMeat()
     for tribe in Tribe.getTribes()
         let spirit = tribe.spirit
@@ -63,7 +62,7 @@ function supplyMeat()
                         doAfter(5.) -> 
                             if not meat.isOwned()
                                 meat.remove()
-
+*/
 
 function onEnter()
     reviveTrolls()
@@ -76,7 +75,7 @@ function onEnter()
         //playTeleportEfx()
 
 function onExit()
-    supplyMeat()
+    //supplyMeat()
 
 function playTeleportEfx()
     for tribe in Tribe.getTribes()

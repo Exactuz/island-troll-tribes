@@ -18,7 +18,11 @@ import Respawn
 import initlater GurubashiArenaBorders
 import PhilosophersStone
 import UnitExtensions
+import GatheringSlot
+import Abilities
+
 public timer GURUBASHI_ARENA_OPEN_TIMER   
+public constant DUEL_MEAT_STACK_AMOUNT = 2
 
 function onEnter()
     let tribes = Tribe.getTribes()

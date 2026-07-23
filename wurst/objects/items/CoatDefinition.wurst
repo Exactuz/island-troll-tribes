@@ -353,7 +353,7 @@ public constant ITEM_BATTLE_ARMOR_DEFINITION = compiletime(new CustomItemDefinit
         ..setTintingColor3Blue(128)
         ..setScalingValue(1.5)
         ..setAbilities(ABIL_BATTLE)
-        ..setCooldownGroup("AIms")
+        ..setCooldownGroup(ABIL_BATTLE)
         ..constructItemShopDummyUnit(ITEM_BATTLE_ARMOR_DUMMY_UNIT)
         )
 

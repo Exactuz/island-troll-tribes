@@ -4,6 +4,7 @@ import LocalObjectIDs
 import LocalObjectIDs2
 
 public enum ClassType
+    NONE
     BASE_CLASS
     SUB_CLASS
     SUPER_CLASS
